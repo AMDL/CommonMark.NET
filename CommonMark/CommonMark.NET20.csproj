@@ -6,7 +6,6 @@
     <TargetFrameworkVersionEx>v2.0</TargetFrameworkVersionEx>
     <DefineConstantsEx>OptimizeFor20</DefineConstantsEx>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
-    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />

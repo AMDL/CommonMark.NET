@@ -6,7 +6,6 @@
     <ProjectGuid>{40AB0D9C-9464-45B2-AC79-72A566FA1371}</ProjectGuid>
     <DefineConstantsEx>OptimizeFor45</DefineConstantsEx>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
-    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
