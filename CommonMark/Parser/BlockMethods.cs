@@ -137,7 +137,7 @@ namespace CommonMark.Parser
                 if (c == '|')
                 {
                     ret.Add(sb.ToString());
-                    sb.Clear();
+                    sb.Length = 0;
                 }
                 else
                 {
@@ -148,11 +148,11 @@ namespace CommonMark.Parser
             if (sb.Length != 0)
             {
                 var str = sb.ToString();
-                if (!string.IsNullOrWhiteSpace(str))
+                if (!IsNullOrWhiteSpace(str))
                 {
                     ret.Add(str);
                 }
-                sb.Clear();
+                sb.Length = 0;
             }
 
             return ret;
@@ -182,7 +182,7 @@ namespace CommonMark.Parser
                     if (c == '|')
                     {
                         var text = sb.ToString();
-                        sb.Clear();
+                        sb.Length = 0;
 
                         if (text.Length > 0)
                         {
@@ -222,7 +222,7 @@ namespace CommonMark.Parser
                 if (sb.Length > 0)
                 {
                     var text = sb.ToString();
-                    sb.Clear();
+                    sb.Length = 0;
 
                     if (text.Length > 0)
                     {
@@ -253,7 +253,7 @@ namespace CommonMark.Parser
                     if (c == '|')
                     {
                         var text = sb.ToString();
-                        sb.Clear();
+                        sb.Length = 0;
 
                         if (text.Length > 0)
                         {
@@ -292,7 +292,7 @@ namespace CommonMark.Parser
                 if (sb.Length > 0)
                 {
                     var text = sb.ToString();
-                    sb.Clear();
+                    sb.Length = 0;
 
                     if (text.Length > 0)
                     {
@@ -491,10 +491,10 @@ namespace CommonMark.Parser
                 }
             }
 
-            while (columnsLine.Count > 0 && string.IsNullOrWhiteSpace(columnsLine[0])) columnsLine.RemoveAt(0);
-            while (columnsLine.Count > 0 && string.IsNullOrWhiteSpace(columnsLine[columnsLine.Count - 1])) columnsLine.RemoveAt(columnsLine.Count - 1);
-            while (headerLine.Count > 0 && string.IsNullOrWhiteSpace(headerLine[0])) headerLine.RemoveAt(0);
-            while (headerLine.Count > 0 && string.IsNullOrWhiteSpace(headerLine[headerLine.Count - 1])) headerLine.RemoveAt(headerLine.Count - 1);
+            while (columnsLine.Count > 0 && IsNullOrWhiteSpace(columnsLine[0])) columnsLine.RemoveAt(0);
+            while (columnsLine.Count > 0 && IsNullOrWhiteSpace(columnsLine[columnsLine.Count - 1])) columnsLine.RemoveAt(columnsLine.Count - 1);
+            while (headerLine.Count > 0 && IsNullOrWhiteSpace(headerLine[0])) headerLine.RemoveAt(0);
+            while (headerLine.Count > 0 && IsNullOrWhiteSpace(headerLine[headerLine.Count - 1])) headerLine.RemoveAt(headerLine.Count - 1);
 
             if (columnsLine.Count < 2) return false;
             if (headerLine.Count < columnsLine.Count) return false;
@@ -525,7 +525,7 @@ namespace CommonMark.Parser
                 lastTableLine = i;
             }
 
-            if(lastTableLine + 1 < lines.Length && string.IsNullOrWhiteSpace(lines[lastTableLine + 1]))
+            if(lastTableLine + 1 < lines.Length && IsNullOrWhiteSpace(lines[lastTableLine + 1]))
             {
                 lastTableLine++;
             }
@@ -1406,6 +1406,18 @@ namespace CommonMark.Parser
                     break;
                 }
             }
+        }
+
+#if OptimizeFor45
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+#endif
+        static bool IsNullOrWhiteSpace(string str)
+        {
+#if v2_0 || v3_5
+            return string.IsNullOrEmpty(str?.Trim());
+#else
+            return string.IsNullOrWhiteSpace(str);
+#endif
         }
     }
 }
