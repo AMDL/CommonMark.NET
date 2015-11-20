@@ -41,6 +41,20 @@ namespace CommonMark
         RespectReferenceCase = 0x100,
 
         /// <summary>
+        /// The parser will recognize
+        /// 
+        /// First Header  | Second Header
+        /// ------------- | -------------
+        /// Content Cell  | Content Cell
+        /// Content Cell  | Content Cell
+        /// 
+        /// style tables.
+        /// 
+        /// Refer to https://help.github.com/articles/github-flavored-markdown/#tables for more examples
+        /// </summary>
+        GithubStyleTables = 0x200,
+
+        /// <summary>
         /// All additional features are enabled.
         /// </summary>
         All = 0x7FFFFFFF
