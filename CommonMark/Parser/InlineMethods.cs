@@ -17,7 +17,7 @@ namespace CommonMark.Parser
         internal static Func<Block, Subject, CommonMarkSettings, Inline>[] InitializeParsers(CommonMarkSettings settings)
         {
             var handleCaret = 0 != (settings.AdditionalFeatures & CommonMarkAdditionalFeatures.SuperscriptCaret);
-            var handleTilde = 0 != (settings.AdditionalFeatures & CommonMarkAdditionalFeatures.Tilde);
+            var handleTilde = 0 != (settings.AdditionalFeatures & (CommonMarkAdditionalFeatures.StrikethroughTilde | CommonMarkAdditionalFeatures.SubscriptTilde));
 
             var p = new Func<Block, Subject, CommonMarkSettings, Inline>[handleTilde ? 127 : 97];
             p['\n'] = handle_newline;
