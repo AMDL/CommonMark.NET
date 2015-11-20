@@ -185,24 +185,28 @@ namespace CommonMark.Parser
                         if (iopener != null)
                         {
                             bool retry = false;
+                            InlineTag? singleCharTag = null;
+                            InlineTag? doubleCharTag = null;
                             if (iopener.Delimeter == '~')
                             {
-                                InlineTag? singleCharTag = InlineTag.Subscript;
-                                if (0 == (settings.AdditionalFeatures & CommonMarkAdditionalFeatures.SubscriptTilde))
-                                    singleCharTag = null;
-                                InlineTag? doubleCharTag = InlineTag.Strikethrough;
-                                if (0 == (settings.AdditionalFeatures & CommonMarkAdditionalFeatures.StrikethroughTilde))
-                                    doubleCharTag = null;
-                                InlineMethods.MatchInlineStack(parent, iopener, subj, istack.DelimeterCount, istack, singleCharTag, doubleCharTag, settings);
-                                if (istack.DelimeterCount > 0)
-                                    retry = true;
+                                if (0 != (settings.AdditionalFeatures & CommonMarkAdditionalFeatures.SubscriptTilde))
+                                    singleCharTag = InlineTag.Subscript;
+                                if (0 != (settings.AdditionalFeatures & CommonMarkAdditionalFeatures.StrikethroughTilde))
+                                    doubleCharTag = InlineTag.Strikethrough;
+                            }
+                            else if (iopener.Delimeter == '^' && 0 != (settings.AdditionalFeatures & CommonMarkAdditionalFeatures.SuperscriptCaret))
+                            {
+                                singleCharTag = InlineTag.Superscript;
                             }
                             else
                             {
-                                var useDelims = InlineMethods.MatchInlineStack(parent, iopener, subj, istack.DelimeterCount, istack, InlineTag.Emphasis, InlineTag.Strong, settings);
+                                singleCharTag = InlineTag.Emphasis;
+                                doubleCharTag = InlineTag.Strong;
+                            }
+
+                            var useDelims = InlineMethods.MatchInlineStack(parent, iopener, subj, istack.DelimeterCount, istack, singleCharTag, doubleCharTag, settings);
                                 if (istack.DelimeterCount > 0)
                                     retry = true;
-                            }
 
                             if (retry)
                             {
