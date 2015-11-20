@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CommonMark.Parser;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -120,12 +121,12 @@ namespace CommonMark
 
         #region [ Properties that cache structures used in the parsers ]
 
-        private Func<Parser.Subject, CommonMarkSettings, Syntax.Inline>[] _inlineParsers;
+        private Func<Parser.Subject, Syntax.Inline>[] _inlineParsers;
 
         /// <summary>
         /// Gets the delegates that parse inline elements according to these settings.
         /// </summary>
-        internal Func<Parser.Subject, CommonMarkSettings, Syntax.Inline>[] InlineParsers
+        internal Func<Parser.Subject, Syntax.Inline>[] InlineParsers
         {
             get
             {
@@ -162,6 +163,26 @@ namespace CommonMark
                 }
 
                 return v;
+            }
+        }
+
+        private InlineStack.PostProcessor _inlineStackPostProcessor;
+
+        internal InlineStack.PostProcessor InlineStackPostProcessor
+        {
+            get
+            {
+                if (_inlineStackPostProcessor == null)
+                {
+                    lock (this)
+                    {
+                        if (_inlineStackPostProcessor == null)
+                        {
+                            _inlineStackPostProcessor = new InlineStack.PostProcessor(this);
+                        }
+                    }
+                }
+                return _inlineStackPostProcessor;
             }
         }
 

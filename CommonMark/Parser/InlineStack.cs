@@ -163,82 +163,91 @@ namespace CommonMark.Parser
             // this is not done automatically because the initial * is recognized as a potential closer (assuming
             // potential scenario '*[*' ).
             if (curPriority > 0)
-                PostProcessInlineStack(null, first, last, curPriority, settings);
+                settings.InlineStackPostProcessor.PostProcess(null, first, last, curPriority);
         }
 
-        public static void PostProcessInlineStack(Subject subj, InlineStack first, InlineStack last, InlineStackPriority ignorePriority, CommonMarkSettings settings)
+        internal sealed class PostProcessor
         {
-            while (ignorePriority > 0)
+            private readonly CommonMarkSettings settings;
+
+            public PostProcessor(CommonMarkSettings settings)
             {
-                var istack = first;
-                while (istack != null)
-                {
-                    if (istack.Priority >= ignorePriority)
-                    {
-                        RemoveStackEntry(istack, subj, istack, settings);
-                    }
-                    else if (0 != (istack.Flags & InlineStackFlags.Closer))
-                    {
-                        bool canClose;
-                        var iopener = FindMatchingOpener(istack.Previous, istack.Priority, istack.Delimeter, out canClose);
-                        if (iopener != null)
-                        {
-                            bool retry = false;
-                            InlineTag? singleCharTag = null;
-                            InlineTag? doubleCharTag = null;
-                            if (iopener.Delimeter == '~')
-                            {
-                                if (0 != (settings.AdditionalFeatures & CommonMarkAdditionalFeatures.SubscriptTilde))
-                                    singleCharTag = InlineTag.Subscript;
-                                if (0 != (settings.AdditionalFeatures & CommonMarkAdditionalFeatures.StrikethroughTilde))
-                                    doubleCharTag = InlineTag.Strikethrough;
-                            }
-                            else if (iopener.Delimeter == '^' && 0 != (settings.AdditionalFeatures & CommonMarkAdditionalFeatures.SuperscriptCaret))
-                            {
-                                singleCharTag = InlineTag.Superscript;
-                            }
-                            else
-                            {
-                                singleCharTag = InlineTag.Emphasis;
-                                doubleCharTag = InlineTag.Strong;
-                            }
-
-                            var useDelims = InlineMethods.MatchInlineStack(iopener, subj, istack.DelimeterCount, istack, singleCharTag, doubleCharTag, settings);
-                            if (istack.DelimeterCount > 0)
-                                retry = true;
-
-                            if (retry)
-                            {
-                                // remove everything between opened and closer (not inclusive).
-                                if (istack.Previous != null && iopener.Next != istack.Previous)
-                                    RemoveStackEntry(iopener.Next, subj, istack.Previous, settings);
-
-                                continue;
-                            }
-                            else
-                            {
-                                // remove opener, everything in between, and the closer
-                                RemoveStackEntry(iopener, subj, istack, settings);
-                            }
-                        }
-                        else if (!canClose)
-                        {
-                            // this case means that a matching opener does not exist
-                            // remove the Closer flag so that a future Opener can be matched against it.
-                            istack.Flags &= ~InlineStackFlags.Closer;
-                        }
-                    }
-
-                    if (istack == last)
-                        break;
-
-                    istack = istack.Next;
-                }
-
-                ignorePriority--;
+                this.settings = settings;
             }
+
+            public void PostProcess(Subject subj, InlineStack first, InlineStack last, InlineStackPriority ignorePriority)
+            {
+                while (ignorePriority > 0)
+                {
+                    var istack = first;
+                    while (istack != null)
+                    {
+                        if (istack.Priority >= ignorePriority)
+                        {
+                            RemoveStackEntry(istack, subj, istack, settings);
+                        }
+                        else if (0 != (istack.Flags & InlineStackFlags.Closer))
+                        {
+                            bool canClose;
+                            var iopener = FindMatchingOpener(istack.Previous, istack.Priority, istack.Delimeter, out canClose);
+                            if (iopener != null)
+                            {
+                                bool retry = false;
+                                InlineTag? singleCharTag = null;
+                                InlineTag? doubleCharTag = null;
+                                if (iopener.Delimeter == '~')
+                                {
+                                    if (0 != (settings.AdditionalFeatures & CommonMarkAdditionalFeatures.SubscriptTilde))
+                                        singleCharTag = InlineTag.Subscript;
+                                    if (0 != (settings.AdditionalFeatures & CommonMarkAdditionalFeatures.StrikethroughTilde))
+                                        doubleCharTag = InlineTag.Strikethrough;
+                                }
+                                else if (iopener.Delimeter == '^' && 0 != (settings.AdditionalFeatures & CommonMarkAdditionalFeatures.SuperscriptCaret))
+                                {
+                                    singleCharTag = InlineTag.Superscript;
+                                }
+                                else
+                                {
+                                    singleCharTag = InlineTag.Emphasis;
+                                    doubleCharTag = InlineTag.Strong;
+                                }
+
+                                var useDelims = InlineMethods.MatchInlineStack(iopener, subj, istack.DelimeterCount, istack, singleCharTag, doubleCharTag, settings);
+                                if (istack.DelimeterCount > 0)
+                                    retry = true;
+
+                                if (retry)
+                                {
+                                    // remove everything between opened and closer (not inclusive).
+                                    if (istack.Previous != null && iopener.Next != istack.Previous)
+                                        RemoveStackEntry(iopener.Next, subj, istack.Previous, settings);
+
+                                    continue;
+                                }
+                                else
+                                {
+                                    // remove opener, everything in between, and the closer
+                                    RemoveStackEntry(iopener, subj, istack, settings);
+                                }
+                            }
+                            else if (!canClose)
+                            {
+                                // this case means that a matching opener does not exist
+                                // remove the Closer flag so that a future Opener can be matched against it.
+                                istack.Flags &= ~InlineStackFlags.Closer;
+                            }
+                        }
+
+                        if (istack == last)
+                            break;
+
+                        istack = istack.Next;
+                    }
+
+                    ignorePriority--;
+                }
+            }
+
         }
-
-
     }
 }
