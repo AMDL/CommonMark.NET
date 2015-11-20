@@ -116,7 +116,9 @@ namespace CommonMark
         /// </summary>
         public CommonMarkSettings Clone()
         {
-            return (CommonMarkSettings)this.MemberwiseClone();
+            var clone = (CommonMarkSettings)this.MemberwiseClone();
+            clone._inlineStackPostProcessor = null;
+            return clone;
         }
 
         #region [ Properties that cache structures used in the parsers ]
