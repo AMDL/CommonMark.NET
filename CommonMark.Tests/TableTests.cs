@@ -436,6 +436,18 @@ Hello world
         }
 
         [TestMethod]
+        public void EmptyCell0()
+        {
+            var markdown = @"Head1|Head2
+---|---
+   |Row2|";
+            var settings = ReadSettings.Clone();
+            var html = CommonMark.CommonMarkConverter.Convert(markdown, settings);
+            var result = "<table><thead><tr><th><span data-sourcepos=\"0-5\">Head1</span></th><th><span data-sourcepos=\"6-11\">Head2</span></th></tr></thead><tbody><tr><td></td><td><span data-sourcepos=\"25-29\">Row2</span></td></tr></tbody></table>";
+            Helpers.ExecuteTest(html, result);
+        }
+
+        [TestMethod]
         public void EmptyCell1()
         {
             var markdown = @"
