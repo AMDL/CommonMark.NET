@@ -176,13 +176,7 @@ namespace CommonMark
             {
                 if (_inlineStackPostProcessor == null)
                 {
-                    lock (this)
-                    {
-                        if (_inlineStackPostProcessor == null)
-                        {
-                            _inlineStackPostProcessor = new InlineStack.PostProcessor(this);
-                        }
-                    }
+                    _inlineStackPostProcessor = new InlineStack.PostProcessor(this);
                 }
                 return _inlineStackPostProcessor;
             }
