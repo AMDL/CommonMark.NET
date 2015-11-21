@@ -262,8 +262,8 @@ namespace CommonMark.Parser
                             var trailingWhiteSpace = 0;
                             while (trailingWhiteSpace < text.Length && char.IsWhiteSpace(text[text.Length - trailingWhiteSpace - 1])) trailingWhiteSpace++;
 
-
-                            var cellText = text.Substring(leadingWhiteSpace, text.Length - leadingWhiteSpace - trailingWhiteSpace);
+                            var length = Math.Max(0, text.Length - leadingWhiteSpace - trailingWhiteSpace);
+                            var cellText = text.Substring(leadingWhiteSpace, length);
                             cleanCellText.Add(cellText);
                         }
 

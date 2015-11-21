@@ -434,5 +434,17 @@ Hello world
                 Assert.AreEqual("<blockquote>\r\n<table><thead><tr><th>First Header</th><th>Second Header</th></tr></thead><tbody><tr><td>Content+Cell</td><td>Content-Cell</td></tr><tr><td>Content*Cell</td><td>Content/Cell</td></tr></tbody></table></blockquote>\r\n\r\n", html);
             }
         }
+
+        [TestMethod]
+        public void EmptyCell1()
+        {
+            var markdown = @"
+Head1 | Head2
+---|---
+ Row1 |    |";
+            var settings = ReadSettings.Clone();
+            var html = CommonMark.CommonMarkConverter.Convert(markdown, settings);
+            Helpers.ExecuteTest(html, "<table><thead><tr><th><span data-sourcepos=\"2-7\">Head1</span></th><th><span data-sourcepos=\"10-15\">Head2</span></th></tr></thead><tbody><tr><td><span data-sourcepos=\"27-31\">Row1</span></td><td></td></tr></tbody></table>");
+        }
     }
 }
