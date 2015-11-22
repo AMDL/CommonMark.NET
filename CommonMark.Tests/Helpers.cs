@@ -35,7 +35,8 @@ namespace CommonMark.Tests
             using (var reader = new System.IO.StringReader(commonMark))
             using (var writer = new System.IO.StringWriter())
             {
-                document = CommonMarkConverter.ProcessStage1(reader, settings);
+                var prologue = CommonMarkConverter.ProcessPrologue(reader, settings);
+                document = CommonMarkConverter.ProcessStage1(reader, settings, prologue);
                 CommonMarkConverter.ProcessStage2(document, settings);
                 CommonMarkConverter.ProcessStage3(document, writer, settings);
                 actual = writer.ToString();
