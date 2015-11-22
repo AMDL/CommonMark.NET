@@ -90,16 +90,52 @@ namespace CommonMark
         }
 
         /// <summary>
+        /// Performs a preliminary stage of the conversion, optionally handling a prologue.
+        /// </summary>
+        /// <param name="reader">The reader that contains the source data.</param>
+        /// <param name="settings">The object containing settings for the parsing process.</param>
+        /// <returns>The first line following the prologue or <c>null</c>, and the prologue line count.</returns>
+        public static Tuple<string, int> ProcessPrologue(TextReader reader, CommonMarkSettings settings = null)
+        {
+            if (reader == null)
+                throw new ArgumentNullException(nameof(reader));
+
+            if (settings == null)
+                settings = CommonMarkSettings.Default;
+
+            var handlePrologue = settings.HandlePrologue;
+            var prologueHandler = settings.PrologueLineHandler;
+            if (prologueHandler != null)
+                handlePrologue = true;
+
+            string line = null;
+            int lineNumber = 0;
+
+            if (prologueHandler != null)
+            {
+                while (handlePrologue && (line = reader.ReadLine()) != null)
+                {
+                    handlePrologue = prologueHandler(ref line);
+                    if (line != null)
+                        ++lineNumber;
+                }
+            }
+
+            return new Tuple<string, int>(line, lineNumber);
+        }
+
+        /// <summary>
         /// Performs the first stage of the conversion - parses block elements from the source and created the syntax tree.
         /// </summary>
         /// <param name="source">The reader that contains the source data.</param>
         /// <param name="settings">The object containing settings for the parsing process.</param>
+        /// <param name="prologue">The first line following the prologue or <c>null</c>, and the prologue line count.</param>
         /// <returns>The block element that represents the document.</returns>
         /// <exception cref="ArgumentNullException">when <paramref name="source"/> is <c>null</c></exception>
         /// <exception cref="CommonMarkException">when errors occur during block parsing.</exception>
         /// <exception cref="IOException">when error occur while reading the data.</exception>
-        [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Advanced)] 
-        public static Syntax.Block ProcessStage1(TextReader source, CommonMarkSettings settings = null)
+        [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Advanced)]
+        public static Syntax.Block ProcessStage1(TextReader source, CommonMarkSettings settings = null, Tuple<string, int> prologue = null)
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
@@ -110,10 +146,12 @@ namespace CommonMark
             var cur = Syntax.Block.CreateDocument();
             var doc = cur;
             var line = new LineInfo(settings.TrackSourcePosition);
+            if (prologue != null)
+                line.LineNumber = prologue.Item2;
 
             try
             {
-                var reader = new TabTextReader(source);
+                var reader = new TabTextReader(source, prologue?.Item1);
                 reader.ReadLine(line);
                 while (line.Line != null)
                 {
@@ -260,7 +298,8 @@ namespace CommonMark
             if (settings == null)
                 settings = CommonMarkSettings.Default;
 
-            var document = ProcessStage1(source, settings);
+            var prologue = ProcessPrologue(source, settings);
+            var document = ProcessStage1(source, settings, prologue);
             ProcessStage2(document, settings);
             return document;
         }
@@ -297,7 +336,8 @@ namespace CommonMark
             if (settings == null)
                 settings = CommonMarkSettings.Default;
 
-            var document = ProcessStage1(source, settings);
+            var prologue = ProcessPrologue(source, settings);
+            var document = ProcessStage1(source, settings, prologue);
             ProcessStage2(document, settings);
             ProcessStage3(document, target, settings);
         }

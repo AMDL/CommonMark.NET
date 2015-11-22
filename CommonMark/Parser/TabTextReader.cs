@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Text;
 
 namespace CommonMark.Parser
@@ -14,10 +15,17 @@ namespace CommonMark.Parser
         private readonly StringBuilder _builder;
         private bool _endOfStream;
 
-        public TabTextReader(TextReader inner)
+        public TabTextReader(TextReader inner, string firstLine)
         {
             this._inner = inner;
+            int bufferSize;
+            if (firstLine == null)
+                bufferSize = _bufferSize;
+            else
+                bufferSize = Math.Max(_bufferSize, firstLine.Length + 1);
             this._buffer = new char[_bufferSize];
+            if (firstLine != null)
+                FillBuffer(firstLine);
             this._builder = new StringBuilder(256);
         }
 
@@ -31,6 +39,15 @@ namespace CommonMark.Parser
             this._endOfStream = this._bufferLength == 0;
             this._bufferPosition = 0;
             return !this._endOfStream;
+        }
+
+        private void FillBuffer(string line)
+        {
+            this._previousBufferLength += this._bufferLength;
+            Array.Copy(line.ToCharArray(), this._buffer, line.Length);
+            this._buffer[line.Length] = '\n';
+            this._bufferLength = line.Length + 1;
+            this._bufferPosition = 0;
         }
 
         public void ReadLine(LineInfo line)

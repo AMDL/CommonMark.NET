@@ -5,6 +5,13 @@ using System.Text;
 namespace CommonMark
 {
     /// <summary>
+    /// Prologue line handler.
+    /// </summary>
+    /// <param name="line">Single input line. If it terminated the prologue, it must be changed to <c>null</c>.</param>
+    /// <returns><c>true</c> if the prologue is incomplete, or <c>false</c> otherwise.</returns>
+    public delegate bool PrologueLineHandler(ref string line);
+
+    /// <summary>
     /// Class used to configure the behavior of <see cref="CommonMarkConverter"/>.
     /// </summary>
     /// <remarks>This class is not thread-safe so any changes to a instance that is reused (for example, the 
@@ -57,6 +64,28 @@ namespace CommonMark
         /// This also controls if these values will be written to the output.
         /// </summary>
         public bool TrackSourcePosition { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the parser handles a document prologue.
+        /// This may be useful if e.g. a YAML metadata block is present.
+        /// </summary>
+        /// <value><c>true</c> if a document prologue should be handled, or <c>false</c> otherwise.</value>
+        public bool HandlePrologue { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the parser includes the prologue line in the line count.
+        /// </summary>
+        /// <value><c>true</c> if the prologue lines should be included in the line count, or <c>false</c> otherwise.</value>
+        public bool IncludePrologueInLineCount { get; set; }
+
+        /// <summary>
+        /// Gets or sets the prologue line handler.
+        /// </summary>
+        /// <value>
+        /// Prologue line handler.
+        /// Should be specified if <see cref="HandlePrologue"/> is <c>true</c>.
+        /// </value>
+        public PrologueLineHandler PrologueLineHandler { get; set; }
 
         private CommonMarkAdditionalFeatures _additionalFeatures;
 
