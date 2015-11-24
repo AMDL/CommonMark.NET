@@ -93,6 +93,12 @@
     <None Include="packages.config" />
     <None Include="Properties\public.snk" />
   </ItemGroup>
+  <ItemGroup Condition=" '$(BuildMode)' == 'portable' Or '$(BuildMode)' == 'portable_v4.5' ">
+    <ProjectReference Include="..\CommonMark.Shim\CommonMark.Shim.csproj">
+      <Project>{6a001dea-3175-41fa-a4cd-97f929855642}</Project>
+      <Name>CommonMark.Shim</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="CommonMark.Targets.csproj" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

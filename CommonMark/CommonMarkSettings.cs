@@ -89,7 +89,7 @@ namespace CommonMark
                         {
                             return orig(x);
                         }
-                        catch (Exception ex)
+                        catch (System.Exception ex)
                         {
                             throw new CommonMarkException("An error occurred while executing the CommonMarkSettings.UriResolver delegate. View inner exception for details.", ex);
                         }

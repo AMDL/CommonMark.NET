@@ -83,6 +83,10 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CommonMark.Shim.NET\CommonMark.Shim.NET.csproj">
+      <Project>{9b5eb798-260d-403f-9964-ce80022c0fa6}</Project>
+      <Name>CommonMark.Shim.NET</Name>
+    </ProjectReference>
     <ProjectReference Include="..\CommonMark\CommonMark.Base.csproj">
       <Project>{0fd4b1dd-45a8-4f02-beb0-5881cd512573}</Project>
       <Name>CommonMark.Base</Name>

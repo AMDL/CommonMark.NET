@@ -133,7 +133,7 @@ namespace CommonMark
             {
                 throw;
             }
-            catch(Exception ex)
+            catch (System.Exception ex)
             {
                 throw new CommonMarkException("An error occurred while parsing line " + line.ToString(), cur, ex);
             }
@@ -150,7 +150,7 @@ namespace CommonMark
             {
                 throw;
             }
-            catch (Exception ex)
+            catch (System.Exception ex)
             {
                 throw new CommonMarkException("An error occurred while finalizing open containers.", cur, ex);
             }
@@ -186,7 +186,7 @@ namespace CommonMark
             {
                 throw;
             }
-            catch(Exception ex)
+            catch (System.Exception ex)
             {
                 throw new CommonMarkException("An error occurred during inline parsing.", ex);
             }
@@ -244,7 +244,7 @@ namespace CommonMark
             {
                 throw;
             }
-            catch(Exception ex)
+            catch (System.Exception ex)
             {
                 throw new CommonMarkException("An error occurred during formatting of the document.", ex);
             }

@@ -8,9 +8,7 @@ namespace CommonMark
     /// <summary>
     /// An exception that is caught during CommonMark parsing or formatting.
     /// </summary>
-#if v2_0 || v3_5 || v4_0 || v4_5
     [Serializable]
-#endif
     public class CommonMarkException : Exception
     {
         /// <summary>
@@ -33,13 +31,13 @@ namespace CommonMark
         /// <summary>Initializes a new instance of the <see cref="CommonMarkException" /> class with a specified error message and a reference to the inner exception that is the cause of this exception.</summary>
         /// <param name="message">The error message that explains the reason for the exception.</param>
         /// <param name="innerException">The exception that is the cause of the current exception, or a <c>null</c> reference (<c>Nothing</c> in Visual Basic) if no inner exception is specified.</param>
-        public CommonMarkException(string message, Exception innerException) : base(message, innerException) { }
+        public CommonMarkException(string message, System.Exception innerException) : base(message, innerException) { }
 
         /// <summary>Initializes a new instance of the <see cref="CommonMarkException" /> class with a specified error message, a reference to the element that caused it and a reference to the inner exception that is the cause of this exception.</summary>
         /// <param name="message">The error message that explains the reason for the exception.</param>
         /// <param name="inline">The inline element that is related to the exception cause.</param>
         /// <param name="innerException">The exception that is the cause of the current exception, or a <c>null</c> reference (<c>Nothing</c> in Visual Basic) if no inner exception is specified.</param>
-        public CommonMarkException(string message, Inline inline, Exception innerException = null)
+        public CommonMarkException(string message, Inline inline, System.Exception innerException = null)
             : base(message, innerException)
         {
             this.InlineElement = inline;
@@ -49,13 +47,12 @@ namespace CommonMark
         /// <param name="message">The error message that explains the reason for the exception.</param>
         /// <param name="block">The block element that is related to the exception cause.</param>
         /// <param name="innerException">The exception that is the cause of the current exception, or a <c>null</c> reference (<c>Nothing</c> in Visual Basic) if no inner exception is specified.</param>
-        public CommonMarkException(string message, Block block, Exception innerException = null)
+        public CommonMarkException(string message, Block block, System.Exception innerException = null)
             : base(message, innerException) 
         {
             this.BlockElement = block;
         }
 
-#if v2_0 || v3_5 || v4_0 || v4_5
         /// <summary>Initializes a new instance of the <see cref="CommonMarkException" /> class from the specified instances of the <see cref="System.Runtime.Serialization.SerializationInfo" /> and <see cref="System.Runtime.Serialization.StreamingContext" /> classes.</summary>
 		/// <param name="serializationInfo">A <see cref="System.Runtime.Serialization.SerializationInfo" /> instance that contains the information required to deserialize the new <see cref="T:System.Security.Authentication.InvalidCredentialException" /> instance. </param>
 		/// <param name="streamingContext">A <see cref="System.Runtime.Serialization.StreamingContext" /> instance. </param>
@@ -82,6 +79,5 @@ namespace CommonMark
             ////info.AddValue("BlockElement", this.BlockElement);
             ////info.AddValue("InlineElement", this.InlineElement);
         }
-#endif
     }
 }
