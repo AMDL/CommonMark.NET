@@ -50,6 +50,7 @@
     <Compile Include="CommonMarkConverter.cs" />
     <Compile Include="CommonMarkException.cs" />
     <Compile Include="CommonMarkSettings.cs" />
+    <Compile Include="DiscardYamlPrologueHandler.cs" />
     <Compile Include="Formatters\HtmlFormatter.cs" />
     <Compile Include="Func.cs" />
     <Compile Include="OutputFormat.cs" />
