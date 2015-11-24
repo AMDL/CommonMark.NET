@@ -116,7 +116,8 @@ namespace CommonMark
                 while (handlePrologue && (line = reader.ReadLine()) != null)
                 {
                     handlePrologue = prologueHandler(ref line);
-                    ++lineNumber;
+                    if (line != null)
+                        ++lineNumber;
                 }
             }
 
@@ -146,7 +147,7 @@ namespace CommonMark
             var doc = cur;
             var line = new LineInfo(settings.TrackSourcePosition);
             if (prologue != null && settings.IncludePrologueInLineCount)
-                line.LineNumber = prologue.Item2;
+                line.LineNumber = prologue.Item2 + 1;
 
             try
             {
