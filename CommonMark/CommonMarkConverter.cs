@@ -45,7 +45,7 @@ namespace CommonMark
                 if (_version.Major != 0 || _version.Minor != 0)
                     return _version;
 
-#if portable && v4_5
+#if portable_v4_5
                 var assembly = System.Reflection.IntrospectionExtensions.GetTypeInfo(typeof(CommonMarkConverter)).Assembly;
 #else
                 var assembly = typeof(CommonMarkConverter).Assembly;
@@ -83,7 +83,7 @@ namespace CommonMark
         {
             get
             {
-#if NETCore || (portable && v4_5)
+#if NETCore || portable_v4_5
                 var assembly = System.Reflection.IntrospectionExtensions.GetTypeInfo(typeof(CommonMarkConverter)).Assembly;
 #else
                 var assembly = typeof(CommonMarkConverter).Assembly;
