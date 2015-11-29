@@ -89,13 +89,7 @@ namespace CommonMark.Tests
             Helpers.ExecuteTest("^bar^^", "<p><sup>bar</sup>^</p>", Settings);
         }
 
-        [TestMethod]
-        [TestCategory("Inlines - Superscript")]
-        public void SuperscriptExample8()
-        {
-            // make sure that the fenced code blocks are not broken because of this feature
-            Helpers.ExecuteTest("~~~foo\n^", "<pre><code class=\"language-foo\">^\n</code></pre>", Settings);
-        }
+        //No Example8 for superscript
 
         [TestMethod]
         [TestCategory("Inlines - Superscript")]
