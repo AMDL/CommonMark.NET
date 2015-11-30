@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="Exception.cs" />
     <Compile Include="Exception_Shim.cs" />
+    <Compile Include="MarkObsoleteAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="System\Runtime\Serialization\ISerializable.cs" />
     <Compile Include="System\Runtime\Serialization\SerializationInfo.cs" />
