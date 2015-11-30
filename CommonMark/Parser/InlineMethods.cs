@@ -415,7 +415,7 @@ namespace CommonMark.Parser
                 }
             }
 
-            var inlText = new Inline(subj.Buffer, subj.Position - numdelims, numdelims, subj.Position - numdelims, subj.Position);
+            var inlText = new Inline(subj.Buffer, subj.Position - numdelims, numdelims, subj.Position - numdelims, subj.Position, c);
 
             if (canOpen || canClose)
             {
@@ -441,8 +441,8 @@ namespace CommonMark.Parser
             InlineTag? singleCharTag = InlineTag.Subscript;
             if (0 == (settings.AdditionalFeatures & CommonMarkAdditionalFeatures.SubscriptTilde))
             {
-                if (numdelims == 1)
-                    return new Inline("~", subj.Position - 1, subj.Position);
+            if (numdelims == 1)
+                return new Inline("~", subj.Position - 1, subj.Position);
                 singleCharTag = null;
             }
 
@@ -1106,7 +1106,7 @@ namespace CommonMark.Parser
                 while (endpos > startpos && subj.Buffer[endpos - 1] == ' ')
                     endpos--;
 
-            return new Inline(subj.Buffer, startpos, endpos - startpos, startpos, endpos);
+            return new Inline(subj.Buffer, startpos, endpos - startpos, startpos, endpos, c);
         }
 
         public static Inline parse_inlines(Subject subj, Dictionary<string, Reference> refmap, Func<Subject, CommonMarkSettings, Inline>[] parsers, char[] specialCharacters, CommonMarkSettings settings)
