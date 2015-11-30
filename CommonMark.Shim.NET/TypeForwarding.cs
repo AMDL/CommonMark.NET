@@ -22,6 +22,7 @@
 using System.Runtime.CompilerServices;
 
 [assembly: TypeForwardedTo(typeof(System.Exception))]
+[assembly: TypeForwardedTo(typeof(System.ObsoleteAttribute))]
 [assembly: TypeForwardedTo(typeof(System.SerializableAttribute))]
 [assembly: TypeForwardedTo(typeof(System.Runtime.Serialization.ISerializable))]
 [assembly: TypeForwardedTo(typeof(System.Runtime.Serialization.SerializationInfo))]
