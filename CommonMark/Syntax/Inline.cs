@@ -72,13 +72,14 @@ namespace CommonMark.Syntax
         /// <summary>
         /// Initializes a new instance of the <see cref="Inline"/> class. The element type is set to <see cref="InlineTag.String"/>
         /// </summary>
-        internal Inline(string content, int startIndex, int length, int sourcePosition, int sourceLastPosition)
+        internal Inline(string content, int startIndex, int length, int sourcePosition, int sourceLastPosition, char delimiterCharacter)
         {
             this.LiteralContentValue.Source = content;
             this.LiteralContentValue.StartIndex = startIndex;
             this.LiteralContentValue.Length = length; 
             this.SourcePosition = sourcePosition;
             this.SourceLastPosition = sourceLastPosition;
+            this.DelimiterCharacter = delimiterCharacter;
         }
 
         /// <summary>
@@ -142,7 +143,13 @@ namespace CommonMark.Syntax
         /// Gets or sets the first descendant of this element. This is only used if the <see cref="Tag"/> property specifies
         /// a type that can have nested elements. 
         /// </summary>
-        public Inline FirstChild { get; set; }
+        public Inline FirstChild
+        {
+            get;
+
+            [MarkObsolete("This property accessor is deprecated and will be removed in future versions. If you have a use case where this property accessor is required, please log an issue at https://github.com/Knagis/CommonMark.NET", false)]
+            set;
+        }
 
         /// <summary>
         /// Gets or sets the position of the element within the source data.
@@ -151,7 +158,13 @@ namespace CommonMark.Syntax
         /// in earlier parser stage, such as converting tabs to spaces).
         /// </summary>
         /// <seealso cref="SourceLength"/>
-        public int SourcePosition { get; set; }
+        public int SourcePosition
+        {
+            get;
+
+            [MarkObsolete("This property accessor is deprecated and will be removed in future versions. If you have a use case where this property accessor is required, please log an issue at https://github.com/Knagis/CommonMark.NET", false)]
+            set;
+        }
 
         internal int SourceLastPosition { get; set; }
 
@@ -163,14 +176,22 @@ namespace CommonMark.Syntax
         /// </summary>
         /// <seealso cref="SourcePosition"/>
         public int SourceLength 
-        { 
-            get { return this.SourceLastPosition - this.SourcePosition; }
-            set { this.SourceLastPosition = this.SourcePosition + value; }
+        {
+            get
+            {
+                return this.SourceLastPosition - this.SourcePosition;
+            }
+
+            [MarkObsolete("This property accessor is deprecated and will be removed in future versions. If you have a use case where this property accessor is required, please log an issue at https://github.com/Knagis/CommonMark.NET", false)]
+            set
+            {
+                this.SourceLastPosition = this.SourcePosition + value;
+            }
         }
 
         /// <summary>
         /// Gets the link details. This is now obsolete in favor of <see cref="TargetUrl"/> and <see cref="LiteralContent"/>
-        /// properties and this property will be removed in future.
+        /// properties and this property will be removed in future versions.
         /// </summary>
         [Obsolete("The link properties have been moved to TargetUrl and LiteralContent (previously Title) properties to reduce number of objects created. This property will be removed in future versions.", false)]
         [System.Diagnostics.DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never)]
@@ -185,6 +206,8 @@ namespace CommonMark.Syntax
         public Inline NextSibling
         {
             get { return this._next; }
+
+            [MarkObsolete("This property accessor is deprecated and will be removed in future versions. If you have a use case where this property accessor is required, please log an issue at https://github.com/Knagis/CommonMark.NET", false)]
             set { this._next = value; }
         }
 
@@ -204,6 +227,15 @@ namespace CommonMark.Syntax
 
                 return x;
             }
+        }
+
+        /// <summary>
+        /// Gets the delimiter character for this inline element.
+        /// </summary>
+        public char DelimiterCharacter
+        {
+            get;
+            private set;
         }
     }
 }
