@@ -474,7 +474,7 @@ namespace CommonMark.Parser
                 }
             }
 
-            var inlText = new Inline(subj.Buffer, subj.Position - numdelims, numdelims, subj.Position - numdelims, subj.Position);
+            var inlText = new Inline(subj.Buffer, subj.Position - numdelims, numdelims, subj.Position - numdelims, subj.Position, '~');
 
             if (canOpen || canClose)
             {
@@ -519,7 +519,7 @@ namespace CommonMark.Parser
                 }
             }
 
-            var inlText = new Inline(subj.Buffer, subj.Position - numdelims, numdelims, subj.Position - numdelims, subj.Position);
+            var inlText = new Inline(subj.Buffer, subj.Position - numdelims, numdelims, subj.Position - numdelims, subj.Position, '^');
 
             if (canOpen || canClose)
             {
