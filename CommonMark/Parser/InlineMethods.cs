@@ -295,6 +295,11 @@ namespace CommonMark.Parser
                 canClose &= (!temp || afterIsPunctuation);
             }
 
+            if (delimeter == '$')
+            {
+                canOpen &= !char.IsDigit(charAfter);
+            }
+
             return numdelims;
         }
 

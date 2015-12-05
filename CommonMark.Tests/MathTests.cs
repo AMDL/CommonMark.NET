@@ -87,6 +87,48 @@ namespace CommonMark.Tests
 
         [TestMethod]
         [TestCategory("Inlines - Math")]
+        public void MathLeadingZero()
+        {
+            Helpers.ExecuteTest("foo $0bar$ asd", "<p>foo $0bar$ asd</p>", Settings);
+        }
+
+        [TestMethod]
+        [TestCategory("Inlines - Math")]
+        public void MathLeadingOne()
+        {
+            Helpers.ExecuteTest("foo $1bar$ asd", "<p>foo $1bar$ asd</p>", Settings);
+        }
+
+        [TestMethod]
+        [TestCategory("Inlines - Math")]
+        public void MathLeadingNine()
+        {
+            Helpers.ExecuteTest("foo $9bar$ asd", "<p>foo $9bar$ asd</p>", Settings);
+        }
+
+        [TestMethod]
+        [TestCategory("Inlines - Math")]
+        public void MathTrailingZero()
+        {
+            Helpers.ExecuteTest("foo $bar0$ asd", "<p>foo <span class=\"math\">bar0</span> asd</p>", Settings);
+        }
+
+        [TestMethod]
+        [TestCategory("Inlines - Math")]
+        public void MathTrailingOne()
+        {
+            Helpers.ExecuteTest("foo $bar1$ asd", "<p>foo <span class=\"math\">bar1</span> asd</p>", Settings);
+        }
+
+        [TestMethod]
+        [TestCategory("Inlines - Math")]
+        public void MathTrailingNine()
+        {
+            Helpers.ExecuteTest("foo $bar9$ asd", "<p>foo <span class=\"math\">bar9</span> asd</p>", Settings);
+        }
+
+        [TestMethod]
+        [TestCategory("Inlines - Math")]
         public void MathExample1()
         {
             Helpers.ExecuteTest("foo $bar$", "<p>foo <span class=\"math\">bar</span></p>", Settings);
