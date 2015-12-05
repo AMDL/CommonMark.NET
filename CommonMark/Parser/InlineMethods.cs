@@ -14,36 +14,41 @@ namespace CommonMark.Parser
         /// Initializes the array of delegates for inline parsing.
         /// </summary>
         /// <returns></returns>
-        internal static Func<Subject, CommonMarkSettings, Inline>[] InitializeParsers(CommonMarkSettings settings)
+        internal static Func<Subject, Inline>[] InitializeParsers(CommonMarkSettings settings)
         {
             var handleCaret = 0 != (settings.AdditionalFeatures & CommonMarkAdditionalFeatures.SuperscriptCaret);
             var tildeFeatures = CommonMarkAdditionalFeatures.StrikethroughTilde | CommonMarkAdditionalFeatures.SubscriptTilde;
             var handleTilde = 0 != (settings.AdditionalFeatures & tildeFeatures);
 
-            var p = new Func<Subject, CommonMarkSettings, Inline>[handleTilde ? 127 : 97];
+            var p = new Func<Subject, Inline>[handleTilde ? 127 : 97];
             p['\n'] = handle_newline;
             p['`'] = handle_backticks;
             p['\\'] = handle_backslash;
             p['&'] = HandleEntity;
             p['<'] = handle_pointy_brace;
-            p['_'] = HandleEmphasis;
-            p['*'] = HandleEmphasis;
-            p['['] = HandleLeftSquareBracket;
-            p[']'] = HandleRightSquareBracket;
-            p['!'] = HandleExclamation;
+            p['_'] = s => HandleEmphasis(s, settings);
+            p['*'] = s => HandleEmphasis(s, settings);
+            p['['] = s => HandleLeftSquareBracket(s, settings);
+            p[']'] = s => HandleRightSquareBracket(s, settings);
+            p['!'] = s => HandleExclamation(s, settings);
 
             if (handleCaret)
-                p['^'] = HandleCaret;
+                p['^'] = s => HandleCaret(s, settings);
 
-            if (tildeFeatures == (settings.AdditionalFeatures & tildeFeatures))
-                p['~'] = HandleSubscriptAndStrikethrough;
-            else if (0 != (settings.AdditionalFeatures & CommonMarkAdditionalFeatures.StrikethroughTilde))
-                p['~'] = HandleStrikethrough;
-            else if (0 != (settings.AdditionalFeatures & CommonMarkAdditionalFeatures.SubscriptTilde))
-                p['~'] = HandleSubscript;
+            if (handleTilde)
+            {
+                Func<Subject, CommonMarkSettings, Inline> handle_tilde;
+                if (tildeFeatures == (settings.AdditionalFeatures & tildeFeatures))
+                    handle_tilde = HandleSubscriptAndStrikethrough;
+                else if (0 != (settings.AdditionalFeatures & CommonMarkAdditionalFeatures.StrikethroughTilde))
+                    handle_tilde = HandleStrikethrough;
+                else
+                    handle_tilde = HandleSubscript;
+                p['~'] = s => handle_tilde(s, settings);
+            }
 
             if (0 != (settings.AdditionalFeatures & CommonMarkAdditionalFeatures.MathDollar))
-                p['$'] = HandleMath;
+                p['$'] = s => HandleMath(s, settings);
 
             return p;
         }
@@ -52,10 +57,10 @@ namespace CommonMark.Parser
         /// Initializes the array of delegates for inline emphasis parsing.
         /// </summary>
         /// <returns></returns>
-        internal static Func<Subject, CommonMarkSettings, Inline>[] InitializeEmphasisParsers(CommonMarkSettings settings)
+        internal static Func<Subject, Inline>[] InitializeEmphasisParsers(CommonMarkSettings settings)
         {
-            var p = new Func<Subject, CommonMarkSettings, Inline>[96];
-            p['_'] = p['*'] = HandleEmphasis;
+            var p = new Func<Subject, Inline>[96];
+            p['_'] = p['*'] = s => HandleEmphasis(s, settings);
             return p;
         }
 
@@ -249,7 +254,7 @@ namespace CommonMark.Parser
 
         // Parse backtick code section or raw backticks, return an inline.
         // Assumes that the subject has a backtick at the current position.
-        static Inline handle_backticks(Subject subj, CommonMarkSettings settings)
+        static Inline handle_backticks(Subject subj)
         {
             int ticklength = 0;
             var bl = subj.Length;
@@ -491,17 +496,17 @@ namespace CommonMark.Parser
         {
             subj.Position++;
             if (peek_char(subj) == '[')
-                return HandleLeftSquareBracket(subj, true);
+                return HandleLeftSquareBracket(subj, true, settings);
             else
                 return new Inline("!", subj.Position - 1, subj.Position);
         }
 
         private static Inline HandleLeftSquareBracket(Subject subj, CommonMarkSettings settings)
         {
-            return HandleLeftSquareBracket(subj, false);
+            return HandleLeftSquareBracket(subj, false, settings);
         }
 
-        private static Inline HandleLeftSquareBracket(Subject subj, bool isImage)
+        private static Inline HandleLeftSquareBracket(Subject subj, bool isImage, CommonMarkSettings settings)
         {
             Inline inlText;
             
@@ -640,7 +645,7 @@ namespace CommonMark.Parser
         }
 
         // Parse backslash-escape or just a backslash, returning an inline.
-        private static Inline handle_backslash(Subject subj, CommonMarkSettings settings)
+        private static Inline handle_backslash(Subject subj)
         {
             subj.Position++;
 
@@ -675,7 +680,7 @@ namespace CommonMark.Parser
         /// Parses the entity at the current position. Returns a new string inline.
         /// Assumes that there is a <c>&amp;</c> at the current position.
         /// </summary>
-        private static Inline HandleEntity(Subject subj, CommonMarkSettings settings)
+        private static Inline HandleEntity(Subject subj)
         {
             var origPos = subj.Position;
             return new Inline(ParseEntity(subj), origPos, subj.Position);
@@ -891,7 +896,7 @@ namespace CommonMark.Parser
 
         // Parse an autolink or HTML tag.
         // Assumes the subject has a '<' character at the current position.
-        static Inline handle_pointy_brace(Subject subj, CommonMarkSettings settings)
+        static Inline handle_pointy_brace(Subject subj)
         {
             int matchlen;
             string contents;
@@ -1010,7 +1015,7 @@ namespace CommonMark.Parser
 
         // Parse a hard or soft linebreak, returning an inline.
         // Assumes the subject has a newline at the current position.
-        static Inline handle_newline(Subject subj, CommonMarkSettings settings)
+        static Inline handle_newline(Subject subj)
         {
             int nlpos = subj.Position;
 
@@ -1031,14 +1036,14 @@ namespace CommonMark.Parser
         /// <summary>
         /// Parse an inline element from the subject. The subject position is updated to after the element.
         /// </summary>
-        public static Inline ParseInline(Subject subj, Func<Subject, CommonMarkSettings, Inline>[] parsers, char[] specialCharacters, CommonMarkSettings settings)
+        public static Inline ParseInline(Subject subj, Func<Subject, Inline>[] parsers, char[] specialCharacters)
         {
             var c = subj.Buffer[subj.Position];
 
             var parser = c < parsers.Length ? parsers[c] : null;
 
             if (parser != null)
-                return parser(subj, settings);
+                return parser(subj);
 
             var startpos = subj.Position;
 
@@ -1059,20 +1064,20 @@ namespace CommonMark.Parser
             return new Inline(subj.Buffer, startpos, endpos - startpos, startpos, endpos, c);
         }
 
-        public static Inline parse_inlines(Subject subj, Dictionary<string, Reference> refmap, Func<Subject, CommonMarkSettings, Inline>[] parsers, char[] specialCharacters, CommonMarkSettings settings)
+        public static Inline parse_inlines(Subject subj, Dictionary<string, Reference> refmap, Func<Subject, Inline>[] parsers, char[] specialCharacters, CommonMarkSettings settings)
         {
             var len = subj.Length;
 
             if (len == 0)
                 return null;
 
-            var first = ParseInline(subj, parsers, specialCharacters, settings);
+            var first = ParseInline(subj, parsers, specialCharacters);
             subj.LastInline = first.LastSibling;
 
             Inline cur;
             while (subj.Position < len)
             {
-                cur = ParseInline(subj, parsers, specialCharacters, settings);
+                cur = ParseInline(subj, parsers, specialCharacters);
                 if (cur != null)
                 {
                     subj.LastInline.NextSibling = cur;

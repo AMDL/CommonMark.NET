@@ -149,12 +149,12 @@ namespace CommonMark
 
         #region [ Properties that cache structures used in the parsers ]
 
-        private Func<Parser.Subject, CommonMarkSettings, Syntax.Inline>[] _inlineParsers;
+        private Func<Parser.Subject, Syntax.Inline>[] _inlineParsers;
 
         /// <summary>
         /// Gets the delegates that parse inline elements according to these settings.
         /// </summary>
-        internal Func<Parser.Subject, CommonMarkSettings, Syntax.Inline>[] InlineParsers
+        internal Func<Parser.Subject, Syntax.Inline>[] InlineParsers
         {
             get
             {
@@ -169,12 +169,12 @@ namespace CommonMark
             }
         }
 
-        private Func<Parser.Subject, CommonMarkSettings, Syntax.Inline>[] _inlineEmphasisParsers;
+        private Func<Parser.Subject, Syntax.Inline>[] _inlineEmphasisParsers;
 
         /// <summary>
         /// Gets the delegates that parse inline emphasis elements.
         /// </summary>
-        internal Func<Parser.Subject, CommonMarkSettings, Syntax.Inline>[] InlineEmphasisParsers
+        internal Func<Parser.Subject, Syntax.Inline>[] InlineEmphasisParsers
         {
             get
             {
