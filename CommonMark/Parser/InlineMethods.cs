@@ -303,7 +303,7 @@ namespace CommonMark.Parser
             return numdelims;
         }
 
-        internal static int MatchInlineStack(InlineStack opener, Subject subj, int closingDelimeterCount, InlineStack closer, InlineTag singleCharTag, InlineTag doubleCharTag)
+        internal static int MatchInlineStack(InlineStack opener, Subject subj, int closingDelimeterCount, InlineStack closer, InlineTag? singleCharTag, InlineTag? doubleCharTag)
         {
             // calculate the actual number of delimeters used from this closer
             int useDelims;
@@ -312,18 +312,18 @@ namespace CommonMark.Parser
             if (closingDelimeterCount < 3 || openerDelims < 3)
             {
                 useDelims = closingDelimeterCount <= openerDelims ? closingDelimeterCount : openerDelims;
-                if (useDelims == 1 && singleCharTag == (InlineTag)0)
+                if (useDelims == 1 && singleCharTag == null)
                     return 0;
             }
-            else if (singleCharTag == (InlineTag)0)
+            else if (singleCharTag == null)
                 useDelims = 2;
-            else if (doubleCharTag == (InlineTag)0)
+            else if (doubleCharTag == null)
                 useDelims = 1;
             else
                 useDelims = closingDelimeterCount % 2 == 0 ? 2 : 1;
 
             Inline inl = opener.StartingInline;
-            InlineTag tag = useDelims == 1 ? singleCharTag : doubleCharTag;
+            InlineTag tag = useDelims == 1 ? singleCharTag.Value : doubleCharTag.Value;
             if (openerDelims == useDelims)
             {
                 // the opener is completely used up - remove the stack entry and reuse the inline element
@@ -394,15 +394,15 @@ namespace CommonMark.Parser
 
         private static Inline HandleTilde(Subject subj)
         {
-            return HandleOpenerCloser(subj, (InlineTag)0, InlineTag.Strikethrough);
+            return HandleOpenerCloser(subj, null, InlineTag.Strikethrough);
         }
 
         private static Inline HandleMath(Subject subj)
         {
-            return HandleOpenerCloser(subj, InlineTag.Math, (InlineTag)0);
+            return HandleOpenerCloser(subj, InlineTag.Math, null);
         }
 
-        private static Inline HandleOpenerCloser(Subject subj, InlineTag singleCharTag, InlineTag doubleCharTag)
+        private static Inline HandleOpenerCloser(Subject subj, InlineTag? singleCharTag, InlineTag? doubleCharTag)
         {
             bool canOpen, canClose;
             var c = subj.Buffer[subj.Position];

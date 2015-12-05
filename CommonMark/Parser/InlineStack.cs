@@ -185,13 +185,13 @@ namespace CommonMark.Parser
                             bool retry = false;
                             if (iopener.Delimeter == '~')
                             {
-                                InlineMethods.MatchInlineStack(iopener, subj, istack.DelimeterCount, istack, (InlineTag)0, InlineTag.Strikethrough);
+                                InlineMethods.MatchInlineStack(iopener, subj, istack.DelimeterCount, istack, null, InlineTag.Strikethrough);
                                 if (istack.DelimeterCount > 1)
                                     retry = true;
                             }
                             else if (iopener.Delimeter == '$')
                             {
-                                InlineMethods.MatchInlineStack(iopener, subj, istack.DelimeterCount, istack, InlineTag.Math, (InlineTag)0);
+                                InlineMethods.MatchInlineStack(iopener, subj, istack.DelimeterCount, istack, InlineTag.Math, null);
                                 if (istack.DelimeterCount > 1)
                                     retry = true;
                             }
