@@ -197,11 +197,9 @@ namespace CommonMark.Parser
                             {
                                 singleCharTag = InlineTag.Superscript;
                             }
-                            else if (iopener.Delimeter == '$')
+                            else if (iopener.Delimeter == '$' && 0 != (settings.AdditionalFeatures & CommonMarkAdditionalFeatures.MathDollar))
                             {
-                                InlineMethods.MatchInlineStack(iopener, subj, istack.DelimeterCount, istack, InlineTag.Math, null, settings);
-                                if (istack.DelimeterCount > 1)
-                                    retry = true;
+                                singleCharTag = InlineTag.Math;
                             }
                             else
                             {
@@ -210,8 +208,8 @@ namespace CommonMark.Parser
                             }
 
                             var useDelims = InlineMethods.MatchInlineStack(iopener, subj, istack.DelimeterCount, istack, singleCharTag, doubleCharTag, settings);
-                            if (istack.DelimeterCount > 0)
-                                retry = true;
+                                if (istack.DelimeterCount > 0)
+                                    retry = true;
 
                             if (retry)
                             {
