@@ -169,6 +169,26 @@ namespace CommonMark
             }
         }
 
+        private Func<Parser.Subject, CommonMarkSettings, Syntax.Inline>[] _inlineEmphasisParsers;
+
+        /// <summary>
+        /// Gets the delegates that parse inline emphasis elements.
+        /// </summary>
+        internal Func<Parser.Subject, CommonMarkSettings, Syntax.Inline>[] InlineEmphasisParsers
+        {
+            get
+            {
+                var p = this._inlineEmphasisParsers;
+                if (p == null)
+                {
+                    p = Parser.InlineMethods.InitializeEmphasisParsers(this);
+                    this._inlineEmphasisParsers = p;
+                }
+
+                return p;
+            }
+        }
+
         private char[] _inlineParserSpecialCharacters;
 
         /// <summary>

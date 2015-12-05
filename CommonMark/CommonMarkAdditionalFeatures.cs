@@ -35,6 +35,10 @@ namespace CommonMark
         /// </summary>
         RespectReferenceCase = 0x100,
 
+        /// The parser will recognize emphasis in indented code.
+        /// </summary>
+        EmphasisInIndentedCode = 32,
+
         /// <summary>
         /// All additional features are enabled.
         /// </summary>
