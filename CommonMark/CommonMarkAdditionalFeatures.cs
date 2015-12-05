@@ -21,6 +21,11 @@ namespace CommonMark
         StrikethroughTilde = 1,
 
         /// <summary>
+        /// The parser will recognize syntax <c>$foo$</c> that will be rendered as &lt;div class="math"&gt;foo&lt;/div&gt;</c>.
+        /// </summary>
+        MathDollar = 8,
+
+        /// <summary>
         /// All additional features are enabled.
         /// </summary>
         All = 0x7FFFFFFF

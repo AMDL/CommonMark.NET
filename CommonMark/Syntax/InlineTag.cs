@@ -72,6 +72,12 @@ namespace CommonMark.Syntax
         /// Represents an inline element that has been "removed" (visually represented as strikethrough).
         /// Only present if the <see cref="CommonMarkAdditionalFeatures.StrikethroughTilde"/> is enabled.
         /// </summary>
-        Strikethrough
+        Strikethrough,
+
+        /// <summary>
+        /// Represents an inline element that contains mathematical expression.
+        /// Only present if the <see cref="CommonMarkAdditionalFeatures.MathDollar"/> is enabled.
+        /// </summary>
+        Math,
     }
 }

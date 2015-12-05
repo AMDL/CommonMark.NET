@@ -189,6 +189,12 @@ namespace CommonMark.Parser
                                 if (istack.DelimeterCount > 1)
                                     retry = true;
                             }
+                            else if (iopener.Delimeter == '$')
+                            {
+                                InlineMethods.MatchInlineStack(iopener, subj, istack.DelimeterCount, istack, InlineTag.Math, null);
+                                if (istack.DelimeterCount > 1)
+                                    retry = true;
+                            }
                             else
                             {
                                 var useDelims = InlineMethods.MatchInlineStack(iopener, subj, istack.DelimeterCount, istack, InlineTag.Emphasis, InlineTag.Strong);
