@@ -176,6 +176,15 @@ namespace CommonMark.Tests
             Helpers.ExecuteTest("$bar$$", "<p><span class=\"math\">bar</span>$</p>", Settings);
         }
 
+        //No Example8 for Math
+
+        [TestMethod]
+        [TestCategory("Inlines - Math")]
+        public void MathExample9()
+        {
+            Helpers.ExecuteTest("foo $$bar$$", "<p>foo <span class=\"math\"><span class=\"math\">bar</span></span></p>", Settings);
+        }
+
         [TestMethod]
         [TestCategory("Inlines - Math")]
         public void MathExample10a()
@@ -191,6 +200,8 @@ namespace CommonMark.Tests
             // '[' char in the middle will delay the $ match to the post-process phase.
             Helpers.ExecuteTest("foo $ba[r$$", "<p>foo <span class=\"math\">ba[r</span>$</p>", Settings);
         }
+
+        //No Example10c for Math
 
         [TestMethod]
         [TestCategory("Inlines - Math")]
