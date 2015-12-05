@@ -665,10 +665,10 @@ namespace CommonMark.Formatters
                         break;
 
                     case InlineTag.Math:
-                        writer.WriteConstant("<div class=\"math\"");
+                        writer.WriteConstant("<span class=\"math\"");
                         if (trackPositions) PrintPosition(writer, inline);
                         writer.Write('>');
-                        stackLiteral = "</div>";
+                        stackLiteral = "</span>";
                         visitChildren = true;
                         stackWithinLink = withinLink;
                         break;

@@ -572,14 +572,14 @@ namespace CommonMark.Formatters
 
                     if (isOpening)
                     {
-                        Write("<div class=\"math\"");
+                        Write("<span class=\"math\"");
                         if (Settings.TrackSourcePosition) WritePositionAttribute(inline);
                         Write('>');
                     }
 
                     if (isClosing)
                     {
-                        Write("</div>");
+                        Write("</span>");
                     }
                     break;
 
