@@ -5,7 +5,7 @@ using System.Text;
 namespace CommonMark.Syntax
 {
     /// <summary>
-    /// Contains additional data for fenced code blocks. Used in <see cref="Block.FencedCodeData"/>/
+    /// Contains additional data for fenced code and custom container blocks. Used in <see cref="Block.FencedCodeData"/>/
     /// </summary>
     public sealed class FencedCodeData
     {

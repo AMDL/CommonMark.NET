@@ -162,6 +162,15 @@ namespace CommonMark.Formatters
                                format_str(block.StringContent.ToString(buffer), buffer));
                         break;
 
+                    case BlockTag.CustomContainer:
+                        writer.Write("custom_container");
+                        PrintPosition(trackPositions, writer, block);
+                        writer.Write(" length={0} info={1} {2}",
+                               block.FencedCodeData.FenceLength,
+                               format_str(block.FencedCodeData.Info, buffer),
+                               format_str(block.StringContent.ToString(buffer), buffer));
+                        break;
+
                     case BlockTag.HtmlBlock:
                         writer.Write("html_block");
                         PrintPosition(trackPositions, writer, block);

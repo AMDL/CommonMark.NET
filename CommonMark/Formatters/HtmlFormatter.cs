@@ -264,6 +264,22 @@ namespace CommonMark.Formatters
                     WriteLine("</code></pre>");
                     break;
 
+                case BlockTag.CustomContainer:
+                    if (isOpening)
+                    {
+                        EnsureNewLine();
+
+                        Write("<div class=\"" + block.FencedCodeData.Info + '"');
+                        if (Settings.TrackSourcePosition)
+                            WritePositionAttribute(block);
+                        Write('>');
+                    }
+
+                    if (isClosing)
+                        WriteLine("</div>");
+
+                    break;
+
                 case BlockTag.HtmlBlock:
                     ignoreChildNodes = true;
                     // cannot output source position for HTML blocks

@@ -40,6 +40,11 @@ namespace CommonMark
         EmphasisInIndentedCode = 32,
 
         /// <summary>
+        /// The parser will recognize <c>:::foo<br/>bar<br/>:::</c> that will be rendered as <c>&lt;div class="foo"&gt;bar&lt;/div&gt;</c>
+        /// </summary>
+        CustomContainers = 128,
+
+        /// <summary>
         /// All additional features are enabled.
         /// </summary>
         All = 0x7FFFFFFF

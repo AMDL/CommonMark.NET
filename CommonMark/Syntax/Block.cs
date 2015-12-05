@@ -171,7 +171,7 @@ namespace CommonMark.Syntax
         public ListData ListData { get; set; }
 
         /// <summary>
-        /// Gets or sets the additional properties that apply to fenced code blocks.
+        /// Gets or sets the additional properties that apply to fenced code and custom container blocks.
         /// </summary>
         public FencedCodeData FencedCodeData { get; set; }
 
