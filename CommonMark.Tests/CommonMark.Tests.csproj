@@ -56,6 +56,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="CustomContainerTests.cs" />
     <Compile Include="DelimiterCharTests.cs" />
     <Compile Include="SourcePositionTests.cs" />
     <Compile Include="EnumeratorTests.cs" />

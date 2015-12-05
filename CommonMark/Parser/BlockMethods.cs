@@ -28,7 +28,8 @@ namespace CommonMark.Parser
             return (block_type == BlockTag.Paragraph ||
                     block_type == BlockTag.AtxHeader ||
                     block_type == BlockTag.IndentedCode ||
-                    block_type == BlockTag.FencedCode);
+                    block_type == BlockTag.FencedCode ||
+                    block_type == BlockTag.CustomContainer);
         }
 
         private static void AddLine(Block block, LineInfo lineInfo, string ln, int offset, int length = -1)
@@ -154,6 +155,7 @@ namespace CommonMark.Parser
                     break;
 
                 case BlockTag.FencedCode:
+                case BlockTag.CustomContainer:
                     // first line of contents becomes info
                     var firstlinelen = b.StringContent.IndexOf('\n') + 1;
                     b.FencedCodeData.Info = InlineMethods.Unescape(b.StringContent.TakeFromStart(firstlinelen, true).Trim());
@@ -287,7 +289,7 @@ namespace CommonMark.Parser
             while (block != null)
             {
                 var tag = block.Tag;
-                if (tag == BlockTag.Paragraph || tag == BlockTag.AtxHeader || tag == BlockTag.SETextHeader)
+                if (tag == BlockTag.Paragraph || tag == BlockTag.AtxHeader || tag == BlockTag.SETextHeader || tag == BlockTag.CustomContainer)
                 {
                     sc = block.StringContent;
                     if (sc != null)
@@ -431,7 +433,7 @@ namespace CommonMark.Parser
         // Process one line at a time, modifying a block.
         // Returns 0 if successful.  curptr is changed to point to
         // the currently open block.
-        public static void IncorporateLine(LineInfo line, ref Block curptr)
+        public static void IncorporateLine(LineInfo line, ref Block curptr, CommonMarkSettings settings)
         {
             var ln = line.Line;
 
@@ -536,6 +538,7 @@ namespace CommonMark.Parser
                         }
 
                     case BlockTag.FencedCode:
+                    case BlockTag.CustomContainer:
                         {
                             // -1 means we've seen closer 
                             if (container.FencedCodeData.FenceLength == -1)
@@ -601,6 +604,7 @@ namespace CommonMark.Parser
             // unless last matched container is code block, try new container starts:
             while (container.Tag != BlockTag.FencedCode &&
                    container.Tag != BlockTag.IndentedCode &&
+                   container.Tag != BlockTag.CustomContainer &&
                    container.Tag != BlockTag.HtmlBlock)
             {
 
@@ -633,10 +637,13 @@ namespace CommonMark.Parser
                     container.HeaderLevel = i;
 
                 }
-                else if (!indented && (curChar == '`' || curChar == '~') && 0 != (matched = Scanner.scan_open_code_fence(ln, first_nonspace, ln.Length)))
+                else if (!indented && (curChar == '`' || curChar == '~' || curChar == ':') && 0 != (matched = Scanner.scan_open_code_fence(ln, first_nonspace, ln.Length, settings)))
                 {
 
-                    container = CreateChildBlock(container, line, BlockTag.FencedCode, first_nonspace);
+                    var blockTag = curChar == ':'
+                        ? BlockTag.CustomContainer
+                        : BlockTag.FencedCode;
+                    container = CreateChildBlock(container, line, blockTag, first_nonspace);
                     container.FencedCodeData = new FencedCodeData();
                     container.FencedCodeData.FenceChar = curChar;
                     container.FencedCodeData.FenceLength = matched;
@@ -758,6 +765,7 @@ namespace CommonMark.Parser
                                           container.Tag != BlockTag.BlockQuote &&
                                           container.Tag != BlockTag.SETextHeader &&
                                           container.Tag != BlockTag.FencedCode &&
+                                          container.Tag != BlockTag.CustomContainer &&
                                           !(container.Tag == BlockTag.ListItem &&
                                             container.FirstChild == null &&
                                             container.SourcePosition >= line.LineOffset));
@@ -800,12 +808,12 @@ namespace CommonMark.Parser
                     AddLine(container, line, ln, offset);
 
                 }
-                else if (container.Tag == BlockTag.FencedCode)
+                else if (container.Tag == BlockTag.FencedCode || container.Tag == BlockTag.CustomContainer)
                 {
 
                     if ((indent <= 3
                       && curChar == container.FencedCodeData.FenceChar)
-                      && (0 != Scanner.scan_close_code_fence(ln, first_nonspace, container.FencedCodeData.FenceLength, ln.Length)))
+                      && (0 != Scanner.scan_close_code_fence(ln, first_nonspace, container.FencedCodeData.FenceLength, ln.Length, settings)))
                     {
                         // if closing fence, set fence length to -1. it will be closed when the next line is processed. 
                         container.FencedCodeData.FenceLength = -1;

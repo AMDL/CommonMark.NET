@@ -337,6 +337,17 @@ namespace CommonMark.Formatters
                         writer.WriteLineConstant("</code></pre>");
                         break;
 
+                    case BlockTag.CustomContainer:
+                        writer.EnsureLine();
+
+                        writer.WriteConstant("<div class=\"" + block.FencedCodeData.Info + '"');
+                        if (trackPositions)
+                            PrintPosition(writer, block);
+                        writer.Write('>');
+                        InlinesToHtml(writer, block.InlineContent, settings, inlineStack);
+                        writer.WriteLineConstant("</div>");
+                        break;
+
                     case BlockTag.HtmlBlock:
                         // cannot output source position for HTML blocks
                         block.StringContent.WriteTo(writer);
