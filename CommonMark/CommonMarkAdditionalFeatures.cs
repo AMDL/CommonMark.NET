@@ -31,7 +31,7 @@ namespace CommonMark
         SuperscriptCaret = 4,
 
         /// <summary>
-        /// The parser will recognize syntax <c>$foo$</c> that will be rendered as &lt;div class="math"&gt;foo&lt;/div&gt;</c>.
+        /// The parser will recognize syntax <c>$foo$</c> that will be rendered as &lt;span class="math"&gt;foo&lt;/span&gt;</c>.
         /// </summary>
         MathDollar = 8,
 
