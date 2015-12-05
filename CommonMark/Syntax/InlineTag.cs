@@ -85,5 +85,11 @@ namespace CommonMark.Syntax
         /// Only present if the <see cref="CommonMarkAdditionalFeatures.SuperscriptCaret"/> is enabled.
         /// </summary>
         Superscript,
+
+        /// <summary>
+        /// Represents an inline element that contains mathematical expression.
+        /// Only present if the <see cref="CommonMarkAdditionalFeatures.MathDollar"/> is enabled.
+        /// </summary>
+        Math,
     }
 }

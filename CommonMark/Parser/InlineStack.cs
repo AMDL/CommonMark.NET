@@ -197,6 +197,12 @@ namespace CommonMark.Parser
                             {
                                 singleCharTag = InlineTag.Superscript;
                             }
+                            else if (iopener.Delimeter == '$')
+                            {
+                                InlineMethods.MatchInlineStack(iopener, subj, istack.DelimeterCount, istack, InlineTag.Math, null, settings);
+                                if (istack.DelimeterCount > 1)
+                                    retry = true;
+                            }
                             else
                             {
                                 singleCharTag = InlineTag.Emphasis;

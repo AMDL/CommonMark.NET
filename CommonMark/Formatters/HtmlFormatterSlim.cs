@@ -469,6 +469,7 @@ namespace CommonMark.Formatters
                     case InlineTag.Strong:
                     case InlineTag.Emphasis:
                     case InlineTag.Strikethrough:
+                    case InlineTag.Math:
                         stackLiteral = string.Empty;
                         stackWithinLink = withinLink;
                         visitChildren = true;
@@ -659,6 +660,15 @@ namespace CommonMark.Formatters
                         if (trackPositions) PrintPosition(writer, inline);
                         writer.Write('>');
                         stackLiteral = "</sup>";
+                        visitChildren = true;
+                        stackWithinLink = withinLink;
+                        break;
+
+                    case InlineTag.Math:
+                        writer.WriteConstant("<div class=\"math\"");
+                        if (trackPositions) PrintPosition(writer, inline);
+                        writer.Write('>');
+                        stackLiteral = "</div>";
                         visitChildren = true;
                         stackWithinLink = withinLink;
                         break;

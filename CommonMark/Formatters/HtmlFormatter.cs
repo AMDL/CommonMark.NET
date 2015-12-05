@@ -359,6 +359,7 @@ namespace CommonMark.Formatters
                     case InlineTag.Strong:
                     case InlineTag.Emphasis:
                     case InlineTag.Strikethrough:
+                    case InlineTag.Math:
                         break;
 
                     default:
@@ -563,6 +564,22 @@ namespace CommonMark.Formatters
                     if (isClosing)
                     {
                         Write("</sup>");
+                    }
+                    break;
+
+                case InlineTag.Math:
+                    ignoreChildNodes = false;
+
+                    if (isOpening)
+                    {
+                        Write("<div class=\"math\"");
+                        if (Settings.TrackSourcePosition) WritePositionAttribute(inline);
+                        Write('>');
+                    }
+
+                    if (isClosing)
+                    {
+                        Write("</div>");
                     }
                     break;
 

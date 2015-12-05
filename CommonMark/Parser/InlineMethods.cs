@@ -37,6 +37,9 @@ namespace CommonMark.Parser
             if (handleTilde)
                 p['~'] = HandleTilde;
 
+            if (0 != (settings.AdditionalFeatures & CommonMarkAdditionalFeatures.MathDollar))
+                p['$'] = HandleMath;
+
             return p;
         }
 
@@ -536,6 +539,52 @@ namespace CommonMark.Parser
                 var istack = new InlineStack();
                 istack.DelimeterCount = numdelims;
                 istack.Delimeter = '^';
+                istack.StartingInline = inlText;
+                istack.Priority = InlineStack.InlineStackPriority.Emphasis;
+                istack.Flags = (canOpen ? InlineStack.InlineStackFlags.Opener : 0)
+                             | (canClose ? InlineStack.InlineStackFlags.Closer : 0);
+
+                InlineStack.AppendStackEntry(istack, subj);
+            }
+
+            return inlText;
+        }
+
+        private static Inline HandleMath(Subject subj, CommonMarkSettings settings)
+        {
+            bool canOpen, canClose;
+            var c = subj.Buffer[subj.Position];
+            var numdelims = ScanEmphasisDelimeters(subj, c, out canOpen, out canClose);
+
+            if (canClose)
+            {
+                // walk the stack and find a matching opener, if there is one
+                var istack = InlineStack.FindMatchingOpener(subj.LastPendingInline, InlineStack.InlineStackPriority.Emphasis, c, out canClose);
+                if (istack != null)
+                {
+                    var useDelims = MatchInlineStack(istack, subj, numdelims, null, InlineTag.Math, null, settings);
+
+                    // if the closer was not fully used, move back a char or two and try again.
+                    if (useDelims < numdelims)
+                    {
+                        subj.Position = subj.Position - numdelims + useDelims;
+
+                        // use recursion only if it will not be very deep.
+                        if (numdelims < 10)
+                            return HandleMath(subj, settings);
+                    }
+
+                    return null;
+                }
+            }
+
+            var inlText = new Inline(subj.Buffer, subj.Position - numdelims, numdelims, subj.Position - numdelims, subj.Position, c);
+
+            if (canOpen || canClose)
+            {
+                var istack = new InlineStack();
+                istack.DelimeterCount = numdelims;
+                istack.Delimeter = c;
                 istack.StartingInline = inlText;
                 istack.Priority = InlineStack.InlineStackPriority.Emphasis;
                 istack.Flags = (canOpen ? InlineStack.InlineStackFlags.Opener : 0)
