@@ -53,6 +53,7 @@
     <Compile Include="DiscardYamlPrologueHandler.cs" />
     <Compile Include="Formatters\HtmlFormatter.cs" />
     <Compile Include="Func.cs" />
+    <Compile Include="Lazy.cs" />
     <Compile Include="OutputFormat.cs" />
     <Compile Include="Parser\EntityDecoder.cs" />
     <Compile Include="Parser\InlineStack.cs" />

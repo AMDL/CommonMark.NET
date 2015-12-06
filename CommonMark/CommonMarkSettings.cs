@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace CommonMark
 {
@@ -23,7 +22,10 @@ namespace CommonMark
         [Obsolete("Use CommonMarkSettings.Default.Clone() instead", false)]
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         public CommonMarkSettings()
-        { }
+        {
+            _inlineParsers = new Lazy<Func<Parser.Subject, Syntax.Inline>[]>(GetInlineParsers);
+            _inlineParserSpecialCharacters = new Lazy<char[]>(GetInlineParserSpecialCharacters);
+        }
 
         /// <summary>
         /// Gets or sets the output format used by the last stage of conversion.
@@ -96,7 +98,12 @@ namespace CommonMark
         public CommonMarkAdditionalFeatures AdditionalFeatures
         {
             get { return this._additionalFeatures; }
-            set { this._additionalFeatures = value; this._inlineParsers = null; this._inlineParserSpecialCharacters = null; }
+            set
+            {
+                this._additionalFeatures = value;
+                this._inlineParsers = new Lazy<Func<Parser.Subject,Syntax.Inline>[]>(GetInlineParsers);
+                this._inlineParserSpecialCharacters = new Lazy<char[]>(GetInlineParserSpecialCharacters);
+            }
         }
 
         private Func<string, string> _uriResolver;
@@ -144,29 +151,27 @@ namespace CommonMark
         /// </summary>
         public CommonMarkSettings Clone()
         {
-            return (CommonMarkSettings)this.MemberwiseClone();
+            var clone = (CommonMarkSettings)this.MemberwiseClone();
+            clone._inlineParsers = new Lazy<Func<Parser.Subject, Syntax.Inline>[]>(clone.GetInlineParsers);
+            clone._inlineParserSpecialCharacters = new Lazy<char[]>(clone.GetInlineParserSpecialCharacters);
+            return clone;
         }
 
         #region [ Properties that cache structures used in the parsers ]
 
-        private Func<Parser.Subject, Syntax.Inline>[] _inlineParsers;
+        private Lazy<Func<Parser.Subject, Syntax.Inline>[]> _inlineParsers;
 
         /// <summary>
         /// Gets the delegates that parse inline elements according to these settings.
         /// </summary>
         internal Func<Parser.Subject, Syntax.Inline>[] InlineParsers
         {
-            get
-            {
-                var p = this._inlineParsers;
-                if (p == null)
-                {
-                    p = Parser.InlineMethods.InitializeParsers(this);
-                    this._inlineParsers = p;
-                }
+            get { return _inlineParsers.Value; }
+        }
 
-                return p;
-            }
+        private Func<Parser.Subject, Syntax.Inline>[] GetInlineParsers()
+        {
+            return Parser.InlineMethods.InitializeParsers(this);
         }
 
         private Func<Parser.Subject, Syntax.Inline>[] _inlineEmphasisParsers;
@@ -189,29 +194,25 @@ namespace CommonMark
             }
         }
 
-        private char[] _inlineParserSpecialCharacters;
+        private Lazy<char[]> _inlineParserSpecialCharacters;
 
         /// <summary>
         /// Gets the characters that have special meaning for inline element parsers according to these settings.
         /// </summary>
         internal char[] InlineParserSpecialCharacters
         {
-            get
-            {
-                var v = this._inlineParserSpecialCharacters;
-                if (v == null)
-                {
-                    var p = this.InlineParsers;
-                    var vs = new List<char>(20);
-                    for (var i = 0; i < p.Length; i++)
-                        if (p[i] != null)
-                            vs.Add((char)i);
+            get { return _inlineParserSpecialCharacters.Value; }
+        }
 
-                    v = this._inlineParserSpecialCharacters = vs.ToArray();
-                }
+        private char[] GetInlineParserSpecialCharacters()
+        {
+            var p = this.InlineParsers;
+            var vs = new List<char>(20);
+            for (var i = 0; i < p.Length; i++)
+                if (p[i] != null)
+                    vs.Add((char)i);
 
-                return v;
-            }
+            return vs.ToArray();
         }
 
         #endregion

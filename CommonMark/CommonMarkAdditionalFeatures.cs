@@ -35,11 +35,6 @@ namespace CommonMark
         /// </summary>
         MathDollar = 8,
 
-        /// <summary>
-        /// The parser will treat reference labels as case sensitive.
-        /// </summary>
-        RespectReferenceCase = 0x100,
-
         /// The parser will recognize emphasis in indented code.
         /// </summary>
         EmphasisInIndentedCode = 32,
@@ -48,6 +43,11 @@ namespace CommonMark
         /// The parser will recognize <c>:::foo<br/>bar<br/>:::</c> that will be rendered as <c>&lt;div class="foo"&gt;bar&lt;/div&gt;</c>
         /// </summary>
         CustomContainers = 128,
+
+        /// <summary>
+        /// The parser will treat reference labels as case sensitive.
+        /// </summary>
+        RespectReferenceCase = 0x100,
 
         /// <summary>
         /// All additional features are enabled.
