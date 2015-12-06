@@ -17,8 +17,7 @@ namespace CommonMark.Parser
         internal static Func<Subject, Inline>[] InitializeParsers(CommonMarkSettings settings)
         {
             var handleCaret = 0 != (settings.AdditionalFeatures & CommonMarkAdditionalFeatures.SuperscriptCaret);
-            var tildeFeatures = CommonMarkAdditionalFeatures.StrikethroughTilde | CommonMarkAdditionalFeatures.SubscriptTilde;
-            var handleTilde = 0 != (settings.AdditionalFeatures & tildeFeatures);
+            var handleTilde = 0 != (settings.AdditionalFeatures & (CommonMarkAdditionalFeatures.StrikethroughTilde | CommonMarkAdditionalFeatures.SubscriptTilde));
 
             var p = new Func<Subject, Inline>[handleTilde ? 127 : 97];
             p['\n'] = handle_newline;
@@ -37,14 +36,13 @@ namespace CommonMark.Parser
 
             if (handleTilde)
             {
-                Func<Subject, CommonMarkSettings, Inline> handle_tilde;
-                if (tildeFeatures == (settings.AdditionalFeatures & tildeFeatures))
-                    handle_tilde = HandleSubscriptAndStrikethrough;
-                else if (0 != (settings.AdditionalFeatures & CommonMarkAdditionalFeatures.StrikethroughTilde))
-                    handle_tilde = HandleStrikethrough;
-                else
-                    handle_tilde = HandleSubscript;
-                p['~'] = s => handle_tilde(s, settings);
+                var singleCharTag = (0 != (settings.AdditionalFeatures & CommonMarkAdditionalFeatures.SubscriptTilde))
+                    ? InlineTag.Subscript
+                    : (InlineTag?)null;
+                var doubleCharTag = (0 != (settings.AdditionalFeatures & CommonMarkAdditionalFeatures.StrikethroughTilde))
+                    ? InlineTag.Strikethrough
+                    : (InlineTag?)null;
+                p['~'] = s => HandleOpenerCloser(s, singleCharTag, doubleCharTag, settings);
             }
 
             if (0 != (settings.AdditionalFeatures & CommonMarkAdditionalFeatures.MathDollar))
@@ -419,21 +417,6 @@ namespace CommonMark.Parser
         private static Inline HandleEmphasis(Subject subj, CommonMarkSettings settings)
         {
             return HandleOpenerCloser(subj, InlineTag.Emphasis, InlineTag.Strong, settings);
-        }
-
-        private static Inline HandleStrikethrough(Subject subj, CommonMarkSettings settings)
-        {
-            return HandleOpenerCloser(subj, null, InlineTag.Strikethrough, settings);
-        }
-
-        private static Inline HandleSubscript(Subject subj, CommonMarkSettings settings)
-        {
-            return HandleOpenerCloser(subj, InlineTag.Subscript, null, settings);
-        }
-
-        private static Inline HandleSubscriptAndStrikethrough(Subject subj, CommonMarkSettings settings)
-        {
-            return HandleOpenerCloser(subj, InlineTag.Subscript, InlineTag.Strikethrough, settings);
         }
 
         private static Inline HandleCaret(Subject subj, CommonMarkSettings settings)
