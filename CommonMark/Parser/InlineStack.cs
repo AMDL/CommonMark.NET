@@ -186,9 +186,9 @@ namespace CommonMark.Parser
                         if (iopener != null)
                         {
                             bool retry = false;
-                            var singleCharTag = iopener.Delimeter < singleCharTags.Length ? singleCharTags[iopener.Delimeter] : null;
-                            var doubleCharTag = iopener.Delimeter < doubleCharTags.Length ? doubleCharTags[iopener.Delimeter] : null;
-                            if (singleCharTag != null || doubleCharTag != null)
+                            var singleCharTag = iopener.Delimeter < singleCharTags.Length ? singleCharTags[iopener.Delimeter] : (InlineTag)0;
+                            var doubleCharTag = iopener.Delimeter < doubleCharTags.Length ? doubleCharTags[iopener.Delimeter] : (InlineTag)0;
+                            if (singleCharTag != 0 || doubleCharTag != 0)
                             {
                                 var useDelims = InlineMethods.MatchInlineStack(iopener, subj, istack.DelimeterCount, istack, singleCharTag, doubleCharTag, parameters);
                                 if (istack.DelimeterCount > 0)

@@ -10,15 +10,15 @@ namespace CommonMark.Parser
     {
         private readonly Lazy<Func<Subject, Syntax.Inline>[]> _parsers;
         private readonly Lazy<char[]> _specialCharacters;
-        private readonly Lazy<InlineTag?[]> _singleCharTags;
-        private readonly Lazy<InlineTag?[]> _doubleCharTags;
+        private readonly Lazy<InlineTag[]> _singleCharTags;
+        private readonly Lazy<InlineTag[]> _doubleCharTags;
 
         protected InlineParserParameters()
         {
             this._parsers = new Lazy<Func<Subject,Syntax.Inline>[]>(GetParsers);
             this._specialCharacters = new Lazy<char[]>(GetSpecialCharacters);
-            this._singleCharTags = new Lazy<InlineTag?[]>(GetSingleCharTags);
-            this._doubleCharTags = new Lazy<InlineTag?[]>(GetDoubleCharTags);
+            this._singleCharTags = new Lazy<InlineTag[]>(GetSingleCharTags);
+            this._doubleCharTags = new Lazy<InlineTag[]>(GetDoubleCharTags);
         }
 
         /// <summary>
@@ -46,7 +46,7 @@ namespace CommonMark.Parser
         /// <summary>
         /// Gets the tags to use when single-character inline openers are matched.
         /// </summary>
-        public InlineTag?[] SingleCharTags
+        public InlineTag[] SingleCharTags
         {
 #if OptimizeFor45
             [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
@@ -57,7 +57,7 @@ namespace CommonMark.Parser
         /// <summary>
         /// Gets the tags to use when double-character inline openers are matched.
         /// </summary>
-        public InlineTag?[] DoubleCharTags
+        public InlineTag[] DoubleCharTags
         {
 #if OptimizeFor45
             [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
@@ -67,9 +67,9 @@ namespace CommonMark.Parser
 
         internal abstract Func<Subject, Syntax.Inline>[] GetParsers();
 
-        internal abstract InlineTag?[] GetSingleCharTags();
+        internal abstract InlineTag[] GetSingleCharTags();
 
-        internal abstract InlineTag?[] GetDoubleCharTags();
+        internal abstract InlineTag[] GetDoubleCharTags();
 
         private char[] GetSpecialCharacters()
         {
@@ -108,12 +108,12 @@ namespace CommonMark.Parser
             return Parser.InlineMethods.InitializeParsers(Settings);
         }
 
-        internal override InlineTag?[] GetSingleCharTags()
+        internal override InlineTag[] GetSingleCharTags()
         {
             return Parser.InlineMethods.InitializeSingleCharTags(Settings);
         }
 
-        internal override InlineTag?[] GetDoubleCharTags()
+        internal override InlineTag[] GetDoubleCharTags()
         {
             return Parser.InlineMethods.InitializeDoubleCharTags(Settings);
         }
@@ -134,12 +134,12 @@ namespace CommonMark.Parser
             return Parser.InlineMethods.InitializeEmphasisParsers(this);
         }
 
-        internal override InlineTag?[] GetSingleCharTags()
+        internal override InlineTag[] GetSingleCharTags()
         {
             return Parser.InlineMethods.InitializeEmphasisSingleCharTags();
         }
 
-        internal override InlineTag?[] GetDoubleCharTags()
+        internal override InlineTag[] GetDoubleCharTags()
         {
             return Parser.InlineMethods.InitializeEmphasisDoubleCharTags();
         }

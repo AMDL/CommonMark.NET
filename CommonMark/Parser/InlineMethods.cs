@@ -32,9 +32,9 @@ namespace CommonMark.Parser
 
             for (int i = 0; i < length; i++)
             {
-                var singleCharTag = i < singleCharTags.Length ? singleCharTags[i] : null;
-                var doubleCharTag = i < doubleCharTags.Length ? doubleCharTags[i] : null;
-                if (singleCharTag != null || doubleCharTag != null)
+                var singleCharTag = i < singleCharTags.Length ? singleCharTags[i] : (InlineTag)0;
+                var doubleCharTag = i < doubleCharTags.Length ? doubleCharTags[i] : (InlineTag)0;
+                if (singleCharTag != 0 || doubleCharTag != 0)
                     p[i] = s => HandleOpenerCloser(s, singleCharTag, doubleCharTag, settings.InlineParserParameters);
             }
 
@@ -52,7 +52,7 @@ namespace CommonMark.Parser
             return p;
         }
 
-        internal static InlineTag?[] InitializeSingleCharTags(CommonMarkSettings settings)
+        internal static InlineTag[] InitializeSingleCharTags(CommonMarkSettings settings)
         {
             var handleCaret = 0 != (settings.AdditionalFeatures & CommonMarkAdditionalFeatures.SuperscriptCaret);
             var handleTilde = 0 != (settings.AdditionalFeatures & CommonMarkAdditionalFeatures.SubscriptTilde);
@@ -72,7 +72,7 @@ namespace CommonMark.Parser
             return t;
         }
 
-        internal static InlineTag?[] InitializeDoubleCharTags(CommonMarkSettings settings)
+        internal static InlineTag[] InitializeDoubleCharTags(CommonMarkSettings settings)
         {
             var handleTilde = 0 != (settings.AdditionalFeatures & CommonMarkAdditionalFeatures.StrikethroughTilde);
 
@@ -84,16 +84,16 @@ namespace CommonMark.Parser
             return t;
         }
 
-        internal static InlineTag?[] InitializeEmphasisSingleCharTags(bool handleTilde = false)
+        internal static InlineTag[] InitializeEmphasisSingleCharTags(bool handleTilde = false)
         {
-            var t = new InlineTag?[handleTilde ? 127 : 97];
+            var t = new InlineTag[handleTilde ? 127 : 97];
             t['_'] = t['*'] = InlineTag.Emphasis;
             return t;
         }
 
-        internal static InlineTag?[] InitializeEmphasisDoubleCharTags(bool handleTilde = false)
+        internal static InlineTag[] InitializeEmphasisDoubleCharTags(bool handleTilde = false)
         {
-            var t = new InlineTag?[handleTilde ? 127 : 97];
+            var t = new InlineTag[handleTilde ? 127 : 97];
             t['_'] = t['*'] = InlineTag.Strong;
             return t;
         }
@@ -364,7 +364,7 @@ namespace CommonMark.Parser
             return numdelims;
         }
 
-        internal static int MatchInlineStack(InlineStack opener, Subject subj, int closingDelimeterCount, InlineStack closer, InlineTag? singleCharTag, InlineTag? doubleCharTag, InlineParserParameters parameters)
+        internal static int MatchInlineStack(InlineStack opener, Subject subj, int closingDelimeterCount, InlineStack closer, InlineTag singleCharTag, InlineTag doubleCharTag, InlineParserParameters parameters)
         {
             // calculate the actual number of delimeters used from this closer
             int useDelims;
@@ -373,20 +373,20 @@ namespace CommonMark.Parser
             if (closingDelimeterCount < 3 || openerDelims < 3)
             {
                 useDelims = closingDelimeterCount <= openerDelims ? closingDelimeterCount : openerDelims;
-                if (useDelims == 2 && doubleCharTag == null)
+                if (useDelims == 2 && doubleCharTag == 0)
                     useDelims = 1;
-                if (useDelims == 1 && singleCharTag == null)
+                if (useDelims == 1 && singleCharTag == 0)
                     return 0;
             }
-            else if (singleCharTag == null)
+            else if (singleCharTag == 0)
                 useDelims = 2;
-            else if (doubleCharTag == null)
+            else if (doubleCharTag == 0)
                 useDelims = 1;
             else
                 useDelims = closingDelimeterCount % 2 == 0 ? 2 : 1;
 
             Inline inl = opener.StartingInline;
-            InlineTag tag = useDelims == 1 ? singleCharTag.Value : doubleCharTag.Value;
+            InlineTag tag = useDelims == 1 ? singleCharTag : doubleCharTag;
             if (openerDelims == useDelims)
             {
                 // the opener is completely used up - remove the stack entry and reuse the inline element
@@ -450,7 +450,7 @@ namespace CommonMark.Parser
             return useDelims;
         }
 
-        private static Inline HandleOpenerCloser(Subject subj, InlineTag? singleCharTag, InlineTag? doubleCharTag, InlineParserParameters parameters)
+        private static Inline HandleOpenerCloser(Subject subj, InlineTag singleCharTag, InlineTag doubleCharTag, InlineParserParameters parameters)
         {
             bool canOpen, canClose;
             var c = subj.Buffer[subj.Position];
