@@ -16,8 +16,7 @@ namespace CommonMark
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         public CommonMarkSettings()
         {
-            _inlineParsers = new Lazy<Func<Parser.Subject, Syntax.Inline>[]>(GetInlineParsers);
-            _inlineParserSpecialCharacters = new Lazy<char[]>(GetInlineParserSpecialCharacters);
+            Reset();
         }
 
         /// <summary>
@@ -72,8 +71,7 @@ namespace CommonMark
             set
             {
                 this._additionalFeatures = value;
-                this._inlineParsers = new Lazy<Func<Parser.Subject,Syntax.Inline>[]>(GetInlineParsers);
-                this._inlineParserSpecialCharacters = new Lazy<char[]>(GetInlineParserSpecialCharacters);
+                this.Reset();
             }
         }
 
@@ -123,9 +121,14 @@ namespace CommonMark
         public CommonMarkSettings Clone()
         {
             var clone = (CommonMarkSettings)this.MemberwiseClone();
-            clone._inlineParsers = new Lazy<Func<Parser.Subject, Syntax.Inline>[]>(clone.GetInlineParsers);
-            clone._inlineParserSpecialCharacters = new Lazy<char[]>(clone.GetInlineParserSpecialCharacters);
+            clone.Reset();
             return clone;
+        }
+
+        private void Reset()
+        {
+            _inlineParsers = new Lazy<Func<Parser.Subject, Syntax.Inline>[]>(GetInlineParsers);
+            _inlineParserSpecialCharacters = new Lazy<char[]>(GetInlineParserSpecialCharacters);
         }
 
         #region [ Properties that cache structures used in the parsers ]
