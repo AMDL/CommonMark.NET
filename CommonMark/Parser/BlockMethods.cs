@@ -279,7 +279,10 @@ namespace CommonMark.Parser
         {
             Stack<Inline> inlineStack = null;
             var stack = new Stack<Block>();
+            var parsers = settings.InlineParsers;
             var specialCharacters = settings.InlineParserSpecialCharacters;
+            var emphasisParsers = settings.InlineEmphasisParsers;
+            var emphasisSpecialCharacters = settings.InlineParserEmphasisSpecialCharacters;
             var subj = new Subject(refmap);
 
             StringContent sc;
@@ -300,10 +303,9 @@ namespace CommonMark.Parser
                         sc.FillSubject(subj);
                         delta = subj.Position;
 
-                        var parsers = parseEmphasisInIndentedCode
-                            ? settings.InlineEmphasisParsers
-                            : settings.InlineParsers;
-                        block.InlineContent = InlineMethods.parse_inlines(subj, refmap, parsers, specialCharacters, settings);
+                        var inlineParsers = parseEmphasisInIndentedCode ? emphasisParsers : parsers;
+                        var inlineSpecialCharacters = parseEmphasisInIndentedCode ? emphasisSpecialCharacters : specialCharacters;
+                        block.InlineContent = InlineMethods.parse_inlines(subj, refmap, inlineParsers, inlineSpecialCharacters, settings);
                         block.StringContent = null;
 
                         if (sc.PositionTracker != null)
