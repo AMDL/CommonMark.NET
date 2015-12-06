@@ -25,6 +25,8 @@ namespace CommonMark
         {
             _inlineParsers = new Lazy<Func<Parser.Subject, Syntax.Inline>[]>(GetInlineParsers);
             _inlineParserSpecialCharacters = new Lazy<char[]>(GetInlineParserSpecialCharacters);
+            _inlineEmphasisParsers = new Lazy<Func<Parser.Subject, Syntax.Inline>[]>(GetInlineEmphasisParsers);
+            _inlineParserEmphasisSpecialCharacters = new Lazy<char[]>(GetInlineParserEmphasisSpecialCharacters);
         }
 
         /// <summary>
@@ -103,6 +105,8 @@ namespace CommonMark
                 this._additionalFeatures = value;
                 this._inlineParsers = new Lazy<Func<Parser.Subject,Syntax.Inline>[]>(GetInlineParsers);
                 this._inlineParserSpecialCharacters = new Lazy<char[]>(GetInlineParserSpecialCharacters);
+                this._inlineEmphasisParsers = new Lazy<Func<Parser.Subject, Syntax.Inline>[]>(GetInlineEmphasisParsers);
+                this._inlineParserEmphasisSpecialCharacters = new Lazy<char[]>(GetInlineParserEmphasisSpecialCharacters);
             }
         }
 
@@ -154,6 +158,8 @@ namespace CommonMark
             var clone = (CommonMarkSettings)this.MemberwiseClone();
             clone._inlineParsers = new Lazy<Func<Parser.Subject, Syntax.Inline>[]>(clone.GetInlineParsers);
             clone._inlineParserSpecialCharacters = new Lazy<char[]>(clone.GetInlineParserSpecialCharacters);
+            clone._inlineEmphasisParsers = new Lazy<Func<Parser.Subject, Syntax.Inline>[]>(clone.GetInlineEmphasisParsers);
+            clone._inlineParserEmphasisSpecialCharacters = new Lazy<char[]>(clone.GetInlineParserEmphasisSpecialCharacters);
             return clone;
         }
 
@@ -174,24 +180,19 @@ namespace CommonMark
             return Parser.InlineMethods.InitializeParsers(this);
         }
 
-        private Func<Parser.Subject, Syntax.Inline>[] _inlineEmphasisParsers;
+        private Lazy<Func<Parser.Subject, Syntax.Inline>[]> _inlineEmphasisParsers;
 
         /// <summary>
         /// Gets the delegates that parse inline emphasis elements.
         /// </summary>
         internal Func<Parser.Subject, Syntax.Inline>[] InlineEmphasisParsers
         {
-            get
-            {
-                var p = this._inlineEmphasisParsers;
-                if (p == null)
-                {
-                    p = Parser.InlineMethods.InitializeEmphasisParsers(this);
-                    this._inlineEmphasisParsers = p;
-                }
+            get { return _inlineEmphasisParsers.Value; }
+        }
 
-                return p;
-            }
+        private Func<Parser.Subject, Syntax.Inline>[] GetInlineEmphasisParsers()
+        {
+            return Parser.InlineMethods.InitializeEmphasisParsers(this);
         }
 
         private Lazy<char[]> _inlineParserSpecialCharacters;
@@ -208,6 +209,27 @@ namespace CommonMark
         {
             var p = this.InlineParsers;
             var vs = new List<char>(20);
+            for (var i = 0; i < p.Length; i++)
+                if (p[i] != null)
+                    vs.Add((char)i);
+
+            return vs.ToArray();
+        }
+
+        private Lazy<char[]> _inlineParserEmphasisSpecialCharacters;
+
+        /// <summary>
+        /// Gets the characters that have special meaning for inline element emphasis parsers according to these settings.
+        /// </summary>
+        internal char[] InlineParserEmphasisSpecialCharacters
+        {
+            get { return _inlineParserEmphasisSpecialCharacters.Value; }
+        }
+
+        private char[] GetInlineParserEmphasisSpecialCharacters()
+        {
+            var p = this.InlineEmphasisParsers;
+            var vs = new List<char>(2);
             for (var i = 0; i < p.Length; i++)
                 if (p[i] != null)
                     vs.Add((char)i);
