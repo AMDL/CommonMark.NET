@@ -35,6 +35,14 @@ namespace CommonMark.Tests
 
         [TestMethod]
         [TestCategory("Inlines - Strikethrough")]
+        public void StrikethroughDisabledInPost()
+        {
+            // '[' char in the middle will delay the ~~ match to the post-process phase.
+            Helpers.ExecuteTest("foo ~~~~ba[r~~~~", "<p>foo ~~~~ba[r~~~~</p>");
+        }
+
+        [TestMethod]
+        [TestCategory("Inlines - Strikethrough")]
         public void StrikethroughExample1()
         {
             Helpers.ExecuteTest("foo ~~bar~~", "<p>foo <del>bar</del></p>", Settings);
