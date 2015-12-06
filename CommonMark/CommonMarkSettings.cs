@@ -157,12 +157,12 @@ namespace CommonMark
 
         private void Reset()
         {
-            _inlineParsers = new Lazy<Func<Parser.Subject, Syntax.Inline>[]>(GetInlineParsers);
-            _inlineParserSpecialCharacters = new Lazy<char[]>(GetInlineParserSpecialCharacters);
-            _inlineEmphasisParsers = new Lazy<Func<Parser.Subject, Syntax.Inline>[]>(GetInlineEmphasisParsers);
-            _inlineParserEmphasisSpecialCharacters = new Lazy<char[]>(GetInlineParserEmphasisSpecialCharacters);
-            _inlineSingleCharTags = new Lazy<InlineTag?[]>(GetInlineSingleCharTags);
-            _inlineDoubleCharTags = new Lazy<InlineTag?[]>(GetInlineDoubleCharTags);
+            this._inlineParsers = new Lazy<Func<Parser.Subject, Syntax.Inline>[]>(GetInlineParsers);
+            this._inlineParserSpecialCharacters = new Lazy<char[]>(GetInlineParserSpecialCharacters);
+            this._inlineEmphasisParsers = new Lazy<Func<Parser.Subject, Syntax.Inline>[]>(GetInlineEmphasisParsers);
+            this._inlineParserEmphasisSpecialCharacters = new Lazy<char[]>(GetInlineParserEmphasisSpecialCharacters);
+            this._inlineSingleCharTags = new Lazy<InlineTag?[]>(GetInlineSingleCharTags);
+            this._inlineDoubleCharTags = new Lazy<InlineTag?[]>(GetInlineDoubleCharTags);
         }
 
         #region [ Properties that cache structures used in the parsers ]
