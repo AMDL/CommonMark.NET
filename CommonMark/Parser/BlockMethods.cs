@@ -300,9 +300,9 @@ namespace CommonMark.Parser
                         delta = subj.Position;
 
                         var inlineParameters = parseEmphasisInIndentedCode
-                            ? settings.InlineParserEmphasisParameters
+                            ? settings.EmphasisInlineParserParameters
                             : settings.InlineParserParameters;
-                        block.InlineContent = InlineMethods.parse_inlines(subj, refmap, inlineParameters.Parsers, inlineParameters.SpecialCharacters, settings);
+                        block.InlineContent = InlineMethods.parse_inlines(subj, refmap, inlineParameters);
                         block.StringContent = null;
 
                         if (sc.PositionTracker != null)
