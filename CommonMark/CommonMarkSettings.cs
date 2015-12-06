@@ -24,12 +24,7 @@ namespace CommonMark
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         public CommonMarkSettings()
         {
-            _inlineParsers = new Lazy<Func<Parser.Subject, Syntax.Inline>[]>(GetInlineParsers);
-            _inlineParserSpecialCharacters = new Lazy<char[]>(GetInlineParserSpecialCharacters);
-            _inlineEmphasisParsers = new Lazy<Func<Parser.Subject, Syntax.Inline>[]>(GetInlineEmphasisParsers);
-            _inlineParserEmphasisSpecialCharacters = new Lazy<char[]>(GetInlineParserEmphasisSpecialCharacters);
-            _inlineSingleCharTags = new Lazy<InlineTag?[]>(GetInlineSingleCharTags);
-            _inlineDoubleCharTags = new Lazy<InlineTag?[]>(GetInlineDoubleCharTags);
+            Reset();
         }
 
         /// <summary>
@@ -106,12 +101,7 @@ namespace CommonMark
             set
             {
                 this._additionalFeatures = value;
-                this._inlineParsers = new Lazy<Func<Parser.Subject,Syntax.Inline>[]>(GetInlineParsers);
-                this._inlineParserSpecialCharacters = new Lazy<char[]>(GetInlineParserSpecialCharacters);
-                this._inlineEmphasisParsers = new Lazy<Func<Parser.Subject, Syntax.Inline>[]>(GetInlineEmphasisParsers);
-                this._inlineParserEmphasisSpecialCharacters = new Lazy<char[]>(GetInlineParserEmphasisSpecialCharacters);
-                this._inlineSingleCharTags = new Lazy<InlineTag?[]>(GetInlineSingleCharTags);
-                this._inlineDoubleCharTags = new Lazy<InlineTag?[]>(GetInlineDoubleCharTags);
+                this.Reset();
             }
         }
 
@@ -161,13 +151,18 @@ namespace CommonMark
         public CommonMarkSettings Clone()
         {
             var clone = (CommonMarkSettings)this.MemberwiseClone();
-            clone._inlineParsers = new Lazy<Func<Parser.Subject, Syntax.Inline>[]>(clone.GetInlineParsers);
-            clone._inlineParserSpecialCharacters = new Lazy<char[]>(clone.GetInlineParserSpecialCharacters);
-            clone._inlineEmphasisParsers = new Lazy<Func<Parser.Subject, Syntax.Inline>[]>(clone.GetInlineEmphasisParsers);
-            clone._inlineParserEmphasisSpecialCharacters = new Lazy<char[]>(clone.GetInlineParserEmphasisSpecialCharacters);
-            clone._inlineSingleCharTags = new Lazy<InlineTag?[]>(clone.GetInlineSingleCharTags);
-            clone._inlineDoubleCharTags = new Lazy<InlineTag?[]>(clone.GetInlineDoubleCharTags);
+            clone.Reset();
             return clone;
+        }
+
+        private void Reset()
+        {
+            _inlineParsers = new Lazy<Func<Parser.Subject, Syntax.Inline>[]>(GetInlineParsers);
+            _inlineParserSpecialCharacters = new Lazy<char[]>(GetInlineParserSpecialCharacters);
+            _inlineEmphasisParsers = new Lazy<Func<Parser.Subject, Syntax.Inline>[]>(GetInlineEmphasisParsers);
+            _inlineParserEmphasisSpecialCharacters = new Lazy<char[]>(GetInlineParserEmphasisSpecialCharacters);
+            _inlineSingleCharTags = new Lazy<InlineTag?[]>(GetInlineSingleCharTags);
+            _inlineDoubleCharTags = new Lazy<InlineTag?[]>(GetInlineDoubleCharTags);
         }
 
         #region [ Properties that cache structures used in the parsers ]
