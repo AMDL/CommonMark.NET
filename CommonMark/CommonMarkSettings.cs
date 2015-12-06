@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CommonMark.Syntax;
+using System;
 using System.Collections.Generic;
 
 namespace CommonMark
@@ -27,6 +28,8 @@ namespace CommonMark
             _inlineParserSpecialCharacters = new Lazy<char[]>(GetInlineParserSpecialCharacters);
             _inlineEmphasisParsers = new Lazy<Func<Parser.Subject, Syntax.Inline>[]>(GetInlineEmphasisParsers);
             _inlineParserEmphasisSpecialCharacters = new Lazy<char[]>(GetInlineParserEmphasisSpecialCharacters);
+            _inlineSingleCharTags = new Lazy<InlineTag?[]>(GetInlineSingleCharTags);
+            _inlineDoubleCharTags = new Lazy<InlineTag?[]>(GetInlineDoubleCharTags);
         }
 
         /// <summary>
@@ -107,6 +110,8 @@ namespace CommonMark
                 this._inlineParserSpecialCharacters = new Lazy<char[]>(GetInlineParserSpecialCharacters);
                 this._inlineEmphasisParsers = new Lazy<Func<Parser.Subject, Syntax.Inline>[]>(GetInlineEmphasisParsers);
                 this._inlineParserEmphasisSpecialCharacters = new Lazy<char[]>(GetInlineParserEmphasisSpecialCharacters);
+                this._inlineSingleCharTags = new Lazy<InlineTag?[]>(GetInlineSingleCharTags);
+                this._inlineDoubleCharTags = new Lazy<InlineTag?[]>(GetInlineDoubleCharTags);
             }
         }
 
@@ -160,6 +165,8 @@ namespace CommonMark
             clone._inlineParserSpecialCharacters = new Lazy<char[]>(clone.GetInlineParserSpecialCharacters);
             clone._inlineEmphasisParsers = new Lazy<Func<Parser.Subject, Syntax.Inline>[]>(clone.GetInlineEmphasisParsers);
             clone._inlineParserEmphasisSpecialCharacters = new Lazy<char[]>(clone.GetInlineParserEmphasisSpecialCharacters);
+            clone._inlineSingleCharTags = new Lazy<InlineTag?[]>(clone.GetInlineSingleCharTags);
+            clone._inlineDoubleCharTags = new Lazy<InlineTag?[]>(clone.GetInlineDoubleCharTags);
             return clone;
         }
 
@@ -235,6 +242,28 @@ namespace CommonMark
                     vs.Add((char)i);
 
             return vs.ToArray();
+        }
+
+        private Lazy<InlineTag?[]> _inlineSingleCharTags;
+        internal InlineTag?[] InlineSingleCharTags
+        {
+            get { return _inlineSingleCharTags.Value; }
+        }
+
+        private InlineTag?[] GetInlineSingleCharTags()
+        {
+            return Parser.InlineMethods.InitializeSingleCharTags(this);
+        }
+
+        private Lazy<InlineTag?[]> _inlineDoubleCharTags;
+        internal InlineTag?[] InlineDoubleCharTags
+        {
+            get { return _inlineDoubleCharTags.Value; }
+        }
+
+        private InlineTag?[] GetInlineDoubleCharTags()
+        {
+            return Parser.InlineMethods.InitializeDoubleCharTags(this);
         }
 
         #endregion

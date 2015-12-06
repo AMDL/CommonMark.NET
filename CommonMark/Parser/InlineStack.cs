@@ -168,6 +168,8 @@ namespace CommonMark.Parser
 
         public static void PostProcessInlineStack(Subject subj, InlineStack first, InlineStack last, InlineStackPriority ignorePriority, CommonMarkSettings settings)
         {
+            var singleCharTags = settings.InlineSingleCharTags;
+            var doubleCharTags = settings.InlineDoubleCharTags;
             while (ignorePriority > 0)
             {
                 var istack = first;
@@ -184,32 +186,14 @@ namespace CommonMark.Parser
                         if (iopener != null)
                         {
                             bool retry = false;
-                            InlineTag? singleCharTag = null;
-                            InlineTag? doubleCharTag = null;
-                            if (iopener.Delimeter == '~')
+                            var singleCharTag = iopener.Delimeter < singleCharTags.Length ? singleCharTags[iopener.Delimeter] : null;
+                            var doubleCharTag = iopener.Delimeter < doubleCharTags.Length ? doubleCharTags[iopener.Delimeter] : null;
+                            if (singleCharTag != null || doubleCharTag != null)
                             {
-                                if (0 != (settings.AdditionalFeatures & CommonMarkAdditionalFeatures.SubscriptTilde))
-                                    singleCharTag = InlineTag.Subscript;
-                                if (0 != (settings.AdditionalFeatures & CommonMarkAdditionalFeatures.StrikethroughTilde))
-                                    doubleCharTag = InlineTag.Strikethrough;
-                            }
-                            else if (iopener.Delimeter == '^' && 0 != (settings.AdditionalFeatures & CommonMarkAdditionalFeatures.SuperscriptCaret))
-                            {
-                                singleCharTag = InlineTag.Superscript;
-                            }
-                            else if (iopener.Delimeter == '$' && 0 != (settings.AdditionalFeatures & CommonMarkAdditionalFeatures.MathDollar))
-                            {
-                                singleCharTag = InlineTag.Math;
-                            }
-                            else
-                            {
-                                singleCharTag = InlineTag.Emphasis;
-                                doubleCharTag = InlineTag.Strong;
-                            }
-
-                            var useDelims = InlineMethods.MatchInlineStack(iopener, subj, istack.DelimeterCount, istack, singleCharTag, doubleCharTag, settings);
+                                var useDelims = InlineMethods.MatchInlineStack(iopener, subj, istack.DelimeterCount, istack, singleCharTag, doubleCharTag, settings);
                                 if (istack.DelimeterCount > 0)
                                     retry = true;
+                            }
 
                             if (retry)
                             {

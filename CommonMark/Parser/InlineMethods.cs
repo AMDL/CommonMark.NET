@@ -16,37 +16,27 @@ namespace CommonMark.Parser
         /// <returns></returns>
         internal static Func<Subject, Inline>[] InitializeParsers(CommonMarkSettings settings)
         {
-            var handleCaret = 0 != (settings.AdditionalFeatures & CommonMarkAdditionalFeatures.SuperscriptCaret);
-            var handleTilde = 0 != (settings.AdditionalFeatures & (CommonMarkAdditionalFeatures.StrikethroughTilde | CommonMarkAdditionalFeatures.SubscriptTilde));
+            var singleCharTags = settings.InlineSingleCharTags;
+            var doubleCharTags = settings.InlineDoubleCharTags;
+            var length = Math.Max(singleCharTags.Length, doubleCharTags.Length);
 
-            var p = new Func<Subject, Inline>[handleTilde ? 127 : 97];
+            var p = new Func<Subject, Inline>[length];
             p['\n'] = handle_newline;
             p['`'] = handle_backticks;
             p['\\'] = handle_backslash;
             p['&'] = HandleEntity;
             p['<'] = handle_pointy_brace;
-            p['_'] = s => HandleEmphasis(s, settings);
-            p['*'] = s => HandleEmphasis(s, settings);
             p['['] = s => HandleLeftSquareBracket(s, settings);
             p[']'] = s => HandleRightSquareBracket(s, settings);
             p['!'] = s => HandleExclamation(s, settings);
 
-            if (handleCaret)
-                p['^'] = s => HandleCaret(s, settings);
-
-            if (handleTilde)
+            for (int i = 0; i < length; i++)
             {
-                var singleCharTag = (0 != (settings.AdditionalFeatures & CommonMarkAdditionalFeatures.SubscriptTilde))
-                    ? InlineTag.Subscript
-                    : (InlineTag?)null;
-                var doubleCharTag = (0 != (settings.AdditionalFeatures & CommonMarkAdditionalFeatures.StrikethroughTilde))
-                    ? InlineTag.Strikethrough
-                    : (InlineTag?)null;
-                p['~'] = s => HandleOpenerCloser(s, singleCharTag, doubleCharTag, settings);
+                var singleCharTag = i < singleCharTags.Length ? singleCharTags[i] : null;
+                var doubleCharTag = i < doubleCharTags.Length ? doubleCharTags[i] : null;
+                if (singleCharTag != null || doubleCharTag != null)
+                    p[i] = s => HandleOpenerCloser(s, singleCharTag, doubleCharTag, settings);
             }
-
-            if (0 != (settings.AdditionalFeatures & CommonMarkAdditionalFeatures.MathDollar))
-                p['$'] = s => HandleMath(s, settings);
 
             return p;
         }
@@ -58,8 +48,54 @@ namespace CommonMark.Parser
         internal static Func<Subject, Inline>[] InitializeEmphasisParsers(CommonMarkSettings settings)
         {
             var p = new Func<Subject, Inline>[96];
-            p['_'] = p['*'] = s => HandleEmphasis(s, settings);
+            p['_'] = p['*'] = s => HandleOpenerCloser(s, InlineTag.Emphasis, InlineTag.Strong, settings);
             return p;
+        }
+
+        internal static InlineTag?[] InitializeSingleCharTags(CommonMarkSettings settings)
+        {
+            var handleCaret = 0 != (settings.AdditionalFeatures & CommonMarkAdditionalFeatures.SuperscriptCaret);
+            var handleTilde = 0 != (settings.AdditionalFeatures & CommonMarkAdditionalFeatures.SubscriptTilde);
+            var handleMath = 0 != (settings.AdditionalFeatures & CommonMarkAdditionalFeatures.MathDollar);
+
+            var t = InitializeEmphasisSingleTagChars(handleTilde);
+
+            if (handleCaret)
+                t['^'] = InlineTag.Superscript;
+
+            if (handleTilde)
+                t['~'] = InlineTag.Subscript;
+
+            if (handleMath)
+                t['$'] = InlineTag.Math;
+
+            return t;
+        }
+
+        internal static InlineTag?[] InitializeDoubleCharTags(CommonMarkSettings settings)
+        {
+            var handleTilde = 0 != (settings.AdditionalFeatures & CommonMarkAdditionalFeatures.StrikethroughTilde);
+
+            var t = InitializeEmphasisDoubleCharTags(handleTilde);
+
+            if (handleTilde)
+                t['~'] = InlineTag.Strikethrough;
+
+            return t;
+        }
+
+        private static InlineTag?[] InitializeEmphasisSingleTagChars(bool handleTilde = false)
+        {
+            var t = new InlineTag?[handleTilde ? 127 : 97];
+            t['_'] = t['*'] = InlineTag.Emphasis;
+            return t;
+        }
+
+        private static InlineTag?[] InitializeEmphasisDoubleCharTags(bool handleTilde = false)
+        {
+            var t = new InlineTag?[handleTilde ? 127 : 97];
+            t['_'] = t['*'] = InlineTag.Strong;
+            return t;
         }
 
         /// <summary>
@@ -412,21 +448,6 @@ namespace CommonMark.Parser
             }
 
             return useDelims;
-        }
-
-        private static Inline HandleEmphasis(Subject subj, CommonMarkSettings settings)
-        {
-            return HandleOpenerCloser(subj, InlineTag.Emphasis, InlineTag.Strong, settings);
-        }
-
-        private static Inline HandleCaret(Subject subj, CommonMarkSettings settings)
-        {
-            return HandleOpenerCloser(subj, InlineTag.Superscript, null, settings);
-        }
-
-        private static Inline HandleMath(Subject subj, CommonMarkSettings settings)
-        {
-            return HandleOpenerCloser(subj, InlineTag.Math, null, settings);
         }
 
         private static Inline HandleOpenerCloser(Subject subj, InlineTag? singleCharTag, InlineTag? doubleCharTag, CommonMarkSettings settings)
