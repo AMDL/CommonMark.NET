@@ -249,8 +249,8 @@ namespace CommonMark
 
         internal void Reset()
         {
-            this._inlineParsers = new Lazy<InlineParserDelegate[]>(GetInlineParsers);
-            this._inlineParserSpecialCharacters = new Lazy<char[]>(GetInlineParserSpecialCharacters);
+            this._inlineParserParameters = new Lazy<Parser.InlineParserParameters>(GetInlineParserParameters);
+            this._inlineParserEmphasisParameters = new Lazy<Parser.InlineParserParameters>(GetInlineParserEmphasisParameters);
             this._blockParserParameters = new Lazy<Parser.BlockParserParameters>(GetBlockParserParameters);
             this._tableParser = new Lazy<Parser.PipeTableParser>(GetTableParser);
             this._inlineSingleCharTags = new Lazy<Syntax.InlineTag[]>(GetInlineSingleCharTags);
@@ -259,16 +259,47 @@ namespace CommonMark
             this._inlineFormatters = new Lazy<Formatters.IInlineFormatter[]>(GetInlineFormatters);
         }
 
-        #region [ Properties that cache structures used in the parsers ]
+        #region [ Properties that cache parser parameters ]
 
-        private Lazy<InlineParserDelegate[]> _inlineParsers;
+        private Lazy<Parser.InlineParserParameters> _inlineParserParameters;
 
         /// <summary>
-        /// Gets the delegates that parse inline elements according to these settings.
+        /// Gets the parameters for parsing inline elements according to these settings.
         /// </summary>
-        internal InlineParserDelegate[] InlineParsers
+        internal Parser.InlineParserParameters InlineParserParameters
         {
-            get { return _inlineParsers.Value; }
+#if OptimizeFor45
+            [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+#endif
+            get { return _inlineParserParameters.Value; }
+        }
+
+        private Parser.InlineParserParameters GetInlineParserParameters()
+        {
+            return new Parser.InlineParserParameters(GetInlineParsers, GetInlineParserSpecialCharacters);
+        }
+
+        private Lazy<Parser.InlineParserParameters> _inlineParserEmphasisParameters;
+
+        /// <summary>
+        /// Gets the parameters for parsing inline emphasis elements.
+        /// </summary>
+        internal Parser.InlineParserParameters InlineParserEmphasisParameters
+        {
+#if OptimizeFor45
+            [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+#endif
+            get { return _inlineParserEmphasisParameters.Value; }
+        }
+
+        private Parser.InlineParserParameters GetInlineParserEmphasisParameters()
+        {
+            return new Parser.InlineParserParameters(GetInlineEmphasisParsers, GetInlineParserEmphasisSpecialCharacters);
+        }
+
+        private InlineParserDelegate[] InlineParsers
+        {
+            get { return InlineParserParameters.Parsers; }
         }
 
         private InlineParserDelegate[] GetInlineParsers()
@@ -279,14 +310,14 @@ namespace CommonMark
                 (inner, value) => new Parser.DelegateInlineParser(inner, value).ParseInline);
         }
 
-        private Lazy<char[]> _inlineParserSpecialCharacters;
-
-        /// <summary>
-        /// Gets the characters that have special meaning for inline element parsers according to these settings.
-        /// </summary>
-        internal char[] InlineParserSpecialCharacters
+        private InlineParserDelegate[] InlineEmphasisParsers
         {
-            get { return _inlineParserSpecialCharacters.Value; }
+            get { return InlineParserEmphasisParameters.Parsers; }
+        }
+
+        private InlineParserDelegate[] GetInlineEmphasisParsers()
+        {
+            return Parser.InlineMethods.InitializeEmphasisParsers(this);
         }
 
         private char[] GetInlineParserSpecialCharacters()
@@ -313,6 +344,17 @@ namespace CommonMark
         private Parser.BlockParserParameters GetBlockParserParameters()
         {
             return new Parser.BlockParserParameters(this);
+        }
+
+        private char[] GetInlineParserEmphasisSpecialCharacters()
+        {
+            var p = this.InlineEmphasisParsers;
+            var vs = new List<char>(2);
+            for (var i = 0; i < p.Length; i++)
+                if (p[i] != null)
+                    vs.Add((char)i);
+
+            return vs.ToArray();
         }
 
         private Lazy<Parser.PipeTableParser> _tableParser;

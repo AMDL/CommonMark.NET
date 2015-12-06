@@ -74,6 +74,7 @@
     <Compile Include="Parser\BlockParserParameters.cs" />
     <Compile Include="Parser\DelegateInlineParser.cs" />
     <Compile Include="Parser\EntityDecoder.cs" />
+    <Compile Include="Parser\InlineParserParameters.cs" />
     <Compile Include="Parser\InlineStack.cs" />
     <Compile Include="Parser\LineInfo.cs" />
     <Compile Include="Parser\PositionOffset.cs" />
