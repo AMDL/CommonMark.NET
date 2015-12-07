@@ -57,6 +57,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="IndentedCodeTests.cs" />
+    <Compile Include="InlineCodeTests.cs" />
     <Compile Include="SourcePositionTests.cs" />
     <Compile Include="EnumeratorTests.cs" />
     <Compile Include="StrikethroughTests.cs" />

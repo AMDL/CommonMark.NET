@@ -55,7 +55,8 @@ namespace CommonMark.Parser
             None = 0,
             Opener = 1,
             Closer = 2,
-            ImageLink = 4
+            ImageLink = 4,
+            Code = 8,
         }
 
         public enum InlineStackPriority : byte
@@ -65,7 +66,7 @@ namespace CommonMark.Parser
             Maximum = Links
         }
 
-        public static InlineStack FindMatchingOpener(InlineStack seachBackwardsFrom, InlineStackPriority priority, char delimeter, out bool canClose)
+        public static InlineStack FindMatchingOpener(InlineStack seachBackwardsFrom, InlineStackPriority priority, char delimeter, bool backticks, out bool canClose)
         {
             canClose = true;
             var istack = seachBackwardsFrom;
@@ -178,8 +179,9 @@ namespace CommonMark.Parser
                     }
                     else if (0 != (istack.Flags & InlineStackFlags.Closer))
                     {
+                        var backticks = 0 != (istack.Flags & InlineStackFlags.Code);
                         bool canClose;
-                        var iopener = FindMatchingOpener(istack.Previous, istack.Priority, istack.Delimeter, out canClose);
+                        var iopener = FindMatchingOpener(istack.Previous, istack.Priority, istack.Delimeter, backticks, out canClose);
                         if (iopener != null)
                         {
                             bool retry = false;
@@ -187,6 +189,12 @@ namespace CommonMark.Parser
                             {
                                 InlineMethods.MatchInlineStack(iopener, subj, istack.DelimeterCount, istack, null, InlineTag.Strikethrough);
                                 if (istack.DelimeterCount > 1)
+                                    retry = true;
+                            }
+                            else if (iopener.Delimeter == '`')
+                            {
+                                InlineMethods.MatchInlineStack(iopener, subj, istack.DelimeterCount, istack, InlineTag.Code, InlineTag.Code);
+                                if (istack.DelimeterCount > 0)
                                     retry = true;
                             }
                             else

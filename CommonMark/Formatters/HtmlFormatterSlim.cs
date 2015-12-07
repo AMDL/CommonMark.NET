@@ -408,7 +408,7 @@ namespace CommonMark.Formatters
         /// Writes the inline list to the given writer as plain text (without any HTML tags).
         /// </summary>
         /// <seealso href="https://github.com/jgm/CommonMark/issues/145"/>
-        private static void InlinesToPlainText(HtmlTextWriter writer, Inline inline, Stack<InlineStackEntry> stack)
+        private static void InlinesToPlainText(HtmlTextWriter writer, Inline inline, Stack<InlineStackEntry> stack, CommonMarkSettings settings)
         {
             bool withinLink = false;
             bool stackWithinLink = false; 
@@ -423,9 +423,13 @@ namespace CommonMark.Formatters
                 switch (inline.Tag)
                 {
                     case InlineTag.String:
-                    case InlineTag.Code:
                     case InlineTag.RawHtml:
                         EscapeHtml(inline.LiteralContentValue, writer);
+                        break;
+
+                    case InlineTag.Code:
+                        if (0 == (settings.AdditionalFeatures & CommonMarkAdditionalFeatures.EmphasisInInlineCode))
+                            EscapeHtml(inline.LiteralContentValue, writer);
                         break;
 
                     case InlineTag.LineBreak:
@@ -542,8 +546,17 @@ namespace CommonMark.Formatters
                         writer.WriteConstant("<code");
                         if (trackPositions) PrintPosition(writer, inline);
                         writer.Write('>');
-                        EscapeHtml(inline.LiteralContentValue, writer);
-                        writer.WriteConstant("</code>");
+                        if (0 != (settings.AdditionalFeatures & CommonMarkAdditionalFeatures.EmphasisInInlineCode))
+                        {
+                            stackLiteral = "</code>";
+                            visitChildren = true;
+                            stackWithinLink = withinLink;
+                        }
+                        else
+                        {
+                            EscapeHtml(inline.LiteralContentValue, writer);
+                            writer.WriteConstant("</code>");
+                        }
                         break;
 
                     case InlineTag.RawHtml:
@@ -593,7 +606,7 @@ namespace CommonMark.Formatters
                             EscapeUrl(inline.TargetUrl, writer);
 
                         writer.WriteConstant("\" alt=\"");
-                        InlinesToPlainText(writer, inline.FirstChild, stack);
+                        InlinesToPlainText(writer, inline.FirstChild, stack, settings);
                         writer.Write('\"');
                         if (inline.LiteralContentValue.Length > 0)
                         {
@@ -612,8 +625,8 @@ namespace CommonMark.Formatters
                         if (trackPositions) PrintPosition(writer, inline);
                         writer.Write('>');
                         stackLiteral = "</strong>";
-                        stackWithinLink = withinLink;
                         visitChildren = true;
+                        stackWithinLink = withinLink;
                         break;
 
                     case InlineTag.Emphasis:

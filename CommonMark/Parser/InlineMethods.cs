@@ -20,7 +20,10 @@ namespace CommonMark.Parser
 
             var p = new Func<Subject, Inline>[strikethroughTilde ? 127 : 97];
             p['\n'] = handle_newline;
-            p['`'] = handle_backticks;
+            if (0 == (settings.AdditionalFeatures & CommonMarkAdditionalFeatures.EmphasisInInlineCode))
+                p['`'] = handle_backticks;
+            else
+                p['`'] = s => HandleOpenerCloser(s, InlineTag.Code, InlineTag.Code, true);
             p['\\'] = handle_backslash;
             p['&'] = HandleEntity;
             p['<'] = handle_pointy_brace;
@@ -255,10 +258,10 @@ namespace CommonMark.Parser
             else
             {
                 return new Inline(InlineTag.Code, NormalizeWhitespace(subj.Buffer, startpos, endpos - startpos - ticklength))
-                    {
-                        SourcePosition = startpos - ticklength,
-                        SourceLastPosition = endpos
-                    };
+                {
+                    SourcePosition = startpos - ticklength,
+                    SourceLastPosition = endpos
+                };
             }
         }
 
@@ -390,6 +393,16 @@ namespace CommonMark.Parser
 
         private static Inline HandleEmphasis(Subject subj)
         {
+            return HandleOpenerCloser(subj, InlineTag.Emphasis, InlineTag.Strong, false);
+        }
+
+        private static Inline HandleTilde(Subject subj)
+        {
+            return HandleOpenerCloser(subj, null, InlineTag.Strikethrough, false);
+        }
+
+        private static Inline HandleOpenerCloser(Subject subj, InlineTag? singleCharTag, InlineTag? doubleCharTag, bool backticks)
+        {
             bool canOpen, canClose;
             var c = subj.Buffer[subj.Position];
             var numdelims = ScanEmphasisDelimeters(subj, c, out canOpen, out canClose);
@@ -397,10 +410,10 @@ namespace CommonMark.Parser
             if (canClose)
             {
                 // walk the stack and find a matching opener, if there is one
-                var istack = InlineStack.FindMatchingOpener(subj.LastPendingInline, InlineStack.InlineStackPriority.Emphasis, c, out canClose);
+                var istack = InlineStack.FindMatchingOpener(subj.LastPendingInline, InlineStack.InlineStackPriority.Emphasis, c, backticks, out canClose);
                 if (istack != null)
                 {
-                    var useDelims = MatchInlineStack(istack, subj, numdelims, null, InlineTag.Emphasis, InlineTag.Strong);
+                    var useDelims = MatchInlineStack(istack, subj, numdelims, null, singleCharTag, doubleCharTag);
 
                     // if the closer was not fully used, move back a char or two and try again.
                     if (useDelims < numdelims)
@@ -409,7 +422,7 @@ namespace CommonMark.Parser
 
                         // use recursion only if it will not be very deep.
                         if (numdelims < 10)
-                            return HandleEmphasis(subj);
+                            return HandleOpenerCloser(subj, singleCharTag, doubleCharTag, backticks);
                     }
 
                     return null;
@@ -426,56 +439,8 @@ namespace CommonMark.Parser
                 istack.StartingInline = inlText;
                 istack.Priority = InlineStack.InlineStackPriority.Emphasis;
                 istack.Flags = (canOpen ? InlineStack.InlineStackFlags.Opener : 0)
-                             | (canClose ? InlineStack.InlineStackFlags.Closer : 0);
-
-                InlineStack.AppendStackEntry(istack, subj);
-            }
-
-            return inlText;
-        }
-
-        private static Inline HandleTilde(Subject subj)
-        {
-            bool canOpen, canClose;
-            var numdelims = ScanEmphasisDelimeters(subj, '~', out canOpen, out canClose);
-
-            if (numdelims == 1)
-                return new Inline("~", subj.Position - 1, subj.Position);
-
-            if (canClose)
-            {
-                // walk the stack and find a matching opener, if there is one
-                var istack = InlineStack.FindMatchingOpener(subj.LastPendingInline, InlineStack.InlineStackPriority.Emphasis, '~', out canClose);
-                if (istack != null)
-                {
-                    MatchInlineStack(istack, subj, numdelims, null, null, InlineTag.Strikethrough);
-
-                    // if the closer was not fully used, move back a char or two and try again.
-                    if (numdelims > 2)
-                    {
-                        subj.Position = subj.Position - numdelims + 2;
-
-                        // use recursion only if it will not be very deep.
-                        if (numdelims < 10)
-                            return HandleTilde(subj);
-                    }
-
-                    return null;
-                }
-            }
-
-            var inlText = new Inline(subj.Buffer, subj.Position - numdelims, numdelims,
-                subj.Position - numdelims, subj.Position);
-
-            if (canOpen || canClose)
-            {
-                var istack = new InlineStack();
-                istack.DelimeterCount = numdelims;
-                istack.Delimeter = '~';
-                istack.StartingInline = inlText;
-                istack.Priority = InlineStack.InlineStackPriority.Emphasis;
-                istack.Flags = (canOpen ? InlineStack.InlineStackFlags.Opener : 0)
-                             | (canClose ? InlineStack.InlineStackFlags.Closer : 0);
+                             | (canClose ? InlineStack.InlineStackFlags.Closer : 0)
+                             | (backticks ? InlineStack.InlineStackFlags.Code : 0);
 
                 InlineStack.AppendStackEntry(istack, subj);
             }
@@ -580,7 +545,7 @@ namespace CommonMark.Parser
             subj.Position++;
 
             bool canClose;
-            var istack = InlineStack.FindMatchingOpener(subj.LastPendingInline, InlineStack.InlineStackPriority.Links, '[', out canClose);
+            var istack = InlineStack.FindMatchingOpener(subj.LastPendingInline, InlineStack.InlineStackPriority.Links, '[', false, out canClose);
 
             if (istack != null)
             {

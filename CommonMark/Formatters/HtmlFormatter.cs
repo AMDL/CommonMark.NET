@@ -315,9 +315,13 @@ namespace CommonMark.Formatters
                 switch (inline.Tag)
                 {
                     case InlineTag.String:
-                    case InlineTag.Code:
                     case InlineTag.RawHtml:
                         WriteEncodedHtml(inline.LiteralContentValue);
+                        break;
+
+                    case InlineTag.Code:
+                        if (0 == (Settings.AdditionalFeatures & CommonMarkAdditionalFeatures.EmphasisInInlineCode))
+                            WriteEncodedHtml(inline.LiteralContentValue);
                         break;
 
                     case InlineTag.LineBreak:
@@ -388,12 +392,22 @@ namespace CommonMark.Formatters
                     break;
 
                 case InlineTag.Code:
-                    ignoreChildNodes = true;
-                    Write("<code");
-                    if (Settings.TrackSourcePosition) WritePositionAttribute(inline);
-                    Write('>');
-                    WriteEncodedHtml(inline.LiteralContentValue);
-                    Write("</code>");
+                    ignoreChildNodes = (0 == (Settings.AdditionalFeatures & CommonMarkAdditionalFeatures.EmphasisInInlineCode));
+
+                    if (isOpening)
+                    {
+                        Write("<code");
+                        if (Settings.TrackSourcePosition) WritePositionAttribute(inline);
+                        Write('>');
+                        if (ignoreChildNodes)
+                            WriteEncodedHtml(inline.LiteralContentValue);
+                    }
+
+                    if (isClosing)
+                    {
+                        Write("</code>");
+                    }
+
                     break;
 
                 case InlineTag.RawHtml:

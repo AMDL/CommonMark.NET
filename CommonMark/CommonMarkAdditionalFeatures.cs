@@ -21,6 +21,11 @@ namespace CommonMark
         StrikethroughTilde = 1,
 
         /// <summary>
+        /// The parser will recognize emphasis in inline code.
+        /// </summary>
+        EmphasisInInlineCode = 16,
+
+        /// <summary>
         /// The parser will recognize emphasis in indented code.
         /// </summary>
         EmphasisInIndentedCode = 32,
