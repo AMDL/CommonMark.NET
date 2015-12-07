@@ -18,7 +18,9 @@ namespace CommonMark.Parser
         {
             var singleCharTags = settings.InlineParserParameters.SingleCharTags;
             var doubleCharTags = settings.InlineParserParameters.DoubleCharTags;
-            var length = Math.Max(singleCharTags.Length, doubleCharTags.Length);
+            var length = singleCharTags.Length >= doubleCharTags.Length
+                ? singleCharTags.Length
+                : doubleCharTags.Length;
 
             var p = new Func<Subject, Inline>[length];
             p['\n'] = handle_newline;
