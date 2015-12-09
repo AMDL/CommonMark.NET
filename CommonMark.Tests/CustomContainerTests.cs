@@ -45,6 +45,13 @@ namespace CommonMark.Tests
 
         [TestMethod]
         [TestCategory("Leaf blocks - Custom containers")]
+        public void CustomContainersParagraph()
+        {
+            Helpers.ExecuteTest(":::foo\nbar\n\nasd\n:::", "<div class=\"foo\"><p>bar</p><p>asd</p></div>", Settings);
+        }
+
+        [TestMethod]
+        [TestCategory("Leaf blocks - Custom containers")]
         public void CustomContainerExample077()
         {
             Helpers.ExecuteTest(":::\n<\n >\n:::", "<div class=\"\">&lt;\n&gt;</div>", Settings);
