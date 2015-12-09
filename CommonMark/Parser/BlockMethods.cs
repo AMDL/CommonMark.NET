@@ -433,7 +433,7 @@ namespace CommonMark.Parser
         // Process one line at a time, modifying a block.
         // Returns 0 if successful.  curptr is changed to point to
         // the currently open block.
-        public static void IncorporateLine(LineInfo line, ref Block curptr, CommonMarkSettings settings)
+        public static void IncorporateLine(LineInfo line, ref Block curptr, BlockParserParameters parameters)
         {
             var ln = line.Line;
 
@@ -637,7 +637,7 @@ namespace CommonMark.Parser
                     container.HeaderLevel = i;
 
                 }
-                else if (!indented && (curChar == '`' || curChar == '~' || curChar == ':') && 0 != (matched = Scanner.scan_open_code_fence(ln, first_nonspace, ln.Length, settings)))
+                else if (!indented && parameters.IsFenceDelimiter(curChar) && 0 != (matched = Scanner.scan_open_code_fence(ln, first_nonspace, ln.Length, parameters)))
                 {
 
                     var blockTag = curChar == ':'
@@ -813,7 +813,7 @@ namespace CommonMark.Parser
 
                     if ((indent <= 3
                       && curChar == container.FencedCodeData.FenceChar)
-                      && (0 != Scanner.scan_close_code_fence(ln, first_nonspace, container.FencedCodeData.FenceLength, ln.Length, settings)))
+                      && (0 != Scanner.scan_close_code_fence(ln, first_nonspace, container.FencedCodeData.FenceLength, ln.Length, parameters)))
                     {
                         // if closing fence, set fence length to -1. it will be closed when the next line is processed. 
                         container.FencedCodeData.FenceLength = -1;

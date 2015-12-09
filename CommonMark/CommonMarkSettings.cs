@@ -127,8 +127,9 @@ namespace CommonMark
 
         private void Reset()
         {
-            _inlineParsers = new Lazy<Func<Parser.Subject, Syntax.Inline>[]>(GetInlineParsers);
-            _inlineParserSpecialCharacters = new Lazy<char[]>(GetInlineParserSpecialCharacters);
+            this._inlineParsers = new Lazy<Func<Parser.Subject, Syntax.Inline>[]>(GetInlineParsers);
+            this._inlineParserSpecialCharacters = new Lazy<char[]>(GetInlineParserSpecialCharacters);
+            this._blockParserParameters = new Lazy<Parser.BlockParserParameters>(GetBlockParserParameters);
         }
 
         #region [ Properties that cache structures used in the parsers ]
@@ -167,6 +168,21 @@ namespace CommonMark
                     vs.Add((char)i);
 
             return vs.ToArray();
+        }
+
+        private Lazy<Parser.BlockParserParameters> _blockParserParameters;
+
+        /// <summary>
+        /// Gets the block element parser parameters.
+        /// </summary>
+        internal Parser.BlockParserParameters BlockParserParameters
+        {
+            get { return _blockParserParameters.Value; }
+        }
+
+        private Parser.BlockParserParameters GetBlockParserParameters()
+        {
+            return new Parser.BlockParserParameters(this);
         }
 
         #endregion
