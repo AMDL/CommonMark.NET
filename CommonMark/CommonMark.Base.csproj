@@ -54,6 +54,7 @@
     <Compile Include="Func.cs" />
     <Compile Include="Lazy.cs" />
     <Compile Include="OutputFormat.cs" />
+    <Compile Include="Parser\BlockParserParameters.cs" />
     <Compile Include="Parser\EntityDecoder.cs" />
     <Compile Include="Parser\InlineStack.cs" />
     <Compile Include="Parser\LineInfo.cs" />

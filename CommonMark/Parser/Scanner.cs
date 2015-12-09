@@ -494,7 +494,7 @@ namespace CommonMark.Parser
         /// <summary>
         /// Scan an opening code fence. Returns the number of characters forming the fence.
         /// </summary>
-        public static int scan_open_code_fence(string s, int pos, int sourceLength)
+        public static int scan_open_code_fence(string s, int pos, int sourceLength, BlockParserParameters parameters)
         {
             /*!re2c
               [`]{3,} / [^`\n\x00]*[\n] { return (p - start); }
@@ -506,7 +506,7 @@ namespace CommonMark.Parser
                 return 0;
 
             var fchar = s[pos];
-            if (fchar != '`' && fchar != '~')
+            if (!parameters.IsFenceDelimiter(fchar))
                 return 0;
 
             var cnt = 1;
@@ -541,7 +541,7 @@ namespace CommonMark.Parser
         /// <summary>
         /// Scan a closing code fence with length at least len.
         /// </summary>
-        public static int scan_close_code_fence(string s, int pos, int len, int sourceLength)
+        public static int scan_close_code_fence(string s, int pos, int len, int sourceLength, BlockParserParameters parameters)
         {
             /*!re2c
               ([`]{3,} | [~]{3,}) / spacechar* [\n]
@@ -556,7 +556,7 @@ namespace CommonMark.Parser
                 return 0;
 
             var c1 = s[pos];
-            if (c1 != '`' && c1 != '~')
+            if (!parameters.IsFenceDelimiter(c1))
                 return 0;
 
             var cnt = 1;
