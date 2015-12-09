@@ -39,22 +39,19 @@ namespace CommonMark.Parser
 #endif
         internal bool IsSETextHeaderDelimiter(char c)
         {
-            return GetSETextHeaderLevel(c, 0) > 0;
+            return GetSETextHeaderLevel(c) > 0;
         }
 
         /// <summary>
         /// Returns the level of a setext header.
         /// </summary>
         /// <param name="c">Header delimiter.</param>
-        /// <param name="length">Row length.</param>
         /// <returns>Header level or 0.</returns>
 #if OptimizeFor45
         [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
 #endif
-        internal int GetSETextHeaderLevel(char c, int length)
+        internal int GetSETextHeaderLevel(char c)
         {
-            if (c == '.' && length == 1)
-                return 0;
             var delims = SetextHeaderDelimiters;
             return Array.IndexOf(delims, c, 0, delims.Length) + 1;
         }

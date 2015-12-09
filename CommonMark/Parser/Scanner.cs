@@ -329,7 +329,10 @@ namespace CommonMark.Parser
                 return 0;
             }
 
-            return parameters.GetSETextHeaderLevel(c1, i - pos);
+            if (c1 == '.' && i - pos == 1)
+                return 0;
+
+            return parameters.GetSETextHeaderLevel(c1);
         }
 
         /// <summary>
