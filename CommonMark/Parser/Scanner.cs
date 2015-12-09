@@ -295,7 +295,7 @@ namespace CommonMark.Parser
         /// Match sexext header line.  Return 1 for level-1 header,
         /// 2 for level-2, 0 for no match.
         /// </summary>
-        public static int scan_setext_header_line(string s, int pos, int sourceLength)
+        public static int scan_setext_header_line(string s, int pos, int sourceLength, BlockParserParameters parameters)
         {
             /*!re2c
               [=]+ [ ]* [\n] { return 1; }
@@ -308,11 +308,12 @@ namespace CommonMark.Parser
 
             var c1 = s[pos];
 
-            if (c1 != '=' && c1 != '-')
+            if (!parameters.IsSETextHeaderDelimiter(c1))
                 return 0;
 
             var fin = false;
-            for (var i = pos + 1; i < sourceLength; i++)
+            var i = pos + 1;
+            for (; i < sourceLength; i++)
             {
                 var c = s[i];
                 if (c == c1 && !fin)
@@ -328,7 +329,7 @@ namespace CommonMark.Parser
                 return 0;
             }
 
-            return c1 == '=' ? 1 : 2;
+            return parameters.GetSETextHeaderLevel(c1, i - pos);
         }
 
         /// <summary>

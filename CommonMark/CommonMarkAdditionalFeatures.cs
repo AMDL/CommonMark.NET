@@ -51,6 +51,11 @@ namespace CommonMark
         RespectReferenceCase = 0x100,
 
         /// <summary>
+        /// The parser will recognize a row of two or more dots (<c>..</c>) as following a level 3 setext header line.
+        /// </summary>
+        HeaderDots = 512,
+
+        /// <summary>
         /// All additional features are enabled.
         /// </summary>
         All = 0x7FFFFFFF

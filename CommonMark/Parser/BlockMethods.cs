@@ -670,8 +670,8 @@ namespace CommonMark.Parser
                     // note, we don't adjust offset because the tag is part of the text
 
                 }
-                else if (!indented && container.Tag == BlockTag.Paragraph && (curChar == '=' || curChar == '-')
-                        && 0 != (matched = Scanner.scan_setext_header_line(ln, first_nonspace, ln.Length))
+                else if (!indented && container.Tag == BlockTag.Paragraph && parameters.IsSETextHeaderDelimiter(curChar)
+                        && 0 != (matched = Scanner.scan_setext_header_line(ln, first_nonspace, ln.Length, parameters))
                         && ContainsSingleLine(container.StringContent))
                 {
 
