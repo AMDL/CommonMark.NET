@@ -1,18 +1,16 @@
-﻿using System;
-
-namespace CommonMark.Parser
+﻿namespace CommonMark.Parser
 {
     /// <summary>
     /// Block element parser parameters.
     /// </summary>
     class BlockParserParameters
     {
+        private readonly CommonMarkSettings settings;
+
         public BlockParserParameters(CommonMarkSettings settings)
         {
-            this._fenceDelimiters = new Lazy<char[]>(() => GetFenceDelimiters(settings));
+            this.settings = settings;
         }
-
-        private readonly Lazy<char[]> _fenceDelimiters;
 
         /// <summary>
         /// Checks if the character is a fence delimiter.
@@ -24,16 +22,7 @@ namespace CommonMark.Parser
 #endif
         internal bool IsFenceDelimiter(char c)
         {
-            var fenceDelimeters = this._fenceDelimiters.Value;
-            return Array.IndexOf(fenceDelimeters, c, 0, fenceDelimeters.Length) >= 0;
-        }
-
-        private char[] GetFenceDelimiters(CommonMarkSettings settings)
-        {
-            var fenceDelimeters = new char[2];
-            fenceDelimeters[0] = '`';
-            fenceDelimeters[1] = '~';
-            return fenceDelimeters;
+            return c == '`' || c == '~';
         }
     }
 }
