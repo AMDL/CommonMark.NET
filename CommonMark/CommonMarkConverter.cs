@@ -121,7 +121,7 @@ namespace CommonMark
                 reader.ReadLine(line);
                 while (line.Line != null)
                 {
-                    BlockMethods.IncorporateLine(line, ref cur, settings.BlockParserParameters);
+                    BlockMethods.IncorporateLine(line, ref cur, settings);
                     reader.ReadLine(line);
                 }
             }

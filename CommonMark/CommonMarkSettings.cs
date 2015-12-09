@@ -80,10 +80,10 @@ namespace CommonMark
         /// Gets or sets the delegate that is used to resolve addresses during rendering process. Can be used to process application relative URLs (<c>~/foo/bar</c>).
         /// </summary>
         /// <example><code>CommonMarkSettings.Default.UriResolver = VirtualPathUtility.ToAbsolute;</code></example>
-        public Func<string, string> UriResolver 
+        public Func<string, string> UriResolver
         {
             get { return this._uriResolver; }
-            set 
+            set
             {
                 if (value != null)
                 {
@@ -173,10 +173,13 @@ namespace CommonMark
         private Lazy<Parser.BlockParserParameters> _blockParserParameters;
 
         /// <summary>
-        /// Gets the block element parser parameters.
+        /// Gets the parameters for parsing block elements according to these settings.
         /// </summary>
         internal Parser.BlockParserParameters BlockParserParameters
         {
+#if OptimizeFor45
+            [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+#endif
             get { return _blockParserParameters.Value; }
         }
 

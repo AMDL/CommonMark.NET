@@ -433,8 +433,10 @@ namespace CommonMark.Parser
         // Process one line at a time, modifying a block.
         // Returns 0 if successful.  curptr is changed to point to
         // the currently open block.
-        public static void IncorporateLine(LineInfo line, ref Block curptr, BlockParserParameters parameters)
+        public static void IncorporateLine(LineInfo line, ref Block curptr, CommonMarkSettings settings)
         {
+            var parameters = settings.BlockParserParameters;
+
             var ln = line.Line;
 
             Block last_matched_container;
