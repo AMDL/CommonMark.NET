@@ -3,7 +3,7 @@
     /// <summary>
     /// Contains additional data for table cell element. Used in the <see cref="Block.TableCellData"/> property.
     /// </summary>
-    public class TableCellData
+    public sealed class TableCellData
     {
         /// <summary>
         /// Gets or sets the cell type.
