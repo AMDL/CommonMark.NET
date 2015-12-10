@@ -22,7 +22,12 @@ namespace CommonMark.Parser
             if (pos >= sourceLength || !IsPipeTableOpener(s[pos]))
                 return 0;
 
-            var columnList = new System.Collections.Generic.List<TableColumnData>();
+            data = new TableData
+            {
+                TableType = TableType.Pipe,
+                ColumnDelimiter = TableColumnDelimiter.Pipe,
+            };
+
             var charCount = 0;
             char columnDelimiter = (char)0;
             TableColumnData columnData = null;
@@ -74,7 +79,7 @@ namespace CommonMark.Parser
 
                     if (charCount == 0)
                     {
-                        if (columnList.Count > 0 || !IsPipeTableColumnDelimiter(c))
+                        if (data.FirstColumn != null || !IsPipeTableColumnDelimiter(c))
                             return 0;
                         columnData = new TableColumnData();
                         continue;
@@ -83,7 +88,12 @@ namespace CommonMark.Parser
                     if (columnData == null || charCount < 3)
                         return 0;
 
-                    columnList.Add(columnData);
+                    if (data.FirstColumn == null)
+                        data.FirstColumn = columnData;
+                    else
+                        data.LastColumn.NextSibling = columnData;
+                    data.LastColumn = columnData;
+                    data.ColumnCount++;
                     columnData = null;
                     charCount = 0;
                     continue;
@@ -109,21 +119,20 @@ namespace CommonMark.Parser
             {
                 if (charCount > 0 && charCount < 3)
                     return 0;
-                columnList.Add(columnData);
+
+                if (data.FirstColumn == null)
+                    return 0;
+                data.LastColumn.NextSibling = columnData;
+                data.LastColumn = columnData;
+                data.ColumnCount++;
             }
 
-            if (columnList.Count <= 1)
+            if (data.FirstColumn == data.LastColumn)
                 return 0;
 
-            data = new TableData
-            {
-                TableType = TableType.Pipe,
-                ColumnData = columnList.ToArray(),
-                HeaderColumnDelimiter = columnDelimiter == '|' ? TableHeaderColumnDelimiter.Pipe : TableHeaderColumnDelimiter.Plus,
-                ColumnDelimiter = TableColumnDelimiter.Pipe,
-            };
+            data.HeaderColumnDelimiter = columnDelimiter == '|' ? TableHeaderColumnDelimiter.Pipe : TableHeaderColumnDelimiter.Plus;
 
-            return columnList.Count;
+            return data.ColumnCount;
         }
 
         internal static void IncorporateCells(Block block)
@@ -132,8 +141,7 @@ namespace CommonMark.Parser
                 return;
 
             var tableData = block.Parent.TableData;
-            var columnData = tableData.ColumnData;
-            var columnCount = columnData.Length;
+            var columnData = tableData.FirstColumn;
             var cellType = block.TableRowData.TableRowType == TableRowType.Header
                 ? TableCellType.Header
                 : TableCellType.Default;
@@ -150,7 +158,7 @@ namespace CommonMark.Parser
             Inline inline = block.InlineContent;
             Inline nextInline;
 
-            while (inline != null || cellCount < columnCount)
+            while (inline != null || columnData != null)
             {
                 if (inline != null)
                 {
@@ -167,9 +175,7 @@ namespace CommonMark.Parser
                     TableCellData = new TableCellData
                     {
                         CellType = cellType,
-                        ColumnData = cellCount < columnCount
-                            ? columnData[cellCount]
-                            : new TableColumnData()
+                        ColumnData = columnData ?? new TableColumnData()
                     },
                     InlineContent = inline,
                 };
@@ -189,6 +195,9 @@ namespace CommonMark.Parser
                     inline.NextSibling = null;
                     inline = nextInline;
                 }
+
+                if (columnData != null)
+                    columnData = columnData.NextSibling;
             }
 
             block.TableRowData.CellCount = cellCount;

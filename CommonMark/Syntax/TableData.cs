@@ -11,9 +11,19 @@
         public TableType TableType { get; internal set; }
 
         /// <summary>
-        /// Gets or sets the column data.
+        /// Gets or sets the first column.
         /// </summary>
-        public TableColumnData[] ColumnData { get; internal set; }
+        public TableColumnData FirstColumn { get; internal set; }
+
+        /// <summary>
+        /// Gets or sets the last column.
+        /// </summary>
+        public TableColumnData LastColumn { get; internal set; }
+
+        /// <summary>
+        /// Gets or sets the column count.
+        /// </summary>
+        public int ColumnCount { get; internal set; }
 
         /// <summary>
         /// Gets or sets the header column delimiter.
