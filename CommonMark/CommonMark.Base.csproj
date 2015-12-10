@@ -91,6 +91,8 @@
     <Compile Include="Syntax\TableColumnDelimiter.cs" />
     <Compile Include="Syntax\TableData.cs" />
     <Compile Include="Syntax\TableHeaderColumnDelimiter.cs" />
+    <Compile Include="Syntax\TableRowData.cs" />
+    <Compile Include="Syntax\TableRowType.cs" />
     <Compile Include="Syntax\TableType.cs" />
     <Compile Include="Utilities.cs" />
   </ItemGroup>

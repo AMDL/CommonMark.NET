@@ -186,6 +186,11 @@ namespace CommonMark.Syntax
         public TableData TableData { get; set; }
 
         /// <summary>
+        /// Gets or sets the additional properties that apply to table row elements.
+        /// </summary>
+        public TableRowData TableRowData { get; set; }
+
+        /// <summary>
         /// Gets or sets the dictionary containing resolved link references. Only set on the document node, <c>null</c>
         /// and not used for all other elements.
         /// </summary>
