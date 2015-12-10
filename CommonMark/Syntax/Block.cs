@@ -181,14 +181,20 @@ namespace CommonMark.Syntax
         public int HeaderLevel { get; set; }
 
         /// <summary>
+        /// Gets or sets the additional properties that apply to table cell elements.
+        /// Only set for <see cref="BlockTag.TableCell"/> elements if tables are enabled in <see cref="CommonMarkSettings.AdditionalFeatures"/>.
+        /// </summary>
+        public TableCellData TableCellData { get; set; }
+
+        /// <summary>
         /// Gets or sets the additional properties that apply to table row elements.
-        /// Only set for <see cref="BlockTag.TableRow"/> elements, and only if tables are enabled in <see cref="CommonMarkSettings.AdditionalFeatures"/>.
+        /// Only set for <see cref="BlockTag.TableRow"/> elements if tables are enabled in <see cref="CommonMarkSettings.AdditionalFeatures"/>.
         /// </summary>
         public TableRowData TableRowData { get; set; }
 
         /// <summary>
         /// Gets or sets the additional properties that apply to table elements.
-        /// Only set for <see cref="BlockTag.Table"/> elements, and only if tables are enabled in <see cref="CommonMarkSettings.AdditionalFeatures"/>.
+        /// Only set for <see cref="BlockTag.Table"/> elements if tables are enabled in <see cref="CommonMarkSettings.AdditionalFeatures"/>.
         /// </summary>
         public TableData TableData { get; set; }
 
