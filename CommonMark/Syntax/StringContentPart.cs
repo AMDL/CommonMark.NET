@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace CommonMark.Syntax
+﻿namespace CommonMark.Syntax
 {
     /// <summary>
     /// Represents a part of <see cref="StringContent"/>.
     /// </summary>
-    internal struct StringPart
+    public struct StringPart
     {
-        public StringPart(string source, int startIndex, int length)
+        internal StringPart(string source, int startIndex, int length)
         {
             this.Source = source;
             this.StartIndex = startIndex;
@@ -31,6 +27,10 @@ namespace CommonMark.Syntax
         /// </summary>
         public int Length;
 
+        /// <summary>
+        /// Returns the content.
+        /// </summary>
+        /// <returns>String content.</returns>
         public override string ToString()
         {
             if (this.Source == null)

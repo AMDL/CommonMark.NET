@@ -114,7 +114,28 @@ namespace CommonMark.Formatters
             ignoreChildNodes = false;
             int x;
 
-            switch (block.Tag)
+            var formatter = Settings.BlockFormatters[(int)block.Tag];
+            if (formatter != null)
+            {
+                var stackTight = formatter.IsStackTight(false);
+                if (isOpening)
+                {
+                    formatter.WriteOpening(_target, block);
+                    if (stackTight.HasValue)
+                        RenderTightParagraphs.Push(stackTight.Value);
+                }
+
+                if (isClosing)
+                {
+                    if (stackTight.HasValue)
+                        RenderTightParagraphs.Pop();
+                    bool visitChildren;
+                    var closing = formatter.GetClosing(block, out visitChildren);
+                    ignoreChildNodes = !visitChildren;
+                    WriteLine(closing);
+                }
+            }
+            else switch (block.Tag)
             {
                 case BlockTag.Document:
                     break;

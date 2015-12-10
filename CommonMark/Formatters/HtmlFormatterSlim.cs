@@ -223,11 +223,23 @@ namespace CommonMark.Formatters
             bool trackPositions = settings.TrackSourcePosition;
             int x;
 
+            BlockFormatter formatter;
+            bool? isStackTight;
+
             while (block != null)
             {
                 visitChildren = false;
 
-                switch (block.Tag)
+                formatter = settings.BlockFormatters[(int)block.Tag];
+                if (formatter != null)
+                {
+                    formatter.WriteOpening(writer, block);
+                    stackLiteral = formatter.GetClosing(block, out visitChildren);
+                    isStackTight = formatter.IsStackTight(tight);
+                    if (isStackTight.HasValue)
+                        stackTight = isStackTight.Value;
+                }
+                else switch (block.Tag)
                 {
                     case BlockTag.Document:
                         stackLiteral = null;

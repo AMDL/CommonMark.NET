@@ -6,7 +6,7 @@ namespace CommonMark.Formatters
     /// <summary>
     /// A wrapper for <see cref="HtmlFormatterSlim"/> that keeps track if the last symbol has been a newline.
     /// </summary>
-    internal sealed class HtmlTextWriter
+    internal sealed class HtmlTextWriter : IHtmlTextWriter
     {
         private readonly TextWriter _inner;
         private char _last = '\n';
@@ -176,6 +176,16 @@ namespace CommonMark.Formatters
         {
             if (this._last != '\n')
                 this.WriteLine();
+        }
+
+        void IHtmlTextWriter.WritePosition(Block block)
+        {
+            HtmlFormatterSlim.PrintPosition(this, block);
+        }
+
+        void IHtmlTextWriter.WritePosition(Inline inline)
+        {
+            HtmlFormatterSlim.PrintPosition(this, inline);
         }
     }
 }

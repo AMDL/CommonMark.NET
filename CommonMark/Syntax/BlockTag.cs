@@ -93,5 +93,10 @@ namespace CommonMark.Syntax
         /// Only present if tables are enabled.
         /// </summary>
         TableCell,
+
+        /// <summary>
+        /// Block tag count. There should be no elements with this tag.
+        /// </summary>
+        Count
     }
 }

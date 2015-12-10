@@ -148,6 +148,7 @@ namespace CommonMark
             this._inlineParserSpecialCharacters = new Lazy<char[]>(GetInlineParserSpecialCharacters);
             this._blockParserParameters = new Lazy<Parser.BlockParserParameters>(GetBlockParserParameters);
             this._tableParser = new Lazy<Parser.TableParser>(GetTableParser);
+            this._blockFormatters = new Lazy<Formatters.BlockFormatter[]>(GetBlockFormatters);
         }
 
         #region [ Properties that cache structures used in the parsers ]
@@ -219,5 +220,25 @@ namespace CommonMark
         }
 
         #endregion
+
+        #region [ Properties that cache structures used in the formatters ]
+
+        private Lazy<Formatters.BlockFormatter[]> _blockFormatters;
+
+        /// <summary>
+        /// Gets the block formatters.
+        /// </summary>
+        internal Formatters.BlockFormatter[] BlockFormatters
+        {
+            get { return _blockFormatters.Value; }
+        }
+
+        private Formatters.BlockFormatter[] GetBlockFormatters()
+        {
+            return Formatters.BlockFormatter.InitializeFormatters(this);
+        } 
+
+        #endregion
+
     }
 }
