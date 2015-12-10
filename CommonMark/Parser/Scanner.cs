@@ -334,12 +334,12 @@ namespace CommonMark.Parser
         /// <summary>
         /// Match table header line.
         /// </summary>
-        /// <returns>Table data or <c>null</c>.</returns>
-        public static int scan_table_header_line(string s, int pos, int sourceLength, out Syntax.TableData data)
+        /// <returns>Column count, or 0 for no match.</returns>
+        internal static int scan_table_header_line(string s, int pos, int sourceLength, BlockParserParameters parameters, out Syntax.TableData data)
         {
             data = null;
 
-            if (pos >= sourceLength)
+            if (pos >= sourceLength || !parameters.IsPipeTableOpener(s[pos]))
                 return 0;
 
             var columnList = new System.Collections.Generic.List<Syntax.TableColumnData>();
@@ -351,7 +351,7 @@ namespace CommonMark.Parser
             {
                 var c = s[i];
 
-                if (c == '-')
+                if (parameters.IsPipeTableHeaderDelimiter(c))
                 {
                     if (charCount == 0)
                     {
@@ -364,7 +364,7 @@ namespace CommonMark.Parser
                     continue;
                 }
 
-                if (c == ':')
+                if (parameters.IsPipeTableHeaderAlignmentMarker(c))
                 {
                     if (charCount == 0)
                     {
@@ -382,7 +382,7 @@ namespace CommonMark.Parser
                     continue;
                 }
 
-                if (c == '|' || c == '+')
+                if (parameters.IsPipeTableHeaderColumnDelimiter(c))
                 {
                     if (columnDelimiter != 0)
                     {
@@ -394,7 +394,7 @@ namespace CommonMark.Parser
 
                     if (charCount == 0)
                     {
-                        if (columnList.Count > 0 || c == '+')
+                        if (columnList.Count > 0 || !parameters.IsPipeTableColumnDelimiter(c))
                             return 0;
                         columnData = new Syntax.TableColumnData();
                         continue;
@@ -422,7 +422,7 @@ namespace CommonMark.Parser
 
             if (columnData == null)
             {
-                if (columnDelimiter == '+')
+                if (!parameters.IsPipeTableColumnDelimiter(columnDelimiter))
                     return 0;
             }
             else

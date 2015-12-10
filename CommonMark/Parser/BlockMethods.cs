@@ -726,8 +726,8 @@ namespace CommonMark.Parser
                     container = CreateChildBlock(container, line, BlockTag.ListItem, first_nonspace, settings);
                     container.ListData = data;
                 }
-                else if (!indented && container.Tag == BlockTag.Paragraph && parameters.IsTableOpener(curChar)
-                    && 0 != (matched = Scanner.scan_table_header_line(ln, first_nonspace, ln.Length, out tableData))
+                else if (!indented && container.Tag == BlockTag.Paragraph
+                    && 0 != (matched = Scanner.scan_table_header_line(ln, first_nonspace, ln.Length, parameters, out tableData))
                     && ContainsSingleLine(container.StringContent))
                 {
 

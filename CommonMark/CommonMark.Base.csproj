@@ -63,6 +63,7 @@
     <Compile Include="Parser\ScannerCharacterMatcher.cs" />
     <Compile Include="Parser\ScannerHtmlTag.cs" />
     <Compile Include="Parser\TabTextReader.cs" />
+    <Compile Include="PipeTableFeatures.cs" />
     <Compile Include="Syntax\Block.cs" />
     <Compile Include="Parser\BlockMethods.cs" />
     <Compile Include="Syntax\HtmlBlockType.cs" />
