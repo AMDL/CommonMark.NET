@@ -292,6 +292,81 @@ namespace CommonMark.Formatters
                         visitChildren = true;
                         break;
 
+                    case BlockTag.TableCell:
+                        var parentRowType = block.Parent.TableRowData.TableRowType;
+                        if (0 != (parentRowType & TableRowType.Header))
+                        {
+                            writer.WriteConstant("<th");
+                            stackLiteral = "</th>";
+                        }
+                        else
+                        {
+                            writer.WriteConstant("<td");
+                            stackLiteral = "</td>";
+                        }
+
+                        var cellData = block.TableCellData;
+                        var tableData = block.Parent.Parent.TableData;
+                        var columnData = tableData.ColumnData[cellData.ColumnIndex];
+                        var alignment = columnData.Alignment;
+                        switch (alignment)
+                        {
+                            case TableColumnAlignment.Left:
+                                writer.WriteConstant(" style=\"text-align: left\"");
+                                break;
+                            case TableColumnAlignment.Right:
+                                writer.WriteConstant(" style=\"text-align: right\"");
+                                break;
+                            case TableColumnAlignment.Center:
+                                writer.WriteConstant(" style=\"text-align: center\"");
+                                break;
+                        }
+
+                        if (trackPositions) PrintPosition(writer, block);
+                        writer.WriteLine('>');
+                        visitChildren = true;
+                        break;
+
+                    case BlockTag.TableRow:
+                        writer.EnsureLine();
+                        var rowType = block.TableRowData.TableRowType;
+                        stackLiteral = "</tr>";
+
+                        if (0 != (rowType & TableRowType.Header))
+                        {
+                            writer.WriteConstant("<thead>");
+                            stackLiteral += "</thead>";
+                        }
+                        else if (0 != (rowType & TableRowType.Footer))
+                        {
+                            writer.WriteConstant("<tfoot>");
+                            stackLiteral += "</tfoot>";
+                        }
+                        else
+                        {
+                            if (0 != (rowType & TableRowType.First))
+                                writer.WriteConstant("<tbody>");
+                            if (0 != (rowType & TableRowType.Last))
+                                stackLiteral += "</tbody>";
+                        }
+
+                        writer.WriteConstant("<tr");
+                        if (trackPositions) PrintPosition(writer, block);
+                        writer.WriteLine('>');
+
+                        visitChildren = true;
+                        break;
+
+                    case BlockTag.Table:
+                        writer.EnsureLine();
+                        writer.WriteConstant("<table");
+                        if (trackPositions) PrintPosition(writer, block);
+                        writer.WriteLine('>');
+
+                        stackLiteral = "</table>";
+                        visitChildren = true;
+                        break;
+
                     case BlockTag.AtxHeader:
                     case BlockTag.SETextHeader:
                         writer.EnsureLine();

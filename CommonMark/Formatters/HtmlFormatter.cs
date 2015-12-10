@@ -196,6 +196,92 @@ namespace CommonMark.Formatters
 
                     break;
 
+                case BlockTag.TableCell:
+
+                    if (isOpening)
+                    {
+                        var rowType = block.Parent.TableRowData.TableRowType;
+                        Write(0 != (rowType & TableRowType.Header) ? "<th" : "<td");
+
+                        var cellData = block.TableCellData;
+                        var tableData = block.Parent.Parent.TableData;
+                        var columnData = tableData.ColumnData[cellData.ColumnIndex];
+                        var alignment = columnData.Alignment;
+                        switch (alignment)
+                        {
+                            case TableColumnAlignment.Left:
+                                Write(" style=\"text-align: left\"");
+                                break;
+                            case TableColumnAlignment.Right:
+                                Write(" style=\"text-align: right\"");
+                                break;
+                            case TableColumnAlignment.Center:
+                                Write(" style=\"text-align: center\"");
+                                break;
+                        }
+
+                        if (Settings.TrackSourcePosition) WritePositionAttribute(block);
+                        WriteLine(">");
+                    }
+
+                    if (isClosing)
+                    {
+                        var rowType = block.Parent.TableRowData.TableRowType;
+                        Write(0 != (rowType & TableRowType.Header) ? "</th>" : "</td>");
+                    }
+
+                    break;
+
+                case BlockTag.TableRow:
+
+                    if (isOpening)
+                    {
+                        var rowType = block.TableRowData.TableRowType;
+                        if (0 != (rowType & TableRowType.Header))
+                            WriteLine("<thead>");
+                        else if (0 != (rowType & TableRowType.Footer))
+                            WriteLine("<tfoot>");
+                        else if (0 != (rowType & TableRowType.First))
+                            WriteLine("<tbody>");
+
+                        EnsureNewLine();
+                        Write("<tr");
+                        if (Settings.TrackSourcePosition) WritePositionAttribute(block);
+                        WriteLine(">");
+                    }
+
+                    if (isClosing)
+                    {
+                        WriteLine("</tr>");
+
+                        var rowType = block.TableRowData.TableRowType;
+                        if (0 != (rowType & TableRowType.Header))
+                            WriteLine("</thead>");
+                        else if (0 != (rowType & TableRowType.Footer))
+                            WriteLine("</tfoot>");
+                        else if (0 != (rowType & TableRowType.Last))
+                            WriteLine("</tbody>");
+                    }
+
+                    break;
+
+                case BlockTag.Table:
+
+                    if (isOpening)
+                    {
+                        EnsureNewLine();
+                        Write("<table");
+                        if (Settings.TrackSourcePosition) WritePositionAttribute(block);
+                        WriteLine(">");
+                    }
+
+                    if (isClosing)
+                    {
+                        WriteLine("</table>");
+                    }
+
+                    break;
+
                 case BlockTag.AtxHeader:
                 case BlockTag.SETextHeader:
 

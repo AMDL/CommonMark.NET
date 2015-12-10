@@ -532,7 +532,6 @@ namespace CommonMark.Parser
 
                     case BlockTag.AtxHeader:
                     case BlockTag.SETextHeader:
-                    case BlockTag.Table:
                         {
                             // a header can never contain more than one line
                             all_matched = false;
