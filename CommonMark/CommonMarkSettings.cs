@@ -16,6 +16,7 @@ namespace CommonMark
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         public CommonMarkSettings()
         {
+            this._tables = new Lazy<TableSettings>(GetTables);
             Reset();
         }
 
@@ -75,20 +76,19 @@ namespace CommonMark
             }
         }
 
-        private PipeTableFeatures _pipeTables;
+        private Lazy<TableSettings> _tables;
 
         /// <summary>
-        /// Gets or sets any pipe tables features that the parser and/or formatter will recognize.
-        /// These are only applicable if <see cref="CommonMarkAdditionalFeatures.PipeTables"/> is enabled.
+        /// Gets the table settings. These are only applicable if tables are enabled.
         /// </summary>
-        public PipeTableFeatures PipeTables
+        public TableSettings Tables
         {
-            get { return this._pipeTables; }
-            set
-            {
-                this._pipeTables = value;
-                this.Reset();
-            }
+            get { return this._tables.Value; }
+        }
+
+        private TableSettings GetTables()
+        {
+            return new TableSettings(this);
         }
 
         private Func<string, string> _uriResolver;
@@ -137,11 +137,12 @@ namespace CommonMark
         public CommonMarkSettings Clone()
         {
             var clone = (CommonMarkSettings)this.MemberwiseClone();
+            clone._tables = new Lazy<TableSettings>(clone.GetTables);
             clone.Reset();
             return clone;
         }
 
-        private void Reset()
+        internal void Reset()
         {
             this._inlineParsers = new Lazy<Func<Syntax.Block, Parser.Subject, Syntax.Inline>[]>(GetInlineParsers);
             this._inlineParserSpecialCharacters = new Lazy<char[]>(GetInlineParserSpecialCharacters);

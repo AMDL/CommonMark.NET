@@ -236,7 +236,7 @@ namespace CommonMark.Parser
         /// </returns>
         private bool IsPipeTableHeaderColumnDelimiter(char c)
         {
-            return IsPipeTableColumnDelimiter(c) || (c == '+' && 0 != (settings.PipeTables & PipeTableFeatures.HeaderPlus));
+            return IsPipeTableColumnDelimiter(c) || (c == '+' && 0 != (settings.Tables.PipeTables & PipeTableFeatures.HeaderPlus));
         }
 
         /// <summary>
@@ -260,7 +260,7 @@ namespace CommonMark.Parser
         /// </returns>
         private bool IsPipeTableHeaderAlignmentMarker(char c)
         {
-            return (c == ':' && 0 != (settings.PipeTables & PipeTableFeatures.HeaderColon));
+            return (c == ':' && 0 != (settings.Tables.PipeTables & PipeTableFeatures.HeaderColon));
         }
     }
 }
