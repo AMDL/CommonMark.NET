@@ -202,20 +202,6 @@ namespace CommonMark.Formatters
                     if (isOpening)
                     {
                         Write(cellData.CellType == TableCellType.Header ? "<th" : "<td");
-
-                        switch (cellData.ColumnData.Alignment)
-                        {
-                            case TableColumnAlignment.Left:
-                                Write(" style=\"text-align: left\"");
-                                break;
-                            case TableColumnAlignment.Right:
-                                Write(" style=\"text-align: right\"");
-                                break;
-                            case TableColumnAlignment.Center:
-                                Write(" style=\"text-align: center\"");
-                                break;
-                        }
-
                         if (Settings.TrackSourcePosition) WritePositionAttribute(block);
                         WriteLine(">");
                         RenderTightParagraphs.Push(false);
@@ -289,6 +275,26 @@ namespace CommonMark.Formatters
                         Write("<table");
                         if (Settings.TrackSourcePosition) WritePositionAttribute(block);
                         WriteLine(">");
+
+                        WriteLine("<colgroup>");
+                        for (var column = block.TableData.FirstColumn; column != null; column = column.NextSibling)
+                        {
+                            Write("<col");
+                            switch (column.Alignment)
+                            {
+                                case TableColumnAlignment.Left:
+                                    Write(" style=\"text-align: left\"");
+                                    break;
+                                case TableColumnAlignment.Right:
+                                    Write(" style=\"text-align: right\"");
+                                    break;
+                                case TableColumnAlignment.Center:
+                                    Write(" style=\"text-align: center\"");
+                                    break;
+                            }
+                            WriteLine(" />");
+                        }
+                        WriteLine("</colgroup>");
                     }
 
                     if (isClosing)

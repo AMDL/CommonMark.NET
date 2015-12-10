@@ -305,19 +305,6 @@ namespace CommonMark.Formatters
                             stackLiteral = "</td>";
                         }
 
-                        switch (cellData.ColumnData.Alignment)
-                        {
-                            case TableColumnAlignment.Left:
-                                writer.WriteConstant(" style=\"text-align: left\"");
-                                break;
-                            case TableColumnAlignment.Right:
-                                writer.WriteConstant(" style=\"text-align: right\"");
-                                break;
-                            case TableColumnAlignment.Center:
-                                writer.WriteConstant(" style=\"text-align: center\"");
-                                break;
-                        }
-
                         if (trackPositions) PrintPosition(writer, block);
                         writer.WriteLine('>');
                         stackTight = false;
@@ -370,6 +357,25 @@ namespace CommonMark.Formatters
                         writer.WriteConstant("<table");
                         if (trackPositions) PrintPosition(writer, block);
                         writer.WriteLine('>');
+                        writer.WriteLineConstant("<colgroup>");
+                        for (var column = block.TableData.FirstColumn; column != null; column = column.NextSibling)
+                        {
+                            writer.WriteConstant("<col");
+                            switch (column.Alignment)
+                            {
+                                case TableColumnAlignment.Left:
+                                    writer.WriteConstant(" style=\"text-align: left\"");
+                                    break;
+                                case TableColumnAlignment.Right:
+                                    writer.WriteConstant(" style=\"text-align: right\"");
+                                    break;
+                                case TableColumnAlignment.Center:
+                                    writer.WriteConstant(" style=\"text-align: center\"");
+                                    break;
+                            }
+                            writer.WriteLineConstant(" />");
+                        }
+                        writer.WriteLineConstant("</colgroup>");
 
                         stackLiteral = "</table>";
                         visitChildren = true;
