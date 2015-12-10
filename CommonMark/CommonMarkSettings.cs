@@ -177,6 +177,9 @@ namespace CommonMark
         /// </summary>
         internal Parser.BlockParserParameters BlockParserParameters
         {
+#if OptimizeFor45
+            [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+#endif
             get { return _blockParserParameters.Value; }
         }
 
