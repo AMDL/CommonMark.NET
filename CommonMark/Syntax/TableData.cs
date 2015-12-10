@@ -5,6 +5,9 @@
     /// </summary>
     public sealed class TableData
     {
+        /// <summary>
+        /// Gets or sets the column data.
+        /// </summary>
         public TableColumnData[] ColumnData { get; internal set; }
 
         /// <summary>
