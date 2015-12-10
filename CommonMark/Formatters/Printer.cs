@@ -139,6 +139,11 @@ namespace CommonMark.Formatters
                         writer.Write(" (type={0})", block.TableRowData.TableRowType);
                         break;
 
+                    case BlockTag.TableCaption:
+                        writer.Write("table_caption");
+                        PrintPosition(trackPositions, writer, block);
+                        break;
+
                     case BlockTag.Table:
                         writer.Write("table");
                         PrintPosition(trackPositions, writer, block);

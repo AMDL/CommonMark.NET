@@ -218,10 +218,12 @@ namespace CommonMark.Formatters
 
                         if (Settings.TrackSourcePosition) WritePositionAttribute(block);
                         WriteLine(">");
+                        RenderTightParagraphs.Push(false);
                     }
 
                     if (isClosing)
                     {
+                        RenderTightParagraphs.Pop();
                         Write(cellData.CellType == TableCellType.Header ? "</th>" : "</td>");
                     }
 
@@ -256,6 +258,25 @@ namespace CommonMark.Formatters
                             WriteLine("</tfoot>");
                         else if (0 != (rowType & TableRowType.Last))
                             WriteLine("</tbody>");
+                    }
+
+                    break;
+
+                case BlockTag.TableCaption:
+
+                    if (isOpening)
+                    {
+                        EnsureNewLine();
+                        Write("<caption");
+                        if (Settings.TrackSourcePosition) WritePositionAttribute(block);
+                        WriteLine(">");
+                        RenderTightParagraphs.Push(false);
+                    }
+
+                    if (isClosing)
+                    {
+                        RenderTightParagraphs.Pop();
+                        WriteLine("</caption>");
                     }
 
                     break;

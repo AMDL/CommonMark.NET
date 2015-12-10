@@ -70,20 +70,27 @@ namespace CommonMark.Syntax
         ReferenceDefinition,
 
         /// <summary>
-        /// A table element. Will contain nested blocks with type of <see cref="BlockTag.TableRow"/>.
-        /// Only present if tables are enabled in <see cref="CommonMarkSettings.AdditionalFeatures"/>.
+        /// A table element. Will contain zero or one <see cref="TableCaption"/> block
+        /// and two or more <see cref="TableRow"/> blocks.
+        /// Only present if tables are enabled.
         /// </summary>
         Table,
 
         /// <summary>
-        /// A table row element. Will contain nested blocks with type of <see cref="BlockTag.TableCell"/>.
-        /// Only present if tables are enabled in <see cref="CommonMarkSettings.AdditionalFeatures"/>.
+        /// A table caption element.
+        /// Only present if both tables and table captions are enabled.
+        /// </summary>
+        TableCaption,
+
+        /// <summary>
+        /// A table row element. Will contain <see cref="TableCell"/> blocks.
+        /// Only present if tables are enabled.
         /// </summary>
         TableRow,
 
         /// <summary>
         /// A table cell element.
-        /// Only present if tables are enabled in <see cref="CommonMarkSettings.AdditionalFeatures"/>.
+        /// Only present if tables are enabled.
         /// </summary>
         TableCell,
     }

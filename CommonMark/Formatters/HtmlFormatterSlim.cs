@@ -320,6 +320,7 @@ namespace CommonMark.Formatters
 
                         if (trackPositions) PrintPosition(writer, block);
                         writer.WriteLine('>');
+                        stackTight = false;
                         visitChildren = true;
                         break;
 
@@ -350,6 +351,17 @@ namespace CommonMark.Formatters
                         if (trackPositions) PrintPosition(writer, block);
                         writer.WriteLine('>');
 
+                        visitChildren = true;
+                        break;
+
+                    case BlockTag.TableCaption:
+                        writer.EnsureLine();
+                        writer.WriteConstant("<caption");
+                        if (trackPositions) PrintPosition(writer, block);
+                        writer.WriteLine('>');
+
+                        stackLiteral = "</caption>";
+                        stackTight = false;
                         visitChildren = true;
                         break;
 
