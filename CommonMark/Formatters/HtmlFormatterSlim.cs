@@ -293,8 +293,8 @@ namespace CommonMark.Formatters
                         break;
 
                     case BlockTag.TableCell:
-                        var parentRowType = block.Parent.TableRowData.TableRowType;
-                        if (0 != (parentRowType & TableRowType.Header))
+                        var cellData = block.TableCellData;
+                        if (cellData.CellType == TableCellType.Header)
                         {
                             writer.WriteConstant("<th");
                             stackLiteral = "</th>";
@@ -305,8 +305,7 @@ namespace CommonMark.Formatters
                             stackLiteral = "</td>";
                         }
 
-                        var alignment = block.TableCellData.ColumnData.Alignment;
-                        switch (alignment)
+                        switch (cellData.ColumnData.Alignment)
                         {
                             case TableColumnAlignment.Left:
                                 writer.WriteConstant(" style=\"text-align: left\"");

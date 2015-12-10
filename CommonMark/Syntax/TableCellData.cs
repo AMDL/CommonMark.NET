@@ -6,6 +6,11 @@
     public class TableCellData
     {
         /// <summary>
+        /// Gets or sets the cell type.
+        /// </summary>
+        public TableCellType CellType { get; internal set; }
+
+        /// <summary>
         /// Gets or sets the column data.
         /// </summary>
         public TableColumnData ColumnData { get; internal set; }

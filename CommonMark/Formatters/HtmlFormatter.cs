@@ -197,14 +197,13 @@ namespace CommonMark.Formatters
                     break;
 
                 case BlockTag.TableCell:
+                    var cellData = block.TableCellData;
 
                     if (isOpening)
                     {
-                        var rowType = block.Parent.TableRowData.TableRowType;
-                        Write(0 != (rowType & TableRowType.Header) ? "<th" : "<td");
+                        Write(cellData.CellType == TableCellType.Header ? "<th" : "<td");
 
-                        var alignment = block.TableCellData.ColumnData.Alignment;
-                        switch (alignment)
+                        switch (cellData.ColumnData.Alignment)
                         {
                             case TableColumnAlignment.Left:
                                 Write(" style=\"text-align: left\"");
@@ -223,8 +222,7 @@ namespace CommonMark.Formatters
 
                     if (isClosing)
                     {
-                        var rowType = block.Parent.TableRowData.TableRowType;
-                        Write(0 != (rowType & TableRowType.Header) ? "</th>" : "</td>");
+                        Write(cellData.CellType == TableCellType.Header ? "</th>" : "</td>");
                     }
 
                     break;
