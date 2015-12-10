@@ -6,8 +6,8 @@
     public class TableCellData
     {
         /// <summary>
-        /// Gets or sets the column index.
+        /// Gets or sets the column data.
         /// </summary>
-        public int ColumnIndex { get; internal set; }
+        public TableColumnData ColumnData { get; internal set; }
     }
 }

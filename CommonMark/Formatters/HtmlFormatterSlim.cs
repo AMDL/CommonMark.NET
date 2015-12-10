@@ -305,10 +305,7 @@ namespace CommonMark.Formatters
                             stackLiteral = "</td>";
                         }
 
-                        var cellData = block.TableCellData;
-                        var tableData = block.Parent.Parent.TableData;
-                        var columnData = tableData.ColumnData[cellData.ColumnIndex];
-                        var alignment = columnData.Alignment;
+                        var alignment = block.TableCellData.ColumnData.Alignment;
                         switch (alignment)
                         {
                             case TableColumnAlignment.Left:

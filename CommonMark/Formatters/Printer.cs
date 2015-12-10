@@ -126,14 +126,11 @@ namespace CommonMark.Formatters
 
                     case BlockTag.TableCell:
                         writer.Write("table_cell");
-                        var cellData = block.TableCellData;
                         var rowData = block.Parent.TableRowData;
                         var rowType = rowData.TableRowType;
-                        var tableData = block.Parent.Parent.TableData;
-                        var columnData = tableData.ColumnData[cellData.ColumnIndex];
                         writer.Write(" (type={0} align={1})",
                             (0 != (rowType & TableRowType.Header)) ? "th" : "td",
-                            columnData.Alignment);
+                            block.TableCellData.ColumnData.Alignment);
                         PrintPosition(trackPositions, writer, block);
                         break;
 
