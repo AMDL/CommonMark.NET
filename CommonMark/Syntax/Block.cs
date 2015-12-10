@@ -181,14 +181,16 @@ namespace CommonMark.Syntax
         public int HeaderLevel { get; set; }
 
         /// <summary>
-        /// Gets or sets the additional properties that apply to table elements.
-        /// </summary>
-        public TableData TableData { get; set; }
-
-        /// <summary>
         /// Gets or sets the additional properties that apply to table row elements.
+        /// Only set for <see cref="BlockTag.TableRow"/> elements, and only if tables are enabled in <see cref="CommonMarkSettings.AdditionalFeatures"/>.
         /// </summary>
         public TableRowData TableRowData { get; set; }
+
+        /// <summary>
+        /// Gets or sets the additional properties that apply to table elements.
+        /// Only set for <see cref="BlockTag.Table"/> elements, and only if tables are enabled in <see cref="CommonMarkSettings.AdditionalFeatures"/>.
+        /// </summary>
+        public TableData TableData { get; set; }
 
         /// <summary>
         /// Gets or sets the dictionary containing resolved link references. Only set on the document node, <c>null</c>

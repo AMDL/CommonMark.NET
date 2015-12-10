@@ -71,16 +71,19 @@ namespace CommonMark.Syntax
 
         /// <summary>
         /// A table element. Will contain nested blocks with type of <see cref="BlockTag.TableRow"/>.
+        /// Only present if tables are enabled in <see cref="CommonMarkSettings.AdditionalFeatures"/>.
         /// </summary>
         Table,
 
         /// <summary>
         /// A table row element. Will contain nested blocks with type of <see cref="BlockTag.TableCell"/>.
+        /// Only present if tables are enabled in <see cref="CommonMarkSettings.AdditionalFeatures"/>.
         /// </summary>
         TableRow,
 
         /// <summary>
         /// A table cell element.
+        /// Only present if tables are enabled in <see cref="CommonMarkSettings.AdditionalFeatures"/>.
         /// </summary>
         TableCell,
     }
