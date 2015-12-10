@@ -54,10 +54,14 @@ namespace CommonMark.Formatters
                 writer.WritePosition(block);
         }
 
-        internal static BlockFormatter[] InitializeFormatters(CommonMarkSettings commonMarkSettings)
+        internal static BlockFormatter[] InitializeFormatters(CommonMarkSettings settings)
         {
-            var formatters = new BlockFormatter[(int)BlockTag.Count];
-            return formatters;
+            var f = new BlockFormatter[(int)BlockTag.Count];
+            f[(int)BlockTag.TableCell] = new TableCellFormatter(settings);
+            f[(int)BlockTag.TableRow] = new TableRowFormatter(settings);
+            f[(int)BlockTag.TableCaption] = new TableCaptionFormatter(settings);
+            f[(int)BlockTag.Table] = new TableFormatter(settings);
+            return f;
         }
     }
 }

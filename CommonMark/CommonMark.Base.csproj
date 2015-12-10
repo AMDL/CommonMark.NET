@@ -53,6 +53,10 @@
     <Compile Include="Formatters\BlockFormatter.cs" />
     <Compile Include="Formatters\HtmlFormatter.cs" />
     <Compile Include="Formatters\IHtmlTextWriter.cs" />
+    <Compile Include="Formatters\TableCaptionFormatter.cs" />
+    <Compile Include="Formatters\TableCellFormatter.cs" />
+    <Compile Include="Formatters\TableFormatter.cs" />
+    <Compile Include="Formatters\TableRowFormatter.cs" />
     <Compile Include="Func.cs" />
     <Compile Include="Lazy.cs" />
     <Compile Include="OutputFormat.cs" />
