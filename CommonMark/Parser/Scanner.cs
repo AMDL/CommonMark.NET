@@ -332,6 +332,125 @@ namespace CommonMark.Parser
         }
 
         /// <summary>
+        /// Match table header line.
+        /// </summary>
+        /// <returns>Table data or <c>null</c>.</returns>
+        public static int scan_table_header_line(string s, int pos, int sourceLength, out Syntax.TableData data)
+        {
+            data = null;
+
+            if (pos >= sourceLength)
+                return 0;
+
+            var c1 = s[pos];
+
+            if (c1 != '-' && c1 != ':')
+                return 0;
+
+            var columnList = new System.Collections.Generic.List<Syntax.TableColumnData>();
+            var charCount = 0;
+            char columnDelimiter = (char)0;
+            Syntax.TableColumnData columnData = null;
+
+            for (var i = pos + 1; i < sourceLength; i++)
+            {
+                var c = s[i];
+
+                if (c == '-')
+                {
+                    if (charCount == 0)
+                    {
+                        if (columnData != null)
+                            return 0;
+                        columnData = new Syntax.TableColumnData();
+                    }
+
+                    charCount++;
+                    continue;
+                }
+
+                if (c == ':')
+                {
+                    if (charCount == 0)
+                    {
+                        columnData = new Syntax.TableColumnData();
+                        columnData.Alignment = Syntax.TableColumnAlignment.Left;
+                    }
+                    else
+                    {
+                        if (charCount < 2 || (columnData.Alignment & Syntax.TableColumnAlignment.Right) != 0)
+                            return 0;
+                        columnData.Alignment |= Syntax.TableColumnAlignment.Right;
+                    }
+
+                    charCount++;
+                    continue;
+                }
+
+                if (c == '|' || c == '+')
+                {
+                    if (columnDelimiter != 0)
+                    {
+                        if (c != columnDelimiter)
+                            return 0;
+                    }
+                    else
+                        columnDelimiter = c;
+
+                    if (charCount == 0)
+                    {
+                        if (columnList.Count > 0 || c == '+')
+                            return 0;
+                        columnData = new Syntax.TableColumnData();
+                        continue;
+                    }
+
+                    if (columnData == null || charCount < 3)
+                        return 0;
+
+                    columnList.Add(columnData);
+                    columnData = null;
+                    charCount = 0;
+                    continue;
+                }
+
+                charCount = 0;
+
+                if (c == ' ')
+                    continue;
+
+                if (c == '\n')
+                    break;
+
+                return 0;
+            }
+
+            if (charCount == 0)
+            {
+                if (columnDelimiter == '+')
+                    return 0;
+            }
+            else
+            {
+                if (columnData == null || charCount < 3)
+                    return 0;
+                columnList.Add(columnData);
+            }
+
+            if (columnList.Count <= 1)
+                return 0;
+
+            data = new Syntax.TableData
+            {
+                ColumnData = columnList.ToArray(),
+                HeaderColumnDelimiter = columnDelimiter == '|' ? Syntax.TableHeaderColumnDelimiter.Pipe : Syntax.TableHeaderColumnDelimiter.Plus,
+                ColumnDelimiter = Syntax.TableColumnDelimiter.Pipe,
+            };
+
+            return columnList.Count;
+        }
+
+        /// <summary>
         /// Scan a horizontal rule line: "...three or more hyphens, asterisks,
         /// or underscores on a line by themselves. If you wish, you may use
         /// spaces between the hyphens or asterisks."

@@ -17,7 +17,9 @@ namespace CommonMark.Parser
             return (parent_type == BlockTag.Document ||
                      parent_type == BlockTag.BlockQuote ||
                      parent_type == BlockTag.ListItem ||
-                     (parent_type == BlockTag.List && child_type == BlockTag.ListItem));
+                     (parent_type == BlockTag.List && child_type == BlockTag.ListItem) ||
+                     (parent_type == BlockTag.Table && child_type == BlockTag.TableRow) ||
+                     (parent_type == BlockTag.TableRow && child_type == BlockTag.TableCell));
         }
 
 #if OptimizeFor45
@@ -64,7 +66,8 @@ namespace CommonMark.Parser
                 if (block.IsLastLineBlank)
                     return true;
 
-                if (block.Tag != BlockTag.List && block.Tag != BlockTag.ListItem)
+                if (block.Tag != BlockTag.List && block.Tag != BlockTag.ListItem
+                    && block.Tag != BlockTag.Table && block.Tag != BlockTag.TableRow)
                     return false;
 
                 block = block.LastChild;
@@ -287,7 +290,7 @@ namespace CommonMark.Parser
             while (block != null)
             {
                 var tag = block.Tag;
-                if (tag == BlockTag.Paragraph || tag == BlockTag.AtxHeader || tag == BlockTag.SETextHeader)
+                if (tag == BlockTag.Paragraph || tag == BlockTag.AtxHeader || tag == BlockTag.SETextHeader || tag == BlockTag.Table)
                 {
                     sc = block.StringContent;
                     if (sc != null)
@@ -452,6 +455,7 @@ namespace CommonMark.Parser
             int matched;
             int i;
             ListData data;
+            TableData tableData;
             bool all_matched = true;
             Block cur = curptr;
             var blank = false;
@@ -526,6 +530,7 @@ namespace CommonMark.Parser
 
                     case BlockTag.AtxHeader:
                     case BlockTag.SETextHeader:
+                    case BlockTag.Table:
                         {
                             // a header can never contain more than one line
                             all_matched = false;
@@ -657,8 +662,8 @@ namespace CommonMark.Parser
 
                 }
                 else if (!indented && container.Tag == BlockTag.Paragraph && (curChar == '=' || curChar == '-')
-                        && 0 != (matched = Scanner.scan_setext_header_line(ln, first_nonspace, ln.Length))
-                        && ContainsSingleLine(container.StringContent))
+                    && 0 != (matched = Scanner.scan_setext_header_line(ln, first_nonspace, ln.Length))
+                    && ContainsSingleLine(container.StringContent))
                 {
 
                     container.Tag = BlockTag.SETextHeader;
@@ -719,6 +724,17 @@ namespace CommonMark.Parser
                     container = CreateChildBlock(container, line, BlockTag.ListItem, first_nonspace, settings);
                     container.ListData = data;
                 }
+                else if (0 != (settings.AdditionalFeatures & CommonMarkAdditionalFeatures.PipeTables)
+                    && !indented && container.Tag == BlockTag.Paragraph && (curChar == '-' || curChar == '|' || curChar == ':')
+                    && 0 != (matched = Scanner.scan_table_header_line(ln, first_nonspace, ln.Length, out tableData))
+                    && ContainsSingleLine(container.StringContent))
+                {
+
+                    container.Tag = BlockTag.Table;
+                    container.TableData = tableData;
+                    AdvanceOffset(ln, ln.Length - 1 - offset, false, ref offset, ref column);
+
+                }
                 else if (indented && !maybeLazy && !blank)
                 {
                     AdvanceOffset(ln, CODE_INDENT, true, ref offset, ref column);
@@ -758,7 +774,7 @@ namespace CommonMark.Parser
                                           container.Tag != BlockTag.BlockQuote &&
                                           container.Tag != BlockTag.SETextHeader &&
                                           container.Tag != BlockTag.FencedCode &&
-                                          !(container.Tag == BlockTag.ListItem &&
+                                          !((container.Tag == BlockTag.ListItem || container.Tag == BlockTag.TableRow) &&
                                             container.FirstChild == null &&
                                             container.SourcePosition >= line.LineOffset));
 

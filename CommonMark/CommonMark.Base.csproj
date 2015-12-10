@@ -85,6 +85,12 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Syntax\StringContent.cs" />
     <Compile Include="Syntax\StringContentPart.cs" />
+    <Compile Include="Syntax\TableColumnAlignment.cs" />
+    <Compile Include="Syntax\TableColumnData.cs" />
+    <Compile Include="Syntax\TableColumnDelimiter.cs" />
+    <Compile Include="Syntax\TableData.cs" />
+    <Compile Include="Syntax\TableHeaderColumnDelimiter.cs" />
+    <Compile Include="Syntax\TableType.cs" />
     <Compile Include="Utilities.cs" />
   </ItemGroup>
   <ItemGroup>

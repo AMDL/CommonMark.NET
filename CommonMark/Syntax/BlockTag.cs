@@ -67,6 +67,21 @@ namespace CommonMark.Syntax
         /// <summary>
         /// A text block that contains only link reference definitions.
         /// </summary>
-        ReferenceDefinition
+        ReferenceDefinition,
+
+        /// <summary>
+        /// A table element. Will contain nested blocks with type of <see cref="BlockTag.TableRow"/>.
+        /// </summary>
+        Table,
+
+        /// <summary>
+        /// A table row element. Will contain nested blocks with type of <see cref="BlockTag.TableCell"/>.
+        /// </summary>
+        TableRow,
+
+        /// <summary>
+        /// A table cell element.
+        /// </summary>
+        TableCell,
     }
 }
