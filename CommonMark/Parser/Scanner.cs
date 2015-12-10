@@ -442,6 +442,7 @@ namespace CommonMark.Parser
 
             data = new Syntax.TableData
             {
+                TableType = Syntax.TableType.Pipe,
                 ColumnData = columnList.ToArray(),
                 HeaderColumnDelimiter = columnDelimiter == '|' ? Syntax.TableHeaderColumnDelimiter.Pipe : Syntax.TableHeaderColumnDelimiter.Plus,
                 ColumnDelimiter = Syntax.TableColumnDelimiter.Pipe,

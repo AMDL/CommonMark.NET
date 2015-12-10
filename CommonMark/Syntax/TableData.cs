@@ -6,6 +6,11 @@
     public sealed class TableData
     {
         /// <summary>
+        /// Gets or sets the table type.
+        /// </summary>
+        public TableType TableType { get; internal set; }
+
+        /// <summary>
         /// Gets or sets the column data.
         /// </summary>
         public TableColumnData[] ColumnData { get; internal set; }
