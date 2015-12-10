@@ -3,7 +3,7 @@
     /// <summary>
     /// Block element parser parameters.
     /// </summary>
-    class BlockParserParameters
+    internal sealed class BlockParserParameters
     {
         private readonly CommonMarkSettings settings;
 
