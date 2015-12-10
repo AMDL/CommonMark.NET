@@ -133,7 +133,7 @@ namespace CommonMark.Parser
         /// <returns><c>true</c> if the character can open a pipe table header line.</returns>
         private bool IsPipeTableOpener(char c)
         {
-            return (0 == (settings.AdditionalFeatures & CommonMarkAdditionalFeatures.PipeTables))
+            return (0 != (settings.AdditionalFeatures & CommonMarkAdditionalFeatures.PipeTables))
                 && (IsPipeTableHeaderDelimiter(c) || IsPipeTableColumnDelimiter(c) || IsPipeTableHeaderAlignmentMarker(c));
         }
 
