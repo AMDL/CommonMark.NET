@@ -146,6 +146,7 @@ namespace CommonMark
             this._inlineParsers = new Lazy<Func<Parser.Subject, Syntax.Inline>[]>(GetInlineParsers);
             this._inlineParserSpecialCharacters = new Lazy<char[]>(GetInlineParserSpecialCharacters);
             this._blockParserParameters = new Lazy<Parser.BlockParserParameters>(GetBlockParserParameters);
+            this._tableParser = new Lazy<Parser.TableParser>(GetTableParser);
         }
 
         #region [ Properties that cache structures used in the parsers ]
@@ -193,15 +194,27 @@ namespace CommonMark
         /// </summary>
         internal Parser.BlockParserParameters BlockParserParameters
         {
-#if OptimizeFor45
-            [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-#endif
             get { return _blockParserParameters.Value; }
         }
 
         private Parser.BlockParserParameters GetBlockParserParameters()
         {
             return new Parser.BlockParserParameters(this);
+        }
+
+        private Lazy<Parser.TableParser> _tableParser;
+
+        /// <summary>
+        /// Gets the table parser.
+        /// </summary>
+        internal Parser.TableParser TableParser
+        {
+            get { return _tableParser.Value; }
+        }
+
+        private Parser.TableParser GetTableParser()
+        {
+            return new Parser.TableParser(this);
         }
 
         #endregion

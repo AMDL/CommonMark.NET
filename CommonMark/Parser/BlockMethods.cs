@@ -437,6 +437,7 @@ namespace CommonMark.Parser
         public static void IncorporateLine(LineInfo line, ref Block curptr, CommonMarkSettings settings)
         {
             var parameters = settings.BlockParserParameters;
+            var tableParser = settings.TableParser;
 
             var ln = line.Line;
 
@@ -727,7 +728,7 @@ namespace CommonMark.Parser
                     container.ListData = data;
                 }
                 else if (!indented && container.Tag == BlockTag.Paragraph
-                    && 0 != (matched = Scanner.scan_table_header_line(ln, first_nonspace, ln.Length, parameters, out tableData))
+                    && 0 != (matched = tableParser.ScanTableHeaderLine(ln, first_nonspace, ln.Length, out tableData))
                     && ContainsSingleLine(container.StringContent))
                 {
 
