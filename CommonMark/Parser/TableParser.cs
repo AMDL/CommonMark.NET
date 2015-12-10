@@ -126,6 +126,75 @@ namespace CommonMark.Parser
             return columnList.Count;
         }
 
+        internal static void IncorporateCells(Block block)
+        {
+            if (block.Tag != BlockTag.TableCell)
+                return;
+
+            var tableData = block.Parent.TableData;
+            var columnData = tableData.ColumnData;
+            var columnCount = columnData.Length;
+            var cellType = block.TableRowData.TableRowType == TableRowType.Header
+                ? TableCellType.Header
+                : TableCellType.Default;
+            var cellCount = 0;
+
+            var sourcePosition = block.SourcePosition;
+#pragma warning disable 0618
+            var startLine = block.StartLine;
+            var startColumn = block.StartColumn;
+#pragma warning restore 0618
+
+            Block child = null;
+            Block nextChild;
+            Inline inline = block.InlineContent;
+            Inline nextInline;
+
+            while (inline != null || cellCount < columnCount)
+            {
+                if (inline != null)
+                {
+                    sourcePosition = inline.SourcePosition;
+                    //startLine = inline.StartLine;
+                    //startColumn = inline.StartColumn;
+                }
+
+#pragma warning disable 0618
+                nextChild = new Block(BlockTag.TableCell, startLine, startColumn, sourcePosition)
+#pragma warning restore 0618
+                {
+                    Parent = block,
+                    TableCellData = new TableCellData
+                    {
+                        CellType = cellType,
+                        ColumnData = cellCount < columnCount
+                            ? columnData[cellCount]
+                            : new TableColumnData()
+                    },
+                    InlineContent = inline,
+                };
+
+                cellCount++;
+
+                if (child == null)
+                    block.FirstChild = nextChild;
+                else
+                    child.NextSibling = nextChild;
+
+                child = nextChild;
+
+                if (inline != null)
+                {
+                    nextInline = inline.NextSibling;
+                    inline.NextSibling = null;
+                    inline = nextInline;
+                }
+            }
+
+            block.TableRowData.CellCount = cellCount;
+            block.InlineContent = null;
+        }
+
         /// <summary>
         /// Checks if a character can serve as a pipe table header line opener.
         /// </summary>
