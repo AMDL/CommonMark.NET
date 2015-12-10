@@ -14,28 +14,33 @@ namespace CommonMark.Parser
         /// Initializes the array of delegates for inline parsing.
         /// </summary>
         /// <returns></returns>
-        internal static Func<Subject, Inline>[] InitializeParsers(CommonMarkSettings settings)
+        internal static Func<Block, Subject, Inline>[] InitializeParsers(CommonMarkSettings settings)
         {
             var strikethroughTilde = 0 != (settings.AdditionalFeatures & CommonMarkAdditionalFeatures.StrikethroughTilde);
 
-            var p = new Func<Subject, Inline>[strikethroughTilde ? 127 : 97];
-            p['\n'] = handle_newline;
-            p['`'] = handle_backticks;
-            p['\\'] = handle_backslash;
-            p['&'] = HandleEntity;
-            p['<'] = handle_pointy_brace;
-            p['_'] = s => HandleEmphasis(s, settings);
-            p['*'] = s => HandleEmphasis(s, settings);
-            p['['] = s => HandleLeftSquareBracket(s, settings);
-            p[']'] = s => HandleRightSquareBracket(s, settings);
-            p['!'] = s => HandleExclamation(s, settings);
+            var p = new Func<Block, Subject, Inline>[127];
+            p['\n'] = (b, s) => handle_newline(s);
+            p['`'] = (b, s) => handle_backticks(s);
+            p['\\'] = (b, s) => handle_backslash(s);
+            p['&'] = (b, s) => HandleEntity(s);
+            p['<'] = (b, s) => handle_pointy_brace(s);
+            p['_'] = (b, s) => HandleEmphasis(s, settings);
+            p['*'] = (b, s) => HandleEmphasis(s, settings);
+            p['['] = (b, s) => HandleLeftSquareBracket(s, settings);
+            p[']'] = (b, s) => HandleRightSquareBracket(s, settings);
+            p['!'] = (b, s) => HandleExclamation(s, settings);
+            p['|'] = (b, s) => HandlePipe(b, s, settings);
 
             if (strikethroughTilde)
-                p['~'] = s => HandleTilde(s, settings);
+                p['~'] = (b, s) => HandleTilde(s, settings);
 
             return p;
         }
 
+        private static Inline HandlePipe(Block block, Subject subj, CommonMarkSettings settings)
+        {
+            throw new NotImplementedException();
+        }
 
         /// <summary>
         /// Collapses internal whitespace to single space, removes leading/trailing whitespace, folds case.
@@ -979,14 +984,14 @@ namespace CommonMark.Parser
         /// <summary>
         /// Parse an inline element from the subject. The subject position is updated to after the element.
         /// </summary>
-        public static Inline ParseInline(Subject subj, Func<Subject, Inline>[] parsers, char[] specialCharacters, CommonMarkSettings settings)
+        public static Inline ParseInline(Block parent, Subject subj, Func<Block, Subject, Inline>[] parsers, char[] specialCharacters, CommonMarkSettings settings)
         {
             var c = subj.Buffer[subj.Position];
 
             var parser = c < parsers.Length ? parsers[c] : null;
 
             if (parser != null)
-                return parser(subj);
+                return parser(parent, subj);
 
             var startpos = subj.Position;
 
@@ -1007,20 +1012,20 @@ namespace CommonMark.Parser
             return new Inline(subj.Buffer, startpos, endpos - startpos, startpos, endpos, c);
         }
 
-        public static Inline parse_inlines(Subject subj, Dictionary<string, Reference> refmap, Func<Subject, Inline>[] parsers, char[] specialCharacters, CommonMarkSettings settings)
+        public static Inline parse_inlines(Block parent, Subject subj, Dictionary<string, Reference> refmap, Func<Block, Subject, Inline>[] parsers, char[] specialCharacters, CommonMarkSettings settings)
         {
             var len = subj.Length;
 
             if (len == 0)
                 return null;
 
-            var first = ParseInline(subj, parsers, specialCharacters, settings);
+            var first = ParseInline(parent, subj, parsers, specialCharacters, settings);
             subj.LastInline = first.LastSibling;
 
             Inline cur;
             while (subj.Position < len)
             {
-                cur = ParseInline(subj, parsers, specialCharacters, settings);
+                cur = ParseInline(parent, subj, parsers, specialCharacters, settings);
                 if (cur != null)
                 {
                     subj.LastInline.NextSibling = cur;

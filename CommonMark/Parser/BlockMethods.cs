@@ -287,10 +287,14 @@ namespace CommonMark.Parser
             StringContent sc;
             int delta;
 
+            Block child = null;
+            Block nextChild;
+            Inline nextInline;
+
             while (block != null)
             {
                 var tag = block.Tag;
-                if (tag == BlockTag.Paragraph || tag == BlockTag.AtxHeader || tag == BlockTag.SETextHeader || tag == BlockTag.Table)
+                if (tag == BlockTag.Paragraph || tag == BlockTag.AtxHeader || tag == BlockTag.SETextHeader)
                 {
                     sc = block.StringContent;
                     if (sc != null)
@@ -298,7 +302,101 @@ namespace CommonMark.Parser
                         sc.FillSubject(subj);
                         delta = subj.Position;
 
-                        block.InlineContent = InlineMethods.parse_inlines(subj, refmap, parsers, specialCharacters, settings);
+                        block.InlineContent = InlineMethods.parse_inlines(block, subj, refmap, parsers, specialCharacters, settings);
+                        block.StringContent = null;
+
+                        if (sc.PositionTracker != null)
+                        {
+                            sc.PositionTracker.AddBlockOffset(-delta);
+                            AdjustInlineSourcePosition(block.InlineContent, sc.PositionTracker, ref inlineStack);
+                        }
+                    }
+                }
+                else if (tag == BlockTag.Table)
+                {
+#pragma warning disable 0618
+                    child = new Block(BlockTag.TableRow, block.StartLine, block.StartColumn, block.SourcePosition)
+#pragma warning restore 0618
+                    {
+                        Parent = block,
+                        TableRowData = new TableRowData
+                        {
+                            TableRowType = TableRowType.Header,
+                        },
+                        StringContent = block.StringContent,
+                    };
+
+                    block.FirstChild = child;
+                    block.StringContent = null;
+
+                    block = child;
+                }
+                else if (tag == BlockTag.TableRow)
+                {
+                    sc = block.StringContent;
+                    if (sc != null)
+                    {
+                        sc.FillSubject(subj);
+                        delta = subj.Position;
+
+                        var tableData = block.Parent.TableData;
+                        var columnData = tableData.ColumnData;
+                        var columnCount = columnData.Length;
+                        var cellType = block.TableRowData.TableRowType == TableRowType.Header
+                            ? TableCellType.Header
+                            : TableCellType.Default;
+                        var cellCount = 0;
+
+                        var sourcePosition = block.SourcePosition;
+#pragma warning disable 0618
+                        var startLine = block.StartLine;
+                        var startColumn = block.StartColumn;
+#pragma warning restore 0618
+
+                        var inline = InlineMethods.parse_inlines(block, subj, refmap, parsers, specialCharacters, settings);
+
+                        while (inline != null || cellCount < columnCount)
+                        {
+                            if (inline != null)
+                            {
+                                sourcePosition = inline.SourcePosition;
+                                //startLine = inline.StartLine;
+                                //startColumn = inline.StartColumn;
+                            }
+
+#pragma warning disable 0618
+                            nextChild = new Block(BlockTag.TableCell, startLine, startColumn, sourcePosition)
+#pragma warning restore 0618
+                            {
+                                Parent = block,
+                                TableCellData = new TableCellData
+                                {
+                                    CellType = cellType,
+                                    ColumnData = cellCount < columnCount
+                                        ? columnData[cellCount]
+                                        : new TableColumnData()
+                                },
+                                InlineContent = inline,
+                            };
+
+                            cellCount++;
+
+                            if (child == null)
+                                block.FirstChild = nextChild;
+                            else
+                                child.NextSibling = nextChild;
+
+                            child = nextChild;
+
+                            if (inline != null)
+                            {
+                                nextInline = inline.NextSibling;
+                                inline.NextSibling = null;
+                                inline = nextInline;
+                            }
+                        }
+
+                        block.TableRowData.CellCount = cellCount;
                         block.StringContent = null;
 
                         if (sc.PositionTracker != null)
