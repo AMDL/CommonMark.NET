@@ -342,11 +342,6 @@ namespace CommonMark.Parser
             if (pos >= sourceLength)
                 return 0;
 
-            var c1 = s[pos];
-
-            if (c1 != '-' && c1 != ':')
-                return 0;
-
             var columnList = new System.Collections.Generic.List<Syntax.TableColumnData>();
             var charCount = 0;
             char columnDelimiter = (char)0;
