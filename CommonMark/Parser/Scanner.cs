@@ -425,14 +425,14 @@ namespace CommonMark.Parser
                 return 0;
             }
 
-            if (charCount == 0)
+            if (columnData == null)
             {
                 if (columnDelimiter == '+')
                     return 0;
             }
             else
             {
-                if (columnData == null || charCount < 3)
+                if (charCount > 0 && charCount < 3)
                     return 0;
                 columnList.Add(columnData);
             }
