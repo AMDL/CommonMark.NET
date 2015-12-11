@@ -16,7 +16,20 @@ namespace CommonMark.Formatters.Blocks
 
         public override bool WriteOpening(IHtmlTextWriter writer, Block block)
         {
-            writer.WriteConstant(block.TableCellData.CellType == TableCellType.Header ? "<th" : "<td");
+            var data = block.TableCellData;
+            writer.WriteConstant(data.CellType == TableCellType.Header ? "<th" : "<td");
+            switch (data.ColumnData.Alignment)
+            {
+                case TableColumnAlignment.Left:
+                    writer.WriteConstant(" style=\"text-align: left\"");
+                    break;
+                case TableColumnAlignment.Right:
+                    writer.WriteConstant(" style=\"text-align: right\"");
+                    break;
+                case TableColumnAlignment.Center:
+                    writer.WriteConstant(" style=\"text-align: center\"");
+                    break;
+            }
             WritePosition(writer, block);
             writer.WriteLine('>');
             return true;
