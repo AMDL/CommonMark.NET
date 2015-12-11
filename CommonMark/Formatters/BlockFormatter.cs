@@ -45,13 +45,14 @@ namespace CommonMark.Formatters
         /// <summary>
         /// Returns the paragraph stacking option for a block element.
         /// </summary>
+        /// <param name="block">Block element.</param>
         /// <param name="tight">The parent's stacking option.</param>
         /// <returns>
         /// <c>true</c> to stack paragraphs tightly,
         /// <c>false</c> to stack paragraphs loosely,
         /// or <c>null</c> to skip paragraph stacking.
         /// </returns>
-        public virtual bool? IsStackTight(bool tight)
+        public virtual bool? IsStackTight(Block block, bool tight)
         {
             return null;
         }

@@ -117,7 +117,7 @@ namespace CommonMark.Formatters
             var formatter = Settings.BlockFormatters[(int)block.Tag];
             if (formatter != null)
             {
-                var stackTight = formatter.IsStackTight(false);
+                var stackTight = formatter.IsStackTight(block, false);
                 if (isOpening)
                 {
                     ignoreChildNodes = !formatter.WriteOpening(_target, block);

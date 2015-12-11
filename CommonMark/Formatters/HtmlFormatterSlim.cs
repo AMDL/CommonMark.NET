@@ -235,7 +235,7 @@ namespace CommonMark.Formatters
                 {
                     visitChildren = formatter.WriteOpening(writer, block);
                     stackLiteral = formatter.GetClosing(block);
-                    isStackTight = formatter.IsStackTight(tight);
+                    isStackTight = formatter.IsStackTight(block, tight);
                     if (isStackTight.HasValue)
                         stackTight = isStackTight.Value;
                 }
