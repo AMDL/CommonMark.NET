@@ -8,11 +8,11 @@
         /// <summary>
         /// Gets or sets the row type.
         /// </summary>
-        public TableRowType TableRowType { get; internal set; }
+        public TableRowType TableRowType { get; set; }
 
         /// <summary>
         /// Gets or sets the row cell count.
         /// </summary>
-        public int CellCount { get; internal set; }
+        public int CellCount { get; set; }
     }
 }

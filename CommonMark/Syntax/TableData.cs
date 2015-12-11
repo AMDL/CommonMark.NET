@@ -8,31 +8,31 @@
         /// <summary>
         /// Gets or sets the table type.
         /// </summary>
-        public TableType TableType { get; internal set; }
+        public TableType TableType { get; set; }
 
         /// <summary>
         /// Gets or sets the first column.
         /// </summary>
-        public TableColumnData FirstColumn { get; internal set; }
+        public TableColumnData FirstColumn { get; set; }
 
         /// <summary>
         /// Gets or sets the last column.
         /// </summary>
-        public TableColumnData LastColumn { get; internal set; }
+        public TableColumnData LastColumn { get; set; }
 
         /// <summary>
         /// Gets or sets the column count.
         /// </summary>
-        public int ColumnCount { get; internal set; }
+        public int ColumnCount { get; set; }
 
         /// <summary>
         /// Gets or sets the header column delimiter.
         /// </summary>
-        public TableHeaderColumnDelimiter HeaderColumnDelimiter { get; internal set; }
+        public TableHeaderColumnDelimiter HeaderColumnDelimiter { get; set; }
 
         /// <summary>
         /// Gets or sets the column delimiter.
         /// </summary>
-        public TableColumnDelimiter ColumnDelimiter { get; internal set; }
+        public TableColumnDelimiter ColumnDelimiter { get; set; }
     }
 }

@@ -8,6 +8,6 @@
         /// <summary>
         /// Gets or sets the caption type.
         /// </summary>
-        public TableCaptionType CaptionType { get; internal set; }
+        public TableCaptionType CaptionType { get; set; }
     }
 }

@@ -8,11 +8,11 @@
         /// <summary>
         /// Gets or sets the column alignment.
         /// </summary>
-        public TableColumnAlignment Alignment { get; internal set; }
+        public TableColumnAlignment Alignment { get; set; }
 
         /// <summary>
         /// Gets or sets the next column. Returns <c>null</c> if this is the last column.
         /// </summary>
-        public TableColumnData NextSibling { get; internal set; }
+        public TableColumnData NextSibling { get; set; }
     }
 }
