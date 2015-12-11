@@ -308,22 +308,6 @@ namespace CommonMark.Parser
                         }
                     }
                 }
-                else if (tag == BlockTag.Table)
-                {
-#pragma warning disable 0618
-                    block.FirstChild = new Block(BlockTag.TableRow, block.StartLine, block.StartColumn, block.SourcePosition)
-#pragma warning restore 0618
-                    {
-                        Parent = block,
-                        TableRowData = new TableRowData
-                        {
-                            TableRowType = TableRowType.Header,
-                        },
-                        StringContent = block.StringContent,
-                    };
-
-                    block.StringContent = null;
-                }
 
                 if (block.FirstChild != null)
                 {

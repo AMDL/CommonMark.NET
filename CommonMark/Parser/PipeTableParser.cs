@@ -140,6 +140,23 @@ namespace CommonMark.Parser
             return data.ColumnCount;
         }
 
+        internal static void IncorporateRow(Block block)
+        {
+#pragma warning disable 0618
+            block.FirstChild = new Block(BlockTag.TableRow, block.StartLine, block.StartColumn, block.SourcePosition)
+#pragma warning restore 0618
+            {
+                Parent = block,
+                TableRowData = new TableRowData
+                {
+                    TableRowType = TableRowType.Header,
+                },
+                StringContent = block.StringContent,
+            };
+
+            block.StringContent = null;
+        }
+
         internal static void IncorporateCells(Block block)
         {
             if (block.Tag != BlockTag.TableCell)
