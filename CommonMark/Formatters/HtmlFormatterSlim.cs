@@ -233,8 +233,8 @@ namespace CommonMark.Formatters
                 formatter = settings.BlockFormatters[(int)block.Tag];
                 if (formatter != null)
                 {
-                    formatter.WriteOpening(writer, block);
-                    stackLiteral = formatter.GetClosing(block, out visitChildren);
+                    visitChildren = formatter.WriteOpening(writer, block);
+                    stackLiteral = formatter.GetClosing(block);
                     isStackTight = formatter.IsStackTight(tight);
                     if (isStackTight.HasValue)
                         stackTight = isStackTight.Value;

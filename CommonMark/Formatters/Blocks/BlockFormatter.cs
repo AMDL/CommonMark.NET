@@ -30,15 +30,15 @@ namespace CommonMark.Formatters.Blocks
         /// </summary>
         /// <param name="writer">HTML writer.</param>
         /// <param name="block">Block element.</param>
-        public abstract void WriteOpening(IHtmlTextWriter writer, Block block);
+        /// <returns><c>true</c> if the parent formatter should visit the child block elements.</returns>
+        public abstract bool WriteOpening(IHtmlTextWriter writer, Block block);
 
         /// <summary>
         /// Returns the closing of a block element.
         /// </summary>
         /// <param name="block">Block element.</param>
-        /// <param name="visitChildren"><c>true</c> if the parent formatter should visit the child block elements.</param>
         /// <returns>The closing.</returns>
-        public abstract string GetClosing(Block block, out bool visitChildren);
+        public abstract string GetClosing(Block block);
 
         /// <summary>
         /// Returns the paragraph stacking option for a block element.

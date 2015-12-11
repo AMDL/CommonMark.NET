@@ -120,7 +120,7 @@ namespace CommonMark.Formatters
                 var stackTight = formatter.IsStackTight(false);
                 if (isOpening)
                 {
-                    formatter.WriteOpening(_target, block);
+                    ignoreChildNodes = !formatter.WriteOpening(_target, block);
                     if (stackTight.HasValue)
                         RenderTightParagraphs.Push(stackTight.Value);
                 }
@@ -129,9 +129,7 @@ namespace CommonMark.Formatters
                 {
                     if (stackTight.HasValue)
                         RenderTightParagraphs.Pop();
-                    bool visitChildren;
-                    var closing = formatter.GetClosing(block, out visitChildren);
-                    ignoreChildNodes = !visitChildren;
+                    var closing = formatter.GetClosing(block);
                     WriteLine(closing);
                 }
             }
