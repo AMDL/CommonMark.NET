@@ -11,18 +11,30 @@ namespace CommonMark.Parser
             this.settings = settings;
         }
 
+        public bool IncorporateLine(Block container, string line, int first_nonspace, bool indented, ref int offset, ref int column)
+        {
+            TableData data;
+            if (!indented && container.Tag == BlockTag.Paragraph && BlockMethods.ContainsSingleLine(container.StringContent)
+                && null != (data = ScanHeaderLine(line, first_nonspace, line.Length)))
+            {
+                container.Tag = BlockTag.Table;
+                container.TableData = data;
+                BlockMethods.AdvanceOffset(line, line.Length - 1 - offset, false, ref offset, ref column);
+                return true;
+            }
+            return false;
+        }
+
         /// <summary>
         /// Match pipe table header line.
         /// </summary>
-        /// <returns>Column count, or 0 for no match.</returns>
-        internal int ScanHeaderLine(string s, int pos, int sourceLength, out TableData data)
+        /// <returns>Table data, or <c>null</c> for no match.</returns>
+        private TableData ScanHeaderLine(string s, int pos, int sourceLength)
         {
-            data = null;
-
             if (pos >= sourceLength || !IsHeaderOpener(s[pos]))
-                return 0;
+                return null;
 
-            data = new TableData
+            var data = new TableData
             {
                 TableType = TableType.Pipe,
                 ColumnDelimiter = '|',
@@ -40,7 +52,7 @@ namespace CommonMark.Parser
                     if (data.HeaderDelimiter != 0)
                     {
                         if (c != data.HeaderDelimiter)
-                            return 0;
+                            return null;
                     }
                     else
                         data.HeaderDelimiter = c;
@@ -48,7 +60,7 @@ namespace CommonMark.Parser
                     if (charCount == 0)
                     {
                         if (columnData != null)
-                            return 0;
+                            return null;
                         columnData = new TableColumnData();
                     }
 
@@ -66,7 +78,7 @@ namespace CommonMark.Parser
                     else
                     {
                         if (charCount < 2 || (columnData.Alignment & TableColumnAlignment.Right) != 0)
-                            return 0;
+                            return null;
                         columnData.Alignment |= TableColumnAlignment.Right;
                     }
 
@@ -79,7 +91,7 @@ namespace CommonMark.Parser
                     if (data.HeaderColumnDelimiter != 0)
                     {
                         if (c != data.HeaderColumnDelimiter)
-                            return 0;
+                            return null;
                     }
                     else
                         data.HeaderColumnDelimiter = c;
@@ -87,13 +99,13 @@ namespace CommonMark.Parser
                     if (charCount == 0)
                     {
                         if (data.FirstColumn != null || !IsColumnDelimiter(c))
-                            return 0;
+                            return null;
                         columnData = new TableColumnData();
                         continue;
                     }
 
                     if (columnData == null || charCount < 3)
-                        return 0;
+                        return null;
 
                     if (data.FirstColumn == null)
                         data.FirstColumn = columnData;
@@ -114,30 +126,30 @@ namespace CommonMark.Parser
                 if (c == '\n')
                     break;
 
-                return 0;
+                return null;
             }
 
             if (columnData == null)
             {
                 if (!IsColumnDelimiter(data.HeaderColumnDelimiter))
-                    return 0;
+                    return null;
             }
             else
             {
                 if (charCount > 0 && charCount < 3)
-                    return 0;
+                    return null;
 
                 if (data.FirstColumn == null)
-                    return 0;
+                    return null;
                 data.LastColumn.NextSibling = columnData;
                 data.LastColumn = columnData;
                 data.ColumnCount++;
             }
 
             if (data.FirstColumn == data.LastColumn)
-                return 0;
+                return null;
 
-            return data.ColumnCount;
+            return data;
         }
 
         internal static void IncorporateRow(Block block)

@@ -394,7 +394,7 @@ namespace CommonMark.Parser
             return (pos - startpos);
         }
 
-        private static bool ContainsSingleLine(StringContent content)
+        internal static bool ContainsSingleLine(StringContent content)
         {
             if (content == null)
                 return true;
@@ -410,7 +410,7 @@ namespace CommonMark.Parser
                     listData.BulletChar == itemData.BulletChar);
         }
 
-        private static void AdvanceOffset(string line, int count, bool columns, ref int offset, ref int column)
+        internal static void AdvanceOffset(string line, int count, bool columns, ref int offset, ref int column)
         {
             char c;
             while (count > 0 && (c = line[offset]) != '\n')
@@ -458,7 +458,6 @@ namespace CommonMark.Parser
             int matched;
             int i;
             ListData data;
-            TableData tableData;
             bool all_matched = true;
             Block cur = curptr;
             var blank = false;
@@ -727,15 +726,8 @@ namespace CommonMark.Parser
                     container = CreateChildBlock(container, line, BlockTag.ListItem, first_nonspace, settings);
                     container.ListData = data;
                 }
-                else if (!indented && container.Tag == BlockTag.Paragraph
-                    && 0 != (matched = tableParser.ScanHeaderLine(ln, first_nonspace, ln.Length, out tableData))
-                    && ContainsSingleLine(container.StringContent))
+                else if (tableParser.IncorporateLine(container, ln, first_nonspace, indented, ref offset, ref column))
                 {
-
-                    container.Tag = BlockTag.Table;
-                    container.TableData = tableData;
-                    AdvanceOffset(ln, ln.Length - 1 - offset, false, ref offset, ref column);
-
                 }
                 else if (indented && !maybeLazy && !blank)
                 {
