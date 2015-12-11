@@ -2,24 +2,24 @@
 
 namespace CommonMark.Parser
 {
-    internal sealed class TableParser
+    internal sealed class PipeTableParser
     {
         private readonly CommonMarkSettings settings;
 
-        public TableParser(CommonMarkSettings settings)
+        public PipeTableParser(CommonMarkSettings settings)
         {
             this.settings = settings;
         }
 
         /// <summary>
-        /// Match table header line.
+        /// Match pipe table header line.
         /// </summary>
         /// <returns>Column count, or 0 for no match.</returns>
-        internal int ScanTableHeaderLine(string s, int pos, int sourceLength, out TableData data)
+        internal int ScanHeaderLine(string s, int pos, int sourceLength, out TableData data)
         {
             data = null;
 
-            if (pos >= sourceLength || !IsPipeTableOpener(s[pos]))
+            if (pos >= sourceLength || !IsHeaderOpener(s[pos]))
                 return 0;
 
             data = new TableData
@@ -35,7 +35,7 @@ namespace CommonMark.Parser
             {
                 var c = s[i];
 
-                if (IsPipeTableHeaderDelimiter(c))
+                if (IsHeaderDelimiter(c))
                 {
                     if (data.HeaderDelimiter != 0)
                     {
@@ -56,7 +56,7 @@ namespace CommonMark.Parser
                     continue;
                 }
 
-                if (IsPipeTableHeaderAlignmentMarker(c))
+                if (IsHeaderAlignmentMarker(c))
                 {
                     if (charCount == 0)
                     {
@@ -74,7 +74,7 @@ namespace CommonMark.Parser
                     continue;
                 }
 
-                if (IsPipeTableHeaderColumnDelimiter(c))
+                if (IsHeaderColumnDelimiter(c))
                 {
                     if (data.HeaderColumnDelimiter != 0)
                     {
@@ -86,7 +86,7 @@ namespace CommonMark.Parser
 
                     if (charCount == 0)
                     {
-                        if (data.FirstColumn != null || !IsPipeTableColumnDelimiter(c))
+                        if (data.FirstColumn != null || !IsColumnDelimiter(c))
                             return 0;
                         columnData = new TableColumnData();
                         continue;
@@ -119,7 +119,7 @@ namespace CommonMark.Parser
 
             if (columnData == null)
             {
-                if (!IsPipeTableColumnDelimiter(data.HeaderColumnDelimiter))
+                if (!IsColumnDelimiter(data.HeaderColumnDelimiter))
                     return 0;
             }
             else
@@ -214,10 +214,10 @@ namespace CommonMark.Parser
         /// </summary>
         /// <param name="c">The character to check.</param>
         /// <returns><c>true</c> if the character can open a pipe table header line.</returns>
-        private bool IsPipeTableOpener(char c)
+        private bool IsHeaderOpener(char c)
         {
             return (0 != (settings.AdditionalFeatures & CommonMarkAdditionalFeatures.PipeTables))
-                && (IsPipeTableHeaderDelimiter(c) || IsPipeTableColumnDelimiter(c) || IsPipeTableHeaderAlignmentMarker(c));
+                && (IsHeaderDelimiter(c) || IsColumnDelimiter(c) || IsHeaderAlignmentMarker(c));
         }
 
         /// <summary>
@@ -227,7 +227,7 @@ namespace CommonMark.Parser
         /// <returns>
         /// <c>true</c> if the character can be used as a pipe table header line delimiter.
         /// </returns>
-        private bool IsPipeTableHeaderDelimiter(char c)
+        private bool IsHeaderDelimiter(char c)
         {
             return c == '-' || (c == '=' && 0 != (settings.Tables.PipeTables & PipeTableFeatures.HeaderEquals));
         }
@@ -239,9 +239,9 @@ namespace CommonMark.Parser
         /// <returns>
         /// <c>true</c> if the character can be used as a column delimiter in a pipe table header line.
         /// </returns>
-        private bool IsPipeTableHeaderColumnDelimiter(char c)
+        private bool IsHeaderColumnDelimiter(char c)
         {
-            return IsPipeTableColumnDelimiter(c) || (c == '+' && 0 != (settings.Tables.PipeTables & PipeTableFeatures.HeaderPlus));
+            return IsColumnDelimiter(c) || (c == '+' && 0 != (settings.Tables.PipeTables & PipeTableFeatures.HeaderPlus));
         }
 
         /// <summary>
@@ -251,7 +251,7 @@ namespace CommonMark.Parser
         /// <returns>
         /// <c>true</c> if the character can be used as a pipe table column delimiter and can open a pipe table header line.
         /// </returns>
-        private bool IsPipeTableColumnDelimiter(char c)
+        private bool IsColumnDelimiter(char c)
         {
             return c == '|';
         }
@@ -263,7 +263,7 @@ namespace CommonMark.Parser
         /// <returns>
         /// <c>true</c> if the character can be used as an alignment marker in a pipe table header line.
         /// </returns>
-        private bool IsPipeTableHeaderAlignmentMarker(char c)
+        private bool IsHeaderAlignmentMarker(char c)
         {
             return (c == ':' && 0 != (settings.Tables.PipeTables & PipeTableFeatures.HeaderColon));
         }

@@ -147,7 +147,7 @@ namespace CommonMark
             this._inlineParsers = new Lazy<Func<Syntax.Block, Parser.Subject, Syntax.Inline>[]>(GetInlineParsers);
             this._inlineParserSpecialCharacters = new Lazy<char[]>(GetInlineParserSpecialCharacters);
             this._blockParserParameters = new Lazy<Parser.BlockParserParameters>(GetBlockParserParameters);
-            this._tableParser = new Lazy<Parser.TableParser>(GetTableParser);
+            this._tableParser = new Lazy<Parser.PipeTableParser>(GetTableParser);
             this._blockFormatters = new Lazy<Formatters.Blocks.IBlockFormatter[]>(GetBlockFormatters);
             this._inlineFormatters = new Lazy<Formatters.Inlines.IInlineFormatter[]>(GetInlineFormatters);
         }
@@ -205,19 +205,19 @@ namespace CommonMark
             return new Parser.BlockParserParameters(this);
         }
 
-        private Lazy<Parser.TableParser> _tableParser;
+        private Lazy<Parser.PipeTableParser> _tableParser;
 
         /// <summary>
-        /// Gets the table parser.
+        /// Gets the pipe table parser.
         /// </summary>
-        internal Parser.TableParser TableParser
+        internal Parser.PipeTableParser PipeTableParser
         {
             get { return _tableParser.Value; }
         }
 
-        private Parser.TableParser GetTableParser()
+        private Parser.PipeTableParser GetTableParser()
         {
-            return new Parser.TableParser(this);
+            return new Parser.PipeTableParser(this);
         }
 
         #endregion
