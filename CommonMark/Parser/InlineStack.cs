@@ -221,6 +221,8 @@ namespace CommonMark.Parser
         /// <param name="settings">The object containing settings for the parsing process.</param>
         public static void PostProcessInlineStack(Subject subj, InlineStack first, InlineStack last, InlineStackPriority ignorePriority, CommonMarkSettings settings)
         {
+            var singleCharTags = settings.InlineSingleCharTags;
+            var doubleCharTags = settings.InlineDoubleCharTags;
             while (ignorePriority > 0)
             {
                 var istack = first;
@@ -237,15 +239,11 @@ namespace CommonMark.Parser
                         if (iopener != null)
                         {
                             bool retry = false;
-                            if (iopener.Delimeter == '~')
+                            var singleCharTag = iopener.Delimeter < singleCharTags.Length ? singleCharTags[iopener.Delimeter] : 0;
+                            var doubleCharTag = iopener.Delimeter < doubleCharTags.Length ? doubleCharTags[iopener.Delimeter] : 0;
+                            if (singleCharTag != 0 || doubleCharTag != 0)
                             {
-                                InlineMethods.MatchInlineStack(iopener, subj, istack.DelimeterCount, istack, (InlineTag)0, InlineTag.Strikethrough, settings);
-                                if (istack.DelimeterCount > 1)
-                                    retry = true;
-                            }
-                            else
-                            {
-                                var useDelims = InlineMethods.MatchInlineStack(iopener, subj, istack.DelimeterCount, istack, InlineTag.Emphasis, InlineTag.Strong, settings);
+                                var useDelims = InlineMethods.MatchInlineStack(iopener, subj, istack.DelimeterCount, istack, singleCharTag, doubleCharTag, settings);
                                 if (istack.DelimeterCount > 0)
                                     retry = true;
                             }

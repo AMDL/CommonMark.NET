@@ -221,6 +221,8 @@ namespace CommonMark
             this._inlineParserSpecialCharacters = new Lazy<char[]>(GetInlineParserSpecialCharacters);
             this._blockParserParameters = new Lazy<Parser.BlockParserParameters>(GetBlockParserParameters);
             this._tableParser = new Lazy<Parser.PipeTableParser>(GetTableParser);
+            this._inlineSingleCharTags = new Lazy<Syntax.InlineTag[]>(GetInlineSingleCharTags);
+            this._inlineDoubleCharTags = new Lazy<Syntax.InlineTag[]>(GetInlineDoubleCharTags);
             this._blockFormatters = new Lazy<Formatters.IBlockFormatter[]>(GetBlockFormatters);
             this._inlineFormatters = new Lazy<Formatters.IInlineFormatter[]>(GetInlineFormatters);
         }
@@ -311,6 +313,62 @@ namespace CommonMark
             return new Parser.PipeTableParser(this);
         }
 
+        private Lazy<Syntax.InlineTag[]> _inlineSingleCharTags;
+        internal Syntax.InlineTag[] InlineSingleCharTags
+        {
+            get { return _inlineSingleCharTags.Value; }
+        }
+
+        private Syntax.InlineTag[] GetInlineSingleCharTags()
+        {
+            var tags = Parser.InlineMethods.InitializeSingleCharTags(this);
+            foreach (var extension in Extensions)
+            {
+                if (extension.SingleCharTags != null)
+                {
+                    foreach (var kvp in extension.SingleCharTags)
+                    {
+                        var value = kvp.Value;
+                        if (value == 0)
+                            throw new ArgumentException("Single character tag value cannot be 0.");
+                        var key = kvp.Key;
+                        if (tags[key] != 0)
+                            throw new InvalidOperationException("Single character tag value is already set.");
+                        tags[key] = kvp.Value;
+                    }
+                }
+            }
+            return tags;
+        }
+
+        private Lazy<Syntax.InlineTag[]> _inlineDoubleCharTags;
+        internal Syntax.InlineTag[] InlineDoubleCharTags
+        {
+            get { return _inlineDoubleCharTags.Value; }
+        }
+
+        private Syntax.InlineTag[] GetInlineDoubleCharTags()
+        {
+            var tags = Parser.InlineMethods.InitializeDoubleCharTags(this);
+            foreach (var extension in Extensions)
+            {
+                if (extension.DoubleCharTags != null)
+                {
+                    foreach (var kvp in extension.DoubleCharTags)
+                    {
+                        var value = kvp.Value;
+                        if (value == 0)
+                            throw new ArgumentException("Double character tag value cannot be 0.");
+                        var key = kvp.Key;
+                        if (tags[key] != 0)
+                            throw new InvalidOperationException("Double character tag value is already set.");
+                        tags[key] = kvp.Value;
+                    }
+                }
+            }
+            return tags;
+        }
+
         #endregion
 
         #region [ Properties that cache structures used in the formatters ]
@@ -379,7 +437,7 @@ namespace CommonMark
                 }
             }
             return formatters;
-        } 
+        }
 
         #endregion
 
