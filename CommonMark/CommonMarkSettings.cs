@@ -4,14 +4,6 @@ using System.Collections.Generic;
 namespace CommonMark
 {
     /// <summary>
-    /// Inline parser delegate.
-    /// </summary>
-    /// <param name="block">Parent block.</param>
-    /// <param name="subject">Subject.</param>
-    /// <returns>Inline element or <c>null</c>.</returns>
-    public delegate Syntax.Inline InlineParserDelegate(Syntax.Block block, Parser.Subject subject);
-
-    /// <summary>
     /// Class used to configure the behavior of <see cref="CommonMarkConverter"/>.
     /// </summary>
     /// <remarks>This class is not thread-safe so any changes to a instance that is reused (for example, the 
@@ -24,6 +16,7 @@ namespace CommonMark
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         public CommonMarkSettings()
         {
+            this._extensions = new List<IExtension>();
             this._tables = new Lazy<TableSettings>(GetTables);
             Reset();
         }
@@ -68,6 +61,8 @@ namespace CommonMark
         /// </summary>
         public bool TrackSourcePosition { get; set; }
 
+        #region Extensions
+
         private CommonMarkAdditionalFeatures _additionalFeatures;
 
         /// <summary>
@@ -84,6 +79,73 @@ namespace CommonMark
             }
         }
 
+        private List<IExtension> _extensions;
+
+        /// <summary>
+        /// Gets the extensions.
+        /// </summary>
+        internal IEnumerable<IExtension> Extensions
+        {
+            get { return _extensions; }
+        }
+
+        /// <summary>
+        /// Registers an extension. Extensions must not retain references to the settings object.
+        /// </summary>
+        /// <param name="extension">The extension to register.</param>
+        public void Register(IExtension extension)
+        {
+            if (extension == null)
+                throw new ArgumentNullException(nameof(extension));
+            _extensions.Add(extension);
+            this.Reset();
+        }
+
+        /// <summary>
+        /// Registers multiple extensions. Extensions must not retain references to the settings object.
+        /// </summary>
+        /// <param name="extensions">The extensions to register.</param>
+        public void Register(IEnumerable<IExtension> extensions)
+        {
+            if (extensions == null)
+                throw new ArgumentNullException(nameof(extensions));
+            _extensions.AddRange(extensions);
+            this.Reset();
+        }
+
+        /// <summary>
+        /// Unregisters an extension.
+        /// </summary>
+        /// <param name="extension">The extension to unregister.</param>
+        public void Unregister(IExtension extension)
+        {
+            if (extension == null)
+                throw new ArgumentNullException(nameof(extension));
+            _extensions.Remove(extension);
+            this.Reset();
+        }
+
+        /// <summary>
+        /// Unregisters all extensions.
+        /// </summary>
+        public void UnregisterAll()
+        {
+            _extensions.Clear();
+            this.Reset();
+        }
+
+        /// <summary>
+        /// Determines whether an extension is registered.
+        /// </summary>
+        /// <param name="extension">The extension to locate.</param>
+        /// <returns><c>true</c> if the extension is registered.</returns>
+        public bool IsRegistered(IExtension extension)
+        {
+            if (extension == null)
+                throw new ArgumentNullException(nameof(extension));
+            return _extensions.Contains(extension);
+        }
+
         private Lazy<TableSettings> _tables;
 
         /// <summary>
@@ -98,6 +160,8 @@ namespace CommonMark
         {
             return new TableSettings(this);
         }
+
+        #endregion Extensions
 
         private Func<string, string> _uriResolver;
         /// <summary>
@@ -145,6 +209,7 @@ namespace CommonMark
         public CommonMarkSettings Clone()
         {
             var clone = (CommonMarkSettings)this.MemberwiseClone();
+            clone._extensions = new List<IExtension>(this._extensions);
             clone._tables = new Lazy<TableSettings>(clone.GetTables);
             clone.Reset();
             return clone;
@@ -174,7 +239,25 @@ namespace CommonMark
 
         private InlineParserDelegate[] GetInlineParsers()
         {
-            return Parser.InlineMethods.InitializeParsers(this);
+            var parsers = Parser.InlineMethods.InitializeParsers(this);
+            foreach (var extension in Extensions)
+            {
+                if (extension.InlineParsers != null)
+                {
+                    foreach (var kvp in extension.InlineParsers)
+                    {
+                        var value = kvp.Value;
+                        if (value == null)
+                            throw new ArgumentException("Parser delegate value cannot be null.");
+                        var key = kvp.Key;
+                        var inner = parsers[key];
+                        if (inner != null)
+                            value = new Parser.DelegateInlineParser(inner, value).ParseInline;
+                        parsers[key] = value;
+                    }
+                }
+            }
+            return parsers;
         }
 
         private Lazy<char[]> _inlineParserSpecialCharacters;
@@ -244,7 +327,25 @@ namespace CommonMark
 
         private Formatters.IBlockFormatter[] GetBlockFormatters()
         {
-            return Formatters.BlockFormatter.InitializeFormatters(this);
+            var formatters = Formatters.BlockFormatter.InitializeFormatters(this);
+            foreach (var extension in Extensions)
+            {
+                if (extension.BlockFormatters != null)
+                {
+                    foreach (var kvp in extension.BlockFormatters)
+                    {
+                        var value = kvp.Value;
+                        if (value == null)
+                            throw new ArgumentException("Block formatter value cannot be null.");
+                        var key = (int)kvp.Key;
+                        var inner = formatters[key];
+                        if (inner != null)
+                            value = new Formatters.Blocks.DelegateBlockFormatter(inner, value);
+                        formatters[key] = value;
+                    }
+                }
+            }
+            return formatters;
         }
 
         private Lazy<Formatters.IInlineFormatter[]> _inlineFormatters;
@@ -259,7 +360,25 @@ namespace CommonMark
 
         private Formatters.IInlineFormatter[] GetInlineFormatters()
         {
-            return Formatters.InlineFormatter.InitializeFormatters(this);
+            var formatters = Formatters.InlineFormatter.InitializeFormatters(this);
+            foreach (var extension in Extensions)
+            {
+                if (extension.InlineFormatters != null)
+                {
+                    foreach (var kvp in extension.InlineFormatters)
+                    {
+                        var value = kvp.Value;
+                        if (value == null)
+                            throw new ArgumentException("Inline formatter value cannot be null.");
+                        var key = (int)kvp.Key;
+                        var inner = formatters[key];
+                        if (inner != null)
+                            value = new Formatters.Inlines.DelegateInlineFormatter(inner, value);
+                        formatters[key] = value;
+                    }
+                }
+            }
+            return formatters;
         } 
 
         #endregion
