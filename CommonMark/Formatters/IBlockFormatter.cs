@@ -1,6 +1,6 @@
 ﻿using CommonMark.Syntax;
 
-namespace CommonMark.Formatters.Blocks
+namespace CommonMark.Formatters
 {
     /// <summary>
     /// Block element formatter interface.

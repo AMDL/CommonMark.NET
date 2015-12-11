@@ -223,7 +223,7 @@ namespace CommonMark.Formatters
             bool trackPositions = settings.TrackSourcePosition;
             int x;
 
-            Blocks.IBlockFormatter formatter;
+            IBlockFormatter formatter;
             bool? isStackTight;
 
             while (block != null)
@@ -503,7 +503,7 @@ namespace CommonMark.Formatters
             bool visitChildren;
             bool trackPositions = settings.TrackSourcePosition;
             string stackLiteral = null;
-            Inlines.IInlineFormatter formatter;
+            IInlineFormatter formatter;
             bool? isRenderPlainTextInlines;
 
             while (inline != null)

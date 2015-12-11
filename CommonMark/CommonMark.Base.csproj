@@ -50,8 +50,8 @@
     <Compile Include="CommonMarkConverter.cs" />
     <Compile Include="CommonMarkException.cs" />
     <Compile Include="CommonMarkSettings.cs" />
-    <Compile Include="Formatters\Blocks\BlockFormatter.cs" />
-    <Compile Include="Formatters\Blocks\IBlockFormatter.cs" />
+    <Compile Include="Formatters\BlockFormatter.cs" />
+    <Compile Include="Formatters\IBlockFormatter.cs" />
     <Compile Include="Formatters\Blocks\TableColumnFormatter.cs" />
     <Compile Include="Formatters\Blocks\TableColumnGroupFormatter.cs" />
     <Compile Include="Formatters\HtmlFormatter.cs" />
@@ -60,8 +60,8 @@
     <Compile Include="Formatters\Blocks\TableCellFormatter.cs" />
     <Compile Include="Formatters\Blocks\TableFormatter.cs" />
     <Compile Include="Formatters\Blocks\TableRowFormatter.cs" />
-    <Compile Include="Formatters\Inlines\IInlineFormatter.cs" />
-    <Compile Include="Formatters\Inlines\InlineFormatter.cs" />
+    <Compile Include="Formatters\IInlineFormatter.cs" />
+    <Compile Include="Formatters\InlineFormatter.cs" />
     <Compile Include="Func.cs" />
     <Compile Include="Lazy.cs" />
     <Compile Include="OutputFormat.cs" />
@@ -118,6 +118,10 @@
     </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\public.snk" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Extensions\" />
+    <Folder Include="Formatters\Inlines\" />
   </ItemGroup>
   <Import Project="CommonMark.Targets.csproj" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

@@ -156,8 +156,8 @@ namespace CommonMark
             this._inlineParserSpecialCharacters = new Lazy<char[]>(GetInlineParserSpecialCharacters);
             this._blockParserParameters = new Lazy<Parser.BlockParserParameters>(GetBlockParserParameters);
             this._tableParser = new Lazy<Parser.PipeTableParser>(GetTableParser);
-            this._blockFormatters = new Lazy<Formatters.Blocks.IBlockFormatter[]>(GetBlockFormatters);
-            this._inlineFormatters = new Lazy<Formatters.Inlines.IInlineFormatter[]>(GetInlineFormatters);
+            this._blockFormatters = new Lazy<Formatters.IBlockFormatter[]>(GetBlockFormatters);
+            this._inlineFormatters = new Lazy<Formatters.IInlineFormatter[]>(GetInlineFormatters);
         }
 
         #region [ Properties that cache structures used in the parsers ]
@@ -232,34 +232,34 @@ namespace CommonMark
 
         #region [ Properties that cache structures used in the formatters ]
 
-        private Lazy<Formatters.Blocks.IBlockFormatter[]> _blockFormatters;
+        private Lazy<Formatters.IBlockFormatter[]> _blockFormatters;
 
         /// <summary>
         /// Gets the block element formatters.
         /// </summary>
-        internal Formatters.Blocks.IBlockFormatter[] BlockFormatters
+        internal Formatters.IBlockFormatter[] BlockFormatters
         {
             get { return _blockFormatters.Value; }
         }
 
-        private Formatters.Blocks.IBlockFormatter[] GetBlockFormatters()
+        private Formatters.IBlockFormatter[] GetBlockFormatters()
         {
-            return Formatters.Blocks.BlockFormatter.InitializeFormatters(this);
+            return Formatters.BlockFormatter.InitializeFormatters(this);
         }
 
-        private Lazy<Formatters.Inlines.IInlineFormatter[]> _inlineFormatters;
+        private Lazy<Formatters.IInlineFormatter[]> _inlineFormatters;
 
         /// <summary>
         /// Gets the inline element formatters.
         /// </summary>
-        internal Formatters.Inlines.IInlineFormatter[] InlineFormatters
+        internal Formatters.IInlineFormatter[] InlineFormatters
         {
             get { return _inlineFormatters.Value; }
         }
 
-        private Formatters.Inlines.IInlineFormatter[] GetInlineFormatters()
+        private Formatters.IInlineFormatter[] GetInlineFormatters()
         {
-            return Formatters.Inlines.InlineFormatter.InitializeFormatters(this);
+            return Formatters.InlineFormatter.InitializeFormatters(this);
         } 
 
         #endregion

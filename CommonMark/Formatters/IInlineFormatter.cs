@@ -1,6 +1,6 @@
 ﻿using CommonMark.Syntax;
 
-namespace CommonMark.Formatters.Inlines
+namespace CommonMark.Formatters
 {
     /// <summary>
     /// Inline element formatter interface.
