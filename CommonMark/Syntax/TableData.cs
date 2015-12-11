@@ -26,6 +26,11 @@
         public int ColumnCount { get; set; }
 
         /// <summary>
+        /// Gets or sets the header row delimiter character.
+        /// </summary>
+        public char HeaderDelimiter { get; set; }
+
+        /// <summary>
         /// Gets or sets the header column delimiter character.
         /// </summary>
         public char HeaderColumnDelimiter { get; set; }

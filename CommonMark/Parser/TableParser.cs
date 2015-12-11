@@ -37,6 +37,14 @@ namespace CommonMark.Parser
 
                 if (IsPipeTableHeaderDelimiter(c))
                 {
+                    if (data.HeaderDelimiter != 0)
+                    {
+                        if (c != data.HeaderDelimiter)
+                            return 0;
+                    }
+                    else
+                        data.HeaderDelimiter = c;
+
                     if (charCount == 0)
                     {
                         if (columnData != null)
@@ -221,7 +229,7 @@ namespace CommonMark.Parser
         /// </returns>
         private bool IsPipeTableHeaderDelimiter(char c)
         {
-            return c == '-';
+            return c == '-' || (c == '=' && 0 != (settings.Tables.PipeTables & PipeTableFeatures.HeaderEquals));
         }
 
         /// <summary>
