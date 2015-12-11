@@ -48,24 +48,5 @@ namespace CommonMark.Extension
                 };
             }
         }
-
-        /// <summary>
-        /// Determines whether the specified object is <see cref="Strikeout"/>.
-        /// </summary>
-        /// <param name="obj">The object to check.</param>
-        /// <returns><c>true</c> if the object is a <see cref="Strikeout"/> instance.</returns>
-        public override bool Equals(object obj)
-        {
-            return obj is Strikeout;
-        }
-
-        /// <summary>
-        /// Returns the hash code of the type object.
-        /// </summary>
-        /// <returns>Hash code.</returns>
-        public override int GetHashCode()
-        {
-            return GetType().GetHashCode();
-        }
     }
 }
