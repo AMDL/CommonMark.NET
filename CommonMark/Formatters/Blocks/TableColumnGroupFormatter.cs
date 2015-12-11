@@ -2,35 +2,29 @@
 
 namespace CommonMark.Formatters.Blocks
 {
-    internal class TableFormatter : BlockFormatter
+    internal class TableColumnGroupFormatter : BlockFormatter
     {
-        public TableFormatter(CommonMarkSettings settings)
+        public TableColumnGroupFormatter(CommonMarkSettings settings)
             : base(settings)
         {
         }
 
         public override bool CanHandle(Block block)
         {
-            return block.Tag == BlockTag.Table;
+            return block.Tag == BlockTag.TableColumnGroup;
         }
 
         public override bool WriteOpening(IHtmlTextWriter writer, Block block)
         {
-            writer.EnsureLine();
-            writer.WriteConstant("<table");
+            writer.WriteConstant("<colgroup");
             WritePosition(writer, block);
-            writer.WriteLine('>');
+            writer.WriteLineConstant(" />");
             return true;
         }
 
         public override string GetClosing(Block block)
         {
-            return "</table>";
-        }
-
-        public override bool? IsStackTight(bool tight)
-        {
-            return false;
+            return "</colgroup>";
         }
     }
 }

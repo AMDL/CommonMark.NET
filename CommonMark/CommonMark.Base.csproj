@@ -52,6 +52,8 @@
     <Compile Include="CommonMarkSettings.cs" />
     <Compile Include="Formatters\Blocks\BlockFormatter.cs" />
     <Compile Include="Formatters\Blocks\IBlockFormatter.cs" />
+    <Compile Include="Formatters\Blocks\TableColumnFormatter.cs" />
+    <Compile Include="Formatters\Blocks\TableColumnGroupFormatter.cs" />
     <Compile Include="Formatters\HtmlFormatter.cs" />
     <Compile Include="Formatters\IHtmlTextWriter.cs" />
     <Compile Include="Formatters\Blocks\TableCaptionFormatter.cs" />

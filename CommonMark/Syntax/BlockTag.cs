@@ -70,7 +70,9 @@ namespace CommonMark.Syntax
         ReferenceDefinition,
 
         /// <summary>
-        /// A table element. Will contain zero or one <see cref="TableCaption"/> block
+        /// A table element.
+        /// Will contain zero or one <see cref="TableCaption"/> block,
+        /// zero or more <see cref="TableColumnGroup"/> blocks,
         /// and two or more <see cref="TableRow"/> blocks.
         /// Only present if tables are enabled.
         /// </summary>
@@ -81,6 +83,18 @@ namespace CommonMark.Syntax
         /// Only present if both tables and table captions are enabled.
         /// </summary>
         TableCaption,
+
+        /// <summary>
+        /// A table column group element. Will contain <see cref="TableColumn"/> blocks.
+        /// Only present if both tables and table column groups are enabled.
+        /// </summary>
+        TableColumnGroup,
+
+        /// <summary>
+        /// A table column element.
+        /// Only present if both tables and table column groups are enabled.
+        /// </summary>
+        TableColumn,
 
         /// <summary>
         /// A table row element. Will contain <see cref="TableCell"/> blocks.
