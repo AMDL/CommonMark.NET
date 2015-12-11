@@ -50,7 +50,7 @@
     <Compile Include="CommonMarkConverter.cs" />
     <Compile Include="CommonMarkException.cs" />
     <Compile Include="CommonMarkSettings.cs" />
-    <Compile Include="Formatters\BlockFormatter.cs" />
+    <Compile Include="Formatters\Blocks\BlockFormatter.cs" />
     <Compile Include="Formatters\HtmlFormatter.cs" />
     <Compile Include="Formatters\IHtmlTextWriter.cs" />
     <Compile Include="Formatters\TableCaptionFormatter.cs" />

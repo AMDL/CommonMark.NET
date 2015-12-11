@@ -223,7 +223,7 @@ namespace CommonMark.Formatters
             bool trackPositions = settings.TrackSourcePosition;
             int x;
 
-            BlockFormatter formatter;
+            Blocks.BlockFormatter formatter;
             bool? isStackTight;
 
             while (block != null)
