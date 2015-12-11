@@ -227,7 +227,7 @@ namespace CommonMark
         private Lazy<Formatters.Blocks.IBlockFormatter[]> _blockFormatters;
 
         /// <summary>
-        /// Gets the block formatters.
+        /// Gets the block element formatters.
         /// </summary>
         internal Formatters.Blocks.IBlockFormatter[] BlockFormatters
         {

@@ -22,7 +22,7 @@ namespace CommonMark.Formatters.Blocks
         /// Checks whether the formatter can handle a block element.
         /// </summary>
         /// <param name="block">Block element.</param>
-        /// <returns><c>true</c> if the formatter can handle the specified block element.</returns>
+        /// <returns><c>true</c> if the formatter can handle <paramref name="block"/>.</returns>
         public abstract bool CanHandle(Block block);
 
         /// <summary>
@@ -44,7 +44,11 @@ namespace CommonMark.Formatters.Blocks
         /// Returns the paragraph stacking option for a block element.
         /// </summary>
         /// <param name="tight">The parent's stacking option.</param>
-        /// <returns><c>true</c>, <c>false</c> or <c>null</c>.</returns>
+        /// <returns>
+        /// <c>true</c> to stack paragraphs tightly,
+        /// <c>false</c> to stack paragraphs loosely,
+        /// or <c>null</c> to skip paragraph stacking.
+        /// </returns>
         public virtual bool? IsStackTight(bool tight)
         {
             return null;
