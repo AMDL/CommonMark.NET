@@ -70,6 +70,21 @@ namespace CommonMark.Syntax
         ReferenceDefinition,
 
         /// <summary>
+        /// A definition list element. Will contain <see cref="Term"/> and <see cref="Definition"/> blocks.
+        /// </summary>
+        DefinitionList,
+
+        /// <summary>
+        /// A defined term in a <see cref="DefinitionList"/> block.
+        /// </summary>
+        Term,
+
+        /// <summary>
+        /// A term definition in a <see cref="DefinitionList"/> block.
+        /// </summary>
+        Definition,
+
+        /// <summary>
         /// A table element.
         /// Will contain zero or one <see cref="TableCaption"/> block,
         /// zero or more <see cref="TableColumnGroup"/> blocks,
