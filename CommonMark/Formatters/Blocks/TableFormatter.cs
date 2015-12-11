@@ -9,6 +9,11 @@ namespace CommonMark.Formatters.Blocks
         {
         }
 
+        public override bool CanHandle(Block block)
+        {
+            return block.Tag == BlockTag.Table;
+        }
+
         public override void WriteOpening(IHtmlTextWriter writer, Block block)
         {
             writer.EnsureLine();
