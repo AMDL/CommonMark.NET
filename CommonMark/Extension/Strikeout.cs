@@ -1,4 +1,5 @@
 ﻿using CommonMark.Formatters;
+using CommonMark.Formatters.Inlines;
 using CommonMark.Syntax;
 using System.Collections.Generic;
 
@@ -9,46 +10,7 @@ namespace CommonMark.Extension
     /// </summary>
     public class Strikeout : CommonMarkExtension
     {
-        #region Formatter
-
-        class Formatter : InlineFormatter
-        {
-            public Formatter(CommonMarkSettings settings)
-                : base(settings)
-            {
-            }
-
-            public override bool CanHandle(Inline inline)
-            {
-                return inline.Tag == InlineTag.Strikethrough;
-            }
-
-            public override bool WriteOpening(IHtmlTextWriter writer, Inline inline)
-            {
-                writer.WriteConstant("<del");
-                WritePosition(writer, inline);
-                writer.Write('>');
-                return true;
-            }
-
-            public override string GetClosing(Inline inline)
-            {
-                return "</del>";
-            }
-
-            public override string GetNodeTag(Inline inline)
-            {
-                return "del";
-            }
-
-            public override void Print(System.IO.TextWriter writer, Inline inline)
-            {
-            }
-        }
-
-        #endregion
-
-        private readonly Formatter formatter;
+        private readonly StrikethroughFormatter formatter;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Strikeout"/> class.
@@ -56,7 +18,7 @@ namespace CommonMark.Extension
         /// <param name="settings">The object containing settings to be cloned for the formatting process.</param>
         public Strikeout(CommonMarkSettings settings)
         {
-            this.formatter = new Formatter(settings.Clone());
+            this.formatter = new StrikethroughFormatter(settings.Clone());
         }
 
         /// <summary>

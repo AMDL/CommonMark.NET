@@ -66,6 +66,7 @@
     <Compile Include="Formatters\IInlineFormatter.cs" />
     <Compile Include="Formatters\InlineFormatter.cs" />
     <Compile Include="Formatters\Inlines\DelegateInlineFormatter.cs" />
+    <Compile Include="Formatters\Inlines\StrikethroughFormatter.cs" />
     <Compile Include="Func.cs" />
     <Compile Include="ICommonMarkExtension.cs" />
     <Compile Include="Lazy.cs" />
