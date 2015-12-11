@@ -16,7 +16,7 @@ namespace CommonMark
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         public CommonMarkSettings()
         {
-            this._extensions = new List<ICommonMarkExtension>();
+            this._extensions = new Lazy<List<ICommonMarkExtension>>(() => new List<ICommonMarkExtension>());
             this._tables = new Lazy<TableSettings>(GetTables);
             Reset();
         }
@@ -79,22 +79,22 @@ namespace CommonMark
 #pragma warning disable 0618
                 var strikethroughTilde = 0 != (value & CommonMarkAdditionalFeatures.StrikethroughTilde);
 #pragma warning restore 0618
-                if (strikethroughTilde && !_extensions.Contains(strikeout))
-                    _extensions.Add(strikeout);
-                if (!strikethroughTilde && _extensions.Contains(strikeout))
-                    _extensions.Remove(strikeout);
+                if (strikethroughTilde && !IsRegistered(strikeout))
+                    Extensions.Add(strikeout);
+                if (!strikethroughTilde && IsRegistered(strikeout))
+                    Extensions.Remove(strikeout);
                 this.Reset();
             }
         }
 
-        private List<ICommonMarkExtension> _extensions;
+        private Lazy<List<ICommonMarkExtension>> _extensions;
 
         /// <summary>
         /// Gets the extensions.
         /// </summary>
-        internal IEnumerable<ICommonMarkExtension> Extensions
+        private List<ICommonMarkExtension> Extensions
         {
-            get { return _extensions; }
+            get { return _extensions.Value; }
         }
 
         /// <summary>
@@ -105,7 +105,14 @@ namespace CommonMark
         {
             if (extension == null)
                 throw new ArgumentNullException(nameof(extension));
-            _extensions.Add(extension);
+
+            if (Extensions.Contains(extension))
+            {
+                var message = string.Format("Extension is already registered: {0}.", extension.ToString());
+                throw new InvalidOperationException(message);
+            }
+
+            Extensions.Add(extension);
             this.Reset();
         }
 
@@ -117,7 +124,17 @@ namespace CommonMark
         {
             if (extensions == null)
                 throw new ArgumentNullException(nameof(extensions));
-            _extensions.AddRange(extensions);
+
+            foreach (var extension in extensions)
+            {
+                if (Extensions.Contains(extension))
+                {
+                    var message = string.Format("Extension is already registered: {0}.", extension.ToString());
+                    throw new InvalidOperationException(message);
+                }
+            }
+
+            Extensions.AddRange(extensions);
             this.Reset();
         }
 
@@ -129,7 +146,13 @@ namespace CommonMark
         {
             if (extension == null)
                 throw new ArgumentNullException(nameof(extension));
-            _extensions.Remove(extension);
+
+            if (!Extensions.Remove(extension))
+            {
+                var message = string.Format("Extension is not registered: {0}.", extension.ToString());
+                throw new InvalidOperationException(message);
+            }
+
             this.Reset();
         }
 
@@ -138,7 +161,7 @@ namespace CommonMark
         /// </summary>
         public void UnregisterAll()
         {
-            _extensions.Clear();
+            Extensions.Clear();
             this.Reset();
         }
 
@@ -151,7 +174,8 @@ namespace CommonMark
         {
             if (extension == null)
                 throw new ArgumentNullException(nameof(extension));
-            return _extensions.Contains(extension);
+
+            return Extensions.Contains(extension);
         }
 
         private Lazy<TableSettings> _tables;
@@ -176,10 +200,10 @@ namespace CommonMark
         /// Gets or sets the delegate that is used to resolve addresses during rendering process. Can be used to process application relative URLs (<c>~/foo/bar</c>).
         /// </summary>
         /// <example><code>CommonMarkSettings.Default.UriResolver = VirtualPathUtility.ToAbsolute;</code></example>
-        public Func<string, string> UriResolver 
+        public Func<string, string> UriResolver
         {
             get { return this._uriResolver; }
-            set 
+            set
             {
                 if (value != null)
                 {
@@ -217,7 +241,7 @@ namespace CommonMark
         public CommonMarkSettings Clone()
         {
             var clone = (CommonMarkSettings)this.MemberwiseClone();
-            clone._extensions = new List<ICommonMarkExtension>(this._extensions);
+            clone._extensions = new Lazy<List<ICommonMarkExtension>>(() => new List<ICommonMarkExtension>(this.Extensions));
             clone._tables = new Lazy<TableSettings>(clone.GetTables);
             clone.Reset();
             return clone;
