@@ -4,14 +4,26 @@ using System.Text;
 
 namespace CommonMark.Parser
 {
+    /// <summary>
+    /// Inline parser subject.
+    /// </summary>
     [System.Diagnostics.DebuggerDisplay("{DebugToString()}")]
-    internal sealed class Subject
+    public sealed class Subject
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Subject"/> class.
+        /// </summary>
+        /// <param name="referenceMap">Reference map.</param>
         public Subject(Dictionary<string, Reference> referenceMap)
         {
             this.ReferenceMap = referenceMap;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Subject"/> class.
+        /// </summary>
+        /// <param name="buffer">String buffer.</param>
+        /// <param name="referenceMap">Reference map.</param>
         public Subject(string buffer, Dictionary<string, Reference> referenceMap)
         {
             this.Buffer = buffer;
@@ -59,6 +71,9 @@ namespace CommonMark.Parser
         /// </summary>
         public StringBuilder ReusableStringBuilder = new StringBuilder();
 
+        /// <summary>
+        /// A mapping from reference labels to reference link definitions.
+        /// </summary>
         public readonly Dictionary<string, Reference> ReferenceMap;
 
 #if !NETCore

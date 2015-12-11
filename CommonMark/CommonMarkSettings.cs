@@ -4,6 +4,14 @@ using System.Collections.Generic;
 namespace CommonMark
 {
     /// <summary>
+    /// Inline parser delegate.
+    /// </summary>
+    /// <param name="block">Parent block.</param>
+    /// <param name="subject">Subject.</param>
+    /// <returns>Inline element or <c>null</c>.</returns>
+    public delegate Syntax.Inline InlineParserDelegate(Syntax.Block block, Parser.Subject subject);
+
+    /// <summary>
     /// Class used to configure the behavior of <see cref="CommonMarkConverter"/>.
     /// </summary>
     /// <remarks>This class is not thread-safe so any changes to a instance that is reused (for example, the 
@@ -144,7 +152,7 @@ namespace CommonMark
 
         internal void Reset()
         {
-            this._inlineParsers = new Lazy<Func<Syntax.Block, Parser.Subject, Syntax.Inline>[]>(GetInlineParsers);
+            this._inlineParsers = new Lazy<InlineParserDelegate[]>(GetInlineParsers);
             this._inlineParserSpecialCharacters = new Lazy<char[]>(GetInlineParserSpecialCharacters);
             this._blockParserParameters = new Lazy<Parser.BlockParserParameters>(GetBlockParserParameters);
             this._tableParser = new Lazy<Parser.PipeTableParser>(GetTableParser);
@@ -154,17 +162,17 @@ namespace CommonMark
 
         #region [ Properties that cache structures used in the parsers ]
 
-        private Lazy<Func<Syntax.Block, Parser.Subject, Syntax.Inline>[]> _inlineParsers;
+        private Lazy<InlineParserDelegate[]> _inlineParsers;
 
         /// <summary>
         /// Gets the delegates that parse inline elements according to these settings.
         /// </summary>
-        internal Func<Syntax.Block, Parser.Subject, Syntax.Inline>[] InlineParsers
+        internal InlineParserDelegate[] InlineParsers
         {
             get { return _inlineParsers.Value; }
         }
 
-        private Func<Syntax.Block, Parser.Subject, Syntax.Inline>[] GetInlineParsers()
+        private InlineParserDelegate[] GetInlineParsers()
         {
             return Parser.InlineMethods.InitializeParsers(this);
         }

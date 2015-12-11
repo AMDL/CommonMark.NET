@@ -14,11 +14,11 @@ namespace CommonMark.Parser
         /// Initializes the array of delegates for inline parsing.
         /// </summary>
         /// <returns></returns>
-        internal static Func<Block, Subject, Inline>[] InitializeParsers(CommonMarkSettings settings)
+        internal static InlineParserDelegate[] InitializeParsers(CommonMarkSettings settings)
         {
             var strikethroughTilde = 0 != (settings.AdditionalFeatures & CommonMarkAdditionalFeatures.StrikethroughTilde);
 
-            var p = new Func<Block, Subject, Inline>[127];
+            var p = new InlineParserDelegate[127];
             p['\n'] = (b, s) => handle_newline(s);
             p['`'] = (b, s) => handle_backticks(s);
             p['\\'] = (b, s) => handle_backslash(s);
@@ -984,7 +984,7 @@ namespace CommonMark.Parser
         /// <summary>
         /// Parse an inline element from the subject. The subject position is updated to after the element.
         /// </summary>
-        public static Inline ParseInline(Block parent, Subject subj, Func<Block, Subject, Inline>[] parsers, char[] specialCharacters, CommonMarkSettings settings)
+        public static Inline ParseInline(Block parent, Subject subj, InlineParserDelegate[] parsers, char[] specialCharacters, CommonMarkSettings settings)
         {
             var c = subj.Buffer[subj.Position];
 
@@ -1012,7 +1012,7 @@ namespace CommonMark.Parser
             return new Inline(subj.Buffer, startpos, endpos - startpos, startpos, endpos, c);
         }
 
-        public static Inline parse_inlines(Block parent, Subject subj, Dictionary<string, Reference> refmap, Func<Block, Subject, Inline>[] parsers, char[] specialCharacters, CommonMarkSettings settings)
+        public static Inline parse_inlines(Block parent, Subject subj, Dictionary<string, Reference> refmap, InlineParserDelegate[] parsers, char[] specialCharacters, CommonMarkSettings settings)
         {
             var len = subj.Length;
 

@@ -6,7 +6,7 @@ namespace CommonMark.Parser
     /// <summary>
     /// Describes an element in a stack of possible inline openers.
     /// </summary>
-    internal sealed class InlineStack
+    public sealed class InlineStack
     {
         /// <summary>
         /// The parser priority if this stack entry.
@@ -49,22 +49,62 @@ namespace CommonMark.Parser
         /// </summary>
         public InlineStackFlags Flags;
 
+        /// <summary>
+        /// Inline stack element flags.
+        /// </summary>
         [Flags]
         public enum InlineStackFlags : byte
         {
+            /// <summary>
+            /// The element has no flags.
+            /// </summary>
             None = 0,
+
+            /// <summary>
+            /// The element is a stack opener.
+            /// </summary>
             Opener = 1,
+
+            /// <summary>
+            /// The element is a stack closer.
+            /// </summary>
             Closer = 2,
+
+            /// <summary>
+            /// The element is an image link.
+            /// </summary>
             ImageLink = 4
         }
 
+        /// <summary>
+        /// Inline stack priority.
+        /// </summary>
         public enum InlineStackPriority : byte
         {
+            /// <summary>
+            /// Emphasis elements.
+            /// </summary>
             Emphasis = 0,
+
+            /// <summary>
+            /// Link elements.
+            /// </summary>
             Links = 1,
+
+            /// <summary>
+            /// Maximum priority value.
+            /// </summary>
             Maximum = Links
         }
 
+        /// <summary>
+        /// Attempts to match an opening element to the specified closing element.
+        /// </summary>
+        /// <param name="seachBackwardsFrom">Stack element to search backwards from.</param>
+        /// <param name="priority">Priority.</param>
+        /// <param name="delimeter">Delimiter character.</param>
+        /// <param name="canClose"><c>true</c> if a matching opener was found.</param>
+        /// <returns></returns>
         public static InlineStack FindMatchingOpener(InlineStack seachBackwardsFrom, InlineStackPriority priority, char delimeter, out bool canClose)
         {
             canClose = true;
@@ -94,6 +134,11 @@ namespace CommonMark.Parser
             }
         }
 
+        /// <summary>
+        /// Appends an element to the stack.
+        /// </summary>
+        /// <param name="entry">Stack element to append.</param>
+        /// <param name="subj">Subject.</param>
         public static void AppendStackEntry(InlineStack entry, Subject subj)
         {
             if (subj.LastPendingInline != null)
@@ -166,6 +211,14 @@ namespace CommonMark.Parser
                 PostProcessInlineStack(null, first, last, curPriority, settings);
         }
 
+        /// <summary>
+        /// Post-processes the stack.
+        /// </summary>
+        /// <param name="subj">Subject.</param>
+        /// <param name="first">First stack element.</param>
+        /// <param name="last">Last stack element.</param>
+        /// <param name="ignorePriority">Initial priority.</param>
+        /// <param name="settings">The object containing settings for the parsing process.</param>
         public static void PostProcessInlineStack(Subject subj, InlineStack first, InlineStack last, InlineStackPriority ignorePriority, CommonMarkSettings settings)
         {
             while (ignorePriority > 0)
@@ -228,7 +281,5 @@ namespace CommonMark.Parser
                 ignorePriority--;
             }
         }
-
-
     }
 }
