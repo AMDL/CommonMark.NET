@@ -1,5 +1,6 @@
 ﻿using CommonMark.Formatters.Blocks;
 using CommonMark.Syntax;
+using System.IO;
 
 namespace CommonMark.Formatters
 {
@@ -54,6 +55,20 @@ namespace CommonMark.Formatters
         {
             return null;
         }
+
+        /// <summary>
+        /// Returns the syntax tree node tag for a block element.
+        /// </summary>
+        /// <param name="block">Block element.</param>
+        /// <returns>Tag.</returns>
+        public abstract string GetNodeTag(Block block);
+
+        /// <summary>
+        /// Writes the properties of a block element.
+        /// </summary>
+        /// <param name="writer">Writer.</param>
+        /// <param name="block">Block element.</param>
+        public abstract void Print(TextWriter writer, Block block);
 
         /// <summary>
         /// Writes the position of a block element.

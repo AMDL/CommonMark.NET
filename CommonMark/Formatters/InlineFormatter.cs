@@ -1,4 +1,5 @@
 ﻿using CommonMark.Syntax;
+using System.IO;
 
 namespace CommonMark.Formatters
 {
@@ -70,5 +71,19 @@ namespace CommonMark.Formatters
             var f = new InlineFormatter[(int)InlineTag.Count];
             return f;
         }
+
+        /// <summary>
+        /// Returns the syntax tree node tag for an inline element.
+        /// </summary>
+        /// <param name="inline">Inline element.</param>
+        /// <returns>Tag.</returns>
+        public abstract string GetNodeTag(Inline inline);
+
+        /// <summary>
+        /// Writes the properties of an inline element.
+        /// </summary>
+        /// <param name="writer">Writer.</param>
+        /// <param name="inline">Inline element.</param>
+        public abstract void Print(TextWriter writer, Inline inline);
     }
 }

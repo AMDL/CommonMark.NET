@@ -82,12 +82,20 @@ namespace CommonMark.Formatters
             var inlineStack = new Stack<InlineStackEntry>();
             var buffer = new StringBuilder();
             var trackPositions = settings.TrackSourcePosition;
+            IBlockFormatter formatter;
 
             while (block != null)
             {
                 writer.Write(new string(' ', indent));
 
-                switch (block.Tag)
+                formatter = settings.BlockFormatters[(int)block.Tag];
+                if (formatter != null)
+                {
+                    writer.Write(formatter.GetNodeTag(block));
+                    PrintPosition(trackPositions, writer, block);
+                    formatter.Print(writer, block);
+                }
+                else switch (block.Tag)
                 {
                     case BlockTag.Document:
                         writer.Write("document");
@@ -211,7 +219,7 @@ namespace CommonMark.Formatters
 
                 if (block.InlineContent != null)
                 {
-                    PrintInlines(writer, block.InlineContent, indent + 2, inlineStack, buffer, trackPositions);
+                    PrintInlines(writer, block.InlineContent, indent + 2, inlineStack, buffer, settings);
                 }
 
                 if (block.FirstChild != null)
@@ -239,13 +247,23 @@ namespace CommonMark.Formatters
             }
         }
 
-        private static void PrintInlines(TextWriter writer, Inline inline, int indent, Stack<InlineStackEntry> stack, StringBuilder buffer, bool trackPositions)
+        private static void PrintInlines(TextWriter writer, Inline inline, int indent, Stack<InlineStackEntry> stack, StringBuilder buffer, CommonMarkSettings settings)
         {
+            var trackPositions = settings.TrackSourcePosition;
+            IInlineFormatter formatter;
+
             while (inline != null)
             {
                 writer.Write(new string(' ', indent));
 
-                switch (inline.Tag)
+                formatter = settings.InlineFormatters[(int)inline.Tag];
+                if (formatter != null)
+                {
+                    writer.Write(formatter.GetNodeTag(inline));
+                    PrintPosition(trackPositions, writer, inline);
+                    formatter.Print(writer, inline);
+                }
+                else switch (inline.Tag)
                 {
                     case InlineTag.String:
                         writer.Write("str");

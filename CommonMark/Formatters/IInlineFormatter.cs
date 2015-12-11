@@ -1,4 +1,5 @@
 ﻿using CommonMark.Syntax;
+using System.IO;
 
 namespace CommonMark.Formatters
 {
@@ -39,5 +40,19 @@ namespace CommonMark.Formatters
         /// or <c>null</c> to skip content rendering.
         /// </returns>
         bool? IsRenderPlainTextInlines(Inline inline);
+
+        /// <summary>
+        /// Returns the syntax tree node tag for an inline element.
+        /// </summary>
+        /// <param name="inline">Inline element.</param>
+        /// <returns>Tag.</returns>
+        string GetNodeTag(Inline inline);
+
+        /// <summary>
+        /// Writes the properties of an inline element.
+        /// </summary>
+        /// <param name="writer">Writer.</param>
+        /// <param name="inline">Inline element.</param>
+        void Print(TextWriter writer, Inline inline);
     }
 }
