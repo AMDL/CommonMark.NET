@@ -18,7 +18,7 @@ namespace CommonMark.Parser
         {
             var strikethroughTilde = 0 != (settings.AdditionalFeatures & CommonMarkAdditionalFeatures.StrikethroughTilde);
 
-            var p = new InlineParserDelegate[127];
+            var p = new InlineParserDelegate[strikethroughTilde ? 127 : 97];
             p['\n'] = (b, s) => handle_newline(s);
             p['`'] = (b, s) => handle_backticks(s);
             p['\\'] = (b, s) => handle_backslash(s);
@@ -29,17 +29,11 @@ namespace CommonMark.Parser
             p['['] = (b, s) => HandleLeftSquareBracket(s, settings);
             p[']'] = (b, s) => HandleRightSquareBracket(s, settings);
             p['!'] = (b, s) => HandleExclamation(s, settings);
-            p['|'] = (b, s) => HandlePipe(b, s, settings);
 
             if (strikethroughTilde)
                 p['~'] = (b, s) => HandleTilde(s, settings);
 
             return p;
-        }
-
-        private static Inline HandlePipe(Block block, Subject subj, CommonMarkSettings settings)
-        {
-            throw new NotImplementedException();
         }
 
         /// <summary>
