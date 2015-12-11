@@ -19,6 +19,13 @@ namespace CommonMark.Formatters.Blocks
         }
 
         /// <summary>
+        /// Checks whether the formatter can handle a block element.
+        /// </summary>
+        /// <param name="block">Block element.</param>
+        /// <returns><c>true</c> if the formatter can handle the specified block element.</returns>
+        public abstract bool CanHandle(Block block);
+
+        /// <summary>
         /// Writes the opening of a block element.
         /// </summary>
         /// <param name="writer">HTML writer.</param>
