@@ -18,6 +18,7 @@ namespace CommonMark
         /// <summary>
         /// The parser will recognize syntax <c>~~foo~~</c> that will be rendered as <c>&lt;del&gt;foo&lt;/del&gt;</c>.
         /// </summary>
+        [Obsolete("Use " + nameof(Extension.Strikeout) + " instead.")]
         StrikethroughTilde = 1,
 
         /// <summary>

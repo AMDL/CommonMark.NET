@@ -292,11 +292,6 @@ namespace CommonMark.Formatters
                         PrintPosition(trackPositions, writer, inline);
                         break;
 
-                    case InlineTag.Strikethrough:
-                        writer.Write("del");
-                        PrintPosition(trackPositions, writer, inline);
-                        break;
-
                     default:
                         writer.Write("unknown: " + inline.Tag.ToString());
                         PrintPosition(trackPositions, writer, inline);

@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using CommonMark.Extension;
 
 namespace CommonMark.Tests
 {
@@ -19,7 +15,7 @@ namespace CommonMark.Tests
                 if (s == null)
                 {
                     s = CommonMarkSettings.Default.Clone();
-                    s.AdditionalFeatures |= CommonMarkAdditionalFeatures.StrikethroughTilde;
+                    s.Register(new Strikeout(s));
                     _settings = s;
                 }
                 return s;

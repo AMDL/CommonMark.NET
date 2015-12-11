@@ -51,6 +51,7 @@
     <Compile Include="CommonMarkException.cs" />
     <Compile Include="CommonMarkSettings.cs" />
     <Compile Include="CommonMarkExtension.cs" />
+    <Compile Include="Extension\Strikeout.cs" />
     <Compile Include="Formatters\BlockFormatter.cs" />
     <Compile Include="Formatters\Blocks\DelegateBlockFormatter.cs" />
     <Compile Include="Formatters\IBlockFormatter.cs" />

@@ -555,7 +555,7 @@ third";
 
             var data = "~~~~foo~~~~ ~";
             var stng = Settings.Clone();
-            stng.AdditionalFeatures |= CommonMarkAdditionalFeatures.StrikethroughTilde;
+            stng.Register(new Extension.Strikeout(stng));
             var doc = Helpers.ParseDocument(data, stng);
 
             var inline = doc.AsEnumerable().FirstOrDefault(o => o.Inline != null && o.Inline.Tag == Syntax.InlineTag.Strikethrough);

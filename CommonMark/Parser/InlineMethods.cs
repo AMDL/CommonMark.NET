@@ -52,31 +52,14 @@ namespace CommonMark.Parser
             return p;
         }
 
-        internal static InlineTag[] InitializeSingleCharTags(CommonMarkSettings settings)
-        {
-            return InitializeEmphasisSingleTagChars();
-        }
-
-        internal static InlineTag[] InitializeDoubleCharTags(CommonMarkSettings settings)
-        {
-            var handleTilde = 0 != (settings.AdditionalFeatures & CommonMarkAdditionalFeatures.StrikethroughTilde);
-
-            var t = InitializeEmphasisDoubleCharTags();
-
-            if (handleTilde)
-                t['~'] = InlineTag.Strikethrough;
-
-            return t;
-        }
-
-        private static InlineTag[] InitializeEmphasisSingleTagChars()
+        internal static InlineTag[] InitializeSingleCharTags()
         {
             var t = new InlineTag[127];
             t['_'] = t['*'] = InlineTag.Emphasis;
             return t;
         }
 
-        private static InlineTag[] InitializeEmphasisDoubleCharTags()
+        internal static InlineTag[] InitializeDoubleCharTags()
         {
             var t = new InlineTag[127];
             t['_'] = t['*'] = InlineTag.Strong;

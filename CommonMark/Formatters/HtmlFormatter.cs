@@ -520,22 +520,6 @@ namespace CommonMark.Formatters
                     }
                     break;
 
-                case InlineTag.Strikethrough:
-                    ignoreChildNodes = false;
-
-                    if (isOpening)
-                    {
-                        Write("<del");
-                        if (Settings.TrackSourcePosition) WritePositionAttribute(inline);
-                        Write('>');
-                    }
-
-                    if (isClosing)
-                    {
-                        Write("</del>");
-                    }
-                    break;
-
                 default:
                     throw new CommonMarkException("Inline type " + inline.Tag + " is not supported.", inline);
             }

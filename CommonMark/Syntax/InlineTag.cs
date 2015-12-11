@@ -70,7 +70,7 @@ namespace CommonMark.Syntax
 
         /// <summary>
         /// Represents an inline element that has been "removed" (visually represented as strikethrough).
-        /// Only present if the <see cref="CommonMarkAdditionalFeatures.StrikethroughTilde"/> is enabled.
+        /// Only present if <see cref="Extension.Strikeout"/> is registered.
         /// </summary>
         Strikethrough,
 

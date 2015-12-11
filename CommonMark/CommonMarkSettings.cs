@@ -75,6 +75,14 @@ namespace CommonMark
             set
             {
                 this._additionalFeatures = value;
+                var strikeout = new Extension.Strikeout(this);
+#pragma warning disable 0618
+                var strikethroughTilde = 0 != (value & CommonMarkAdditionalFeatures.StrikethroughTilde);
+#pragma warning restore 0618
+                if (strikethroughTilde && !_extensions.Contains(strikeout))
+                    _extensions.Add(strikeout);
+                if (!strikethroughTilde && _extensions.Contains(strikeout))
+                    _extensions.Remove(strikeout);
                 this.Reset();
             }
         }
@@ -321,7 +329,7 @@ namespace CommonMark
 
         private Syntax.InlineTag[] GetInlineSingleCharTags()
         {
-            var tags = Parser.InlineMethods.InitializeSingleCharTags(this);
+            var tags = Parser.InlineMethods.InitializeSingleCharTags();
             foreach (var extension in Extensions)
             {
                 if (extension.SingleCharTags != null)
@@ -349,7 +357,7 @@ namespace CommonMark
 
         private Syntax.InlineTag[] GetInlineDoubleCharTags()
         {
-            var tags = Parser.InlineMethods.InitializeDoubleCharTags(this);
+            var tags = Parser.InlineMethods.InitializeDoubleCharTags();
             foreach (var extension in Extensions)
             {
                 if (extension.DoubleCharTags != null)
