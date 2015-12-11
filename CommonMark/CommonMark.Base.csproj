@@ -50,7 +50,7 @@
     <Compile Include="CommonMarkConverter.cs" />
     <Compile Include="CommonMarkException.cs" />
     <Compile Include="CommonMarkSettings.cs" />
-    <Compile Include="Extension.cs" />
+    <Compile Include="CommonMarkExtension.cs" />
     <Compile Include="Formatters\BlockFormatter.cs" />
     <Compile Include="Formatters\Blocks\DelegateBlockFormatter.cs" />
     <Compile Include="Formatters\IBlockFormatter.cs" />
@@ -66,7 +66,7 @@
     <Compile Include="Formatters\InlineFormatter.cs" />
     <Compile Include="Formatters\Inlines\DelegateInlineFormatter.cs" />
     <Compile Include="Func.cs" />
-    <Compile Include="IExtension.cs" />
+    <Compile Include="ICommonMarkExtension.cs" />
     <Compile Include="Lazy.cs" />
     <Compile Include="OutputFormat.cs" />
     <Compile Include="Parser\BlockParserParameters.cs" />

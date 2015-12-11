@@ -5,48 +5,41 @@ using System.Collections.Generic;
 namespace CommonMark
 {
     /// <summary>
-    /// Extension.
+    /// Inline parser delegate.
     /// </summary>
-    public abstract class Extension : IExtension
+    /// <param name="block">Parent block.</param>
+    /// <param name="subject">Subject.</param>
+    /// <returns>Inline element or <c>null</c>.</returns>
+    public delegate Syntax.Inline InlineParserDelegate(Syntax.Block block, Parser.Subject subject);
+
+    /// <summary>
+    /// Extension interface.
+    /// </summary>
+    public interface ICommonMarkExtension
     {
         /// <summary>
         /// Gets the mapping from character to inline parser delegate.
         /// </summary>
-        public virtual IDictionary<char, InlineParserDelegate> InlineParsers
-        {
-            get { return null; }
-        }
+        IDictionary<char, InlineParserDelegate> InlineParsers { get; }
 
         /// <summary>
         /// Gets the mapping from character to inline tag for matched single-character openers.
         /// </summary>
-        public virtual IDictionary<char, InlineTag> SingleCharTags
-        {
-            get { return null; }
-        }
+        IDictionary<char, InlineTag> SingleCharTags { get; }
 
         /// <summary>
         /// Gets the mapping from character to inline tag for matched double-character openers.
         /// </summary>
-        public virtual IDictionary<char, InlineTag> DoubleCharTags
-        {
-            get { return null; }
-        }
+        IDictionary<char, InlineTag> DoubleCharTags { get; }
 
         /// <summary>
         /// Gets the mapping from block tag to block element formatter.
         /// </summary>
-        public virtual IDictionary<BlockTag, IBlockFormatter> BlockFormatters
-        {
-            get { return null; }
-        }
+        IDictionary<BlockTag, IBlockFormatter> BlockFormatters { get; }
 
         /// <summary>
         /// Gets the mapping from inline tag to inline element formatter.
         /// </summary>
-        public virtual IDictionary<InlineTag, IInlineFormatter> InlineFormatters
-        {
-            get { return null; }
-        }
+        IDictionary<InlineTag, IInlineFormatter> InlineFormatters { get; }
     }
 }

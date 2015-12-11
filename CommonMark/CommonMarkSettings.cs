@@ -16,7 +16,7 @@ namespace CommonMark
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         public CommonMarkSettings()
         {
-            this._extensions = new List<IExtension>();
+            this._extensions = new List<ICommonMarkExtension>();
             this._tables = new Lazy<TableSettings>(GetTables);
             Reset();
         }
@@ -79,12 +79,12 @@ namespace CommonMark
             }
         }
 
-        private List<IExtension> _extensions;
+        private List<ICommonMarkExtension> _extensions;
 
         /// <summary>
         /// Gets the extensions.
         /// </summary>
-        internal IEnumerable<IExtension> Extensions
+        internal IEnumerable<ICommonMarkExtension> Extensions
         {
             get { return _extensions; }
         }
@@ -93,7 +93,7 @@ namespace CommonMark
         /// Registers an extension. Extensions must not retain references to the settings object.
         /// </summary>
         /// <param name="extension">The extension to register.</param>
-        public void Register(IExtension extension)
+        public void Register(ICommonMarkExtension extension)
         {
             if (extension == null)
                 throw new ArgumentNullException(nameof(extension));
@@ -105,7 +105,7 @@ namespace CommonMark
         /// Registers multiple extensions. Extensions must not retain references to the settings object.
         /// </summary>
         /// <param name="extensions">The extensions to register.</param>
-        public void Register(IEnumerable<IExtension> extensions)
+        public void Register(IEnumerable<ICommonMarkExtension> extensions)
         {
             if (extensions == null)
                 throw new ArgumentNullException(nameof(extensions));
@@ -117,7 +117,7 @@ namespace CommonMark
         /// Unregisters an extension.
         /// </summary>
         /// <param name="extension">The extension to unregister.</param>
-        public void Unregister(IExtension extension)
+        public void Unregister(ICommonMarkExtension extension)
         {
             if (extension == null)
                 throw new ArgumentNullException(nameof(extension));
@@ -139,7 +139,7 @@ namespace CommonMark
         /// </summary>
         /// <param name="extension">The extension to locate.</param>
         /// <returns><c>true</c> if the extension is registered.</returns>
-        public bool IsRegistered(IExtension extension)
+        public bool IsRegistered(ICommonMarkExtension extension)
         {
             if (extension == null)
                 throw new ArgumentNullException(nameof(extension));
@@ -209,7 +209,7 @@ namespace CommonMark
         public CommonMarkSettings Clone()
         {
             var clone = (CommonMarkSettings)this.MemberwiseClone();
-            clone._extensions = new List<IExtension>(this._extensions);
+            clone._extensions = new List<ICommonMarkExtension>(this._extensions);
             clone._tables = new Lazy<TableSettings>(clone.GetTables);
             clone.Reset();
             return clone;
