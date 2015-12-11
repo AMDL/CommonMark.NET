@@ -1,17 +1,18 @@
 ﻿using CommonMark.Syntax;
 
-namespace CommonMark.Formatters
+namespace CommonMark.Formatters.Blocks
 {
-    internal class TableCellFormatter : BlockFormatter
+    internal class TableCaptionFormatter : BlockFormatter
     {
-        public TableCellFormatter(CommonMarkSettings settings)
+        public TableCaptionFormatter(CommonMarkSettings settings)
             : base(settings)
         {
         }
 
         public override void WriteOpening(IHtmlTextWriter writer, Block block)
         {
-            writer.WriteConstant(block.TableCellData.CellType == TableCellType.Header ? "<th" : "<td");
+            writer.EnsureLine();
+            writer.WriteConstant("<caption");
             WritePosition(writer, block);
             writer.WriteLine('>');
         }
@@ -19,9 +20,7 @@ namespace CommonMark.Formatters
         public override string GetClosing(Block block, out bool visitChildren)
         {
             visitChildren = true;
-            return block.TableCellData.CellType == TableCellType.Header
-                ? "</th>"
-                : "</td>";
+            return "</caption>";
         }
 
         public override bool? IsStackTight(bool tight)
