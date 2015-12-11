@@ -72,6 +72,11 @@ namespace CommonMark.Syntax
         /// Represents an inline element that has been "removed" (visually represented as strikethrough).
         /// Only present if the <see cref="CommonMarkAdditionalFeatures.StrikethroughTilde"/> is enabled.
         /// </summary>
-        Strikethrough
+        Strikethrough,
+
+        /// <summary>
+        /// Inline tag count. There should be no elements with this tag.
+        /// </summary>
+        Count
     }
 }

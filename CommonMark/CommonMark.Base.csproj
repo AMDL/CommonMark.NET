@@ -58,6 +58,8 @@
     <Compile Include="Formatters\Blocks\TableCellFormatter.cs" />
     <Compile Include="Formatters\Blocks\TableFormatter.cs" />
     <Compile Include="Formatters\Blocks\TableRowFormatter.cs" />
+    <Compile Include="Formatters\Inlines\IInlineFormatter.cs" />
+    <Compile Include="Formatters\Inlines\InlineFormatter.cs" />
     <Compile Include="Func.cs" />
     <Compile Include="Lazy.cs" />
     <Compile Include="OutputFormat.cs" />

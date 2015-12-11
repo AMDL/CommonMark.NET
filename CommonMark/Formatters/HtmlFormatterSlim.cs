@@ -503,12 +503,25 @@ namespace CommonMark.Formatters
             bool visitChildren;
             bool trackPositions = settings.TrackSourcePosition;
             string stackLiteral = null;
+            Inlines.IInlineFormatter formatter;
+            bool? isRenderPlainTextInlines;
 
             while (inline != null)
             {
                 visitChildren = false;
 
-                switch (inline.Tag)
+                formatter = settings.InlineFormatters[(int)inline.Tag];
+                if (formatter != null)
+                {
+                    visitChildren = formatter.WriteOpening(writer, inline);
+                    isRenderPlainTextInlines = formatter.IsRenderPlainTextInlines(inline);
+                    if (isRenderPlainTextInlines == true)
+                        InlinesToPlainText(writer, inline.FirstChild, stack);
+                    else if (isRenderPlainTextInlines == false)
+                        EscapeHtml(inline.LiteralContentValue, writer);
+                    stackLiteral = formatter.GetClosing(inline);
+                }
+                else switch (inline.Tag)
                 {
                     case InlineTag.String:
                         if (trackPositions)
