@@ -14,17 +14,17 @@ namespace CommonMark.Formatters.Blocks
             return block.Tag == BlockTag.TableCaption;
         }
 
-        public override void WriteOpening(IHtmlTextWriter writer, Block block)
+        public override bool WriteOpening(IHtmlTextWriter writer, Block block)
         {
             writer.EnsureLine();
             writer.WriteConstant("<caption");
             WritePosition(writer, block);
             writer.WriteLine('>');
+            return true;
         }
 
-        public override string GetClosing(Block block, out bool visitChildren)
+        public override string GetClosing(Block block)
         {
-            visitChildren = true;
             return "</caption>";
         }
 

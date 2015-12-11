@@ -14,7 +14,7 @@ namespace CommonMark.Formatters.Blocks
             return block.Tag == BlockTag.Table;
         }
 
-        public override void WriteOpening(IHtmlTextWriter writer, Block block)
+        public override bool WriteOpening(IHtmlTextWriter writer, Block block)
         {
             writer.EnsureLine();
             writer.WriteConstant("<table");
@@ -39,11 +39,11 @@ namespace CommonMark.Formatters.Blocks
                 writer.WriteLineConstant(" />");
             }
             writer.WriteLineConstant("</colgroup>");
+            return true;
         }
 
-        public override string GetClosing(Block block, out bool visitChildren)
+        public override string GetClosing(Block block)
         {
-            visitChildren = true;
             return "</table>";
         }
 

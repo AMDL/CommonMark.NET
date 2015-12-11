@@ -14,7 +14,7 @@ namespace CommonMark.Formatters.Blocks
             return block.Tag == BlockTag.TableRow;
         }
 
-        public override void WriteOpening(IHtmlTextWriter writer, Block block)
+        public override bool WriteOpening(IHtmlTextWriter writer, Block block)
         {
             var rowType = block.TableRowData.TableRowType;
 
@@ -32,9 +32,11 @@ namespace CommonMark.Formatters.Blocks
             writer.WriteConstant("<tr");
             WritePosition(writer, block);
             writer.WriteLine('>');
+
+            return true;
         }
 
-        public override string GetClosing(Block block, out bool visitChildren)
+        public override string GetClosing(Block block)
         {
             var rowType = block.TableRowData.TableRowType;
 
@@ -47,7 +49,6 @@ namespace CommonMark.Formatters.Blocks
             else if (0 != (rowType & TableRowType.Last))
                 stackLiteral += "\n</tbody>";
 
-            visitChildren = true;
             return stackLiteral;
         }
 

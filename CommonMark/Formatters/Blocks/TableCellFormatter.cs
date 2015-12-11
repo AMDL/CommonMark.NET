@@ -14,16 +14,16 @@ namespace CommonMark.Formatters.Blocks
             return block.Tag == BlockTag.TableCell;
         }
 
-        public override void WriteOpening(IHtmlTextWriter writer, Block block)
+        public override bool WriteOpening(IHtmlTextWriter writer, Block block)
         {
             writer.WriteConstant(block.TableCellData.CellType == TableCellType.Header ? "<th" : "<td");
             WritePosition(writer, block);
             writer.WriteLine('>');
+            return true;
         }
 
-        public override string GetClosing(Block block, out bool visitChildren)
+        public override string GetClosing(Block block)
         {
-            visitChildren = true;
             return block.TableCellData.CellType == TableCellType.Header
                 ? "</th>"
                 : "</td>";
