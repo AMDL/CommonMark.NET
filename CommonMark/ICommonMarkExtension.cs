@@ -1,5 +1,4 @@
 ﻿using CommonMark.Formatters;
-using CommonMark.Syntax;
 using System.Collections.Generic;
 
 namespace CommonMark
@@ -23,23 +22,23 @@ namespace CommonMark
         IDictionary<char, InlineParserDelegate> InlineParsers { get; }
 
         /// <summary>
-        /// Gets the mapping from character to inline tag for matched single-character openers.
+        /// Gets the mapping from character to inline delimiter parameters for matched single-character openers.
         /// </summary>
-        IDictionary<char, InlineTag> SingleCharTags { get; }
+        IDictionary<char, Parser.InlineDelimiterParameters> InlineSingleChars { get; }
 
         /// <summary>
-        /// Gets the mapping from character to inline tag for matched double-character openers.
+        /// Gets the mapping from character to inline delimiter parameters for matched double-character openers.
         /// </summary>
-        IDictionary<char, InlineTag> DoubleCharTags { get; }
+        IDictionary<char, Parser.InlineDelimiterParameters> InlineDoubleChars { get; }
 
         /// <summary>
         /// Gets the mapping from block tag to block element formatter.
         /// </summary>
-        IDictionary<BlockTag, IBlockFormatter> BlockFormatters { get; }
+        IDictionary<Syntax.BlockTag, IBlockFormatter> BlockFormatters { get; }
 
         /// <summary>
         /// Gets the mapping from inline tag to inline element formatter.
         /// </summary>
-        IDictionary<InlineTag, IInlineFormatter> InlineFormatters { get; }
+        IDictionary<Syntax.InlineTag, IInlineFormatter> InlineFormatters { get; }
     }
 }

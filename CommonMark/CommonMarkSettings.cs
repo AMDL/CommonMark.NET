@@ -333,23 +333,23 @@ namespace CommonMark
             return new Parser.PipeTableParser(this);
         }
 
-        internal Syntax.InlineTag[] GetInlineSingleCharTags()
+        internal Parser.InlineDelimiterParameters[] GetInlineSingleChars()
         {
-            return GetItems(Parser.InlineMethods.InitializeSingleCharTags(),
-                extension => extension.SingleCharTags,
+            return GetItems(Parser.InlineMethods.EmphasisSingleChars,
+                extension => extension.InlineSingleChars,
                 key => key,
                 (inner, value) => {
-                    throw new InvalidOperationException(string.Format("Single character tag value is already set: {0}.", value));
+                    throw new InvalidOperationException(string.Format("Single-character value is already set: {0}.", value.Tag));
                 });
         }
 
-        internal Syntax.InlineTag[] GetInlineDoubleCharTags()
+        internal Parser.InlineDelimiterParameters[] GetInlineDoubleChars()
         {
-            return GetItems(Parser.InlineMethods.InitializeDoubleCharTags(),
-                extension => extension.DoubleCharTags,
+            return GetItems(Parser.InlineMethods.EmphasisDoubleChars,
+                extension => extension.InlineDoubleChars,
                 key => key,
                 (inner, value) => {
-                    throw new InvalidOperationException(string.Format("Double character tag value is already set: {0}.", value));
+                    throw new InvalidOperationException(string.Format("Double-character value is already set: {0}.", value.Tag));
                 });
         }
 

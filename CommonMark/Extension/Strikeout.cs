@@ -1,5 +1,6 @@
 ﻿using CommonMark.Formatters;
 using CommonMark.Formatters.Inlines;
+using CommonMark.Parser;
 using CommonMark.Syntax;
 using System.Collections.Generic;
 
@@ -10,6 +11,8 @@ namespace CommonMark.Extension
     /// </summary>
     public class Strikeout : CommonMarkExtension
     {
+        private static readonly InlineDelimiterParameters DoubleChar = InitializeDoubleChar();
+
         private readonly StrikethroughFormatter formatter;
 
         /// <summary>
@@ -22,15 +25,15 @@ namespace CommonMark.Extension
         }
 
         /// <summary>
-        /// Gets the mapping from character to inline tag for matched double-character openers.
+        /// Gets the mapping from character to inline delimiter parameters for matched double-character openers.
         /// </summary>
-        public override IDictionary<char, InlineTag> DoubleCharTags
+        public override IDictionary<char, InlineDelimiterParameters> InlineDoubleChars
         {
             get
             {
-                return new Dictionary<char, InlineTag>
+                return new Dictionary<char, InlineDelimiterParameters>
                 {
-                    { '~', InlineTag.Strikethrough }
+                    { '~', DoubleChar }
                 };
             }
         }
@@ -47,6 +50,14 @@ namespace CommonMark.Extension
                     { InlineTag.Strikethrough, formatter }
                 };
             }
+        }
+
+        private static InlineDelimiterParameters InitializeDoubleChar()
+        {
+            return new InlineDelimiterParameters
+            {
+                Tag = InlineTag.Strikethrough,
+            };
         }
     }
 }

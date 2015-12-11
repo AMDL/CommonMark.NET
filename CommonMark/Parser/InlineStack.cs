@@ -221,8 +221,8 @@ namespace CommonMark.Parser
         /// <param name="parameters">Inline parser parameters.</param>
         public static void PostProcessInlineStack(Subject subj, InlineStack first, InlineStack last, InlineStackPriority ignorePriority, InlineParserParameters parameters)
         {
-            var singleCharTags = parameters.SingleCharTags;
-            var doubleCharTags = parameters.DoubleCharTags;
+            var singleChars = parameters.SingleChars;
+            var doubleChars = parameters.DoubleChars;
             while (ignorePriority > 0)
             {
                 var istack = first;
@@ -239,11 +239,11 @@ namespace CommonMark.Parser
                         if (iopener != null)
                         {
                             bool retry = false;
-                            var singleCharTag = iopener.Delimeter < singleCharTags.Length ? singleCharTags[iopener.Delimeter] : 0;
-                            var doubleCharTag = iopener.Delimeter < doubleCharTags.Length ? doubleCharTags[iopener.Delimeter] : 0;
-                            if (singleCharTag != 0 || doubleCharTag != 0)
+                            var singleChar = iopener.Delimeter < singleChars.Length ? singleChars[iopener.Delimeter] : InlineDelimiterParameters.Empty;
+                            var doubleChar = iopener.Delimeter < doubleChars.Length ? doubleChars[iopener.Delimeter] : InlineDelimiterParameters.Empty;
+                            if (!singleChar.IsEmpty || !doubleChar.IsEmpty)
                             {
-                                var useDelims = InlineMethods.MatchInlineStack(iopener, subj, istack.DelimeterCount, istack, singleCharTag, doubleCharTag, parameters);
+                                var useDelims = InlineMethods.MatchInlineStack(iopener, subj, istack.DelimeterCount, istack, singleChar, doubleChar, parameters);
                                 if (istack.DelimeterCount > 0)
                                     retry = true;
                             }
