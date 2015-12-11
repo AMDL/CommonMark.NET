@@ -53,7 +53,7 @@ namespace CommonMark.Formatters.Blocks
             return stackLiteral;
         }
 
-        public override bool? IsStackTight(bool tight)
+        public override bool? IsStackTight(Block block, bool tight)
         {
             return false;
         }
