@@ -25,11 +25,10 @@ namespace CommonMark.Parser
             data = new TableData
             {
                 TableType = TableType.Pipe,
-                ColumnDelimiter = TableColumnDelimiter.Pipe,
+                ColumnDelimiter = '|',
             };
 
             var charCount = 0;
-            char columnDelimiter = (char)0;
             TableColumnData columnData = null;
 
             for (var i = pos + 1; i < sourceLength; i++)
@@ -69,13 +68,13 @@ namespace CommonMark.Parser
 
                 if (IsPipeTableHeaderColumnDelimiter(c))
                 {
-                    if (columnDelimiter != 0)
+                    if (data.HeaderColumnDelimiter != 0)
                     {
-                        if (c != columnDelimiter)
+                        if (c != data.HeaderColumnDelimiter)
                             return 0;
                     }
                     else
-                        columnDelimiter = c;
+                        data.HeaderColumnDelimiter = c;
 
                     if (charCount == 0)
                     {
@@ -112,7 +111,7 @@ namespace CommonMark.Parser
 
             if (columnData == null)
             {
-                if (!IsPipeTableColumnDelimiter(columnDelimiter))
+                if (!IsPipeTableColumnDelimiter(data.HeaderColumnDelimiter))
                     return 0;
             }
             else
@@ -129,8 +128,6 @@ namespace CommonMark.Parser
 
             if (data.FirstColumn == data.LastColumn)
                 return 0;
-
-            data.HeaderColumnDelimiter = columnDelimiter == '|' ? TableHeaderColumnDelimiter.Pipe : TableHeaderColumnDelimiter.Plus;
 
             return data.ColumnCount;
         }
