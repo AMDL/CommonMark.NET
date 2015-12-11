@@ -5,7 +5,7 @@ namespace CommonMark.Formatters.Blocks
     /// <summary>
     /// Block element formatter.
     /// </summary>
-    public abstract class BlockFormatter
+    public abstract class BlockFormatter : IBlockFormatter
     {
         private readonly CommonMarkSettings settings;
 
@@ -61,9 +61,9 @@ namespace CommonMark.Formatters.Blocks
                 writer.WritePosition(block);
         }
 
-        internal static BlockFormatter[] InitializeFormatters(CommonMarkSettings settings)
+        internal static IBlockFormatter[] InitializeFormatters(CommonMarkSettings settings)
         {
-            var f = new BlockFormatter[(int)BlockTag.Count];
+            var f = new IBlockFormatter[(int)BlockTag.Count];
             f[(int)BlockTag.TableCell] = new TableCellFormatter(settings);
             f[(int)BlockTag.TableRow] = new TableRowFormatter(settings);
             f[(int)BlockTag.TableCaption] = new TableCaptionFormatter(settings);
