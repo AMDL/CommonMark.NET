@@ -1,4 +1,5 @@
 ﻿using CommonMark.Syntax;
+using System.IO;
 
 namespace CommonMark.Formatters.Blocks
 {
@@ -55,6 +56,16 @@ namespace CommonMark.Formatters.Blocks
         public override bool? IsStackTight(bool tight)
         {
             return false;
+        }
+
+        public override string GetNodeTag(Block block)
+        {
+            return "table_row";
+        }
+
+        public override void Print(TextWriter writer, Block block)
+        {
+            writer.Write(" (type={0})", block.TableRowData.TableRowType);
         }
     }
 }

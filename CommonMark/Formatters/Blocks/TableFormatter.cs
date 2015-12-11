@@ -1,4 +1,5 @@
 ﻿using CommonMark.Syntax;
+using System.IO;
 
 namespace CommonMark.Formatters.Blocks
 {
@@ -31,6 +32,20 @@ namespace CommonMark.Formatters.Blocks
         public override bool? IsStackTight(bool tight)
         {
             return false;
+        }
+
+        public override string GetNodeTag(Block block)
+        {
+            return "table";
+        }
+
+        public override void Print(TextWriter writer, Block block)
+        {
+            writer.Write(" (type={0} head_delim={1} head_col_delim={2} col_delim={3})",
+                block.TableData.TableType,
+                block.TableData.HeaderDelimiter,
+                block.TableData.HeaderColumnDelimiter,
+                block.TableData.ColumnDelimiter);
         }
     }
 }

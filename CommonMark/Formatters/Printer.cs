@@ -132,35 +132,6 @@ namespace CommonMark.Formatters
                         }
                         break;
 
-                    case BlockTag.TableCell:
-                        writer.Write("table_cell");
-                        var cellData = block.TableCellData;
-                        writer.Write(" (type={0} align={1})",
-                            cellData.CellType,
-                            cellData.ColumnData.Alignment);
-                        PrintPosition(trackPositions, writer, block);
-                        break;
-
-                    case BlockTag.TableRow:
-                        writer.Write("table_row");
-                        PrintPosition(trackPositions, writer, block);
-                        writer.Write(" (type={0})", block.TableRowData.TableRowType);
-                        break;
-
-                    case BlockTag.TableCaption:
-                        writer.Write("table_caption");
-                        PrintPosition(trackPositions, writer, block);
-                        break;
-
-                    case BlockTag.Table:
-                        writer.Write("table");
-                        PrintPosition(trackPositions, writer, block);
-                        writer.Write(" (type={0} head_col_delim={1} col_delim={2})",
-                            block.TableData.TableType,
-                            block.TableData.HeaderColumnDelimiter,
-                            block.TableData.ColumnDelimiter);
-                        break;
-
                     case BlockTag.AtxHeader:
                         writer.Write("atx_header");
                         PrintPosition(trackPositions, writer, block);
