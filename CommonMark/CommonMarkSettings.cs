@@ -249,25 +249,10 @@ namespace CommonMark
 
         private InlineParserDelegate[] GetInlineParsers()
         {
-            var parsers = Parser.InlineMethods.InitializeParsers(this);
-            foreach (var extension in Extensions)
-            {
-                if (extension.InlineParsers != null)
-                {
-                    foreach (var kvp in extension.InlineParsers)
-                    {
-                        var value = kvp.Value;
-                        if (value == null)
-                            throw new ArgumentException("Parser delegate value cannot be null.");
-                        var key = kvp.Key;
-                        var inner = parsers[key];
-                        if (inner != null)
-                            value = new Parser.DelegateInlineParser(inner, value).ParseInline;
-                        parsers[key] = value;
-                    }
-                }
-            }
-            return parsers;
+            return GetItems(Parser.InlineMethods.InitializeParsers(this),
+                extension => extension.InlineParsers,
+                key => key,
+                (inner, value) => new Parser.DelegateInlineParser(inner, value).ParseInline);
         }
 
         private Lazy<char[]> _inlineParserSpecialCharacters;
@@ -329,24 +314,12 @@ namespace CommonMark
 
         private Syntax.InlineTag[] GetInlineSingleCharTags()
         {
-            var tags = Parser.InlineMethods.InitializeSingleCharTags();
-            foreach (var extension in Extensions)
-            {
-                if (extension.SingleCharTags != null)
-                {
-                    foreach (var kvp in extension.SingleCharTags)
-                    {
-                        var value = kvp.Value;
-                        if (value == 0)
-                            throw new ArgumentException("Single character tag value cannot be 0.");
-                        var key = kvp.Key;
-                        if (tags[key] != 0)
-                            throw new InvalidOperationException("Single character tag value is already set.");
-                        tags[key] = kvp.Value;
-                    }
-                }
-            }
-            return tags;
+            return GetItems(Parser.InlineMethods.InitializeSingleCharTags(),
+                extension => extension.SingleCharTags,
+                key => key,
+                (inner, value) => {
+                    throw new InvalidOperationException(string.Format("Single character tag value is already set: {0}.", value));
+                });
         }
 
         private Lazy<Syntax.InlineTag[]> _inlineDoubleCharTags;
@@ -357,24 +330,12 @@ namespace CommonMark
 
         private Syntax.InlineTag[] GetInlineDoubleCharTags()
         {
-            var tags = Parser.InlineMethods.InitializeDoubleCharTags();
-            foreach (var extension in Extensions)
-            {
-                if (extension.DoubleCharTags != null)
-                {
-                    foreach (var kvp in extension.DoubleCharTags)
-                    {
-                        var value = kvp.Value;
-                        if (value == 0)
-                            throw new ArgumentException("Double character tag value cannot be 0.");
-                        var key = kvp.Key;
-                        if (tags[key] != 0)
-                            throw new InvalidOperationException("Double character tag value is already set.");
-                        tags[key] = kvp.Value;
-                    }
-                }
-            }
-            return tags;
+            return GetItems(Parser.InlineMethods.InitializeDoubleCharTags(),
+                extension => extension.DoubleCharTags,
+                key => key,
+                (inner, value) => {
+                    throw new InvalidOperationException(string.Format("Double character tag value is already set: {0}.", value));
+                });
         }
 
         #endregion
@@ -393,25 +354,10 @@ namespace CommonMark
 
         private Formatters.IBlockFormatter[] GetBlockFormatters()
         {
-            var formatters = Formatters.BlockFormatter.InitializeFormatters(this);
-            foreach (var extension in Extensions)
-            {
-                if (extension.BlockFormatters != null)
-                {
-                    foreach (var kvp in extension.BlockFormatters)
-                    {
-                        var value = kvp.Value;
-                        if (value == null)
-                            throw new ArgumentException("Block formatter value cannot be null.");
-                        var key = (int)kvp.Key;
-                        var inner = formatters[key];
-                        if (inner != null)
-                            value = new Formatters.Blocks.DelegateBlockFormatter(inner, value);
-                        formatters[key] = value;
-                    }
-                }
-            }
-            return formatters;
+            return GetItems(Formatters.BlockFormatter.InitializeFormatters(this),
+                ext => ext.BlockFormatters,
+                key => (int)key,
+                (inner, value) => new Formatters.Blocks.DelegateBlockFormatter(inner, value));
         }
 
         private Lazy<Formatters.IInlineFormatter[]> _inlineFormatters;
@@ -426,28 +372,45 @@ namespace CommonMark
 
         private Formatters.IInlineFormatter[] GetInlineFormatters()
         {
-            var formatters = Formatters.InlineFormatter.InitializeFormatters(this);
-            foreach (var extension in Extensions)
-            {
-                if (extension.InlineFormatters != null)
-                {
-                    foreach (var kvp in extension.InlineFormatters)
-                    {
-                        var value = kvp.Value;
-                        if (value == null)
-                            throw new ArgumentException("Inline formatter value cannot be null.");
-                        var key = (int)kvp.Key;
-                        var inner = formatters[key];
-                        if (inner != null)
-                            value = new Formatters.Inlines.DelegateInlineFormatter(inner, value);
-                        formatters[key] = value;
-                    }
-                }
-            }
-            return formatters;
+            return GetItems(Formatters.InlineFormatter.InitializeFormatters(this),
+                ext => ext.InlineFormatters,
+                key => (int)key,
+                (inner, value) => new Formatters.Inlines.DelegateInlineFormatter(inner, value));
         }
 
         #endregion
 
+        #region Private helper methods
+
+        private TValue[] GetItems<TKey, TValue>(TValue[] initialItems,
+            Func<ICommonMarkExtension, IDictionary<TKey, TValue>> itemsFactory,
+            Func<TKey, int> keyFactory, Func<TValue, TValue, TValue> valueFactory)
+            where TKey: struct
+        {
+            foreach (var extension in Extensions)
+            {
+                var extensionItems = itemsFactory(extension);
+                if (extensionItems != null)
+                {
+                    foreach (var kvp in extensionItems)
+                    {
+                        var value = kvp.Value;
+                        if (value == null || value.Equals(default(TValue)))
+                        {
+                            var message = string.Format("{0} value cannot be {1}: {2}.", typeof(TValue).Name, 0, extension.ToString());
+                            throw new InvalidOperationException(message);
+                        }
+                        var key = keyFactory(kvp.Key);
+                        var inner = initialItems[key];
+                        if (inner != null && !inner.Equals(default(TValue)))
+                            value = valueFactory(inner, value);
+                        initialItems[key] = value;
+                    }
+                }
+            }
+            return initialItems;
+        }
+
+        #endregion
     }
 }
