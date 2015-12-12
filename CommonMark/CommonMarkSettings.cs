@@ -352,7 +352,7 @@ namespace CommonMark
 
         #endregion
 
-        #region [ Properties that cache formatter parameters ]
+        #region FormatterParameters
 
         private Formatters.FormatterParameters _formatterParameters;
 
@@ -363,6 +363,10 @@ namespace CommonMark
         {
             get { return _formatterParameters; }
         }
+
+        #endregion FormatterParameters
+
+        #region BlockFormatters
 
         private Lazy<Formatters.IBlockFormatter[]> _blockFormatters;
 
@@ -377,10 +381,19 @@ namespace CommonMark
         private Formatters.IBlockFormatter[] GetBlockFormatters()
         {
             return GetItems(Formatters.BlockFormatter.InitializeFormatters(FormatterParameters),
-                ext => ext.BlockFormatters,
-                key => (int)key,
-                (inner, value) => new Formatters.DelegateBlockFormatter(inner, value));
+                ext => ext.BlockFormatters, key => (int)key, GetBlockFormatter);
         }
+
+        private static Formatters.IBlockFormatter GetBlockFormatter(Formatters.IBlockFormatter inner, Formatters.IBlockFormatter outer)
+        {
+            return !inner.Equals(outer)
+                ? new Formatters.DelegateBlockFormatter(inner, outer)
+                : inner;
+        }
+
+        #endregion BlockFormatters
+
+        #region InlineFormatters
 
         private Lazy<Formatters.IInlineFormatter[]> _inlineFormatters;
 
@@ -395,12 +408,17 @@ namespace CommonMark
         private Formatters.IInlineFormatter[] GetInlineFormatters()
         {
             return GetItems(Formatters.InlineFormatter.InitializeFormatters(FormatterParameters),
-                ext => ext.InlineFormatters,
-                key => (int)key,
-                (inner, value) => new Formatters.DelegateInlineFormatter(inner, value));
+                ext => ext.InlineFormatters, key => (int)key, GetInlineFormatter);
         }
 
-        #endregion
+        private static Formatters.IInlineFormatter GetInlineFormatter(Formatters.IInlineFormatter inner, Formatters.IInlineFormatter outer)
+        {
+            return !inner.Equals(outer)
+                ? new Formatters.DelegateInlineFormatter(inner, outer)
+                : inner;
+        }
+
+        #endregion InlineFormatters
 
         #region Private helper methods
 
