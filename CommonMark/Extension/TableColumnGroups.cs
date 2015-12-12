@@ -6,15 +6,15 @@ using System.Collections.Generic;
 namespace CommonMark.Extension
 {
     /// <summary>
-    /// Base tables extension class.
+    /// Table column groups.
     /// </summary>
-    public abstract class Tables : CommonMarkExtension
+    public class TableColumnGroups : CommonMarkExtension
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="Tables"/> class.
+        /// Initializes a new instance of the <see cref="TableColumnGroups"/> class.
         /// </summary>
         /// <param name="settings">Common settings.</param>
-        protected Tables(CommonMarkSettings settings)
+        public TableColumnGroups(CommonMarkSettings settings)
             : base(settings)
         {
         }
@@ -27,12 +27,8 @@ namespace CommonMark.Extension
         {
             return new Dictionary<BlockTag, IBlockFormatter>
             {
-                { BlockTag.TableCell, new TableCellFormatter(parameters) },
-                { BlockTag.TableRow, new TableRowFormatter(parameters) },
-                { BlockTag.TableBody, new TableBodyFormatter(parameters) },
-                { BlockTag.TableFooter, new TableFooterFormatter(parameters) },
-                { BlockTag.TableHeader, new TableHeaderFormatter(parameters) },
-                { BlockTag.Table, new TableFormatter(parameters) },
+                { BlockTag.TableColumn, new TableColumnFormatter(parameters) },
+                { BlockTag.TableColumnGroup, new TableColumnGroupFormatter(parameters) },
             };
         }
     }
