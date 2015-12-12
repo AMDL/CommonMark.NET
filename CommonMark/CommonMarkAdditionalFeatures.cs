@@ -8,6 +8,7 @@ namespace CommonMark
     /// CommonMark implementations is required.
     /// </summary>
     [Flags]
+    [Obsolete("Use " + nameof(CommonMarkSettings.Register) + "() and " + nameof(CommonMarkSettings.Unregister) + "() instead.")]
     public enum CommonMarkAdditionalFeatures
     {
         /// <summary>
@@ -20,11 +21,6 @@ namespace CommonMark
         /// </summary>
         [Obsolete("Use " + nameof(Extension.Strikeout) + " instead.")]
         StrikethroughTilde = 1,
-
-        /// <summary>
-        /// The parser will recognize pipe tables.
-        /// </summary>
-        PipeTables = 1024,
 
         /// <summary>
         /// All additional features are enabled.

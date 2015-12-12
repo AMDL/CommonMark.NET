@@ -51,9 +51,16 @@
     <Compile Include="CommonMarkException.cs" />
     <Compile Include="CommonMarkSettings.cs" />
     <Compile Include="CommonMarkExtension.cs" />
+    <Compile Include="Extension\PipeTablesSettings.cs" />
     <Compile Include="Extension\Strikeout.cs" />
+    <Compile Include="Extension\TableCaptions.cs" />
+    <Compile Include="Extension\TableCaptionsSettings.cs" />
+    <Compile Include="Extension\TableCaptionsFeatures.cs" />
     <Compile Include="Formatters\BlockFormatter.cs" />
     <Compile Include="Formatters\Blocks\DelegateBlockFormatter.cs" />
+    <Compile Include="Formatters\Blocks\TableBodyFormatter.cs" />
+    <Compile Include="Formatters\Blocks\TableFooterFormatter.cs" />
+    <Compile Include="Formatters\Blocks\TableHeaderFormatter.cs" />
     <Compile Include="Formatters\FormatterParameters.cs" />
     <Compile Include="Formatters\IBlockFormatter.cs" />
     <Compile Include="Formatters\Blocks\TableColumnFormatter.cs" />
@@ -82,9 +89,9 @@
     <Compile Include="Parser\PositionTracker.cs" />
     <Compile Include="Parser\ScannerCharacterMatcher.cs" />
     <Compile Include="Parser\ScannerHtmlTag.cs" />
-    <Compile Include="Parser\PipeTableParser.cs" />
+    <Compile Include="Extension\PipeTables.cs" />
     <Compile Include="Parser\TabTextReader.cs" />
-    <Compile Include="PipeTableFeatures.cs" />
+    <Compile Include="Extension\PipeTablesFeatures.cs" />
     <Compile Include="Syntax\Block.cs" />
     <Compile Include="Parser\BlockMethods.cs" />
     <Compile Include="Syntax\HtmlBlockType.cs" />
@@ -109,16 +116,13 @@
     <Compile Include="Syntax\StringContent.cs" />
     <Compile Include="Syntax\StringContentPart.cs" />
     <Compile Include="Syntax\TableCaptionData.cs" />
-    <Compile Include="Syntax\TableCaptionType.cs" />
+    <Compile Include="Syntax\CaptionPlacement.cs" />
     <Compile Include="Syntax\TableCellData.cs" />
-    <Compile Include="Syntax\TableCellType.cs" />
     <Compile Include="Syntax\TableColumnAlignment.cs" />
     <Compile Include="Syntax\TableColumnData.cs" />
     <Compile Include="Syntax\TableData.cs" />
     <Compile Include="Syntax\TableRowData.cs" />
-    <Compile Include="Syntax\TableRowType.cs" />
     <Compile Include="Syntax\TableType.cs" />
-    <Compile Include="TableSettings.cs" />
     <Compile Include="Utilities.cs" />
   </ItemGroup>
   <ItemGroup>

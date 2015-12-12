@@ -18,7 +18,6 @@ namespace CommonMark
         {
             this._formatterParameters = new Formatters.FormatterParameters();
             this._extensions = new Lazy<List<ICommonMarkExtension>>(() => new List<ICommonMarkExtension>());
-            this._tables = new Lazy<TableSettings>(GetTables);
             Reset();
         }
 
@@ -74,12 +73,15 @@ namespace CommonMark
 
         #region Extensions
 
+#pragma warning disable 0618
         private CommonMarkAdditionalFeatures _additionalFeatures;
+#pragma warning restore 0618
 
         /// <summary>
         /// Gets or sets any additional features (that are not present in the current CommonMark specification) that
         /// the parser and/or formatter will recognize.
         /// </summary>
+        [Obsolete("Use " + nameof(CommonMarkSettings.Register) + "() and " + nameof(CommonMarkSettings.Unregister) + "() instead.")]
         public CommonMarkAdditionalFeatures AdditionalFeatures
         {
             get { return this._additionalFeatures; }
@@ -87,9 +89,7 @@ namespace CommonMark
             {
                 this._additionalFeatures = value;
                 var strikeout = new Extension.Strikeout(this);
-#pragma warning disable 0618
                 var strikethroughTilde = 0 != (value & CommonMarkAdditionalFeatures.StrikethroughTilde);
-#pragma warning restore 0618
                 if (strikethroughTilde && !IsRegistered(strikeout))
                     Extensions.Add(strikeout);
                 if (!strikethroughTilde && IsRegistered(strikeout))
@@ -150,6 +150,22 @@ namespace CommonMark
         }
 
         /// <summary>
+        /// Registers all built-in extensions with all their features enabled.
+        /// This may be useful in benchmarking.
+        /// </summary>
+        public void RegisterAll()
+        {
+            Register(new Extension.Strikeout(this));
+            Register(new Extension.PipeTables(new Extension.PipeTablesSettings(Extension.PipeTablesFeatures.All)));
+            Register(new Extension.TableCaptions(this, new Extension.TableCaptionsSettings
+            {
+                Features = Extension.TableCaptionsFeatures.All,
+                Leads = new[] { "Table" },
+            }));
+            this.Reset();
+        }
+
+        /// <summary>
         /// Unregisters an extension.
         /// </summary>
         /// <param name="extension">The extension to unregister.</param>
@@ -187,21 +203,6 @@ namespace CommonMark
                 throw new ArgumentNullException(nameof(extension));
 
             return Extensions.Contains(extension);
-        }
-
-        private Lazy<TableSettings> _tables;
-
-        /// <summary>
-        /// Gets the table settings. These are only applicable if tables are enabled.
-        /// </summary>
-        public TableSettings Tables
-        {
-            get { return this._tables.Value; }
-        }
-
-        private TableSettings GetTables()
-        {
-            return new TableSettings(this);
         }
 
         #endregion Extensions
@@ -253,7 +254,6 @@ namespace CommonMark
         {
             var clone = (CommonMarkSettings)this.MemberwiseClone();
             clone._extensions = new Lazy<List<ICommonMarkExtension>>(() => new List<ICommonMarkExtension>(this.Extensions));
-            clone._tables = new Lazy<TableSettings>(clone.GetTables);
             clone.Reset();
             return clone;
         }
@@ -263,7 +263,6 @@ namespace CommonMark
             this._inlineParserParameters = new Lazy<Parser.StandardInlineParserParameters>(GetInlineParserParameters);
             this._emphasisInlineParserParameters = new Lazy<Parser.EmphasisInlineParserParameters>(GetEmphasisInlineParserParameters);
             this._blockParserParameters = new Lazy<Parser.BlockParserParameters>(GetBlockParserParameters);
-            this._tableParser = new Lazy<Parser.PipeTableParser>(GetTableParser);
             this._blockFormatters = new Lazy<Formatters.IBlockFormatter[]>(GetBlockFormatters);
             this._inlineFormatters = new Lazy<Formatters.IInlineFormatter[]>(GetInlineFormatters);
         }
@@ -327,21 +326,6 @@ namespace CommonMark
         private Parser.BlockParserParameters GetBlockParserParameters()
         {
             return new Parser.BlockParserParameters(this);
-        }
-
-        private Lazy<Parser.PipeTableParser> _tableParser;
-
-        /// <summary>
-        /// Gets the pipe table parser.
-        /// </summary>
-        internal Parser.PipeTableParser PipeTableParser
-        {
-            get { return _tableParser.Value; }
-        }
-
-        private Parser.PipeTableParser GetTableParser()
-        {
-            return new Parser.PipeTableParser(this);
         }
 
         internal Parser.InlineDelimiterParameters[] GetInlineSingleChars()
