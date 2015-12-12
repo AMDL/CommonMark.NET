@@ -236,6 +236,7 @@ namespace CommonMark
                 }
 
                 this._uriResolver = value;
+                this._formatterParameters.UriResolver = value;
             }
         }
 
