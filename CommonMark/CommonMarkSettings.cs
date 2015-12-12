@@ -156,6 +156,7 @@ namespace CommonMark
         public void RegisterAll()
         {
             Register(new Extension.Strikeout(this));
+            Register(new Extension.DefinitionLists(this, new Extension.DefinitionListsSettings(Extension.DefinitionListsFeatures.All)));
             Register(new Extension.PipeTables(new Extension.PipeTablesSettings(Extension.PipeTablesFeatures.All)));
             Register(new Extension.TableCaptions(this, new Extension.TableCaptionsSettings
             {
