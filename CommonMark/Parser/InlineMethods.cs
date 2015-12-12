@@ -335,12 +335,12 @@ namespace CommonMark.Parser
             if (closingDelimeterCount < 3 || openerDelims < 3)
             {
                 useDelims = closingDelimeterCount <= openerDelims ? closingDelimeterCount : openerDelims;
-                if (useDelims == 1 && singleCharTag == (InlineTag)0)
+                if (useDelims == 1 && singleCharTag == 0)
                     return 0;
             }
-            else if (singleCharTag == (InlineTag)0)
+            else if (singleCharTag == 0)
                 useDelims = 2;
-            else if (doubleCharTag == (InlineTag)0)
+            else if (doubleCharTag == 0)
                 useDelims = 1;
             else
                 useDelims = closingDelimeterCount % 2 == 0 ? 2 : 1;

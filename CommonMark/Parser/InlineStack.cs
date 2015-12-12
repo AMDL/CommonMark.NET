@@ -239,8 +239,9 @@ namespace CommonMark.Parser
                         if (iopener != null)
                         {
                             bool retry = false;
-                            var singleCharTag = iopener.Delimeter < singleCharTags.Length ? singleCharTags[iopener.Delimeter] : 0;
-                            var doubleCharTag = iopener.Delimeter < doubleCharTags.Length ? doubleCharTags[iopener.Delimeter] : 0;
+                            var delimeter = iopener.Delimeter;
+                            var singleCharTag = delimeter < singleCharTags.Length ? singleCharTags[delimeter] : 0;
+                            var doubleCharTag = delimeter < doubleCharTags.Length ? doubleCharTags[delimeter] : 0;
                             if (singleCharTag != 0 || doubleCharTag != 0)
                             {
                                 var useDelims = InlineMethods.MatchInlineStack(iopener, subj, istack.DelimeterCount, istack, singleCharTag, doubleCharTag, parameters);
