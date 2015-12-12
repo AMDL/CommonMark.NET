@@ -37,9 +37,9 @@ namespace CommonMark.Extension
         internal bool IncorporateCaption(Block block)
         {
             return ((0 != (settings.Features & TableCaptionsFeatures.After) && block.Tag == BlockTag.Table
-                        && !HasCaption(block) && GetData(block.NextSibling) && IncorporateTrailing(block))
+                        && !HasCaption(block) && Preprocess(block.NextSibling) && IncorporateTrailing(block))
                     || (0 != (settings.Features & TableCaptionsFeatures.Before) && block.NextSibling?.NextSibling?.Tag == BlockTag.Table
-                        && !HasCaption(block.NextSibling.NextSibling) && GetData(block.NextSibling) && IncorporateLeading(block)));
+                        && !HasCaption(block.NextSibling.NextSibling) && Preprocess(block.NextSibling) && IncorporateLeading(block)));
         }
 
         private static bool HasCaption(Block table)
@@ -50,18 +50,15 @@ namespace CommonMark.Extension
             return false;
         }
 
-        private bool GetData(Block block)
+        private bool Preprocess(Block block)
         {
             if (block == null)
                 return false;
 
-            if (block.Tag == BlockTag.Definition && 0 != (settings.Features & TableCaptionsFeatures.Definition))
-            {
-                block.CaptionData = new CaptionData();
-                return true;
-            }
+            if (block.Tag == BlockTag.Definition)
+                return PreprocessDefinition(block);
 
-            if (block.Tag != BlockTag.Paragraph || settings.Leads == null || settings.Leads.Length == 0)
+            if (block.Tag != BlockTag.Paragraph)
                 return false;
 
             var inline = block.InlineContent;
@@ -71,26 +68,51 @@ namespace CommonMark.Extension
             var content = inline.LiteralContent;
             if (content == null)
                 return false;
-            
+
             var index = content.IndexOf(':');
-            if (index <= 0)
-                return false;
+            if (0 != (settings.Features & TableCaptionsFeatures.ColonDefinition) && index == 0)
+                return PreprocessEmptyLead(block, inline, content, index, ':');
+
+            if (settings.Leads == null || settings.Leads.Length == 0)
+                return (0 != (settings.Features & TableCaptionsFeatures.TildeDefinition) && content[0] == '~'
+                    && PreprocessEmptyLead(block, inline, content, index, '~'));
 
             var prefix = content.Substring(0, index - 1).TrimEnd();
             foreach (var lead in settings.Leads)
-            {
                 if (prefix.Equals(lead))
-                {
-                    inline.LiteralContent = content.Substring(index + 1).TrimStart();
-                    block.CaptionData = new CaptionData
-                    {
-                        Lead = lead,
-                    };
-                    return true;
-                }
-            }
+                    return PreprocessMatch(block, inline, content, index, prefix);
 
             return false;
+        }
+
+        private bool PreprocessDefinition(Block block)
+        {
+            if ((0 != (settings.Features & TableCaptionsFeatures.ColonDefinition) && block.ListData.BulletChar == ':')
+                || (0 != (settings.Features & TableCaptionsFeatures.TildeDefinition) && block.ListData.BulletChar == '~'))
+            {
+                block.CaptionData = new CaptionData();
+                return true;
+            }
+            return false;
+        }
+
+        private static bool PreprocessEmptyLead(Block block, Inline inline, string content, int index, char delimiter)
+        {
+            block.ListData = new ListData
+            {
+                BulletChar = delimiter,
+            };
+            return PreprocessMatch(block, inline, content, index, null);
+        }
+
+        private static bool PreprocessMatch(Block block, Inline inline, string content, int index, string prefix)
+        {
+            inline.LiteralContent = content.Substring(index + 1).TrimStart();
+            block.CaptionData = new CaptionData
+            {
+                Lead = prefix,
+            };
+            return true;
         }
 
         private static bool IncorporateLeading(Block previous)

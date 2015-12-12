@@ -8,11 +8,11 @@
         /// <summary>
         /// The caption element immediately precedes the container element.
         /// </summary>
-        Before = 1,
+        Before = 1, // to match TableCaptionsFeatures
 
         /// <summary>
         /// The caption element immediately follows the container element.
         /// </summary>
-        After = 2,
+        After = 2, // to match TableCaptionsFeatures
     }
 }

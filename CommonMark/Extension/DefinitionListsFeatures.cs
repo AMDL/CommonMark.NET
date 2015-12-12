@@ -7,14 +7,19 @@
     public enum DefinitionListsFeatures
     {
         /// <summary>
-        /// No definition lists features are enabled. This is the default.
+        /// No definition lists will be recognized. This is the default.
         /// </summary>
         None = 0,
 
         /// <summary>
+        /// Colons will be recognized as definition markers.
+        /// </summary>
+        Colon = 4, // to match TableCaptionsFeatures
+
+        /// <summary>
         /// Tildes will be recognized as definition markers.
         /// </summary>
-        Tilde = 1,
+        Tilde = 8, // to match TableCaptionsFeatures
 
         /// <summary>
         /// All definition lists features are enabled.

@@ -7,7 +7,7 @@
     public enum TableCaptionsFeatures
     {
         /// <summary>
-        /// No table captions features are enabled. This is the default.
+        /// No table captions will be recognized. This is the default.
         /// </summary>
         None = 0,
 
@@ -22,10 +22,14 @@
         After = 2,
 
         /// <summary>
-        /// Paragraphs begining with <c>:</c> will be recognized as captions.
-        /// Requires <see cref="DefinitionLists"/> to be enabled.
+        /// Paragraphs begining with colons will be recognized as captions.
         /// </summary>
-        Definition = 4,
+        ColonDefinition = 4,
+
+        /// <summary>
+        /// Paragraphs begining with tildes will be recognized as captions.
+        /// </summary>
+        TildeDefinition = 8,
 
         /// <summary>
         /// All table captions features are enabled.
