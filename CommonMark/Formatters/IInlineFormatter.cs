@@ -1,5 +1,5 @@
 ﻿using CommonMark.Syntax;
-using System.IO;
+using System.Collections.Generic;
 
 namespace CommonMark.Formatters
 {
@@ -46,13 +46,13 @@ namespace CommonMark.Formatters
         /// </summary>
         /// <param name="inline">Inline element.</param>
         /// <returns>Tag.</returns>
-        string GetNodeTag(Inline inline);
+        string GetPrinterTag(Inline inline);
 
         /// <summary>
-        /// Writes the properties of an inline element.
+        /// Returns the properties of an inline element.
         /// </summary>
-        /// <param name="writer">Writer.</param>
         /// <param name="inline">Inline element.</param>
-        void Print(TextWriter writer, Inline inline);
+        /// <returns>Properties or <c>null</c>.</returns>
+        IDictionary<string, object> GetPrinterData(Inline inline);
     }
 }

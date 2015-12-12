@@ -1,5 +1,5 @@
 ﻿using CommonMark.Syntax;
-using System.IO;
+using System.Collections.Generic;
 
 namespace CommonMark.Formatters
 {
@@ -47,13 +47,13 @@ namespace CommonMark.Formatters
         /// </summary>
         /// <param name="block">Block element.</param>
         /// <returns>Tag.</returns>
-        string GetNodeTag(Block block);
+        string GetPrinterTag(Block block);
 
         /// <summary>
-        /// Writes the properties of a block element.
+        /// Returns the properties of a block element.
         /// </summary>
-        /// <param name="writer">Writer.</param>
         /// <param name="block">Block element.</param>
-        void Print(TextWriter writer, Block block);
+        /// <returns>Properties or <c>null</c>.</returns>
+        IDictionary<string, object> GetPrinterData(Block block);
     }
 }

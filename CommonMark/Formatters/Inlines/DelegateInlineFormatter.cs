@@ -1,5 +1,5 @@
 ﻿using CommonMark.Syntax;
-using System.IO;
+using System.Collections.Generic;
 
 namespace CommonMark.Formatters.Inlines
 {
@@ -40,19 +40,18 @@ namespace CommonMark.Formatters.Inlines
                 : outer.IsRenderPlainTextInlines(inline);
         }
 
-        public string GetNodeTag(Inline inline)
+        public string GetPrinterTag(Inline inline)
         {
             return inner.CanHandle(inline)
-                ? inner.GetNodeTag(inline)
-                : outer.GetNodeTag(inline);
+                ? inner.GetPrinterTag(inline)
+                : outer.GetPrinterTag(inline);
         }
 
-        public void Print(TextWriter writer, Inline inline)
+        public IDictionary<string, object> GetPrinterData(Inline inline)
         {
-            if (inner.CanHandle(inline))
-                inner.Print(writer, inline);
-            else
-                outer.Print(writer, inline);
+            return inner.CanHandle(inline)
+                ? inner.GetPrinterData(inline)
+                : outer.GetPrinterData(inline);
         }
     }
 }

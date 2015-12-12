@@ -73,6 +73,7 @@
     <Compile Include="Formatters\Blocks\TableFooterFormatter.cs" />
     <Compile Include="Formatters\Blocks\TableHeaderFormatter.cs" />
     <Compile Include="Formatters\Blocks\TermFormatter.cs" />
+    <Compile Include="Formatters\ElementFormatter.cs" />
     <Compile Include="Formatters\FormatterParameters.cs" />
     <Compile Include="Formatters\IBlockFormatter.cs" />
     <Compile Include="Formatters\Blocks\TableColumnFormatter.cs" />

@@ -1,45 +1,21 @@
-﻿using CommonMark.Syntax;
-using System.IO;
+﻿using CommonMark.Formatters.Inlines;
+using CommonMark.Syntax;
 
 namespace CommonMark.Formatters
 {
     /// <summary>
     /// Inline element formatter.
     /// </summary>
-    public abstract class InlineFormatter : IInlineFormatter
+    public abstract class InlineFormatter : ElementFormatter<Inline>, IInlineFormatter
     {
-        private readonly FormatterParameters parameters;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="InlineFormatter"/> class.
         /// </summary>
         /// <param name="parameters">Formatter parameters.</param>
         protected InlineFormatter(FormatterParameters parameters)
+            : base(parameters)
         {
-            this.parameters = parameters;
         }
-
-        /// <summary>
-        /// Checks whether the formatter can handle an inline element.
-        /// </summary>
-        /// <param name="inline">Inline element.</param>
-        /// <returns><c>true</c> if the formatter can handle <paramref name="inline"/>.</returns>
-        public abstract bool CanHandle(Inline inline);
-
-        /// <summary>
-        /// Writes the opening of an inline element.
-        /// </summary>
-        /// <param name="writer">HTML writer.</param>
-        /// <param name="inline">Inline element.</param>
-        /// <returns><c>true</c> if the parent formatter should visit the child inline elements.</returns>
-        public abstract bool WriteOpening(IHtmlTextWriter writer, Inline inline);
-
-        /// <summary>
-        /// Returns the closing of an inline element.
-        /// </summary>
-        /// <param name="inline">Inline element.</param>
-        /// <returns>The closing.</returns>
-        public abstract string GetClosing(Inline inline);
 
         /// <summary>
         /// Returns the content rendering option for an inline element.
@@ -56,14 +32,13 @@ namespace CommonMark.Formatters
         }
 
         /// <summary>
-        /// Writes the position of an inline element if position tracking is enabled.
+        /// Writes the position of an inline element.
         /// </summary>
         /// <param name="writer">HTML writer.</param>
         /// <param name="inline">Inline element.</param>
-        protected void WritePosition(IHtmlTextWriter writer, Inline inline)
+        protected override void DoWritePosition(IHtmlTextWriter writer, Inline inline)
         {
-            if (parameters.TrackPositions)
-                writer.WritePosition(inline);
+            writer.WritePosition(inline);
         }
 
         internal static IInlineFormatter[] InitializeFormatters(FormatterParameters parameters)
@@ -71,19 +46,5 @@ namespace CommonMark.Formatters
             var f = new InlineFormatter[(int)InlineTag.Count];
             return f;
         }
-
-        /// <summary>
-        /// Returns the syntax tree node tag for an inline element.
-        /// </summary>
-        /// <param name="inline">Inline element.</param>
-        /// <returns>Tag.</returns>
-        public abstract string GetNodeTag(Inline inline);
-
-        /// <summary>
-        /// Writes the properties of an inline element.
-        /// </summary>
-        /// <param name="writer">Writer.</param>
-        /// <param name="inline">Inline element.</param>
-        public abstract void Print(TextWriter writer, Inline inline);
     }
 }

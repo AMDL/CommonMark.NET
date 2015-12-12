@@ -83,6 +83,7 @@ namespace CommonMark.Formatters
             var buffer = new StringBuilder();
             var trackPositions = settings.TrackSourcePosition;
             IBlockFormatter formatter;
+            IDictionary<string, object> data;
 
             while (block != null)
             {
@@ -91,9 +92,15 @@ namespace CommonMark.Formatters
                 formatter = settings.BlockFormatters[(int)block.Tag];
                 if (formatter != null)
                 {
-                    writer.Write(formatter.GetNodeTag(block));
+                    writer.Write(formatter.GetPrinterTag(block));
                     PrintPosition(trackPositions, writer, block);
-                    formatter.Print(writer, block);
+                    if ((data = formatter.GetPrinterData(block)) != null)
+                    {
+                        writer.Write(" (");
+                        foreach (var kvp in data)
+                            writer.Write(" " + kvp.Key + "=", kvp.Value);
+                        writer.Write(')');
+                    }
                 }
                 else switch (block.Tag)
                 {
@@ -116,19 +123,19 @@ namespace CommonMark.Formatters
                         writer.Write("list");
                         PrintPosition(trackPositions, writer, block);
 
-                        var data = block.ListData;
-                        if (data.ListType == ListType.Ordered)
+                        var listData = block.ListData;
+                        if (listData.ListType == ListType.Ordered)
                         {
                             writer.Write(" (type=ordered tight={0} start={1} delim={2})",
-                                 data.IsTight,
-                                 data.Start,
-                                 data.Delimiter);
+                                 listData.IsTight,
+                                 listData.Start,
+                                 listData.Delimiter);
                         }
                         else
                         {
                             writer.Write("(type=bullet tight={0} bullet_char={1})",
-                                 data.IsTight,
-                                 data.BulletChar);
+                                 listData.IsTight,
+                                 listData.BulletChar);
                         }
                         break;
 
@@ -222,6 +229,7 @@ namespace CommonMark.Formatters
         {
             var trackPositions = settings.TrackSourcePosition;
             IInlineFormatter formatter;
+            IDictionary<string, object> data;
 
             while (inline != null)
             {
@@ -230,9 +238,15 @@ namespace CommonMark.Formatters
                 formatter = settings.InlineFormatters[(int)inline.Tag];
                 if (formatter != null)
                 {
-                    writer.Write(formatter.GetNodeTag(inline));
+                    writer.Write(formatter.GetPrinterTag(inline));
                     PrintPosition(trackPositions, writer, inline);
-                    formatter.Print(writer, inline);
+                    if ((data = formatter.GetPrinterData(inline)) != null)
+                    {
+                        writer.Write(" (");
+                        foreach (var kvp in data)
+                            writer.Write(" " + kvp.Key + "=", kvp.Value);
+                        writer.Write(')');
+                    }
                 }
                 else switch (inline.Tag)
                 {

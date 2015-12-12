@@ -1,5 +1,5 @@
 ﻿using CommonMark.Syntax;
-using System.IO;
+using System.Collections.Generic;
 
 namespace CommonMark.Formatters.Blocks
 {
@@ -40,19 +40,18 @@ namespace CommonMark.Formatters.Blocks
                 : outer.IsStackTight(block, tight);
         }
 
-        public string GetNodeTag(Block block)
+        public string GetPrinterTag(Block block)
         {
             return inner.CanHandle(block)
-                ? inner.GetNodeTag(block)
-                : outer.GetNodeTag(block);
+                ? inner.GetPrinterTag(block)
+                : outer.GetPrinterTag(block);
         }
 
-        public void Print(TextWriter writer, Block block)
+        public IDictionary<string, object> GetPrinterData(Block block)
         {
-            if (inner.CanHandle(block))
-                inner.Print(writer, block);
-            else
-                outer.Print(writer, block);
+            return inner.CanHandle(block)
+                ? inner.GetPrinterData(block)
+                : outer.GetPrinterData(block);
         }
     }
 }
