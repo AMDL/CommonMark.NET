@@ -271,6 +271,27 @@ namespace CommonMark
 
         #region [ Properties that cache parser parameters ]
 
+        #region BlockParserParameters
+
+        private Lazy<Parser.BlockParserParameters> _blockParserParameters;
+
+        /// <summary>
+        /// Gets the block element parser parameters.
+        /// </summary>
+        internal Parser.BlockParserParameters BlockParserParameters
+        {
+            get { return _blockParserParameters.Value; }
+        }
+
+        private Parser.BlockParserParameters GetBlockParserParameters()
+        {
+            return new Parser.BlockParserParameters(this);
+        }
+
+        #endregion BlockParserParameters
+
+        #region InlineParserParameters
+
         private Lazy<Parser.StandardInlineParserParameters> _inlineParserParameters;
 
         /// <summary>
@@ -288,6 +309,10 @@ namespace CommonMark
         {
             return new Parser.StandardInlineParserParameters(this);
         }
+
+        #endregion InlineParserParameters
+
+        #region EmphasisInlineParserParameters
 
         private Lazy<Parser.EmphasisInlineParserParameters> _emphasisInlineParserParameters;
 
@@ -307,50 +332,58 @@ namespace CommonMark
             return new Parser.EmphasisInlineParserParameters();
         }
 
+        #endregion EmphasisInlineParserParameters
+
+        #region InlineParsers
+
         internal InlineParserDelegate[] GetInlineParsers()
         {
             return GetItems(Parser.InlineMethods.InitializeParsers(this),
-                extension => extension.InlineParsers,
-                key => key,
-                (inner, value) => new Parser.DelegateInlineParser(inner, value).ParseInline);
+                extension => extension.InlineParsers, key => key, GetInlineParser);
         }
 
-        private Lazy<Parser.BlockParserParameters> _blockParserParameters;
-
-        /// <summary>
-        /// Gets the block element parser parameters.
-        /// </summary>
-        internal Parser.BlockParserParameters BlockParserParameters
+        private static InlineParserDelegate GetInlineParser(InlineParserDelegate inner, InlineParserDelegate outer)
         {
-            get { return _blockParserParameters.Value; }
+            return !inner.Equals(outer)
+                ? new Parser.DelegateInlineParser(inner, outer).ParseInline
+                : inner;
         }
 
-        private Parser.BlockParserParameters GetBlockParserParameters()
-        {
-            return new Parser.BlockParserParameters(this);
-        }
+        #endregion InlineParsers
+
+        #region InlineSingleCharTags
 
         internal Syntax.InlineTag[] GetInlineSingleCharTags()
         {
             return GetItems(Parser.InlineMethods.InitializeSingleCharTags(),
-                extension => extension.SingleCharTags,
-                key => key,
-                (inner, value) => {
-                    throw new InvalidOperationException(string.Format("Single character tag value is already set: {0}.", value));
-                });
+                ext => ext.SingleCharTags, key => key, GetInlineSingleCharTag);
         }
+
+        private Syntax.InlineTag GetInlineSingleCharTag(Syntax.InlineTag inner, Syntax.InlineTag outer)
+        {
+            throw new InvalidOperationException(string.Format("Single character tag value is already set: {0}.", inner));
+        }
+
+        #endregion InlineSingleCharTags
+
+        #region InlineDoubleCharTags
 
         internal Syntax.InlineTag[] GetInlineDoubleCharTags()
         {
             return GetItems(Parser.InlineMethods.InitializeDoubleCharTags(),
-                extension => extension.DoubleCharTags,
-                key => key,
-                (inner, value) => {
-                    throw new InvalidOperationException(string.Format("Double character tag value is already set: {0}.", value));
-                });
+                ext => ext.DoubleCharTags, key => key, GetInlineDoubleCharTag);
         }
 
-        #endregion
+        private static Syntax.InlineTag GetInlineDoubleCharTag(Syntax.InlineTag inner, Syntax.InlineTag value)
+        {
+            throw new InvalidOperationException(string.Format("Double character tag value is already set: {0}.", inner));
+        }
+
+        #endregion InlineDoubleCharTags
+
+        #endregion [ Properties that cache parser parameters ]
+
+        #region [ Properties that cache formatter parameters ]
 
         #region FormatterParameters
 
@@ -419,6 +452,8 @@ namespace CommonMark
         }
 
         #endregion InlineFormatters
+
+        #endregion [ Properties that cache formatter parameters ]
 
         #region Private helper methods
 
