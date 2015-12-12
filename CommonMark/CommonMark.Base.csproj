@@ -53,6 +53,9 @@
     <Compile Include="CommonMarkExtension.cs" />
     <Compile Include="Extension\PipeTablesSettings.cs" />
     <Compile Include="Extension\Strikeout.cs" />
+    <Compile Include="Extension\TableCaptions.cs" />
+    <Compile Include="Extension\TableCaptionsSettings.cs" />
+    <Compile Include="Extension\TableCaptionsFeatures.cs" />
     <Compile Include="Formatters\BlockFormatter.cs" />
     <Compile Include="Formatters\Blocks\DelegateBlockFormatter.cs" />
     <Compile Include="Formatters\Blocks\TableBodyFormatter.cs" />
@@ -113,14 +116,13 @@
     <Compile Include="Syntax\StringContent.cs" />
     <Compile Include="Syntax\StringContentPart.cs" />
     <Compile Include="Syntax\TableCaptionData.cs" />
-    <Compile Include="Syntax\TableCaptionType.cs" />
+    <Compile Include="Syntax\CaptionPlacement.cs" />
     <Compile Include="Syntax\TableCellData.cs" />
     <Compile Include="Syntax\TableColumnAlignment.cs" />
     <Compile Include="Syntax\TableColumnData.cs" />
     <Compile Include="Syntax\TableData.cs" />
     <Compile Include="Syntax\TableRowData.cs" />
     <Compile Include="Syntax\TableType.cs" />
-    <Compile Include="TableSettings.cs" />
     <Compile Include="Utilities.cs" />
   </ItemGroup>
   <ItemGroup>

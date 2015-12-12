@@ -6,8 +6,14 @@
     public sealed class TableCaptionData
     {
         /// <summary>
-        /// Gets or sets the caption type.
+        /// Gets or sets the caption placement.
         /// </summary>
-        public TableCaptionType CaptionType { get; set; }
+        public CaptionPlacement Placement { get; set; }
+
+        /// <summary>
+        /// Gets or sets the lead-in text.
+        /// </summary>
+        /// <value>Lead-in text, or <c>null</c> if the element is a definition-style caption.</value>
+        public string Lead { get; set; }
     }
 }

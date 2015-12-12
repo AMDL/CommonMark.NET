@@ -18,7 +18,6 @@ namespace CommonMark
         {
             this._formatterParameters = new Formatters.FormatterParameters();
             this._extensions = new Lazy<List<ICommonMarkExtension>>(() => new List<ICommonMarkExtension>());
-            this._tables = new Lazy<TableSettings>(GetTables);
             Reset();
         }
 
@@ -157,6 +156,11 @@ namespace CommonMark
         {
             Register(new Extension.Strikeout(this));
             Register(new Extension.PipeTables(new Extension.PipeTablesSettings(Extension.PipeTablesFeatures.All)));
+            Register(new Extension.TableCaptions(this, new Extension.TableCaptionsSettings
+            {
+                Features = Extension.TableCaptionsFeatures.All,
+                Leads = new[] { "Table" },
+            }));
             this.Reset();
         }
 
@@ -198,21 +202,6 @@ namespace CommonMark
                 throw new ArgumentNullException(nameof(extension));
 
             return Extensions.Contains(extension);
-        }
-
-        private Lazy<TableSettings> _tables;
-
-        /// <summary>
-        /// Gets the table settings. These are only applicable if tables are enabled.
-        /// </summary>
-        public TableSettings Tables
-        {
-            get { return this._tables.Value; }
-        }
-
-        private TableSettings GetTables()
-        {
-            return new TableSettings(this);
         }
 
         #endregion Extensions
@@ -264,7 +253,6 @@ namespace CommonMark
         {
             var clone = (CommonMarkSettings)this.MemberwiseClone();
             clone._extensions = new Lazy<List<ICommonMarkExtension>>(() => new List<ICommonMarkExtension>(this.Extensions));
-            clone._tables = new Lazy<TableSettings>(clone.GetTables);
             clone.Reset();
             return clone;
         }

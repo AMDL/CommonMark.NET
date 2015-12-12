@@ -1,5 +1,4 @@
 ﻿using CommonMark.Syntax;
-using System.IO;
 
 namespace CommonMark.Formatters.Blocks
 {
@@ -39,9 +38,11 @@ namespace CommonMark.Formatters.Blocks
             return "table_caption";
         }
 
-        public override void Print(TextWriter writer, Block block)
+        public override void Print(System.IO.TextWriter writer, Block block)
         {
-            writer.Write(" (type={0})", block.TableCaptionData.CaptionType);
+            writer.Write(" (placement={0} lead={1})",
+                block.TableCaptionData.Placement,
+                block.TableCaptionData.Lead);
         }
     }
 }
