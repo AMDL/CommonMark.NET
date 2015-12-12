@@ -16,6 +16,7 @@ namespace CommonMark
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         public CommonMarkSettings()
         {
+            this._formatterParameters = new Formatters.FormatterParameters();
             this._extensions = new Lazy<List<ICommonMarkExtension>>(() => new List<ICommonMarkExtension>());
             this._tables = new Lazy<TableSettings>(GetTables);
             Reset();
@@ -49,6 +50,8 @@ namespace CommonMark
         /// </summary>
         public bool RenderSoftLineBreaksAsLineBreaks { get; set; }
 
+        private bool _trackSourcePosition;
+
         /// <summary>
         /// Gets or sets a value indicating whether the parser tracks precise positions in the source data for
         /// block and inline elements. This is disabled by default because it incurs an additional performance cost to
@@ -59,7 +62,15 @@ namespace CommonMark
         /// of these properties are undefined.
         /// This also controls if these values will be written to the output.
         /// </summary>
-        public bool TrackSourcePosition { get; set; }
+        public bool TrackSourcePosition
+        {
+            get { return _trackSourcePosition; }
+            set
+            {
+                _trackSourcePosition = value;
+                this._formatterParameters.TrackPositions = value;
+            }
+        }
 
         #region Extensions
 
@@ -355,7 +366,17 @@ namespace CommonMark
 
         #endregion
 
-        #region [ Properties that cache structures used in the formatters ]
+        #region [ Properties that cache formatter parameters ]
+
+        private Formatters.FormatterParameters _formatterParameters;
+
+        /// <summary>
+        /// Gets the formatter parameters.
+        /// </summary>
+        public Formatters.FormatterParameters FormatterParameters
+        {
+            get { return _formatterParameters; }
+        }
 
         private Lazy<Formatters.IBlockFormatter[]> _blockFormatters;
 
@@ -369,7 +390,7 @@ namespace CommonMark
 
         private Formatters.IBlockFormatter[] GetBlockFormatters()
         {
-            return GetItems(Formatters.BlockFormatter.InitializeFormatters(this),
+            return GetItems(Formatters.BlockFormatter.InitializeFormatters(FormatterParameters),
                 ext => ext.BlockFormatters,
                 key => (int)key,
                 (inner, value) => new Formatters.Blocks.DelegateBlockFormatter(inner, value));
@@ -387,7 +408,7 @@ namespace CommonMark
 
         private Formatters.IInlineFormatter[] GetInlineFormatters()
         {
-            return GetItems(Formatters.InlineFormatter.InitializeFormatters(this),
+            return GetItems(Formatters.InlineFormatter.InitializeFormatters(FormatterParameters),
                 ext => ext.InlineFormatters,
                 key => (int)key,
                 (inner, value) => new Formatters.Inlines.DelegateInlineFormatter(inner, value));

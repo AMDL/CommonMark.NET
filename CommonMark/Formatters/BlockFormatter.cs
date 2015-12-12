@@ -9,15 +9,15 @@ namespace CommonMark.Formatters
     /// </summary>
     public abstract class BlockFormatter : IBlockFormatter
     {
-        private readonly CommonMarkSettings settings;
+        private readonly FormatterParameters parameters;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BlockFormatter"/> class.
         /// </summary>
-        /// <param name="settings">The object containing settings for the formatting process.</param>
-        protected BlockFormatter(CommonMarkSettings settings)
+        /// <param name="parameters">Formatter parameters.</param>
+        protected BlockFormatter(FormatterParameters parameters)
         {
-            this.settings = settings;
+            this.parameters = parameters;
         }
 
         /// <summary>
@@ -78,19 +78,19 @@ namespace CommonMark.Formatters
         /// <param name="block">Block element.</param>
         protected void WritePosition(IHtmlTextWriter writer, Block block)
         {
-            if (settings.TrackSourcePosition)
+            if (parameters.TrackPositions)
                 writer.WritePosition(block);
         }
 
-        internal static IBlockFormatter[] InitializeFormatters(CommonMarkSettings settings)
+        internal static IBlockFormatter[] InitializeFormatters(FormatterParameters parameters)
         {
             var f = new IBlockFormatter[(int)BlockTag.Count];
-            f[(int)BlockTag.TableCell] = new TableCellFormatter(settings);
-            f[(int)BlockTag.TableRow] = new TableRowFormatter(settings);
-            f[(int)BlockTag.TableColumn] = new TableColumnFormatter(settings);
-            f[(int)BlockTag.TableColumnGroup] = new TableColumnGroupFormatter(settings);
-            f[(int)BlockTag.TableCaption] = new TableCaptionFormatter(settings);
-            f[(int)BlockTag.Table] = new TableFormatter(settings);
+            f[(int)BlockTag.TableCell] = new TableCellFormatter(parameters);
+            f[(int)BlockTag.TableRow] = new TableRowFormatter(parameters);
+            f[(int)BlockTag.TableColumn] = new TableColumnFormatter(parameters);
+            f[(int)BlockTag.TableColumnGroup] = new TableColumnGroupFormatter(parameters);
+            f[(int)BlockTag.TableCaption] = new TableCaptionFormatter(parameters);
+            f[(int)BlockTag.Table] = new TableFormatter(parameters);
             return f;
         }
     }

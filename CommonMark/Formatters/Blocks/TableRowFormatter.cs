@@ -5,8 +5,8 @@ namespace CommonMark.Formatters.Blocks
 {
     internal class TableRowFormatter : BlockFormatter
     {
-        public TableRowFormatter(CommonMarkSettings settings)
-            : base(settings)
+        public TableRowFormatter(FormatterParameters parameters)
+            : base(parameters)
         {
         }
 

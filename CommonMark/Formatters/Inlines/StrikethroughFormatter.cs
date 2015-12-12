@@ -4,8 +4,8 @@ namespace CommonMark.Formatters.Inlines
 {
     internal sealed class StrikethroughFormatter : InlineFormatter
     {
-        public StrikethroughFormatter(CommonMarkSettings settings)
-            : base(settings)
+        public StrikethroughFormatter(FormatterParameters parameters)
+            : base(parameters)
         {
         }
 
