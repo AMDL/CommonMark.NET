@@ -150,6 +150,16 @@ namespace CommonMark
         }
 
         /// <summary>
+        /// Registers all built-in extensions with all their features enabled.
+        /// This may be useful in benchmarking.
+        /// </summary>
+        public void RegisterAll()
+        {
+            Register(new Extension.Strikeout(this));
+            this.Reset();
+        }
+
+        /// <summary>
         /// Unregisters an extension.
         /// </summary>
         /// <param name="extension">The extension to unregister.</param>
