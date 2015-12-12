@@ -156,6 +156,7 @@ namespace CommonMark
         public void RegisterAll()
         {
             Register(new Extension.Strikeout(this));
+            Register(new Extension.PipeTables(new Extension.PipeTablesSettings(Extension.PipeTablesFeatures.All)));
             this.Reset();
         }
 
@@ -273,7 +274,6 @@ namespace CommonMark
             this._inlineParserParameters = new Lazy<Parser.StandardInlineParserParameters>(GetInlineParserParameters);
             this._emphasisInlineParserParameters = new Lazy<Parser.EmphasisInlineParserParameters>(GetEmphasisInlineParserParameters);
             this._blockParserParameters = new Lazy<Parser.BlockParserParameters>(GetBlockParserParameters);
-            this._tableParser = new Lazy<Parser.PipeTableParser>(GetTableParser);
             this._blockFormatters = new Lazy<Formatters.IBlockFormatter[]>(GetBlockFormatters);
             this._inlineFormatters = new Lazy<Formatters.IInlineFormatter[]>(GetInlineFormatters);
         }
@@ -337,21 +337,6 @@ namespace CommonMark
         private Parser.BlockParserParameters GetBlockParserParameters()
         {
             return new Parser.BlockParserParameters(this);
-        }
-
-        private Lazy<Parser.PipeTableParser> _tableParser;
-
-        /// <summary>
-        /// Gets the pipe table parser.
-        /// </summary>
-        internal Parser.PipeTableParser PipeTableParser
-        {
-            get { return _tableParser.Value; }
-        }
-
-        private Parser.PipeTableParser GetTableParser()
-        {
-            return new Parser.PipeTableParser(this);
         }
 
         internal Syntax.InlineTag[] GetInlineSingleCharTags()

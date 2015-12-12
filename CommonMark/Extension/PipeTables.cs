@@ -1,16 +1,35 @@
-﻿using CommonMark.Syntax;
+﻿using CommonMark.Extension;
+using CommonMark.Parser;
+using CommonMark.Syntax;
 
-namespace CommonMark.Parser
+namespace CommonMark.Extension
 {
-    internal sealed class PipeTableParser
+    /// <summary>
+    /// Pipe tables.
+    /// </summary>
+    public sealed class PipeTables : CommonMarkExtension
     {
-        private readonly CommonMarkSettings settings;
+        private readonly PipeTablesSettings settings;
 
-        public PipeTableParser(CommonMarkSettings settings)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PipeTables"/> class.
+        /// </summary>
+        /// <param name="settings">Pipe tables settings.</param>
+        public PipeTables(PipeTablesSettings settings)
         {
             this.settings = settings;
         }
 
+        /// <summary>
+        /// Processes a single line, optionally modifying a block.
+        /// </summary>
+        /// <param name="container">Container element.</param>
+        /// <param name="line">Line string.</param>
+        /// <param name="first_nonspace">The index of the first non-space character.</param>
+        /// <param name="indented"><c>true</c> if the line is indented.</param>
+        /// <param name="offset">Offset.</param>
+        /// <param name="column">Column index.</param>
+        /// <returns><c>true</c> if successful.</returns>
         public bool IncorporateLine(Block container, string line, int first_nonspace, bool indented, ref int offset, ref int column)
         {
             TableData data;
@@ -299,46 +318,45 @@ namespace CommonMark.Parser
         }
 
         /// <summary>
-        /// Checks if a character can serve as a pipe table header line opener.
+        /// Checks if a character can serve as a header line opener.
         /// </summary>
         /// <param name="c">The character to check.</param>
-        /// <returns><c>true</c> if the character can open a pipe table header line.</returns>
+        /// <returns><c>true</c> if the character can open a header line.</returns>
         private bool IsHeaderOpener(char c)
         {
-            return (0 != (settings.AdditionalFeatures & CommonMarkAdditionalFeatures.PipeTables))
-                && (IsHeaderDelimiter(c) || IsColumnDelimiter(c) || IsHeaderAlignmentMarker(c));
+            return IsHeaderDelimiter(c) || IsColumnDelimiter(c) || IsHeaderAlignmentMarker(c);
         }
 
         /// <summary>
-        /// Checks if a character can serve as a pipe table header line delimiter.
+        /// Checks if a character can serve as a header line delimiter.
         /// </summary>
         /// <param name="c">The character to check.</param>
         /// <returns>
-        /// <c>true</c> if the character can be used as a pipe table header line delimiter.
+        /// <c>true</c> if the character can be used as a header line delimiter.
         /// </returns>
         private bool IsHeaderDelimiter(char c)
         {
-            return c == '-' || (c == '=' && 0 != (settings.Tables.PipeTables & PipeTableFeatures.HeaderEquals));
+            return c == '-' || (c == '=' && 0 != (settings.Features & PipeTablesFeatures.HeaderEquals));
         }
 
         /// <summary>
-        /// Checks if a character can serve as a column delimiter in a pipe table header line.
+        /// Checks if a character can serve as a column delimiter in a header line.
         /// </summary>
         /// <param name="c">The character to check.</param>
         /// <returns>
-        /// <c>true</c> if the character can be used as a column delimiter in a pipe table header line.
+        /// <c>true</c> if the character can be used as a column delimiter in a header line.
         /// </returns>
         private bool IsHeaderColumnDelimiter(char c)
         {
-            return IsColumnDelimiter(c) || (c == '+' && 0 != (settings.Tables.PipeTables & PipeTableFeatures.HeaderPlus));
+            return IsColumnDelimiter(c) || (c == '+' && 0 != (settings.Features & PipeTablesFeatures.HeaderPlus));
         }
 
         /// <summary>
-        /// Checks if a character can serve both as a column delimiter and as a header line opener in a pipe table.
+        /// Checks if a character can serve both as a column delimiter and as a header line opener.
         /// </summary>
         /// <param name="c">The character to check.</param>
         /// <returns>
-        /// <c>true</c> if the character can be used as a pipe table column delimiter and can open a pipe table header line.
+        /// <c>true</c> if the character can be used as a column delimiter and can open a header line.
         /// </returns>
         private bool IsColumnDelimiter(char c)
         {
@@ -346,15 +364,15 @@ namespace CommonMark.Parser
         }
 
         /// <summary>
-        /// Checks if a character can serve as a pipe table header alignment marker.
+        /// Checks if a character can serve as a header alignment marker.
         /// </summary>
         /// <param name="c">The character to check.</param>
         /// <returns>
-        /// <c>true</c> if the character can be used as an alignment marker in a pipe table header line.
+        /// <c>true</c> if the character can be used as an alignment marker in a header line.
         /// </returns>
         private bool IsHeaderAlignmentMarker(char c)
         {
-            return (c == ':' && 0 != (settings.Tables.PipeTables & PipeTableFeatures.HeaderColon));
+            return (c == ':' && 0 != (settings.Features & PipeTablesFeatures.HeaderColon));
         }
     }
 }

@@ -22,11 +22,6 @@ namespace CommonMark
         StrikethroughTilde = 1,
 
         /// <summary>
-        /// The parser will recognize pipe tables.
-        /// </summary>
-        PipeTables = 1024,
-
-        /// <summary>
         /// All additional features are enabled.
         /// </summary>
         All = 0x7FFFFFFF

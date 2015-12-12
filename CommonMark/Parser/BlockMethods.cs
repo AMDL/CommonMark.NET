@@ -436,7 +436,7 @@ namespace CommonMark.Parser
         public static void IncorporateLine(LineInfo line, ref Block curptr, CommonMarkSettings settings)
         {
             var parameters = settings.BlockParserParameters;
-            var tableParser = settings.PipeTableParser;
+            var pipeTables = new Extension.PipeTables(new Extension.PipeTablesSettings(Extension.PipeTablesFeatures.All));
 
             var ln = line.Line;
 
@@ -725,7 +725,7 @@ namespace CommonMark.Parser
                     container = CreateChildBlock(container, line, BlockTag.ListItem, first_nonspace, settings);
                     container.ListData = data;
                 }
-                else if (tableParser.IncorporateLine(container, ln, first_nonspace, indented, ref offset, ref column))
+                else if (pipeTables.IncorporateLine(container, ln, first_nonspace, indented, ref offset, ref column))
                 {
                 }
                 else if (indented && !maybeLazy && !blank)
