@@ -97,7 +97,7 @@ namespace CommonMark.Syntax
 
         /// <summary>
         /// A table caption element.
-        /// Only present if both tables and table captions are enabled.
+        /// Only present if both tables and <see cref="Extension.TableCaptions"/> are enabled.
         /// </summary>
         TableCaption,
 
