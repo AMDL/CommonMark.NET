@@ -1,5 +1,4 @@
 ﻿using CommonMark.Syntax;
-using System.IO;
 
 namespace CommonMark.Formatters.Blocks
 {
@@ -17,19 +16,27 @@ namespace CommonMark.Formatters.Blocks
 
         public override bool WriteOpening(IHtmlTextWriter writer, Block block)
         {
-            writer.WriteConstant(block.Parent.Tag == BlockTag.TableBody ? "<td" : "<th");
-            switch (block.TableCellData.ColumnData.Alignment)
+            if (block.Parent.Tag == BlockTag.TableBody)
             {
-                case TableColumnAlignment.Left:
-                    writer.WriteConstant(" style=\"text-align: left\"");
-                    break;
-                case TableColumnAlignment.Right:
-                    writer.WriteConstant(" style=\"text-align: right\"");
-                    break;
-                case TableColumnAlignment.Center:
-                    writer.WriteConstant(" style=\"text-align: center\"");
-                    break;
+                writer.WriteConstant("<td");
+                switch (block.TableCellData.ColumnData.Alignment)
+                {
+                    case TableColumnAlignment.Left:
+                        writer.WriteConstant(" style=\"text-align: left\"");
+                        break;
+                    case TableColumnAlignment.Right:
+                        writer.WriteConstant(" style=\"text-align: right\"");
+                        break;
+                    case TableColumnAlignment.Center:
+                        writer.WriteConstant(" style=\"text-align: center\"");
+                        break;
+                }
             }
+            else
+            {
+                writer.WriteConstant("<th");
+            }
+
             WritePosition(writer, block);
             writer.WriteLine('>');
             return true;
@@ -47,10 +54,13 @@ namespace CommonMark.Formatters.Blocks
             return "table_cell";
         }
 
-        public override void Print(TextWriter writer, Block block)
+        public override void Print(System.IO.TextWriter writer, Block block)
         {
-            writer.Write(" (align={0})",
-                block.TableCellData.ColumnData.Alignment);
+            if (block.Parent.Tag == BlockTag.TableBody)
+            {
+                writer.Write(" (align={0})",
+                   block.TableCellData.ColumnData.Alignment);
+            }
         }
     }
 }
