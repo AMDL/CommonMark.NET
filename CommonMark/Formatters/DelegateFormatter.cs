@@ -48,7 +48,7 @@ namespace CommonMark.Formatters
         }
     }
 
-    internal sealed class DelegateBlockFormatter : DelegateFormatter<Block, IBlockFormatter>, IBlockFormatter
+    internal class DelegateBlockFormatter : DelegateFormatter<Block, IBlockFormatter>, IBlockFormatter
     {
         public DelegateBlockFormatter(IBlockFormatter inner, IBlockFormatter outer)
             : base(inner, outer)
@@ -63,7 +63,7 @@ namespace CommonMark.Formatters
         }
     }
 
-    internal sealed class DelegateInlineFormatter : DelegateFormatter<Inline, IInlineFormatter>, IInlineFormatter
+    internal class DelegateInlineFormatter : DelegateFormatter<Inline, IInlineFormatter>, IInlineFormatter
     {
         public DelegateInlineFormatter(IInlineFormatter inner, IInlineFormatter outer)
             : base(inner, outer)
