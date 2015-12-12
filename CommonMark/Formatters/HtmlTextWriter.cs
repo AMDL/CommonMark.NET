@@ -187,5 +187,15 @@ namespace CommonMark.Formatters
         {
             HtmlFormatterSlim.PrintPosition(this, inline);
         }
+
+        void IHtmlTextWriter.WriteEncodedHtml(StringPart part)
+        {
+            HtmlFormatterSlim.EscapeHtml(part, this);
+        }
+
+        void IHtmlTextWriter.WriteEncodedUrl(string url)
+        {
+            HtmlFormatterSlim.EscapeUrl(url, this);
+        }
     }
 }

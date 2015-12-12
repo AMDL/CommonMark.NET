@@ -66,5 +66,15 @@ namespace CommonMark.Formatters
         /// Writes the position of an inline element.
         /// </summary>
         void WritePosition(Inline inline);
+
+        /// <summary>
+        /// Encodes the given text with HTML encoding (ampersand-encoding) and writes the result.
+        /// </summary>
+        void WriteEncodedHtml(StringPart part);
+
+        /// <summary>
+        /// Encodes the given text with URL encoding (percent-encoding) and writes the result.
+        /// </summary>
+        void WriteEncodedUrl(string url);
     }
 }

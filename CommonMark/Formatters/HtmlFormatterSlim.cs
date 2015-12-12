@@ -3,6 +3,7 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using CommonMark.Syntax;
+using System;
 
 namespace CommonMark.Formatters
 {
@@ -234,7 +235,7 @@ namespace CommonMark.Formatters
                 if (formatter != null)
                 {
                     visitChildren = formatter.WriteOpening(writer, block);
-                    stackLiteral = formatter.GetClosing(block);
+                    stackLiteral = formatter.GetClosing(HtmlFormatterHelper.Instance, block);
                     isStackTight = formatter.IsStackTight(block, tight);
                     if (isStackTight.HasValue)
                         stackTight = isStackTight.Value;
@@ -514,12 +515,12 @@ namespace CommonMark.Formatters
                 if (formatter != null)
                 {
                     visitChildren = formatter.WriteOpening(writer, inline);
-                    isRenderPlainTextInlines = formatter.IsRenderPlainTextInlines(inline);
+                    isRenderPlainTextInlines = formatter.IsRenderPlainTextInlines(inline, false);
                     if (isRenderPlainTextInlines == true)
                         InlinesToPlainText(writer, inline.FirstChild, stack);
                     else if (isRenderPlainTextInlines == false)
                         EscapeHtml(inline.LiteralContentValue, writer);
-                    stackLiteral = formatter.GetClosing(inline);
+                    stackLiteral = formatter.GetClosing(HtmlFormatterHelper.Instance, inline);
                 }
                 else switch (inline.Tag)
                 {
@@ -689,6 +690,49 @@ namespace CommonMark.Formatters
                 Literal = literal;
                 Target = target;
                 IsWithinLink = isWithinLink;
+            }
+        }
+    }
+
+    internal sealed class HtmlFormatterHelper : IHtmlFormatter
+    {
+        private static readonly Lazy<HtmlFormatterHelper> _instance;
+
+        public static HtmlFormatterHelper Instance
+        {
+            get { return HtmlFormatterHelper._instance.Value; }
+        }
+
+        static HtmlFormatterHelper()
+        {
+            _instance = new Lazy<HtmlFormatterHelper>(() => new HtmlFormatterHelper());
+        }
+
+        string IHtmlFormatter.EscapeHtml(StringPart part)
+        {
+            using (MemoryStream stream = new MemoryStream())
+            {
+                using (TextWriter writer = new StreamWriter(stream))
+                {
+                    var htmlWriter = new HtmlTextWriter(writer);
+                    HtmlFormatterSlim.EscapeHtml(part, htmlWriter);
+                }
+                var buffer = stream.ToArray();
+                return Encoding.UTF8.GetString(buffer, 0, buffer.Length);
+            }
+        }
+
+        string IHtmlFormatter.EscapeUrl(string url)
+        {
+            using (MemoryStream stream = new MemoryStream())
+            {
+                using (TextWriter writer = new StreamWriter(stream))
+                {
+                    var htmlWriter = new HtmlTextWriter(writer);
+                    HtmlFormatterSlim.EscapeUrl(url, htmlWriter);
+                }
+                var buffer = stream.ToArray();
+                return Encoding.UTF8.GetString(buffer, 0, buffer.Length);
             }
         }
     }

@@ -26,11 +26,11 @@ namespace CommonMark.Formatters
                 : outer.WriteOpening(writer, element);
         }
 
-        public string GetClosing(T element)
+        public string GetClosing(IHtmlFormatter formatter, T element)
         {
             return inner.CanHandle(element)
-                ? inner.GetClosing(element)
-                : outer.GetClosing(element);
+                ? inner.GetClosing(formatter, element)
+                : outer.GetClosing(formatter, element);
         }
 
         public string GetPrinterTag(T element)
@@ -70,11 +70,11 @@ namespace CommonMark.Formatters
         {
         }
 
-        public bool? IsRenderPlainTextInlines(Inline inline)
+        public bool? IsRenderPlainTextInlines(Inline inline, bool plaintext)
         {
             return inner.CanHandle(inline)
-                ? inner.IsRenderPlainTextInlines(inline)
-                : outer.IsRenderPlainTextInlines(inline);
+                ? inner.IsRenderPlainTextInlines(inline, plaintext)
+                : outer.IsRenderPlainTextInlines(inline, plaintext);
         }
     }
 }

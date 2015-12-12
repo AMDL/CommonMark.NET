@@ -54,9 +54,10 @@ namespace CommonMark.Formatters
         /// <summary>
         /// Returns the closing of an element.
         /// </summary>
+        /// <param name="formatter">HTML formatter.</param>
         /// <param name="element">Element.</param>
         /// <returns>The closing.</returns>
-        public virtual string GetClosing(T element)
+        public virtual string GetClosing(IHtmlFormatter formatter, T element)
         {
             return "</" + GetTag(element) + '>';
         }

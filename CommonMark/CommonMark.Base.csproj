@@ -79,6 +79,7 @@
     <Compile Include="Formatters\Blocks\TableColumnGroupFormatter.cs" />
     <Compile Include="Formatters\HtmlFormatter.cs" />
     <Compile Include="Formatters\IElementFormatter.cs" />
+    <Compile Include="Formatters\IHtmlFormatter.cs" />
     <Compile Include="Formatters\IHtmlTextWriter.cs" />
     <Compile Include="Formatters\Blocks\TableCaptionFormatter.cs" />
     <Compile Include="Formatters\Blocks\TableCellFormatter.cs" />

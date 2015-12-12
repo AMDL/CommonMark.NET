@@ -27,9 +27,10 @@ namespace CommonMark.Formatters
         /// <summary>
         /// Returns the closing of an element.
         /// </summary>
+        /// <param name="formatter">HTML formatter.</param>
         /// <param name="element">Element.</param>
         /// <returns>The closing.</returns>
-        string GetClosing(T element);
+        string GetClosing(IHtmlFormatter formatter, T element);
 
         /// <summary>
         /// Returns the syntax tree node tag for an element.
@@ -73,11 +74,12 @@ namespace CommonMark.Formatters
         /// Returns the content rendering option for an inline element.
         /// </summary>
         /// <param name="element">Inline element.</param>
+        /// <param name="plaintext">The parent's rendering option.</param>
         /// <returns>
         /// <c>true</c> to render the child inlines as plain text,
         /// <c>false</c> to render the literal content as HTML,
         /// or <c>null</c> to skip content rendering.
         /// </returns>
-        bool? IsRenderPlainTextInlines(Inline element);
+        bool? IsRenderPlainTextInlines(Inline element, bool plaintext);
     }
 }
