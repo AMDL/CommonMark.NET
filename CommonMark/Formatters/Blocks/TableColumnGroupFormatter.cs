@@ -17,6 +17,7 @@ namespace CommonMark.Formatters.Blocks
 
         public override bool WriteOpening(IHtmlTextWriter writer, Block block)
         {
+            writer.EnsureLine();
             writer.WriteConstant("<colgroup");
             WritePosition(writer, block);
             writer.WriteLineConstant(" />");

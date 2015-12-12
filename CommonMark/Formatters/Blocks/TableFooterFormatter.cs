@@ -16,7 +16,10 @@ namespace CommonMark.Formatters.Blocks
 
         public override bool WriteOpening(IHtmlTextWriter writer, Block block)
         {
-            writer.WriteConstant("<tfoot>");
+            writer.EnsureLine();
+            writer.WriteConstant("<tfoot");
+            WritePosition(writer, block);
+            writer.WriteLine('>');
             return true;
         }
 
