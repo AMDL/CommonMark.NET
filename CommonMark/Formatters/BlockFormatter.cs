@@ -93,6 +93,8 @@ namespace CommonMark.Formatters
             f[(int)BlockTag.TableColumn] = new TableColumnFormatter(parameters);
             f[(int)BlockTag.TableColumnGroup] = new TableColumnGroupFormatter(parameters);
             f[(int)BlockTag.Table] = new TableFormatter(parameters);
+            f[(int)BlockTag.FigureCaption] = new FigureCaptionFormatter(parameters);
+            f[(int)BlockTag.Figure] = new FigureFormatter(parameters);
             return f;
         }
     }

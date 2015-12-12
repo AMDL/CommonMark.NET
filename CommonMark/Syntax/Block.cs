@@ -205,6 +205,12 @@ namespace CommonMark.Syntax
         public TableData TableData { get; set; }
 
         /// <summary>
+        /// Gets or sets the additional properties that apply to caption elements.
+        /// Only set for caption elements.
+        /// </summary>
+        public CaptionData CaptionData { get; set; }
+
+        /// <summary>
         /// Gets or sets the dictionary containing resolved link references. Only set on the document node, <c>null</c>
         /// and not used for all other elements.
         /// </summary>

@@ -58,6 +58,8 @@
     <Compile Include="Extension\TableCaptionsFeatures.cs" />
     <Compile Include="Formatters\BlockFormatter.cs" />
     <Compile Include="Formatters\Blocks\DelegateBlockFormatter.cs" />
+    <Compile Include="Formatters\Blocks\FigureCaptionFormatter.cs" />
+    <Compile Include="Formatters\Blocks\FigureFormatter.cs" />
     <Compile Include="Formatters\Blocks\TableBodyFormatter.cs" />
     <Compile Include="Formatters\Blocks\TableFooterFormatter.cs" />
     <Compile Include="Formatters\Blocks\TableHeaderFormatter.cs" />
@@ -94,6 +96,7 @@
     <Compile Include="Extension\PipeTablesFeatures.cs" />
     <Compile Include="Syntax\Block.cs" />
     <Compile Include="Parser\BlockMethods.cs" />
+    <Compile Include="Syntax\CaptionData.cs" />
     <Compile Include="Syntax\HtmlBlockType.cs" />
     <Compile Include="Syntax\BlockTag.cs" />
     <Compile Include="Syntax\Enumerable.cs" />

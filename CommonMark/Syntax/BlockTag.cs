@@ -144,6 +144,18 @@ namespace CommonMark.Syntax
         TableCell,
 
         /// <summary>
+        /// A figure element.
+        /// Only present if figures are enabled.
+        /// </summary>
+        Figure,
+
+        /// <summary>
+        /// A figure caption element.
+        /// Only present in a <see cref="Figure"/> block if figures are enabled.
+        /// </summary>
+        FigureCaption,
+
+        /// <summary>
         /// Block tag count. There should be no elements with this tag.
         /// </summary>
         Count
