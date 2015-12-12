@@ -51,6 +51,7 @@
     <Compile Include="CommonMarkException.cs" />
     <Compile Include="CommonMarkSettings.cs" />
     <Compile Include="CommonMarkExtension.cs" />
+    <Compile Include="Extension\Figures.cs" />
     <Compile Include="Extension\DefinitionLists.cs" />
     <Compile Include="Extension\DefinitionListsFeatures.cs" />
     <Compile Include="Extension\DefinitionListsSettings.cs" />

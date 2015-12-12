@@ -148,13 +148,13 @@ namespace CommonMark.Syntax
 
         /// <summary>
         /// A figure element.
-        /// Only present if figures are enabled.
+        /// Only present if <see cref="Extension.Figures"/> are enabled.
         /// </summary>
         Figure,
 
         /// <summary>
         /// A figure caption element.
-        /// Only present in a <see cref="Figure"/> block if figures are enabled.
+        /// Only present in a <see cref="Figure"/> block if <see cref="Extension.Figures"/> are enabled.
         /// </summary>
         FigureCaption,
 

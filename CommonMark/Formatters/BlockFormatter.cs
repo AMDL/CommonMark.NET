@@ -85,8 +85,6 @@ namespace CommonMark.Formatters
         internal static IBlockFormatter[] InitializeFormatters(FormatterParameters parameters)
         {
             var f = new IBlockFormatter[(int)BlockTag.Count];
-            f[(int)BlockTag.FigureCaption] = new FigureCaptionFormatter(parameters);
-            f[(int)BlockTag.Figure] = new FigureFormatter(parameters);
             return f;
         }
     }
