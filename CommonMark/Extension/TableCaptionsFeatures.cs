@@ -32,6 +32,11 @@
         TildeDefinition = 8,
 
         /// <summary>
+        /// Spaces before lead-in delimiters will be allowed.
+        /// </summary>
+        TrimLead = 16,
+
+        /// <summary>
         /// All table captions features are enabled.
         /// </summary>
         All = 0x7FFFFFFF

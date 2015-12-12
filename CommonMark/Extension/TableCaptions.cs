@@ -77,7 +77,10 @@ namespace CommonMark.Extension
                 return (0 != (settings.Features & TableCaptionsFeatures.TildeDefinition) && content[0] == '~'
                     && PreprocessEmptyLead(block, inline, content, index, '~'));
 
-            var prefix = content.Substring(0, index - 1).TrimEnd();
+            var prefix = content.Substring(0, index);
+            if (0 != (settings.Features & TableCaptionsFeatures.TrimLead))
+                prefix = prefix.TrimEnd();
+
             foreach (var lead in settings.Leads)
                 if (prefix.Equals(lead))
                     return PreprocessMatch(block, inline, content, index, prefix);
