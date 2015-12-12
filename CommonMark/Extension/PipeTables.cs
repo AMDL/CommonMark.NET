@@ -14,7 +14,7 @@ namespace CommonMark.Extension
         /// <summary>
         /// Initializes a new instance of the <see cref="PipeTables"/> class.
         /// </summary>
-        /// <param name="settings">CommonMark settings.</param>
+        /// <param name="settings">Common settings.</param>
         /// <param name="pipeTablesSettings">Pipe tables settings.</param>
         public PipeTables(CommonMarkSettings settings, PipeTablesSettings pipeTablesSettings)
             : base(settings)

@@ -1,4 +1,5 @@
-﻿using CommonMark.Formatters.Blocks;
+﻿using CommonMark.Formatters;
+using CommonMark.Formatters.Blocks;
 using CommonMark.Syntax;
 using System.Collections.Generic;
 
@@ -10,31 +11,27 @@ namespace CommonMark.Extension
     public class TableCaptions : CommonMarkExtension
     {
         private readonly TableCaptionsSettings settings;
-        private readonly TableCaptionFormatter formatter;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TableCaptions"/> class.
         /// </summary>
-        /// <param name="settings">The object containing settings to be cloned for the formatting process.</param>
+        /// <param name="settings">Common settings.</param>
         /// <param name="tableCaptionsSettings">Table captions settings.</param>
         public TableCaptions(CommonMarkSettings settings, TableCaptionsSettings tableCaptionsSettings)
+            : base(settings)
         {
             this.settings = tableCaptionsSettings;
-            this.formatter = new TableCaptionFormatter(settings.FormatterParameters);
         }
 
         /// <summary>
-        /// Gets the mapping from block tag to block element formatter.
+        /// Creates the mapping from block tag to block element formatter.
         /// </summary>
-        public override IDictionary<BlockTag, Formatters.IBlockFormatter> BlockFormatters
+        protected override IDictionary<BlockTag, Formatters.IBlockFormatter> InitializeBlockFormatters(FormatterParameters parameters)
         {
-            get
+            return new Dictionary<BlockTag, Formatters.IBlockFormatter>
             {
-                return new Dictionary<BlockTag, Formatters.IBlockFormatter>
-                {
-                    { BlockTag.TableCaption, formatter }
-                };
-            }
+                { BlockTag.TableCaption, new TableCaptionFormatter(parameters) }
+            };
         }
 
         internal bool IncorporateCaption(Block block)
