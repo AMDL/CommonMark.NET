@@ -1,4 +1,5 @@
 ﻿using CommonMark.Syntax;
+using System.Collections.Generic;
 
 namespace CommonMark.Formatters.Blocks
 {
@@ -42,25 +43,21 @@ namespace CommonMark.Formatters.Blocks
             return true;
         }
 
-        public override string GetClosing(Block block)
+        protected override string GetTag(Block element)
         {
-            return block.Parent.Tag == BlockTag.TableBody
-                ? "</td>"
-                : "</th>";
+            return element.Parent.Tag == BlockTag.TableBody
+                ? "td"
+                : "th";
         }
 
-        public override string GetNodeTag(Block block)
+        public override IDictionary<string, object> GetPrinterData(Block block)
         {
-            return "table_cell";
-        }
-
-        public override void Print(System.IO.TextWriter writer, Block block)
-        {
-            if (block.Parent.Tag == BlockTag.TableBody)
+            if (block.Parent.Tag != BlockTag.TableBody)
+                return base.GetPrinterData(block);
+            return new Dictionary<string, object>
             {
-                writer.Write(" (align={0})",
-                   block.TableCellData.ColumnData.Alignment);
-            }
+                {"align", block.TableCellData.ColumnData.Alignment},
+            };
         }
     }
 }

@@ -14,27 +14,9 @@ namespace CommonMark.Formatters.Blocks
             return block.Tag == BlockTag.TableFooter;
         }
 
-        public override bool WriteOpening(IHtmlTextWriter writer, Block block)
+        protected override string GetTag(Block element)
         {
-            writer.EnsureLine();
-            writer.WriteConstant("<tfoot");
-            WritePosition(writer, block);
-            writer.WriteLine('>');
-            return true;
-        }
-
-        public override string GetClosing(Block block)
-        {
-            return "</tfoot>";
-        }
-
-        public override string GetNodeTag(Block block)
-        {
-            return "table_foot";
-        }
-
-        public override void Print(System.IO.TextWriter writer, Block block)
-        {
+            return "tfoot";
         }
     }
 }

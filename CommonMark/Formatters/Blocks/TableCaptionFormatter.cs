@@ -1,4 +1,5 @@
 ﻿using CommonMark.Syntax;
+using System.Collections.Generic;
 
 namespace CommonMark.Formatters.Blocks
 {
@@ -14,35 +15,18 @@ namespace CommonMark.Formatters.Blocks
             return block.Tag == BlockTag.TableCaption;
         }
 
-        public override bool WriteOpening(IHtmlTextWriter writer, Block block)
+        protected override string GetTag(Block element)
         {
-            writer.EnsureLine();
-            writer.WriteConstant("<caption");
-            WritePosition(writer, block);
-            writer.WriteLine('>');
-            return true;
+            return "caption";
         }
 
-        public override string GetClosing(Block block)
+        public override IDictionary<string, object> GetPrinterData(Block block)
         {
-            return "</caption>";
-        }
-
-        public override bool? IsStackTight(Block block, bool tight)
-        {
-            return false;
-        }
-
-        public override string GetNodeTag(Block block)
-        {
-            return "table_caption";
-        }
-
-        public override void Print(System.IO.TextWriter writer, Block block)
-        {
-            writer.Write(" (placement={0} lead={1})",
-                block.CaptionData.Placement,
-                block.CaptionData.Lead);
+            return new Dictionary<string, object>
+            {
+                {"placement", block.CaptionData.Placement},
+                {"lead", block.CaptionData.Lead},
+            };
         }
     }
 }

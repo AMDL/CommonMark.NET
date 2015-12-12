@@ -14,27 +14,9 @@ namespace CommonMark.Formatters.Blocks
             return block.Tag == BlockTag.Figure;
         }
 
-        public override bool WriteOpening(IHtmlTextWriter writer, Block block)
-        {
-            writer.EnsureLine();
-            writer.WriteConstant("<figure");
-            WritePosition(writer, block);
-            writer.Write('>');
-            return true;
-        }
-
-        public override string GetClosing(Block block)
-        {
-            return "</figure>";
-        }
-
-        public override string GetNodeTag(Block block)
+        protected override string GetTag(Block element)
         {
             return "figure";
-        }
-
-        public override void Print(System.IO.TextWriter writer, Block block)
-        {
         }
     }
 }

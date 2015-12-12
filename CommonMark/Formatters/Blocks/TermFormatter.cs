@@ -14,27 +14,9 @@ namespace CommonMark.Formatters.Blocks
             return block.Tag == BlockTag.Term;
         }
 
-        public override bool WriteOpening(IHtmlTextWriter writer, Block block)
+        protected override string GetTag(Block element)
         {
-            writer.EnsureLine();
-            writer.WriteConstant("<dt");
-            WritePosition(writer, block);
-            writer.Write('>');
-            return true;
-        }
-
-        public override string GetClosing(Block block)
-        {
-            return "</dt>";
-        }
-
-        public override string GetNodeTag(Block block)
-        {
-            return "term";
-        }
-
-        public override void Print(System.IO.TextWriter writer, Block block)
-        {
+            return "dt";
         }
     }
 }

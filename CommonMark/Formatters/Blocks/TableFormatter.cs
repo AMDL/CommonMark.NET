@@ -1,4 +1,5 @@
 ﻿using CommonMark.Syntax;
+using System.Collections.Generic;
 using System.IO;
 
 namespace CommonMark.Formatters.Blocks
@@ -15,32 +16,20 @@ namespace CommonMark.Formatters.Blocks
             return block.Tag == BlockTag.Table;
         }
 
-        public override bool WriteOpening(IHtmlTextWriter writer, Block block)
-        {
-            writer.EnsureLine();
-            writer.WriteConstant("<table");
-            WritePosition(writer, block);
-            writer.WriteLine('>');
-            return true;
-        }
-
-        public override string GetClosing(Block block)
-        {
-            return "</table>";
-        }
-
-        public override string GetNodeTag(Block block)
+        protected override string GetTag(Block element)
         {
             return "table";
         }
 
-        public override void Print(TextWriter writer, Block block)
+        public override IDictionary<string, object> GetPrinterData(Block block)
         {
-            writer.Write(" (type={0} head_delim={1} head_col_delim={2} col_delim={3})",
-                block.TableData.TableType,
-                block.TableData.HeaderDelimiter,
-                block.TableData.HeaderColumnDelimiter,
-                block.TableData.ColumnDelimiter);
+            return new Dictionary<string, object>
+            {
+                {"type", block.TableData.TableType},
+                {"head_delim", block.TableData.HeaderDelimiter},
+                {"head_col_delim", block.TableData.HeaderColumnDelimiter},
+                {"col_delim", block.TableData.ColumnDelimiter},
+            };
         }
     }
 }

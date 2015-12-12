@@ -1,5 +1,4 @@
 ﻿using CommonMark.Syntax;
-using System.IO;
 
 namespace CommonMark.Formatters.Blocks
 {
@@ -41,13 +40,9 @@ namespace CommonMark.Formatters.Blocks
             return null;
         }
 
-        public override string GetNodeTag(Block block)
+        protected override string GetTag(Block element)
         {
-            return "table_col";
-        }
-
-        public override void Print(TextWriter writer, Block block)
-        {
+            return "col";
         }
     }
 }
