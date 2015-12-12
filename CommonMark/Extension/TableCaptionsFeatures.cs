@@ -23,6 +23,7 @@
 
         /// <summary>
         /// Paragraphs begining with <c>:</c> will be recognized as captions.
+        /// Requires <see cref="DefinitionLists"/> to be enabled.
         /// </summary>
         Definition = 4,
 

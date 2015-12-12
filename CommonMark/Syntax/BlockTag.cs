@@ -71,16 +71,19 @@ namespace CommonMark.Syntax
 
         /// <summary>
         /// A definition list element. Will contain <see cref="Term"/> and <see cref="Definition"/> blocks.
+        /// Only present if <see cref="Extension.DefinitionLists"/> are enabled.
         /// </summary>
         DefinitionList,
 
         /// <summary>
         /// A defined term in a <see cref="DefinitionList"/> block.
+        /// Only present if <see cref="Extension.DefinitionLists"/> are enabled.
         /// </summary>
         Term,
 
         /// <summary>
         /// A term definition in a <see cref="DefinitionList"/> block.
+        /// Only present if <see cref="Extension.DefinitionLists"/> are enabled.
         /// </summary>
         Definition,
 
