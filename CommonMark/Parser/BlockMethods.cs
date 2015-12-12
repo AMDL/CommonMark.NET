@@ -436,7 +436,7 @@ namespace CommonMark.Parser
         public static void IncorporateLine(LineInfo line, ref Block curptr, CommonMarkSettings settings)
         {
             var parameters = settings.BlockParserParameters;
-            var pipeTables = new Extension.PipeTables(new Extension.PipeTablesSettings(Extension.PipeTablesFeatures.All));
+            var pipeTables = new Extension.PipeTables(settings, new Extension.PipeTablesSettings(Extension.PipeTablesFeatures.All));
 
             var ln = line.Line;
 

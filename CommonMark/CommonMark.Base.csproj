@@ -59,6 +59,7 @@
     <Compile Include="Extension\TableCaptions.cs" />
     <Compile Include="Extension\TableCaptionsSettings.cs" />
     <Compile Include="Extension\TableCaptionsFeatures.cs" />
+    <Compile Include="Extension\Tables.cs" />
     <Compile Include="Formatters\BlockFormatter.cs" />
     <Compile Include="Formatters\Blocks\DefinitionFormatter.cs" />
     <Compile Include="Formatters\Blocks\DefinitionListFormatter.cs" />

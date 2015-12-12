@@ -7,17 +7,19 @@ namespace CommonMark.Extension
     /// <summary>
     /// Pipe tables.
     /// </summary>
-    public sealed class PipeTables : CommonMarkExtension
+    public sealed class PipeTables : Tables
     {
         private readonly PipeTablesSettings settings;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PipeTables"/> class.
         /// </summary>
-        /// <param name="settings">Pipe tables settings.</param>
-        public PipeTables(PipeTablesSettings settings)
+        /// <param name="settings">CommonMark settings.</param>
+        /// <param name="pipeTablesSettings">Pipe tables settings.</param>
+        public PipeTables(CommonMarkSettings settings, PipeTablesSettings pipeTablesSettings)
+            : base(settings)
         {
-            this.settings = settings;
+            this.settings = pipeTablesSettings;
         }
 
         /// <summary>
