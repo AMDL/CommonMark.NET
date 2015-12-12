@@ -54,6 +54,7 @@
     <Compile Include="Extension\Strikeout.cs" />
     <Compile Include="Formatters\BlockFormatter.cs" />
     <Compile Include="Formatters\Blocks\DelegateBlockFormatter.cs" />
+    <Compile Include="Formatters\FormatterParameters.cs" />
     <Compile Include="Formatters\IBlockFormatter.cs" />
     <Compile Include="Formatters\Blocks\TableColumnFormatter.cs" />
     <Compile Include="Formatters\Blocks\TableColumnGroupFormatter.cs" />

@@ -8,15 +8,15 @@ namespace CommonMark.Formatters
     /// </summary>
     public abstract class InlineFormatter : IInlineFormatter
     {
-        private readonly CommonMarkSettings settings;
+        private readonly FormatterParameters parameters;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="InlineFormatter"/> class.
         /// </summary>
-        /// <param name="settings"></param>
-        protected InlineFormatter(CommonMarkSettings settings)
+        /// <param name="parameters">Formatter parameters.</param>
+        protected InlineFormatter(FormatterParameters parameters)
         {
-            this.settings = settings;
+            this.parameters = parameters;
         }
 
         /// <summary>
@@ -62,11 +62,11 @@ namespace CommonMark.Formatters
         /// <param name="inline">Inline element.</param>
         protected void WritePosition(IHtmlTextWriter writer, Inline inline)
         {
-            if (settings.TrackSourcePosition)
+            if (parameters.TrackPositions)
                 writer.WritePosition(inline);
         }
 
-        internal static IInlineFormatter[] InitializeFormatters(CommonMarkSettings settings)
+        internal static IInlineFormatter[] InitializeFormatters(FormatterParameters parameters)
         {
             var f = new InlineFormatter[(int)InlineTag.Count];
             return f;

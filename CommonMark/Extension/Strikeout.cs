@@ -18,10 +18,10 @@ namespace CommonMark.Extension
         /// <summary>
         /// Initializes a new instance of the <see cref="Strikeout"/> class.
         /// </summary>
-        /// <param name="settings">The object containing settings to be cloned for the formatting process.</param>
+        /// <param name="settings">The object containing settings for the formatting process.</param>
         public Strikeout(CommonMarkSettings settings)
         {
-            this.formatter = new StrikethroughFormatter(settings.Clone());
+            this.formatter = new StrikethroughFormatter(settings.FormatterParameters);
         }
 
         /// <summary>
