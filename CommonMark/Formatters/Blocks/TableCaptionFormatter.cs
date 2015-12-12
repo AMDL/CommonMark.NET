@@ -41,8 +41,8 @@ namespace CommonMark.Formatters.Blocks
         public override void Print(System.IO.TextWriter writer, Block block)
         {
             writer.Write(" (placement={0} lead={1})",
-                block.TableCaptionData.Placement,
-                block.TableCaptionData.Lead);
+                block.CaptionData.Placement,
+                block.CaptionData.Lead);
         }
     }
 }

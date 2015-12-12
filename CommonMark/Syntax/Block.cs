@@ -193,12 +193,6 @@ namespace CommonMark.Syntax
         public TableRowData TableRowData { get; set; }
 
         /// <summary>
-        /// Gets or sets the additional properties that apply to table caption elements.
-        /// Only set for <see cref="BlockTag.TableCaption"/> elements if both tables and table captions are enabled.
-        /// </summary>
-        public TableCaptionData TableCaptionData { get; set; }
-
-        /// <summary>
         /// Gets or sets the additional properties that apply to table elements.
         /// Only set for <see cref="BlockTag.Table"/> elements if tables are enabled in <see cref="CommonMarkSettings.AdditionalFeatures"/>.
         /// </summary>

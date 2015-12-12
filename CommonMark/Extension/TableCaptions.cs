@@ -60,7 +60,7 @@ namespace CommonMark.Extension
 
             if (block.Tag == BlockTag.Definition && 0 != (settings.Features & TableCaptionsFeatures.Definition))
             {
-                block.TableCaptionData = new TableCaptionData();
+                block.CaptionData = new CaptionData();
                 return true;
             }
 
@@ -85,7 +85,7 @@ namespace CommonMark.Extension
                 if (prefix.Equals(lead))
                 {
                     inline.LiteralContent = content.Substring(index + 1).TrimStart();
-                    block.TableCaptionData = new TableCaptionData
+                    block.CaptionData = new CaptionData
                     {
                         Lead = lead,
                     };
@@ -130,7 +130,7 @@ namespace CommonMark.Extension
         {
             caption.Parent = table;
             caption.Tag = BlockTag.TableCaption;
-            caption.TableCaptionData.Placement = placement;
+            caption.CaptionData.Placement = placement;
 
             var first = table.FirstChild;
             table.FirstChild = caption;
