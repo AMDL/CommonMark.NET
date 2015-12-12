@@ -8,6 +8,7 @@ namespace CommonMark
     /// CommonMark implementations is required.
     /// </summary>
     [Flags]
+    [Obsolete("Use " + nameof(CommonMarkSettings.Register) + "() and " + nameof(CommonMarkSettings.Unregister) + "() instead.")]
     public enum CommonMarkAdditionalFeatures
     {
         /// <summary>

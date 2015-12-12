@@ -73,12 +73,15 @@ namespace CommonMark
 
         #region Extensions
 
+#pragma warning disable 0618
         private CommonMarkAdditionalFeatures _additionalFeatures;
+#pragma warning restore 0618
 
         /// <summary>
         /// Gets or sets any additional features (that are not present in the current CommonMark specification) that
         /// the parser and/or formatter will recognize.
         /// </summary>
+        [Obsolete("Use " + nameof(CommonMarkSettings.Register) + "() and " + nameof(CommonMarkSettings.Unregister) + "() instead.")]
         public CommonMarkAdditionalFeatures AdditionalFeatures
         {
             get { return this._additionalFeatures; }
@@ -86,9 +89,7 @@ namespace CommonMark
             {
                 this._additionalFeatures = value;
                 var strikeout = new Extension.Strikeout(this);
-#pragma warning disable 0618
                 var strikethroughTilde = 0 != (value & CommonMarkAdditionalFeatures.StrikethroughTilde);
-#pragma warning restore 0618
                 if (strikethroughTilde && !IsRegistered(strikeout))
                     Extensions.Add(strikeout);
                 if (!strikethroughTilde && IsRegistered(strikeout))
