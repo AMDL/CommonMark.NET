@@ -87,6 +87,9 @@ namespace CommonMark.Formatters
             var f = new IBlockFormatter[(int)BlockTag.Count];
             f[(int)BlockTag.TableCell] = new TableCellFormatter(parameters);
             f[(int)BlockTag.TableRow] = new TableRowFormatter(parameters);
+            f[(int)BlockTag.TableBody] = new TableBodyFormatter(parameters);
+            f[(int)BlockTag.TableFooter] = new TableFooterFormatter(parameters);
+            f[(int)BlockTag.TableHeader] = new TableHeaderFormatter(parameters);
             f[(int)BlockTag.TableColumn] = new TableColumnFormatter(parameters);
             f[(int)BlockTag.TableColumnGroup] = new TableColumnGroupFormatter(parameters);
             f[(int)BlockTag.TableCaption] = new TableCaptionFormatter(parameters);

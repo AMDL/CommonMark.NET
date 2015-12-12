@@ -86,9 +86,11 @@ namespace CommonMark.Syntax
 
         /// <summary>
         /// A table element.
-        /// Will contain zero or one <see cref="TableCaption"/> block,
-        /// zero or more <see cref="TableColumnGroup"/> blocks,
-        /// and two or more <see cref="TableRow"/> blocks.
+        /// Will contain an optional <see cref="TableCaption"/> element,
+        /// zero or more <see cref="TableColumnGroup"/> elements,
+        /// an optional <see cref="TableHeader"/> element,
+        /// an optional <see cref="TableFooter"/> element,
+        /// and zero or more <see cref="TableBody"/> elements.
         /// Only present if tables are enabled.
         /// </summary>
         Table,
@@ -100,7 +102,7 @@ namespace CommonMark.Syntax
         TableCaption,
 
         /// <summary>
-        /// A table column group element. Will contain <see cref="TableColumn"/> blocks.
+        /// A table column group element. Will contain <see cref="TableColumn"/> elements.
         /// Only present if both tables and table column groups are enabled.
         /// </summary>
         TableColumnGroup,
@@ -112,7 +114,25 @@ namespace CommonMark.Syntax
         TableColumn,
 
         /// <summary>
-        /// A table row element. Will contain <see cref="TableCell"/> blocks.
+        /// A table header element. Will contain <see cref="TableRow"/> elements.
+        /// Only present if tables are enabled.
+        /// </summary>
+        TableHeader,
+
+        /// <summary>
+        /// A table footer element. Will contain <see cref="TableRow"/> elements.
+        /// Only present if both tables and table footers are enabled.
+        /// </summary>
+        TableFooter,
+
+        /// <summary>
+        /// A table body element. Will contain <see cref="TableRow"/> elements.
+        /// Only present if tables are enabled.
+        /// </summary>
+        TableBody,
+
+        /// <summary>
+        /// A table row element. Will contain <see cref="TableCell"/> elements.
         /// Only present if tables are enabled.
         /// </summary>
         TableRow,

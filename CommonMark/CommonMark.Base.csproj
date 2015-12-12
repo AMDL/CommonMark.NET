@@ -54,6 +54,9 @@
     <Compile Include="Extension\Strikeout.cs" />
     <Compile Include="Formatters\BlockFormatter.cs" />
     <Compile Include="Formatters\Blocks\DelegateBlockFormatter.cs" />
+    <Compile Include="Formatters\Blocks\TableBodyFormatter.cs" />
+    <Compile Include="Formatters\Blocks\TableFooterFormatter.cs" />
+    <Compile Include="Formatters\Blocks\TableHeaderFormatter.cs" />
     <Compile Include="Formatters\FormatterParameters.cs" />
     <Compile Include="Formatters\IBlockFormatter.cs" />
     <Compile Include="Formatters\Blocks\TableColumnFormatter.cs" />
@@ -111,12 +114,10 @@
     <Compile Include="Syntax\TableCaptionData.cs" />
     <Compile Include="Syntax\TableCaptionType.cs" />
     <Compile Include="Syntax\TableCellData.cs" />
-    <Compile Include="Syntax\TableCellType.cs" />
     <Compile Include="Syntax\TableColumnAlignment.cs" />
     <Compile Include="Syntax\TableColumnData.cs" />
     <Compile Include="Syntax\TableData.cs" />
     <Compile Include="Syntax\TableRowData.cs" />
-    <Compile Include="Syntax\TableRowType.cs" />
     <Compile Include="Syntax\TableType.cs" />
     <Compile Include="TableSettings.cs" />
     <Compile Include="Utilities.cs" />

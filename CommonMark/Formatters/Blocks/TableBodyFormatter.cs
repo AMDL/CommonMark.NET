@@ -1,40 +1,36 @@
 ﻿using CommonMark.Syntax;
-using System.IO;
 
 namespace CommonMark.Formatters.Blocks
 {
-    internal class TableRowFormatter : BlockFormatter
+    internal class TableBodyFormatter : BlockFormatter
     {
-        public TableRowFormatter(FormatterParameters parameters)
+        public TableBodyFormatter(FormatterParameters parameters)
             : base(parameters)
         {
         }
 
         public override bool CanHandle(Block block)
         {
-            return block.Tag == BlockTag.TableRow;
+            return block.Tag == BlockTag.TableBody;
         }
 
         public override bool WriteOpening(IHtmlTextWriter writer, Block block)
         {
-            writer.EnsureLine();
-            writer.WriteConstant("<tr");
-            WritePosition(writer, block);
-            writer.WriteLine('>');
+            writer.WriteConstant("<tbody>");
             return true;
         }
 
         public override string GetClosing(Block block)
         {
-            return "</tr>";
+            return "</tbody>";
         }
 
         public override string GetNodeTag(Block block)
         {
-            return "table_row";
+            return "table_body";
         }
 
-        public override void Print(TextWriter writer, Block block)
+        public override void Print(System.IO.TextWriter writer, Block block)
         {
         }
     }

@@ -6,11 +6,6 @@
     public sealed class TableRowData
     {
         /// <summary>
-        /// Gets or sets the row type.
-        /// </summary>
-        public TableRowType TableRowType { get; set; }
-
-        /// <summary>
         /// Gets or sets the row cell count.
         /// </summary>
         public int CellCount { get; set; }

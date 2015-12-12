@@ -152,19 +152,83 @@ namespace CommonMark.Parser
             return data;
         }
 
-        internal static void IncorporateRow(Block block)
+        private static void IncorporateHeader(Block block, int startLine, int startColumn, int sourcePosition)
         {
+            var lastChild = block.LastChild;
 #pragma warning disable 0618
-            block.FirstChild = new Block(BlockTag.TableRow, block.StartLine, block.StartColumn, block.SourcePosition)
+            block.LastChild = new Block(BlockTag.TableHeader, startLine, startColumn, sourcePosition)
 #pragma warning restore 0618
             {
                 Parent = block,
-                TableRowData = new TableRowData
-                {
-                    TableRowType = TableRowType.Header,
-                },
+#pragma warning disable 0618
+                Previous = lastChild,
+#pragma warning restore 0618
                 StringContent = block.StringContent,
             };
+
+            if (lastChild != null)
+                lastChild.NextSibling = block.LastChild;
+
+            block.StringContent = null;
+        }
+
+        private static void IncorporateFooter(Block block, int startLine, int startColumn, int sourcePosition)
+        {
+            var lastChild = block.LastChild;
+#pragma warning disable 0618
+            block.LastChild = new Block(BlockTag.TableFooter, startLine, startColumn, sourcePosition)
+#pragma warning restore 0618
+            {
+                Parent = block,
+#pragma warning disable 0618
+                Previous = lastChild,
+#pragma warning restore 0618
+                StringContent = block.StringContent,
+            };
+
+            if (lastChild != null)
+                lastChild.NextSibling = block.LastChild;
+
+            block.StringContent = null;
+        }
+
+        private static void IncorportateBody(Block block, int startLine, int startColumn, int sourcePosition)
+        {
+            var lastChild = block.LastChild;
+#pragma warning disable 0618
+            block.LastChild = new Block(BlockTag.TableBody, startLine, startColumn, sourcePosition)
+#pragma warning restore 0618
+            {
+                Parent = block,
+#pragma warning disable 0618
+                Previous = lastChild,
+#pragma warning restore 0618
+                StringContent = block.StringContent,
+            };
+
+            if (lastChild != null)
+                lastChild.NextSibling = block.LastChild;
+
+            block.StringContent = null;
+        }
+
+        private static void IncorporateRow(Block block, int startLine, int startColumn, int sourcePosition)
+        {
+            var lastChild = block.LastChild;
+#pragma warning disable 0618
+            block.LastChild = new Block(BlockTag.TableRow, startLine, startColumn, sourcePosition)
+#pragma warning restore 0618
+            {
+                Parent = block,
+#pragma warning disable 0618
+                Previous = lastChild,
+#pragma warning restore 0618
+                TableRowData = new TableRowData(),
+                StringContent = block.StringContent,
+            };
+
+            if (lastChild != null)
+                lastChild.NextSibling = block.LastChild;
 
             block.StringContent = null;
         }
@@ -176,9 +240,6 @@ namespace CommonMark.Parser
 
             var tableData = block.Parent.TableData;
             var columnData = tableData.FirstColumn;
-            var cellType = block.TableRowData.TableRowType == TableRowType.Header
-                ? TableCellType.Header
-                : TableCellType.Default;
             var cellCount = 0;
 
             var sourcePosition = block.SourcePosition;
@@ -208,7 +269,6 @@ namespace CommonMark.Parser
                     Parent = block,
                     TableCellData = new TableCellData
                     {
-                        CellType = cellType,
                         ColumnData = columnData ?? new TableColumnData()
                     },
                     InlineContent = inline,

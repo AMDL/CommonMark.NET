@@ -17,9 +17,8 @@ namespace CommonMark.Formatters.Blocks
 
         public override bool WriteOpening(IHtmlTextWriter writer, Block block)
         {
-            var data = block.TableCellData;
-            writer.WriteConstant(data.CellType == TableCellType.Header ? "<th" : "<td");
-            switch (data.ColumnData.Alignment)
+            writer.WriteConstant(block.Parent.Tag == BlockTag.TableBody ? "<td" : "<th");
+            switch (block.TableCellData.ColumnData.Alignment)
             {
                 case TableColumnAlignment.Left:
                     writer.WriteConstant(" style=\"text-align: left\"");
@@ -38,14 +37,9 @@ namespace CommonMark.Formatters.Blocks
 
         public override string GetClosing(Block block)
         {
-            return block.TableCellData.CellType == TableCellType.Header
-                ? "</th>"
-                : "</td>";
-        }
-
-        public override bool? IsStackTight(Block block, bool tight)
-        {
-            return false;
+            return block.Parent.Tag == BlockTag.TableBody
+                ? "</td>"
+                : "</th>";
         }
 
         public override string GetNodeTag(Block block)
@@ -55,8 +49,7 @@ namespace CommonMark.Formatters.Blocks
 
         public override void Print(TextWriter writer, Block block)
         {
-            writer.Write(" (type={0} align={1})",
-                block.TableCellData.CellType,
+            writer.Write(" (align={0})",
                 block.TableCellData.ColumnData.Alignment);
         }
     }

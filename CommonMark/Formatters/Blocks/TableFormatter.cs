@@ -29,11 +29,6 @@ namespace CommonMark.Formatters.Blocks
             return "</table>";
         }
 
-        public override bool? IsStackTight(Block block, bool tight)
-        {
-            return false;
-        }
-
         public override string GetNodeTag(Block block)
         {
             return "table";
