@@ -1,14 +1,29 @@
 ﻿using CommonMark.Formatters;
 using CommonMark.Syntax;
+using System;
 using System.Collections.Generic;
 
 namespace CommonMark
 {
     /// <summary>
-    /// Extension.
+    /// Base extension class.
     /// </summary>
     public abstract class CommonMarkExtension : ICommonMarkExtension
     {
+        private readonly Lazy<IDictionary<BlockTag, IBlockFormatter>> _blockFormatters;
+        private readonly Lazy<IDictionary<InlineTag, IInlineFormatter>> _inlineFormatters;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CommonMarkExtension"/> class.
+        /// </summary>
+        /// <param name="settings">Common settings.</param>
+        protected CommonMarkExtension(CommonMarkSettings settings)
+        {
+            var parameters = settings.FormatterParameters;
+            this._blockFormatters = new Lazy<IDictionary<BlockTag, IBlockFormatter>>(() => InitializeBlockFormatters(parameters));
+            this._inlineFormatters = new Lazy<IDictionary<InlineTag, IInlineFormatter>>(() => InitializeInlineFormatters(parameters));
+        }
+
         /// <summary>
         /// Gets the mapping from character to inline parser delegate.
         /// </summary>
@@ -36,17 +51,17 @@ namespace CommonMark
         /// <summary>
         /// Gets the mapping from block tag to block element formatter.
         /// </summary>
-        public virtual IDictionary<BlockTag, IBlockFormatter> BlockFormatters
+        public IDictionary<BlockTag, IBlockFormatter> BlockFormatters
         {
-            get { return null; }
+            get { return _blockFormatters.Value; }
         }
 
         /// <summary>
         /// Gets the mapping from inline tag to inline element formatter.
         /// </summary>
-        public virtual IDictionary<InlineTag, IInlineFormatter> InlineFormatters
+        public IDictionary<InlineTag, IInlineFormatter> InlineFormatters
         {
-            get { return null; }
+            get { return _inlineFormatters.Value; }
         }
 
         /// <summary>
@@ -75,6 +90,22 @@ namespace CommonMark
         public override string ToString()
         {
             return GetType().Name;
+        }
+
+        /// <summary>
+        /// Creates the mapping from block tag to block element formatter.
+        /// </summary>
+        protected virtual IDictionary<BlockTag, IBlockFormatter> InitializeBlockFormatters(FormatterParameters parameters)
+        {
+            return null;
+        }
+
+        /// <summary>
+        /// Creates the mapping from inline tag to inline element formatter.
+        /// </summary>
+        protected virtual IDictionary<InlineTag, IInlineFormatter> InitializeInlineFormatters(FormatterParameters parameters)
+        {
+            return null;
         }
     }
 }

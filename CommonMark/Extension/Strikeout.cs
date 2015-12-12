@@ -10,15 +10,13 @@ namespace CommonMark.Extension
     /// </summary>
     public class Strikeout : CommonMarkExtension
     {
-        private readonly StrikethroughFormatter formatter;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="Strikeout"/> class.
         /// </summary>
-        /// <param name="settings">The object containing settings for the formatting process.</param>
+        /// <param name="settings">Common settings.</param>
         public Strikeout(CommonMarkSettings settings)
+            : base(settings)
         {
-            this.formatter = new StrikethroughFormatter(settings.FormatterParameters);
         }
 
         /// <summary>
@@ -36,17 +34,14 @@ namespace CommonMark.Extension
         }
 
         /// <summary>
-        /// Gets the mapping from inline tag to inline element formatter.
+        /// Creates the mapping from inline tag to inline element formatter.
         /// </summary>
-        public override IDictionary<InlineTag, IInlineFormatter> InlineFormatters
+        protected override IDictionary<InlineTag, IInlineFormatter> InitializeInlineFormatters(FormatterParameters parameters)
         {
-            get
+            return new Dictionary<InlineTag, IInlineFormatter>
             {
-                return new Dictionary<InlineTag, IInlineFormatter>
-                {
-                    { InlineTag.Strikethrough, formatter }
-                };
-            }
+                { InlineTag.Strikethrough, new StrikethroughFormatter(parameters) }
+            };
         }
     }
 }
