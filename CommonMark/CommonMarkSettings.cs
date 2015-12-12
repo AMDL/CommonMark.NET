@@ -379,7 +379,7 @@ namespace CommonMark
             return GetItems(Formatters.BlockFormatter.InitializeFormatters(FormatterParameters),
                 ext => ext.BlockFormatters,
                 key => (int)key,
-                (inner, value) => new Formatters.Blocks.DelegateBlockFormatter(inner, value));
+                (inner, value) => new Formatters.DelegateBlockFormatter(inner, value));
         }
 
         private Lazy<Formatters.IInlineFormatter[]> _inlineFormatters;
@@ -397,7 +397,7 @@ namespace CommonMark
             return GetItems(Formatters.InlineFormatter.InitializeFormatters(FormatterParameters),
                 ext => ext.InlineFormatters,
                 key => (int)key,
-                (inner, value) => new Formatters.Inlines.DelegateInlineFormatter(inner, value));
+                (inner, value) => new Formatters.DelegateInlineFormatter(inner, value));
         }
 
         #endregion
