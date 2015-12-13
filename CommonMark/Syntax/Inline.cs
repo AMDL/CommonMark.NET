@@ -211,5 +211,11 @@ namespace CommonMark.Syntax
         /// Gets the delimiter character for this inline element.
         /// </summary>
         public char DelimiterCharacter { get; }
+
+        /// <summary>
+        /// Gets or sets the additional properties that apply to custom inline elements.
+        /// Set for <see cref="InlineTag.Custom"/> elements by custom extensions.
+        /// </summary>
+        public object CustomData { get; set; }
     }
 }

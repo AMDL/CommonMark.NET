@@ -207,6 +207,12 @@ namespace CommonMark.Syntax
         public CaptionData CaptionData { get; set; }
 
         /// <summary>
+        /// Gets or sets the additional properties that apply to custom block elements.
+        /// Set for <see cref="BlockTag.Custom"/> elements by custom extensions.
+        /// </summary>
+        public object CustomData { get; set; }
+
+        /// <summary>
         /// Gets or sets the dictionary containing resolved link references. Only set on the document node, <c>null</c>
         /// and not used for all other elements.
         /// </summary>

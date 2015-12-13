@@ -75,6 +75,12 @@ namespace CommonMark.Syntax
         Strikethrough,
 
         /// <summary>
+        /// Represents a custom inline element.
+        /// Any additional properties are set through <see cref="Inline.CustomData"/>.
+        /// </summary>
+        Custom,
+
+        /// <summary>
         /// Inline tag count. There should be no elements with this tag.
         /// </summary>
         Count

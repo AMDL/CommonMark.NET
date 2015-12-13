@@ -159,6 +159,12 @@ namespace CommonMark.Syntax
         FigureCaption,
 
         /// <summary>
+        /// Custom block element.
+        /// Any additional properties are set through <see cref="Block.CustomData"/>.
+        /// </summary>
+        Custom,
+
+        /// <summary>
         /// Block tag count. There should be no elements with this tag.
         /// </summary>
         Count
