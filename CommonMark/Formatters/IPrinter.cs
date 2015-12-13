@@ -1,6 +1,4 @@
-﻿using System.Text;
-
-namespace CommonMark.Formatters
+﻿namespace CommonMark.Formatters
 {
     /// <summary>
     /// Syntax tree printer interface.
@@ -11,8 +9,7 @@ namespace CommonMark.Formatters
         /// Formats a string.
         /// </summary>
         /// <param name="s">Source string.</param>
-        /// <param name="sb">String builder.</param>
         /// <returns>Formatted string.</returns>
-        string Format(string s, StringBuilder sb);
+        string Format(string s);
     }
 }

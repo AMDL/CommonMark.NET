@@ -8,7 +8,7 @@ namespace CommonMark.Formatters
 {
     internal static class Printer
     {
-        private static string format_str(string s, StringBuilder buffer)
+        internal static string format_str(string s, StringBuilder buffer)
         {
             if (s == null)
                 return string.Empty;
@@ -378,13 +378,16 @@ namespace CommonMark.Formatters
             get { return _instance.Value; }
         }
 
+        private StringBuilder buffer;
+
         private PrinterImpl()
         {
+            this.buffer = new StringBuilder();
         }
 
-        string IPrinter.Format(string s, StringBuilder sb)
+        string IPrinter.Format(string s)
         {
-            throw new System.NotImplementedException();
+            return Printer.format_str(s, buffer);
         }
     }
 }
