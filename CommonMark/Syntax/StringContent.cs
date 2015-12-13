@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 
 namespace CommonMark.Syntax
@@ -93,40 +92,40 @@ namespace CommonMark.Syntax
         /// Resets the given subject instance with data from this string content.
         /// Note that this method calls <see cref="TrimEnd"/> thus changing the source data as well.
         /// </summary>
-        /// <param name="subj">The subject instance which will be reinitialized with the data from this instance.</param>
-        internal void FillSubject(Parser.Subject subj)
+        /// <param name="subject">The subject instance which will be reinitialized with the data from this instance.</param>
+        public void FillSubject(Parser.Subject subject)
         {
-            subj.LastInline = null;
-            subj.LastPendingInline = null;
-            subj.FirstPendingInline = null;
+            subject.LastInline = null;
+            subject.LastPendingInline = null;
+            subject.FirstPendingInline = null;
 
 #if DEBUG
-            subj.DebugStartIndex = 0;
+            subject.DebugStartIndex = 0;
 #endif
 
             this.TrimEnd();
 
             if (this._partCounter == 0)
             {
-                subj.Buffer = string.Empty;
-                subj.Position = 0;
-                subj.Length = 0;
+                subject.Buffer = string.Empty;
+                subject.Position = 0;
+                subject.Length = 0;
                 return;
             }
 
             if (this._partCounter > 1)
             {
-                subj.Buffer = this.ToString(subj.ReusableStringBuilder);
-                subj.Position = 0;
-                subj.Length = subj.Buffer.Length;
+                subject.Buffer = this.ToString(subject.ReusableStringBuilder);
+                subject.Position = 0;
+                subject.Length = subject.Buffer.Length;
                 return;
             }
 
-            subj.Buffer = this._parts[0].Source;
-            subj.Position = this._parts[0].StartIndex;
-            subj.Length = this._parts[0].StartIndex + this._parts[0].Length;
+            subject.Buffer = this._parts[0].Source;
+            subject.Position = this._parts[0].StartIndex;
+            subject.Length = this._parts[0].StartIndex + this._parts[0].Length;
 #if DEBUG
-            subj.DebugStartIndex = this._parts[0].StartIndex;
+            subject.DebugStartIndex = this._parts[0].StartIndex;
 #endif
         }
 
