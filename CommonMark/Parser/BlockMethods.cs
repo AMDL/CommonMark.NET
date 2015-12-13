@@ -135,7 +135,7 @@ namespace CommonMark.Parser
                     var origPos = subj.Position;
                     while (subj.Position < subj.Buffer.Length 
                         && subj.Buffer[subj.Position] == '[' 
-                        && 0 != InlineMethods.ParseReference(subj, settings))
+                        && 0 != InlineMethods.ParseReference(subj, settings.InlineParserParameters))
                     {
                     }
 
@@ -323,7 +323,7 @@ namespace CommonMark.Parser
             sc.FillSubject(subj);
             var delta = subj.Position;
 
-            block.InlineContent = InlineMethods.parse_inlines(block, subj, refmap, settings);
+            block.InlineContent = InlineMethods.parse_inlines(block, subj, refmap, settings.InlineParserParameters);
             block.StringContent = null;
 
             if (sc.PositionTracker != null)

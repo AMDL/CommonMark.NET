@@ -92,7 +92,7 @@ namespace CommonMark.Parser
 
         internal override InlineParserDelegate[] GetParsers()
         {
-            return Settings.GetItems(Parser.InlineMethods.InitializeParsers(Settings),
+            return Settings.GetItems(Parser.InlineMethods.InitializeParsers(this),
                 extension => extension.InlineParsers, key => key, GetParser);
         }
 
@@ -138,7 +138,7 @@ namespace CommonMark.Parser
     {
         internal override InlineParserDelegate[] GetParsers()
         {
-            return Parser.InlineMethods.EmphasisParsers;
+            return Parser.InlineMethods.InitializeEmphasisParsers(this);
         }
 
         internal override InlineDelimiterCharacterParameters[] GetDelimiterCharacters()
