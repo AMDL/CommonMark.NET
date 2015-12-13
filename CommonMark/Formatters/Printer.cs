@@ -100,88 +100,88 @@ namespace CommonMark.Formatters
                         PrintData(writer, data);
                 }
                 else switch (block.Tag)
-                {
-                    case BlockTag.Document:
-                        writer.Write("document");
-                        PrintPosition(trackPositions, writer, block);
-                        break;
+                    {
+                        case BlockTag.Document:
+                            writer.Write("document");
+                            PrintPosition(trackPositions, writer, block);
+                            break;
 
-                    case BlockTag.BlockQuote:
-                        writer.Write("block_quote");
-                        PrintPosition(trackPositions, writer, block);
-                        break;
+                        case BlockTag.BlockQuote:
+                            writer.Write("block_quote");
+                            PrintPosition(trackPositions, writer, block);
+                            break;
 
-                    case BlockTag.ListItem:
-                        writer.Write("list_item");
-                        PrintPosition(trackPositions, writer, block);
-                        break;
+                        case BlockTag.ListItem:
+                            writer.Write("list_item");
+                            PrintPosition(trackPositions, writer, block);
+                            break;
 
-                    case BlockTag.List:
-                        writer.Write("list");
-                        PrintPosition(trackPositions, writer, block);
+                        case BlockTag.List:
+                            writer.Write("list");
+                            PrintPosition(trackPositions, writer, block);
 
-                        var listData = block.ListData;
-                        if (listData.ListType == ListType.Ordered)
-                        {
-                            writer.Write(" (type=ordered tight={0} start={1} delim={2})",
-                                 listData.IsTight,
-                                 listData.Start,
-                                 listData.Delimiter);
-                        }
-                        else
-                        {
-                            writer.Write("(type=bullet tight={0} bullet_char={1})",
-                                 listData.IsTight,
-                                 listData.BulletChar);
-                        }
-                        break;
+                            var listData = block.ListData;
+                            if (listData.ListType == ListType.Ordered)
+                            {
+                                writer.Write(" (type=ordered tight={0} start={1} delim={2})",
+                                     listData.IsTight,
+                                     listData.Start,
+                                     listData.Delimiter);
+                            }
+                            else
+                            {
+                                writer.Write("(type=bullet tight={0} bullet_char={1})",
+                                     listData.IsTight,
+                                     listData.BulletChar);
+                            }
+                            break;
 
-                    case BlockTag.AtxHeader:
-                        writer.Write("atx_header");
-                        PrintPosition(trackPositions, writer, block);
-                        writer.Write(" (level={0})", block.HeaderLevel);
-                        break;
+                        case BlockTag.AtxHeader:
+                            writer.Write("atx_header");
+                            PrintPosition(trackPositions, writer, block);
+                            writer.Write(" (level={0})", block.HeaderLevel);
+                            break;
 
-                    case BlockTag.SETextHeader:
-                        writer.Write("setext_header");
-                        PrintPosition(trackPositions, writer, block);
-                        writer.Write(" (level={0})", block.HeaderLevel);
-                        break;
+                        case BlockTag.SETextHeader:
+                            writer.Write("setext_header");
+                            PrintPosition(trackPositions, writer, block);
+                            writer.Write(" (level={0})", block.HeaderLevel);
+                            break;
 
-                    case BlockTag.Paragraph:
-                        writer.Write("paragraph");
-                        PrintPosition(trackPositions, writer, block);
-                        break;
+                        case BlockTag.Paragraph:
+                            writer.Write("paragraph");
+                            PrintPosition(trackPositions, writer, block);
+                            break;
 
-                    case BlockTag.HorizontalRuler:
-                        writer.Write("hrule");
-                        PrintPosition(trackPositions, writer, block);
-                        break;
+                        case BlockTag.HorizontalRuler:
+                            writer.Write("hrule");
+                            PrintPosition(trackPositions, writer, block);
+                            break;
 
-                    case BlockTag.FencedCode:
-                        writer.Write("fenced_code");
-                        PrintPosition(trackPositions, writer, block);
-                        writer.Write(" length={0} info={1} {2}",
-                               block.FencedCodeData.FenceLength,
-                               format_str(block.FencedCodeData.Info, buffer),
-                               format_str(block.StringContent.ToString(buffer), buffer));
-                        break;
+                        case BlockTag.FencedCode:
+                            writer.Write("fenced_code");
+                            PrintPosition(trackPositions, writer, block);
+                            writer.Write(" length={0} info={1} {2}",
+                                   block.FencedCodeData.FenceLength,
+                                   format_str(block.FencedCodeData.Info, buffer),
+                                   format_str(block.StringContent.ToString(buffer), buffer));
+                            break;
 
-                    case BlockTag.HtmlBlock:
-                        writer.Write("html_block");
-                        PrintPosition(trackPositions, writer, block);
-                        writer.Write(' ');
-                        writer.Write(format_str(block.StringContent.ToString(buffer), buffer));
-                        break;
+                        case BlockTag.HtmlBlock:
+                            writer.Write("html_block");
+                            PrintPosition(trackPositions, writer, block);
+                            writer.Write(' ');
+                            writer.Write(format_str(block.StringContent.ToString(buffer), buffer));
+                            break;
 
-                    case BlockTag.ReferenceDefinition:
-                        writer.Write("reference_def");
-                        PrintPosition(trackPositions, writer, block);
-                        break;
+                        case BlockTag.ReferenceDefinition:
+                            writer.Write("reference_def");
+                            PrintPosition(trackPositions, writer, block);
+                            break;
 
-                    default:
-                        throw new CommonMarkException("Block type " + block.Tag + " is not supported.", block);
-                }
+                        default:
+                            throw new CommonMarkException("Block type " + block.Tag + " is not supported.", block);
+                    }
 
                 writer.WriteLine();
 
@@ -235,68 +235,68 @@ namespace CommonMark.Formatters
                         PrintData(writer, data);
                 }
                 else switch (inline.Tag)
-                {
-                    case InlineTag.String:
-                        writer.Write("str");
-                        PrintPosition(trackPositions, writer, inline);
-                        writer.Write(' ');
-                        writer.Write(format_str(inline.LiteralContent, buffer));
-                        break;
+                    {
+                        case InlineTag.String:
+                            writer.Write("str");
+                            PrintPosition(trackPositions, writer, inline);
+                            writer.Write(' ');
+                            writer.Write(format_str(inline.LiteralContent, buffer));
+                            break;
 
-                    case InlineTag.LineBreak:
-                        writer.Write("linebreak");
-                        PrintPosition(trackPositions, writer, inline);
-                        break;
+                        case InlineTag.LineBreak:
+                            writer.Write("linebreak");
+                            PrintPosition(trackPositions, writer, inline);
+                            break;
 
-                    case InlineTag.SoftBreak:
-                        writer.Write("softbreak");
-                        PrintPosition(trackPositions, writer, inline);
-                        break;
+                        case InlineTag.SoftBreak:
+                            writer.Write("softbreak");
+                            PrintPosition(trackPositions, writer, inline);
+                            break;
 
-                    case InlineTag.Code:
-                        writer.Write("code {0}", format_str(inline.LiteralContent, buffer));
-                        PrintPosition(trackPositions, writer, inline);
-                        writer.Write(' ');
-                        writer.Write(format_str(inline.LiteralContent, buffer));
-                        break;
+                        case InlineTag.Code:
+                            writer.Write("code {0}", format_str(inline.LiteralContent, buffer));
+                            PrintPosition(trackPositions, writer, inline);
+                            writer.Write(' ');
+                            writer.Write(format_str(inline.LiteralContent, buffer));
+                            break;
 
-                    case InlineTag.RawHtml:
-                        writer.Write("html {0}", format_str(inline.LiteralContent, buffer));
-                        writer.Write(' ');
-                        writer.Write(format_str(inline.LiteralContent, buffer));
-                        break;
+                        case InlineTag.RawHtml:
+                            writer.Write("html {0}", format_str(inline.LiteralContent, buffer));
+                            writer.Write(' ');
+                            writer.Write(format_str(inline.LiteralContent, buffer));
+                            break;
 
-                    case InlineTag.Link:
-                        writer.Write("link");
-                        PrintPosition(trackPositions, writer, inline);
-                        writer.Write(" url={0} title={1}",
-                               format_str(inline.TargetUrl, buffer),
-                               format_str(inline.LiteralContent, buffer));
-                        break;
+                        case InlineTag.Link:
+                            writer.Write("link");
+                            PrintPosition(trackPositions, writer, inline);
+                            writer.Write(" url={0} title={1}",
+                                   format_str(inline.TargetUrl, buffer),
+                                   format_str(inline.LiteralContent, buffer));
+                            break;
 
-                    case InlineTag.Image:
-                        writer.Write("image");
-                        PrintPosition(trackPositions, writer, inline);
-                        writer.Write(" url={0} title={1}",
-                               format_str(inline.TargetUrl, buffer),
-                               format_str(inline.LiteralContent, buffer));
-                        break;
+                        case InlineTag.Image:
+                            writer.Write("image");
+                            PrintPosition(trackPositions, writer, inline);
+                            writer.Write(" url={0} title={1}",
+                                   format_str(inline.TargetUrl, buffer),
+                                   format_str(inline.LiteralContent, buffer));
+                            break;
 
-                    case InlineTag.Strong:
-                        writer.Write("strong");
-                        PrintPosition(trackPositions, writer, inline);
-                        break;
+                        case InlineTag.Strong:
+                            writer.Write("strong");
+                            PrintPosition(trackPositions, writer, inline);
+                            break;
 
-                    case InlineTag.Emphasis:
-                        writer.Write("emph");
-                        PrintPosition(trackPositions, writer, inline);
-                        break;
+                        case InlineTag.Emphasis:
+                            writer.Write("emph");
+                            PrintPosition(trackPositions, writer, inline);
+                            break;
 
-                    default:
-                        writer.Write("unknown: " + inline.Tag.ToString());
-                        PrintPosition(trackPositions, writer, inline);
-                        break;
-                }
+                        default:
+                            writer.Write("unknown: " + inline.Tag.ToString());
+                            PrintPosition(trackPositions, writer, inline);
+                            break;
+                    }
 
                 writer.WriteLine();
 
@@ -327,18 +327,17 @@ namespace CommonMark.Formatters
 
         private static void PrintData(TextWriter writer, IDictionary<string, object> data)
         {
-            object value;
-            if (data.Count == 1 && data.TryGetValue(string.Empty, out value))
-            {
-                writer.Write(" {0}", value);
-            }
-            else
-            {
+            if (data.Count > 1 || !data.ContainsKey(string.Empty))
                 writer.Write(" (");
-                foreach (var kvp in data)
-                    writer.Write(" " + kvp.Key + "=", kvp.Value);
-                writer.Write(')');
+            foreach (var kvp in data)
+            {
+                if (kvp.Key.Length == 0)
+                    writer.Write(" {0}", kvp.Value);
+                else
+                    writer.Write(" {0}={1}", kvp.Key, kvp.Value);
             }
+            if (data.Count > 1 || !data.ContainsKey(string.Empty))
+                writer.Write(')');
         }
 
         private struct BlockStackEntry
