@@ -316,6 +316,11 @@ namespace CommonMark.Parser
 
         private static bool ProcessInlines(Block block, Subject subj, Dictionary<string, Reference> refmap, CommonMarkSettings settings, ref Stack<Inline> inlineStack)
         {
+            return ProcessInlines(block, subj, refmap, settings.InlineParserParameters, ref inlineStack);
+        }
+
+        public static bool ProcessInlines(Block block, Subject subj, Dictionary<string, Reference> refmap, InlineParserParameters parameters, ref Stack<Inline> inlineStack)
+        {
             var sc = block.StringContent;
             if (sc == null)
                 return false;
@@ -323,7 +328,7 @@ namespace CommonMark.Parser
             sc.FillSubject(subj);
             var delta = subj.Position;
 
-            block.InlineContent = InlineMethods.parse_inlines(block, subj, refmap, settings.InlineParserParameters);
+            block.InlineContent = InlineMethods.parse_inlines(block, subj, refmap, parameters);
             block.StringContent = null;
 
             if (sc.PositionTracker != null)
