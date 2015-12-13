@@ -130,7 +130,8 @@ namespace CommonMark.Formatters
                     if (stackTight.HasValue)
                         RenderTightParagraphs.Pop();
                     var closing = formatter.GetClosing(HtmlFormatterImpl.Instance, block);
-                    WriteLine(closing);
+                    if (closing != null)
+                        WriteLine(closing);
                 }
             }
             else switch (block.Tag)
@@ -324,7 +325,9 @@ namespace CommonMark.Formatters
                 {
                     if (!isOpening && isRenderPlainTextInlines.HasValue)
                         RenderPlainTextInlines.Pop();
-                    Write(formatter.GetClosing(HtmlFormatterImpl.Instance, inline));
+                    var closing = formatter.GetClosing(HtmlFormatterImpl.Instance, inline);
+                    if (closing != null)
+                        Write(closing);
                 }
 
                 return;
