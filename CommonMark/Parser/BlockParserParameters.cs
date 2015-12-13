@@ -8,13 +8,14 @@ namespace CommonMark.Parser
     internal sealed class BlockParserParameters
     {
         private readonly CommonMarkSettings settings;
-        private readonly Lazy<BlockParserDelegate[]> _parsers;
 
         public BlockParserParameters(CommonMarkSettings settings)
         {
             this.settings = settings;
             this._parsers = new Lazy<BlockParserDelegate[]>(GetParsers);
         }
+
+        private readonly Lazy<BlockParserDelegate[]> _parsers;
 
         public BlockParserDelegate[] Parsers
         {
@@ -24,13 +25,13 @@ namespace CommonMark.Parser
         private BlockParserDelegate[] GetParsers()
         {
             return settings.GetItems(new BlockParserDelegate[127],
-                ext => ext.BlockParsers, key => key, GetBlockParser);
+                ext => ext.BlockParsers, key => key, GetParser);
         }
 
-        private static BlockParserDelegate GetBlockParser(BlockParserDelegate inner, BlockParserDelegate outer)
+        private static BlockParserDelegate GetParser(BlockParserDelegate inner, BlockParserDelegate outer)
         {
             return !inner.Equals(outer)
-                ? new Parser.DelegateBlockParser(inner, outer).ParseInline
+                ? new DelegateBlockParser(inner, outer).Parse
                 : inner;
         }
 

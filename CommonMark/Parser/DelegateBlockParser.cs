@@ -13,7 +13,7 @@ namespace CommonMark.Parser
             this.outer = outer;
         }
 
-        public bool ParseInline(Block container, string line, int first_nonspace, bool indented, ref int offset, ref int column)
+        public bool Parse(Block container, string line, int first_nonspace, bool indented, ref int offset, ref int column)
         {
             return inner(container, line, first_nonspace, indented, ref offset, ref column)
                 || outer(container, line, first_nonspace, indented, ref offset, ref column);
