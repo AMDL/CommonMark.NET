@@ -163,12 +163,12 @@ namespace CommonMark
         /// <param name="block">Block element.</param>
         /// <param name="subject">Subject.</param>
         /// <param name="refmap">The reference mapping used when parsing links.</param>
-        /// <param name="parameters">Inline parser parameters.</param>
         /// <param name="inlineStack">Inline stack.</param>
+        /// <param name="parameters">Inline parser parameters.</param>
         /// <returns></returns>
-        protected bool ProcessInlines(Block block, Subject subject, Dictionary<string, Reference> refmap, InlineParserParameters parameters, ref Stack<Inline> inlineStack)
+        protected bool ProcessInlines(Block block, Subject subject, Dictionary<string, Reference> refmap, ref Stack<Inline> inlineStack, InlineParserParameters parameters)
         {
-            return BlockMethods.ProcessInlines(block, subject, refmap, parameters, ref inlineStack);
+            return BlockMethods.ProcessInlines(block, subject, refmap, ref inlineStack, parameters);
         }
     }
 }

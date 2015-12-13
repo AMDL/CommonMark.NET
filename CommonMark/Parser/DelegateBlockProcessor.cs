@@ -14,10 +14,10 @@ namespace CommonMark.Parser
             this.outer = outer;
         }
 
-        public bool Process(Syntax.Block container, Subject subject, Dictionary<string, Reference> referenceMap, CommonMarkSettings settings, ref Stack<Inline> inlineStack)
+        public bool Process(Syntax.Block container, Subject subject, Dictionary<string, Reference> referenceMap, ref Stack<Inline> inlineStack, CommonMarkSettings settings)
         {
-            return inner(container, subject, referenceMap, settings, ref inlineStack)
-                || outer(container, subject, referenceMap, settings, ref inlineStack);
+            return inner(container, subject, referenceMap, ref inlineStack, settings)
+                || outer(container, subject, referenceMap, ref inlineStack, settings);
         }
     }
 }

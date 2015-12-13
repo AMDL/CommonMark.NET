@@ -21,10 +21,10 @@ namespace CommonMark.Parser
     /// <param name="container">Container element.</param>
     /// <param name="subject">Subject.</param>
     /// <param name="referenceMap">The reference mapping used when parsing links.</param>
-    /// <param name="settings">Common settings.</param>
     /// <param name="inlineStack">Inline stack.</param>
+    /// <param name="settings">Common settings.</param>
     /// <returns><c>true</c> if successful.</returns>
-    public delegate bool BlockProcessorDelegate(Block container, Subject subject, Dictionary<string, Reference> referenceMap, CommonMarkSettings settings, ref Stack<Inline> inlineStack);
+    public delegate bool BlockProcessorDelegate(Block container, Subject subject, Dictionary<string, Reference> referenceMap, ref Stack<Inline> inlineStack, CommonMarkSettings settings);
 
     /// <summary>
     /// Inline parser delegate.

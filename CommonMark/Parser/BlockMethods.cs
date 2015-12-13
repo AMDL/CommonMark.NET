@@ -289,7 +289,7 @@ namespace CommonMark.Parser
                 var processor = processors[(int)block.Tag];
                 if (processor != null)
                 {
-                    processor(block, subj, refmap, settings, ref inlineStack);
+                    processor(block, subj, refmap, ref inlineStack, settings);
                 }
 
                 if (block.FirstChild != null)
@@ -314,12 +314,12 @@ namespace CommonMark.Parser
             }
         }
 
-        private static bool ProcessInlines(Block block, Subject subj, Dictionary<string, Reference> refmap, CommonMarkSettings settings, ref Stack<Inline> inlineStack)
+        private static bool ProcessInlines(Block block, Subject subj, Dictionary<string, Reference> refmap, ref Stack<Inline> inlineStack, CommonMarkSettings settings)
         {
-            return ProcessInlines(block, subj, refmap, settings.InlineParserParameters, ref inlineStack);
+            return ProcessInlines(block, subj, refmap, ref inlineStack, settings.InlineParserParameters);
         }
 
-        public static bool ProcessInlines(Block block, Subject subj, Dictionary<string, Reference> refmap, InlineParserParameters parameters, ref Stack<Inline> inlineStack)
+        public static bool ProcessInlines(Block block, Subject subj, Dictionary<string, Reference> refmap, ref Stack<Inline> inlineStack, InlineParserParameters parameters)
         {
             var sc = block.StringContent;
             if (sc == null)
