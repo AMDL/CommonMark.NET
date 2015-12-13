@@ -329,27 +329,6 @@ namespace CommonMark.Formatters
 
                         break;
 
-                    case BlockTag.FencedCode:
-                        writer.EnsureLine();
-                        writer.WriteConstant("<pre><code");
-                        if (trackPositions) PrintPosition(writer, block);
-
-                        var info = block.FencedCodeData == null ? null : block.FencedCodeData.Info;
-                        if (info != null && info.Length > 0)
-                        {
-                            x = info.IndexOf(' ');
-                            if (x == -1)
-                                x = info.Length;
-
-                            writer.WriteConstant(" class=\"language-");
-                            EscapeHtml(new StringPart(info, 0, x), writer);
-                            writer.Write('\"');
-                        }
-                        writer.Write('>');
-                        EscapeHtml(block.StringContent, writer);
-                        writer.WriteLineConstant("</code></pre>");
-                        break;
-
                     case BlockTag.HtmlBlock:
                         // cannot output source position for HTML blocks
                         block.StringContent.WriteTo(writer);

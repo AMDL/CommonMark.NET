@@ -236,30 +236,6 @@ namespace CommonMark.Formatters
 
                     break;
 
-                case BlockTag.FencedCode:
-
-                    ignoreChildNodes = true;
-
-                    EnsureNewLine();
-                    Write("<pre><code");
-                    if (Settings.TrackSourcePosition) WritePositionAttribute(block);
-
-                    var info = block.FencedCodeData == null ? null : block.FencedCodeData.Info;
-                    if (info != null && info.Length > 0)
-                    {
-                        x = info.IndexOf(' ');
-                        if (x == -1)
-                            x = info.Length;
-
-                        Write(" class=\"language-");
-                        WriteEncodedHtml(new StringPart(info, 0, x));
-                        Write('\"');
-                    }
-                    Write('>');
-                    WriteEncodedHtml(block.StringContent);
-                    WriteLine("</code></pre>");
-                    break;
-
                 case BlockTag.HtmlBlock:
                     ignoreChildNodes = true;
                     // cannot output source position for HTML blocks

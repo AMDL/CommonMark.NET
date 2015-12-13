@@ -158,15 +158,6 @@ namespace CommonMark.Formatters
                             PrintPosition(trackPositions, writer, block);
                             break;
 
-                        case BlockTag.FencedCode:
-                            writer.Write("fenced_code");
-                            PrintPosition(trackPositions, writer, block);
-                            writer.Write(" length={0} info={1} {2}",
-                                   block.FencedCodeData.FenceLength,
-                                   format_str(block.FencedCodeData.Info, buffer),
-                                   format_str(block.StringContent.ToString(buffer), buffer));
-                            break;
-
                         case BlockTag.HtmlBlock:
                             writer.Write("html_block");
                             PrintPosition(trackPositions, writer, block);

@@ -57,6 +57,7 @@ namespace CommonMark.Formatters
         internal static IBlockFormatter[] InitializeFormatters(FormatterParameters parameters)
         {
             var f = new IBlockFormatter[(int)BlockTag.Count];
+            f[(int)BlockTag.FencedCode] = new FencedCodeFormatter(parameters);
             f[(int)BlockTag.IndentedCode] = new IndentedCodeFormatter(parameters);
             return f;
         }
