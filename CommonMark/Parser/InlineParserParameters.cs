@@ -108,17 +108,37 @@ namespace CommonMark.Parser
 
         internal override InlineParserDelegate[] GetParsers()
         {
-            return Settings.GetInlineParsers();
+            return Settings.GetItems(Parser.InlineMethods.InitializeParsers(Settings),
+                extension => extension.InlineParsers, key => key, GetInlineParser);
         }
 
         internal override InlineTag[] GetSingleCharTags()
         {
-            return Settings.GetInlineSingleCharTags();
+            return Settings.GetItems(Parser.InlineMethods.InitializeSingleCharTags(),
+                ext => ext.SingleCharTags, key => key, GetInlineSingleCharTag);
         }
 
         internal override InlineTag[] GetDoubleCharTags()
         {
-            return Settings.GetInlineDoubleCharTags();
+            return Settings.GetItems(Parser.InlineMethods.InitializeDoubleCharTags(),
+                ext => ext.DoubleCharTags, key => key, GetInlineDoubleCharTag);
+        }
+
+        private static InlineParserDelegate GetInlineParser(InlineParserDelegate inner, InlineParserDelegate outer)
+        {
+            return !inner.Equals(outer)
+                ? new Parser.DelegateInlineParser(inner, outer).ParseInline
+                : inner;
+        }
+
+        private static InlineTag GetInlineSingleCharTag(InlineTag inner, InlineTag outer)
+        {
+            throw new InvalidOperationException(string.Format("Single character tag value is already set: {0}.", inner));
+        }
+
+        private static InlineTag GetInlineDoubleCharTag(InlineTag inner, InlineTag value)
+        {
+            throw new InvalidOperationException(string.Format("Double character tag value is already set: {0}.", inner));
         }
 
         private CommonMarkSettings Settings

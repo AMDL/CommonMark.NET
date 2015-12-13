@@ -334,53 +334,6 @@ namespace CommonMark
 
         #endregion EmphasisInlineParserParameters
 
-        #region InlineParsers
-
-        internal InlineParserDelegate[] GetInlineParsers()
-        {
-            return GetItems(Parser.InlineMethods.InitializeParsers(this),
-                extension => extension.InlineParsers, key => key, GetInlineParser);
-        }
-
-        private static InlineParserDelegate GetInlineParser(InlineParserDelegate inner, InlineParserDelegate outer)
-        {
-            return !inner.Equals(outer)
-                ? new Parser.DelegateInlineParser(inner, outer).ParseInline
-                : inner;
-        }
-
-        #endregion InlineParsers
-
-        #region InlineSingleCharTags
-
-        internal Syntax.InlineTag[] GetInlineSingleCharTags()
-        {
-            return GetItems(Parser.InlineMethods.InitializeSingleCharTags(),
-                ext => ext.SingleCharTags, key => key, GetInlineSingleCharTag);
-        }
-
-        private Syntax.InlineTag GetInlineSingleCharTag(Syntax.InlineTag inner, Syntax.InlineTag outer)
-        {
-            throw new InvalidOperationException(string.Format("Single character tag value is already set: {0}.", inner));
-        }
-
-        #endregion InlineSingleCharTags
-
-        #region InlineDoubleCharTags
-
-        internal Syntax.InlineTag[] GetInlineDoubleCharTags()
-        {
-            return GetItems(Parser.InlineMethods.InitializeDoubleCharTags(),
-                ext => ext.DoubleCharTags, key => key, GetInlineDoubleCharTag);
-        }
-
-        private static Syntax.InlineTag GetInlineDoubleCharTag(Syntax.InlineTag inner, Syntax.InlineTag value)
-        {
-            throw new InvalidOperationException(string.Format("Double character tag value is already set: {0}.", inner));
-        }
-
-        #endregion InlineDoubleCharTags
-
         #endregion [ Properties that cache parser parameters ]
 
         #region [ Properties that cache formatter parameters ]
