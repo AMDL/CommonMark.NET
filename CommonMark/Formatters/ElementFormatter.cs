@@ -75,9 +75,10 @@ namespace CommonMark.Formatters
         /// <summary>
         /// Returns the properties of an element.
         /// </summary>
+        /// <param name="printer">Printer.</param>
         /// <param name="element">Element.</param>
         /// <returns>Properties or <c>null</c>.</returns>
-        public virtual IDictionary<string, object> GetPrinterData(T element)
+        public virtual IDictionary<string, object> GetPrinterData(IPrinter printer, T element)
         {
             return null;
         }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using CommonMark.Syntax;
@@ -95,7 +96,7 @@ namespace CommonMark.Formatters
                 {
                     writer.Write(formatter.GetPrinterTag(block));
                     PrintPosition(trackPositions, writer, block);
-                    if ((data = formatter.GetPrinterData(block)) != null)
+                    if ((data = formatter.GetPrinterData(PrinterImpl.Instance, block)) != null)
                     {
                         writer.Write(" (");
                         foreach (var kvp in data)
@@ -242,7 +243,7 @@ namespace CommonMark.Formatters
                 {
                     writer.Write(formatter.GetPrinterTag(inline));
                     PrintPosition(trackPositions, writer, inline);
-                    if ((data = formatter.GetPrinterData(inline)) != null)
+                    if ((data = formatter.GetPrinterData(PrinterImpl.Instance, inline)) != null)
                     {
                         writer.Write(" (");
                         foreach (var kvp in data)
@@ -360,6 +361,30 @@ namespace CommonMark.Formatters
                 this.Indent = indent;
                 this.Target = target;
             }
+        }
+    }
+
+    internal class PrinterImpl : IPrinter
+    {
+        private static readonly Lazy<PrinterImpl> _instance;
+
+        static PrinterImpl()
+        {
+            _instance = new Lazy<PrinterImpl>(() => new PrinterImpl());
+        }
+
+        public static PrinterImpl Instance
+        {
+            get { return _instance.Value; }
+        }
+
+        private PrinterImpl()
+        {
+        }
+
+        string IPrinter.Format(string s, StringBuilder sb)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

@@ -51,6 +51,7 @@
     <Compile Include="CommonMarkException.cs" />
     <Compile Include="CommonMarkSettings.cs" />
     <Compile Include="CommonMarkExtension.cs" />
+    <Compile Include="Formatters\IPrinter.cs" />
     <Compile Include="Parser\DelegateBlockParser.cs" />
     <Compile Include="Extension\Figures.cs" />
     <Compile Include="Extension\DefinitionLists.cs" />

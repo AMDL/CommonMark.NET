@@ -1,4 +1,5 @@
 ﻿using CommonMark.Syntax;
+using System.Collections.Generic;
 
 namespace CommonMark.Formatters
 {
@@ -40,11 +41,11 @@ namespace CommonMark.Formatters
                 : outer.GetPrinterTag(element);
         }
 
-        public System.Collections.Generic.IDictionary<string, object> GetPrinterData(T element)
+        public IDictionary<string, object> GetPrinterData(IPrinter printer, T element)
         {
             return inner.CanHandle(element)
-                ? inner.GetPrinterData(element)
-                : outer.GetPrinterData(element);
+                ? inner.GetPrinterData(printer, element)
+                : outer.GetPrinterData(printer, element);
         }
     }
 
