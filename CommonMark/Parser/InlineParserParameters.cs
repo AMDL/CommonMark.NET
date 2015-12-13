@@ -154,17 +154,17 @@ namespace CommonMark.Parser
     {
         internal override InlineParserDelegate[] GetParsers()
         {
-            return Parser.InlineMethods.InitializeEmphasisParsers(this);
+            return Parser.InlineMethods.EmphasisParsers;
         }
 
         internal override InlineTag[] GetSingleCharTags()
         {
-            return Parser.InlineMethods.InitializeSingleCharTags();
+            return Parser.InlineMethods.EmphasisSingleCharTags;
         }
 
         internal override InlineTag[] GetDoubleCharTags()
         {
-            return Parser.InlineMethods.InitializeDoubleCharTags();
+            return Parser.InlineMethods.EmphasisDoubleCharTags;
         }
     }
 }

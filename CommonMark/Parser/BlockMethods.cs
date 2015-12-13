@@ -280,7 +280,6 @@ namespace CommonMark.Parser
         {
             Stack<Inline> inlineStack = null;
             var stack = new Stack<Block>();
-            var inlineParameters = settings.InlineParserParameters;
             var subj = new Subject(refmap);
 
             StringContent sc;
@@ -297,7 +296,7 @@ namespace CommonMark.Parser
                         sc.FillSubject(subj);
                         delta = subj.Position;
 
-                        block.InlineContent = InlineMethods.parse_inlines(block, subj, refmap, inlineParameters);
+                        block.InlineContent = InlineMethods.parse_inlines(block, subj, refmap, settings);
                         block.StringContent = null;
 
                         if (sc.PositionTracker != null)
