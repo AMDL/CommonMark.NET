@@ -11,7 +11,7 @@ namespace CommonMark.Parser
         /// <summary>
         /// The tag to use for the inline element when the opener is matched.
         /// </summary>
-        public InlineTag Tag { get; set; }
+        public InlineTag Tag;
 
         /// <summary>
         /// Determines whether the parameters instance is empty.
@@ -28,11 +28,6 @@ namespace CommonMark.Parser
     public struct InlineDelimiterCharacterParameters
     {
         /// <summary>
-        /// Empty parameters instance.
-        /// </summary>
-        public static readonly InlineDelimiterCharacterParameters Empty = new InlineDelimiterCharacterParameters();
-
-        /// <summary>
         /// Determines whether the parameters instance is empty.
         /// </summary>
         public bool IsEmpty
@@ -43,12 +38,12 @@ namespace CommonMark.Parser
         /// <summary>
         /// Single character delimiter parameters.
         /// </summary>
-        public InlineDelimiterParameters SingleCharacter { get; set; }
+        public InlineDelimiterParameters SingleCharacter;
 
         /// <summary>
         /// Double character delimiter parameters.
         /// </summary>
-        public InlineDelimiterParameters DoubleCharacter { get; set; }
+        public InlineDelimiterParameters DoubleCharacter;
     }
 
     /// <summary>

@@ -238,8 +238,7 @@ namespace CommonMark.Parser
                         if (iopener != null)
                         {
                             bool retry = false;
-                            var delimeter = iopener.Delimeter;
-                            var delimiters = delimeter < delimChars.Length ? delimChars[delimeter] : InlineDelimiterCharacterParameters.Empty;
+                            var delimiters = iopener.Delimeter < delimChars.Length ? delimChars[iopener.Delimeter] : default(InlineDelimiterCharacterParameters);
                             if (!delimiters.IsEmpty)
                             {
                                 var useDelims = InlineMethods.MatchInlineStack(iopener, subj, istack.DelimeterCount, istack, delimiters, settings);
