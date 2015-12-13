@@ -92,13 +92,13 @@ namespace CommonMark.Parser
 
         internal override InlineParserDelegate[] GetParsers()
         {
-            return Settings.GetItems(Parser.InlineMethods.InitializeParsers(this),
-                extension => extension.InlineParsers, key => key, DelegateInlineParser.Merge);
+            return Settings.Extensions.GetItems(Parser.InlineMethods.InitializeParsers(this),
+                ext => ext.InlineParsers, key => key, DelegateInlineParser.Merge);
         }
 
         internal override InlineDelimiterCharacterParameters[] GetDelimiterCharacters()
         {
-            return Settings.GetItems(Parser.InlineMethods.InitializeDelimiterCharacters(),
+            return Settings.Extensions.GetItems(Parser.InlineMethods.InitializeDelimiterCharacters,
                 ext => ext.InlineDelimiterCharacters, key => key, InlineDelimiterCharacterParameters.Merge);
         }
 

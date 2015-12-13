@@ -60,7 +60,7 @@ namespace CommonMark.Formatters
 
         private Formatters.IBlockFormatter[] GetBlockFormatters()
         {
-            return Settings.GetItems(Formatters.BlockFormatter.InitializeFormatters(this),
+            return Settings.Extensions.GetItems(Formatters.BlockFormatter.InitializeFormatters(this),
                 ext => ext.BlockFormatters, key => (int)key, DelegateBlockFormatter.Merge);
         }
 
@@ -80,7 +80,7 @@ namespace CommonMark.Formatters
 
         private Formatters.IInlineFormatter[] GetInlineFormatters()
         {
-            return Settings.GetItems(Formatters.InlineFormatter.InitializeFormatters(this),
+            return Settings.Extensions.GetItems(Formatters.InlineFormatter.InitializeFormatters(this),
                 ext => ext.InlineFormatters, key => (int)key, DelegateInlineFormatter.Merge);
         }
 

@@ -8,13 +8,13 @@ namespace CommonMark
     /// CommonMark implementations is required.
     /// </summary>
     [Flags]
-    [Obsolete("Use " + nameof(CommonMarkSettings.Register) + "() and " + nameof(CommonMarkSettings.Unregister) + "() instead.")]
+    [Obsolete("Use " + nameof(CommonMarkSettings.Extensions) + " instead.")]
     public enum CommonMarkAdditionalFeatures
     {
         /// <summary>
         /// No additional features are enabled. This is the default.
         /// </summary>
-        [Obsolete("Use " + nameof(CommonMarkSettings.UnregisterAll) + "() instead.")]
+        [Obsolete("Use " + nameof(CommonMarkExtensionCollection.UnregisterAll) + "() instead.")]
         None = 0,
 
         /// <summary>
@@ -26,7 +26,7 @@ namespace CommonMark
         /// <summary>
         /// All additional features are enabled.
         /// </summary>
-        [Obsolete("Use " + nameof(CommonMarkSettings.RegisterAll) + "() instead.")]
+        [Obsolete("Use " + nameof(CommonMarkExtensionCollection.RegisterAll) + "() instead.")]
         All = 0x7FFFFFFF
     }
 }

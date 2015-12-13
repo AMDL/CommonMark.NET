@@ -16,7 +16,7 @@ namespace CommonMark
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         public CommonMarkSettings()
         {
-            this._extensions = new Lazy<List<ICommonMarkExtension>>(() => new List<ICommonMarkExtension>());
+            this._extensions = new CommonMarkExtensionCollection(this);
             Reset();
         }
 
@@ -76,7 +76,7 @@ namespace CommonMark
         /// Gets or sets any additional features (that are not present in the current CommonMark specification) that
         /// the parser and/or formatter will recognize.
         /// </summary>
-        [Obsolete("Use " + nameof(CommonMarkSettings.Register) + "() and " + nameof(CommonMarkSettings.Unregister) + "() instead.")]
+        [Obsolete("Use " + nameof(CommonMarkSettings.Extensions) + " instead.")]
         public CommonMarkAdditionalFeatures AdditionalFeatures
         {
             get { return this._additionalFeatures; }
@@ -85,120 +85,22 @@ namespace CommonMark
                 this._additionalFeatures = value;
                 var strikeout = new Extension.Strikeout(this);
                 var strikethroughTilde = 0 != (value & CommonMarkAdditionalFeatures.StrikethroughTilde);
-                if (strikethroughTilde && !IsRegistered(strikeout))
-                    Extensions.Add(strikeout);
-                if (!strikethroughTilde && IsRegistered(strikeout))
-                    Extensions.Remove(strikeout);
+                if (strikethroughTilde && !Extensions.IsRegistered(strikeout))
+                    Extensions.Register(strikeout);
+                if (!strikethroughTilde && Extensions.IsRegistered(strikeout))
+                    Extensions.Unregister(strikeout);
                 this.Reset();
             }
         }
 
-        private Lazy<List<ICommonMarkExtension>> _extensions;
+        private CommonMarkExtensionCollection _extensions;
 
         /// <summary>
         /// Gets the extensions.
         /// </summary>
-        private List<ICommonMarkExtension> Extensions
+        public CommonMarkExtensionCollection Extensions
         {
-            get { return _extensions.Value; }
-        }
-
-        /// <summary>
-        /// Registers an extension. Extensions must not retain references to the settings object.
-        /// </summary>
-        /// <param name="extension">The extension to register.</param>
-        public void Register(ICommonMarkExtension extension)
-        {
-            if (extension == null)
-                throw new ArgumentNullException(nameof(extension));
-
-            if (Extensions.Contains(extension))
-            {
-                var message = string.Format("Extension is already registered: {0}.", extension.ToString());
-                throw new InvalidOperationException(message);
-            }
-
-            Extensions.Add(extension);
-            this.Reset();
-        }
-
-        /// <summary>
-        /// Registers multiple extensions. Extensions must not retain references to the settings object.
-        /// </summary>
-        /// <param name="extensions">The extensions to register.</param>
-        public void Register(IEnumerable<ICommonMarkExtension> extensions)
-        {
-            if (extensions == null)
-                throw new ArgumentNullException(nameof(extensions));
-
-            foreach (var extension in extensions)
-            {
-                if (Extensions.Contains(extension))
-                {
-                    var message = string.Format("Extension is already registered: {0}.", extension.ToString());
-                    throw new InvalidOperationException(message);
-                }
-            }
-
-            Extensions.AddRange(extensions);
-            this.Reset();
-        }
-
-        /// <summary>
-        /// Registers all built-in extensions with all their features enabled.
-        /// This may be useful in benchmarking.
-        /// </summary>
-        public void RegisterAll()
-        {
-            Register(new Extension.Strikeout(this));
-            Register(new Extension.DefinitionLists(this, new Extension.DefinitionListsSettings(Extension.DefinitionListsFeatures.All)));
-            Register(new Extension.PipeTables(this, new Extension.PipeTablesSettings(Extension.PipeTablesFeatures.All)));
-            Register(new Extension.TableCaptions(this, new Extension.TableCaptionsSettings
-            {
-                Features = Extension.TableCaptionsFeatures.All,
-                Leads = new[] { "Table" },
-            }));
-            this.Reset();
-        }
-
-        /// <summary>
-        /// Unregisters an extension.
-        /// </summary>
-        /// <param name="extension">The extension to unregister.</param>
-        public void Unregister(ICommonMarkExtension extension)
-        {
-            if (extension == null)
-                throw new ArgumentNullException(nameof(extension));
-
-            if (!Extensions.Remove(extension))
-            {
-                var message = string.Format("Extension is not registered: {0}.", extension.ToString());
-                throw new InvalidOperationException(message);
-            }
-
-            this.Reset();
-        }
-
-        /// <summary>
-        /// Unregisters all extensions.
-        /// </summary>
-        public void UnregisterAll()
-        {
-            Extensions.Clear();
-            this.Reset();
-        }
-
-        /// <summary>
-        /// Determines whether an extension is registered.
-        /// </summary>
-        /// <param name="extension">The extension to locate.</param>
-        /// <returns><c>true</c> if the extension is registered.</returns>
-        public bool IsRegistered(ICommonMarkExtension extension)
-        {
-            if (extension == null)
-                throw new ArgumentNullException(nameof(extension));
-
-            return Extensions.Contains(extension);
+            get { return _extensions; }
         }
 
         #endregion Extensions
@@ -249,7 +151,7 @@ namespace CommonMark
         public CommonMarkSettings Clone()
         {
             var clone = (CommonMarkSettings)this.MemberwiseClone();
-            clone._extensions = new Lazy<List<ICommonMarkExtension>>(() => new List<ICommonMarkExtension>(this.Extensions));
+            clone._extensions = new CommonMarkExtensionCollection(clone, this.Extensions);
             clone.Reset();
             return clone;
         }
@@ -320,41 +222,5 @@ namespace CommonMark
         }
 
         #endregion FormatterParameters
-
-        #region Helper methods
-
-        internal TValue[] GetItems<TKey, TValue>(TValue[] initialItems,
-            Func<ICommonMarkExtension, IDictionary<TKey, TValue>> itemsFactory,
-            Func<TKey, int> keyFactory, Func<TValue, TValue, TValue> valueFactory)
-            where TKey : struct
-        {
-            foreach (var extension in Extensions)
-            {
-                var extensionItems = itemsFactory(extension);
-                if (extensionItems != null)
-                {
-                    foreach (var kvp in extensionItems)
-                    {
-                        var value = kvp.Value;
-                        if (value == null || value.Equals(default(TValue)))
-                        {
-                            var message = string.Format("{0} value cannot be {1}: {2}.",
-                                typeof(TValue).Name,
-                                value == null ? "null" : "0",
-                                extension.ToString());
-                            throw new InvalidOperationException(message);
-                        }
-                        var key = keyFactory(kvp.Key);
-                        var inner = initialItems[key];
-                        if (inner != null && !inner.Equals(default(TValue)))
-                            value = valueFactory(inner, value);
-                        initialItems[key] = value;
-                    }
-                }
-            }
-            return initialItems;
-        }
-
-        #endregion
     }
 }

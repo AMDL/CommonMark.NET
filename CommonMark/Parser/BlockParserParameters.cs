@@ -29,8 +29,13 @@ namespace CommonMark.Parser
 
         private BlockParserDelegate[] GetParsers()
         {
-            return Settings.GetItems(new BlockParserDelegate[127],
+            return Settings.Extensions.GetItems(InitializeParsers,
                 ext => ext.BlockParsers, key => key, DelegateBlockParser.Merge);
+        }
+
+        private static BlockParserDelegate[] InitializeParsers()
+        {
+            return new BlockParserDelegate[127];
         }
 
         #endregion Parsers
@@ -46,7 +51,7 @@ namespace CommonMark.Parser
 
         private BlockProcessorDelegate[] GetProcessors()
         {
-            return Settings.GetItems(BlockMethods.InitializeProcessors(),
+            return Settings.Extensions.GetItems(BlockMethods.InitializeProcessors,
                 ext => ext.BlockProcessors, key => (int)key, DelegateBlockProcessor.Merge);
         }
 

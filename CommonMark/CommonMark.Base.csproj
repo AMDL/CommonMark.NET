@@ -49,6 +49,7 @@
     <Compile Include="CommonMarkAdditionalFeatures.cs" />
     <Compile Include="CommonMarkConverter.cs" />
     <Compile Include="CommonMarkException.cs" />
+    <Compile Include="CommonMarkExtensionCollection.cs" />
     <Compile Include="CommonMarkSettings.cs" />
     <Compile Include="CommonMarkExtension.cs" />
     <Compile Include="Formatters\IPrinter.cs" />
