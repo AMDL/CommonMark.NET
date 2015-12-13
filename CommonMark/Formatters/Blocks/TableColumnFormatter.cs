@@ -35,7 +35,7 @@ namespace CommonMark.Formatters.Blocks
             return false;
         }
 
-        public override string GetClosing(Block block)
+        public override string GetClosing(IHtmlFormatter formatter, Block block)
         {
             return null;
         }
