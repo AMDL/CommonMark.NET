@@ -17,6 +17,7 @@ namespace CommonMark
         public CommonMarkSettings()
         {
             this._extensions = new Lazy<List<ICommonMarkExtension>>(() => new List<ICommonMarkExtension>());
+            this._emphasisInlineParserParameters = new Lazy<Parser.EmphasisInlineParserParameters>(GetEmphasisInlineParserParameters);
             Reset();
         }
 
@@ -256,9 +257,8 @@ namespace CommonMark
 
         internal void Reset()
         {
-            this._inlineParserParameters = new Lazy<Parser.StandardInlineParserParameters>(GetInlineParserParameters);
-            this._emphasisInlineParserParameters = new Lazy<Parser.EmphasisInlineParserParameters>(GetEmphasisInlineParserParameters);
             this._blockParserParameters = new Lazy<Parser.BlockParserParameters>(GetBlockParserParameters);
+            this._inlineParserParameters = new Lazy<Parser.StandardInlineParserParameters>(GetInlineParserParameters);
             this._formatterParameters = new Lazy<Formatters.FormatterParameters>(GetFormatterParameters);
         }
 
