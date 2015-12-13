@@ -7,13 +7,18 @@ namespace CommonMark.Parser
     /// </summary>
     internal sealed class BlockParserParameters
     {
-        private readonly CommonMarkSettings settings;
+        #region Constructor
 
         public BlockParserParameters(CommonMarkSettings settings)
         {
-            this.settings = settings;
+            this.Settings = settings;
             this._parsers = new Lazy<BlockParserDelegate[]>(GetParsers);
+            this._processors = new Lazy<BlockProcessorDelegate[]>(GetProcessors);
         }
+
+        #endregion Constructor
+
+        #region Parsers
 
         private readonly Lazy<BlockParserDelegate[]> _parsers;
 
@@ -24,7 +29,7 @@ namespace CommonMark.Parser
 
         private BlockParserDelegate[] GetParsers()
         {
-            return settings.GetItems(new BlockParserDelegate[127],
+            return Settings.GetItems(new BlockParserDelegate[127],
                 ext => ext.BlockParsers, key => key, GetParser);
         }
 
@@ -34,6 +39,32 @@ namespace CommonMark.Parser
                 ? new DelegateBlockParser(inner, outer).Parse
                 : inner;
         }
+
+        #endregion Parsers
+
+        #region Processors
+
+        private readonly Lazy<BlockProcessorDelegate[]> _processors;
+
+        public BlockProcessorDelegate[] Processors
+        {
+            get { return _processors.Value; }
+        }
+
+        private BlockProcessorDelegate[] GetProcessors()
+        {
+            return Settings.GetItems(BlockMethods.InitializeProcessors(),
+                ext => ext.BlockProcessors, key => (int)key, GetProcessor);
+        }
+
+        private BlockProcessorDelegate GetProcessor(BlockProcessorDelegate inner, BlockProcessorDelegate outer)
+        {
+            return !inner.Equals(outer)
+                ? new DelegateBlockProcessor(inner, outer).Process
+                : inner;
+        }
+
+        #endregion Processors
 
         /// <summary>
         /// Checks if a character can serve as a fence delimiter.
@@ -47,5 +78,7 @@ namespace CommonMark.Parser
         {
             return c == '`' || c == '~';
         }
+
+        private CommonMarkSettings Settings { get; }
     }
 }

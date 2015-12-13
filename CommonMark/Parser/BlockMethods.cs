@@ -282,29 +282,14 @@ namespace CommonMark.Parser
             var stack = new Stack<Block>();
             var subj = new Subject(refmap);
 
-            StringContent sc;
-            int delta;
+            var processors = settings.BlockParserParameters.Processors;
 
             while (block != null)
             {
-                var tag = block.Tag;
-                if (tag == BlockTag.Paragraph || tag == BlockTag.AtxHeader || tag == BlockTag.SETextHeader || tag == BlockTag.TableRow)
+                var processor = processors[(int)block.Tag];
+                if (processor != null)
                 {
-                    sc = block.StringContent;
-                    if (sc != null)
-                    {
-                        sc.FillSubject(subj);
-                        delta = subj.Position;
-
-                        block.InlineContent = InlineMethods.parse_inlines(block, subj, refmap, settings);
-                        block.StringContent = null;
-
-                        if (sc.PositionTracker != null)
-                        {
-                            sc.PositionTracker.AddBlockOffset(-delta);
-                            AdjustInlineSourcePosition(block.InlineContent, sc.PositionTracker, ref inlineStack);
-                        }
-                    }
+                    processor(block, subj, refmap, settings, ref inlineStack);
                 }
 
                 if (block.FirstChild != null)
@@ -327,6 +312,34 @@ namespace CommonMark.Parser
                     block = null;
                 }
             }
+        }
+
+        private static bool ProcessInlines(Block block, Subject subj, Dictionary<string, Reference> refmap, CommonMarkSettings settings, ref Stack<Inline> inlineStack)
+        {
+            var sc = block.StringContent;
+            if (sc == null)
+                return false;
+
+            sc.FillSubject(subj);
+            var delta = subj.Position;
+
+            block.InlineContent = InlineMethods.parse_inlines(block, subj, refmap, settings);
+            block.StringContent = null;
+
+            if (sc.PositionTracker != null)
+            {
+                sc.PositionTracker.AddBlockOffset(-delta);
+                AdjustInlineSourcePosition(block.InlineContent, sc.PositionTracker, ref inlineStack);
+            }
+
+            return true;
+        }
+
+        public static BlockProcessorDelegate[] InitializeProcessors()
+        {
+            var p = new BlockProcessorDelegate[(int)BlockTag.Count];
+            p[(int)BlockTag.Paragraph] = p[(int)BlockTag.AtxHeader] = p[(int)BlockTag.SETextHeader] = ProcessInlines;
+            return p;
         }
 
         /// <summary>

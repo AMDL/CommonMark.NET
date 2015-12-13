@@ -12,6 +12,7 @@ namespace CommonMark
     public abstract class CommonMarkExtension : ICommonMarkExtension
     {
         private readonly Lazy<IDictionary<char, BlockParserDelegate>> _blockParsers;
+        private readonly Lazy<IDictionary<BlockTag, BlockProcessorDelegate>> _blockProcessors;
         private readonly Lazy<IDictionary<char, InlineParserDelegate>> _inlineParsers;
         private readonly Lazy<IDictionary<char, InlineDelimiterCharacterParameters>> _inlineDelimiterCharacters;
         private readonly Lazy<IDictionary<BlockTag, IBlockFormatter>> _blockFormatters;
@@ -25,6 +26,7 @@ namespace CommonMark
         {
             var parameters = settings.FormatterParameters;
             this._blockParsers = new Lazy<IDictionary<char, BlockParserDelegate>>(InitalizeBlockParsers);
+            this._blockProcessors = new Lazy<IDictionary<BlockTag, BlockProcessorDelegate>>(InitializeBlockProcessors);
             this._inlineParsers = new Lazy<IDictionary<char, InlineParserDelegate>>(InitalizeInlineParsers);
             this._inlineDelimiterCharacters = new Lazy<IDictionary<char, InlineDelimiterCharacterParameters>>(InitializeInlineDelimiterCharacters);
             this._blockFormatters = new Lazy<IDictionary<BlockTag, IBlockFormatter>>(() => InitializeBlockFormatters(parameters));
@@ -37,6 +39,14 @@ namespace CommonMark
         public IDictionary<char, BlockParserDelegate> BlockParsers
         {
             get { return _blockParsers.Value; }
+        }
+
+        /// <summary>
+        /// Creates the mapping from block tag to block processor delegate.
+        /// </summary>
+        public IDictionary<BlockTag, BlockProcessorDelegate> BlockProcessors
+        {
+            get { return _blockProcessors.Value; }
         }
 
         /// <summary>
@@ -119,6 +129,14 @@ namespace CommonMark
         /// Creates the mapping from character to inline delimiter character parameters.
         /// </summary>
         protected virtual IDictionary<char, InlineDelimiterCharacterParameters> InitializeInlineDelimiterCharacters()
+        {
+            return null;
+        }
+
+        /// <summary>
+        /// Creates the mapping from block tag to block processor delegate.
+        /// </summary>
+        public virtual IDictionary<BlockTag, BlockProcessorDelegate> InitializeBlockProcessors()
         {
             return null;
         }
