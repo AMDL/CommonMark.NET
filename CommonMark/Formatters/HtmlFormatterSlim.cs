@@ -236,7 +236,7 @@ namespace CommonMark.Formatters
                 if (formatter != null)
                 {
                     visitChildren = formatter.WriteOpening(writer, block);
-                    stackLiteral = formatter.GetClosing(HtmlFormatterHelper.Instance, block);
+                    stackLiteral = formatter.GetClosing(HtmlFormatterImpl.Instance, block);
                     isStackTight = formatter.IsStackTight(block, tight);
                     if (isStackTight.HasValue)
                         stackTight = isStackTight.Value;
@@ -522,7 +522,7 @@ namespace CommonMark.Formatters
                         InlinesToPlainText(writer, inline.FirstChild, stack);
                     else if (isRenderPlainTextInlines == false)
                         EscapeHtml(inline.LiteralContentValue, writer);
-                    stackLiteral = formatter.GetClosing(HtmlFormatterHelper.Instance, inline);
+                    stackLiteral = formatter.GetClosing(HtmlFormatterImpl.Instance, inline);
                 }
                 else switch (inline.Tag)
                 {
@@ -696,18 +696,22 @@ namespace CommonMark.Formatters
         }
     }
 
-    internal sealed class HtmlFormatterHelper : IHtmlFormatter
+    internal sealed class HtmlFormatterImpl : IHtmlFormatter
     {
-        private static readonly Lazy<HtmlFormatterHelper> _instance;
+        private static readonly Lazy<HtmlFormatterImpl> _instance;
 
-        public static HtmlFormatterHelper Instance
+        public static HtmlFormatterImpl Instance
         {
-            get { return HtmlFormatterHelper._instance.Value; }
+            get { return HtmlFormatterImpl._instance.Value; }
         }
 
-        static HtmlFormatterHelper()
+        static HtmlFormatterImpl()
         {
-            _instance = new Lazy<HtmlFormatterHelper>(() => new HtmlFormatterHelper());
+            _instance = new Lazy<HtmlFormatterImpl>(() => new HtmlFormatterImpl());
+        }
+
+        private HtmlFormatterImpl()
+        {
         }
 
         string IHtmlFormatter.EscapeHtml(StringPart part)
