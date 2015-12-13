@@ -158,13 +158,6 @@ namespace CommonMark.Formatters
                         PrintPosition(trackPositions, writer, block);
                         break;
 
-                    case BlockTag.IndentedCode:
-                        writer.Write("indented_code {0}", format_str(block.StringContent.ToString(buffer), buffer));
-                        PrintPosition(trackPositions, writer, block);
-                        writer.Write(' ');
-                        writer.Write(format_str(block.StringContent.ToString(buffer), buffer));
-                        break;
-
                     case BlockTag.FencedCode:
                         writer.Write("fenced_code");
                         PrintPosition(trackPositions, writer, block);

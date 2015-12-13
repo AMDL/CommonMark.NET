@@ -329,7 +329,6 @@ namespace CommonMark.Formatters
 
                         break;
 
-                    case BlockTag.IndentedCode:
                     case BlockTag.FencedCode:
                         writer.EnsureLine();
                         writer.WriteConstant("<pre><code");

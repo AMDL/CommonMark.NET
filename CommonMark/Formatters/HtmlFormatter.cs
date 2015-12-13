@@ -236,7 +236,6 @@ namespace CommonMark.Formatters
 
                     break;
 
-                case BlockTag.IndentedCode:
                 case BlockTag.FencedCode:
 
                     ignoreChildNodes = true;
