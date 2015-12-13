@@ -94,6 +94,7 @@
     <Compile Include="Parser\BlockParserParameters.cs" />
     <Compile Include="Parser\DelegateBlockProcessor.cs" />
     <Compile Include="Parser\DelegateInlineParser.cs" />
+    <Compile Include="Parser\Delegates.cs" />
     <Compile Include="Parser\EntityDecoder.cs" />
     <Compile Include="Parser\InlineDelimiterParameters.cs" />
     <Compile Include="Parser\InlineParserParameters.cs" />
