@@ -132,17 +132,37 @@ namespace CommonMark.Parser
 
         internal override InlineParserDelegate[] GetParsers()
         {
-            return Settings.GetInlineParsers();
+            return Settings.GetItems(Parser.InlineMethods.InitializeParsers(Settings),
+                extension => extension.InlineParsers, key => key, GetInlineParser);
         }
 
         internal override InlineDelimiterParameters[] GetSingleChars()
         {
-            return Settings.GetInlineSingleChars();
+            return Settings.GetItems(Parser.InlineMethods.InitializeSingleChars(),
+                ext => ext.InlineSingleChars, key => key, GetInlineSingleChar);
         }
 
         internal override InlineDelimiterParameters[] GetDoubleChars()
         {
-            return Settings.GetInlineDoubleChars();
+            return Settings.GetItems(Parser.InlineMethods.InitializeDoubleChars(),
+                ext => ext.InlineDoubleChars, key => key, GetInlineDoubleChar);
+        }
+
+        private static InlineParserDelegate GetInlineParser(InlineParserDelegate inner, InlineParserDelegate outer)
+        {
+            return !inner.Equals(outer)
+                ? new Parser.DelegateInlineParser(inner, outer).ParseInline
+                : inner;
+        }
+
+        private static InlineDelimiterParameters GetInlineSingleChar(InlineDelimiterParameters inner, InlineDelimiterParameters outer)
+        {
+            throw new InvalidOperationException(string.Format("Single character parameters value is already set: {0}.", inner));
+        }
+
+        private static InlineDelimiterParameters GetInlineDoubleChar(InlineDelimiterParameters inner, InlineDelimiterParameters value)
+        {
+            throw new InvalidOperationException(string.Format("Double character parameters value is already set: {0}.", inner));
         }
 
         private CommonMarkSettings Settings
@@ -158,7 +178,7 @@ namespace CommonMark.Parser
     {
         internal override InlineParserDelegate[] GetParsers()
         {
-            return Parser.InlineMethods.InitializeEmphasisParsers(this);
+            return Parser.InlineMethods.EmphasisParsers;
         }
 
         internal override InlineDelimiterParameters[] GetSingleChars()

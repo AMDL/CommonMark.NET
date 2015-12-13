@@ -1,19 +1,47 @@
 ﻿using CommonMark.Formatters;
+using CommonMark.Syntax;
+using System;
 using System.Collections.Generic;
 
 namespace CommonMark
 {
     /// <summary>
-    /// Extension.
+    /// Base extension class.
     /// </summary>
     public abstract class CommonMarkExtension : ICommonMarkExtension
     {
+        private readonly Lazy<IDictionary<char, BlockParserDelegate>> _blockParsers;
+        private readonly Lazy<IDictionary<char, InlineParserDelegate>> _inlineParsers;
+        private readonly Lazy<IDictionary<BlockTag, IBlockFormatter>> _blockFormatters;
+        private readonly Lazy<IDictionary<InlineTag, IInlineFormatter>> _inlineFormatters;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CommonMarkExtension"/> class.
+        /// </summary>
+        /// <param name="settings">Common settings.</param>
+        protected CommonMarkExtension(CommonMarkSettings settings)
+        {
+            var parameters = settings.FormatterParameters;
+            this._blockParsers = new Lazy<IDictionary<char, BlockParserDelegate>>(() => InitalizeBlockParsers());
+            this._inlineParsers = new Lazy<IDictionary<char, InlineParserDelegate>>(() => InitalizeInlineParsers());
+            this._blockFormatters = new Lazy<IDictionary<BlockTag, IBlockFormatter>>(() => InitializeBlockFormatters(parameters));
+            this._inlineFormatters = new Lazy<IDictionary<InlineTag, IInlineFormatter>>(() => InitializeInlineFormatters(parameters));
+        }
+
+        /// <summary>
+        /// Gets the mapping from character to block parser delegate.
+        /// </summary>
+        public IDictionary<char, BlockParserDelegate> BlockParsers
+        {
+            get { return _blockParsers.Value; }
+        }
+
         /// <summary>
         /// Gets the mapping from character to inline parser delegate.
         /// </summary>
-        public virtual IDictionary<char, InlineParserDelegate> InlineParsers
+        public IDictionary<char, InlineParserDelegate> InlineParsers
         {
-            get { return null; }
+            get { return _inlineParsers.Value; }
         }
 
         /// <summary>
@@ -35,17 +63,17 @@ namespace CommonMark
         /// <summary>
         /// Gets the mapping from block tag to block element formatter.
         /// </summary>
-        public virtual IDictionary<Syntax.BlockTag, IBlockFormatter> BlockFormatters
+        public IDictionary<BlockTag, IBlockFormatter> BlockFormatters
         {
-            get { return null; }
+            get { return _blockFormatters.Value; }
         }
 
         /// <summary>
         /// Gets the mapping from inline tag to inline element formatter.
         /// </summary>
-        public virtual IDictionary<Syntax.InlineTag, IInlineFormatter> InlineFormatters
+        public IDictionary<InlineTag, IInlineFormatter> InlineFormatters
         {
-            get { return null; }
+            get { return _inlineFormatters.Value; }
         }
 
         /// <summary>
@@ -74,6 +102,38 @@ namespace CommonMark
         public override string ToString()
         {
             return GetType().Name;
+        }
+
+        /// <summary>
+        /// Creates the mapping from character to block parser delegate.
+        /// </summary>
+        protected virtual IDictionary<char, BlockParserDelegate> InitalizeBlockParsers()
+        {
+            return null;
+        }
+
+        /// <summary>
+        /// Creates the mapping from character to inline parser delegate.
+        /// </summary>
+        protected virtual IDictionary<char, InlineParserDelegate> InitalizeInlineParsers()
+        {
+            return null;
+        }
+
+        /// <summary>
+        /// Creates the mapping from block tag to block element formatter.
+        /// </summary>
+        protected virtual IDictionary<BlockTag, IBlockFormatter> InitializeBlockFormatters(FormatterParameters parameters)
+        {
+            return null;
+        }
+
+        /// <summary>
+        /// Creates the mapping from inline tag to inline element formatter.
+        /// </summary>
+        protected virtual IDictionary<InlineTag, IInlineFormatter> InitializeInlineFormatters(FormatterParameters parameters)
+        {
+            return null;
         }
     }
 }

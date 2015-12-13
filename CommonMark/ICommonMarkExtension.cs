@@ -1,21 +1,39 @@
 ﻿using CommonMark.Formatters;
+using CommonMark.Syntax;
 using System.Collections.Generic;
 
 namespace CommonMark
 {
     /// <summary>
+    /// Block parser delegate.
+    /// </summary>
+    /// <param name="container">Container element.</param>
+    /// <param name="line">Line string.</param>
+    /// <param name="first_nonspace">The index of the first non-space character.</param>
+    /// <param name="indented"><c>true</c> if the line is indented.</param>
+    /// <param name="offset">Offset.</param>
+    /// <param name="column">Column index.</param>
+    /// <returns><c>true</c> if successful.</returns>
+    public delegate bool BlockParserDelegate(Block container, string line, int first_nonspace, bool indented, ref int offset, ref int column);
+
+    /// <summary>
     /// Inline parser delegate.
     /// </summary>
-    /// <param name="block">Parent block.</param>
+    /// <param name="parent">Parent block.</param>
     /// <param name="subject">Subject.</param>
     /// <returns>Inline element or <c>null</c>.</returns>
-    public delegate Syntax.Inline InlineParserDelegate(Syntax.Block block, Parser.Subject subject);
+    public delegate Inline InlineParserDelegate(Block parent, Parser.Subject subject);
 
     /// <summary>
     /// Extension interface.
     /// </summary>
     public interface ICommonMarkExtension
     {
+        /// <summary>
+        /// Gets the mapping from character to block parser delegate.
+        /// </summary>
+        IDictionary<char, BlockParserDelegate> BlockParsers { get; }
+
         /// <summary>
         /// Gets the mapping from character to inline parser delegate.
         /// </summary>

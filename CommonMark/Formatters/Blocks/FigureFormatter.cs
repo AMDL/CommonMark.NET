@@ -2,21 +2,21 @@
 
 namespace CommonMark.Formatters.Blocks
 {
-    internal class TableFooterFormatter : BlockFormatter
+    internal class FigureFormatter : BlockFormatter
     {
-        public TableFooterFormatter(FormatterParameters parameters)
+        public FigureFormatter(FormatterParameters parameters)
             : base(parameters)
         {
         }
 
         public override bool CanHandle(Block block)
         {
-            return block.Tag == BlockTag.TableFooter;
+            return block.Tag == BlockTag.Figure;
         }
 
         protected override string GetTag(Block element)
         {
-            return "tfoot";
+            return "figure";
         }
     }
 }

@@ -1,23 +1,23 @@
 ﻿using CommonMark.Syntax;
-using System.IO;
+using System.Collections.Generic;
 
 namespace CommonMark.Formatters.Blocks
 {
-    internal class TableCellFormatter : BlockFormatter
+    internal sealed class TableBodyCellFormatter : BlockFormatter
     {
-        public TableCellFormatter(FormatterParameters parameters)
+        public TableBodyCellFormatter(FormatterParameters parameters)
             : base(parameters)
         {
         }
 
         public override bool CanHandle(Block block)
         {
-            return block.Tag == BlockTag.TableCell;
+            return block.Tag == BlockTag.TableCell && block.Parent.Tag == BlockTag.TableBody;
         }
 
         public override bool WriteOpening(IHtmlTextWriter writer, Block block)
         {
-            writer.WriteConstant(block.Parent.Tag == BlockTag.TableBody ? "<td" : "<th");
+            writer.WriteConstant("<td");
             switch (block.TableCellData.ColumnData.Alignment)
             {
                 case TableColumnAlignment.Left:
@@ -30,27 +30,49 @@ namespace CommonMark.Formatters.Blocks
                     writer.WriteConstant(" style=\"text-align: center\"");
                     break;
             }
+
             WritePosition(writer, block);
             writer.WriteLine('>');
             return true;
         }
 
-        public override string GetClosing(Block block)
+        protected override string GetTag(Block element)
         {
-            return block.Parent.Tag == BlockTag.TableBody
-                ? "</td>"
-                : "</th>";
+            return "td";
         }
 
-        public override string GetNodeTag(Block block)
+        public override IDictionary<string, object> GetPrinterData(Block block)
         {
-            return "table_cell";
+            return new Dictionary<string, object>
+            {
+                {"align", block.TableCellData.ColumnData.Alignment},
+            };
+        }
+    }
+
+    internal sealed class TableHeaderCellFormatter : BlockFormatter
+    {
+        public TableHeaderCellFormatter(FormatterParameters parameters)
+            : base(parameters)
+        {
         }
 
-        public override void Print(TextWriter writer, Block block)
+        public override bool CanHandle(Block element)
         {
-            writer.Write(" (align={0})",
-                block.TableCellData.ColumnData.Alignment);
+            return element.Tag == BlockTag.TableCell && element.Parent.Tag != BlockTag.TableBody;
+        }
+
+        protected override string GetTag(Block element)
+        {
+            return "th";
+        }
+    }
+
+    internal sealed class TableCellFormatter : DelegateBlockFormatter
+    {
+        public TableCellFormatter(FormatterParameters parameters)
+            : base(new TableBodyCellFormatter(parameters), new TableHeaderCellFormatter(parameters))
+        {
         }
     }
 }

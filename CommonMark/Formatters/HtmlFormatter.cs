@@ -129,7 +129,7 @@ namespace CommonMark.Formatters
                 {
                     if (stackTight.HasValue)
                         RenderTightParagraphs.Pop();
-                    var closing = formatter.GetClosing(block);
+                    var closing = formatter.GetClosing(HtmlFormatterHelper.Instance, block);
                     WriteLine(closing);
                 }
             }
@@ -306,11 +306,13 @@ namespace CommonMark.Formatters
         /// <param name="ignoreChildNodes">Instructs the caller whether to skip processing of child nodes or not.</param>
         protected virtual void WriteInline(Inline inline, bool isOpening, bool isClosing, out bool ignoreChildNodes)
         {
+            var plaintext = RenderPlainTextInlines.Peek();
+
             var formatter = Settings.InlineFormatters[(int)inline.Tag];
             if (formatter != null)
             {
                 ignoreChildNodes = true;
-                var isRenderPlainTextInlines = formatter.IsRenderPlainTextInlines(inline);
+                var isRenderPlainTextInlines = formatter.IsRenderPlainTextInlines(inline, plaintext);
                 if (isOpening)
                 {
                     ignoreChildNodes = !formatter.WriteOpening(_target, inline);
@@ -322,13 +324,13 @@ namespace CommonMark.Formatters
                 {
                     if (!isOpening && isRenderPlainTextInlines.HasValue)
                         RenderPlainTextInlines.Pop();
-                    Write(formatter.GetClosing(inline));
+                    Write(formatter.GetClosing(HtmlFormatterHelper.Instance, inline));
                 }
 
                 return;
             }
 
-            if (RenderPlainTextInlines.Peek())
+            if (plaintext)
             {
                 switch (inline.Tag)
                 {

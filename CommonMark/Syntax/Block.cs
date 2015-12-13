@@ -182,27 +182,29 @@ namespace CommonMark.Syntax
 
         /// <summary>
         /// Gets or sets the additional properties that apply to table cell elements.
-        /// Only set for <see cref="BlockTag.TableCell"/> elements if tables are enabled in <see cref="CommonMarkSettings.AdditionalFeatures"/>.
+        /// Only set for <see cref="BlockTag.TableCell"/> elements if tables are enabled.
         /// </summary>
         public TableCellData TableCellData { get; set; }
 
         /// <summary>
         /// Gets or sets the additional properties that apply to table row elements.
-        /// Only set for <see cref="BlockTag.TableRow"/> elements if tables are enabled in <see cref="CommonMarkSettings.AdditionalFeatures"/>.
+        /// Only set for <see cref="BlockTag.TableRow"/> elements if tables are enabled.
         /// </summary>
         public TableRowData TableRowData { get; set; }
 
         /// <summary>
-        /// Gets or sets the additional properties that apply to table caption elements.
-        /// Only set for <see cref="BlockTag.TableCaption"/> elements if both tables and table captions are enabled.
-        /// </summary>
-        public TableCaptionData TableCaptionData { get; set; }
-
-        /// <summary>
         /// Gets or sets the additional properties that apply to table elements.
-        /// Only set for <see cref="BlockTag.Table"/> elements if tables are enabled in <see cref="CommonMarkSettings.AdditionalFeatures"/>.
+        /// Only set for <see cref="BlockTag.Table"/> elements if tables are enabled.
         /// </summary>
         public TableData TableData { get; set; }
+
+        /// <summary>
+        /// Gets or sets the additional properties that apply to caption elements.
+        /// Only set for <see cref="BlockTag.FigureCaption"/> elements if <see cref="Extension.Figures"/> are enabled,
+        /// or for <see cref="BlockTag.TableCaption"/> elements if both tables and
+        /// <see cref="Extension.TableCaptions"/> are enabled.
+        /// </summary>
+        public CaptionData CaptionData { get; set; }
 
         /// <summary>
         /// Gets or sets the dictionary containing resolved link references. Only set on the document node, <c>null</c>

@@ -14,6 +14,7 @@ namespace CommonMark
         /// <summary>
         /// No additional features are enabled. This is the default.
         /// </summary>
+        [Obsolete("Use " + nameof(CommonMarkSettings.UnregisterAll) + "() instead.")]
         None = 0,
 
         /// <summary>
@@ -25,6 +26,7 @@ namespace CommonMark
         /// <summary>
         /// All additional features are enabled.
         /// </summary>
+        [Obsolete("Use " + nameof(CommonMarkSettings.RegisterAll) + "() instead.")]
         All = 0x7FFFFFFF
     }
 }

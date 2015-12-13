@@ -159,8 +159,8 @@ namespace CommonMark.Parser
         /// <param name="first">The first entry to be removed.</param>
         /// <param name="subj">The subject associated with this stack. Can be <c>null</c> if the pointers in the subject should not be updated.</param>
         /// <param name="last">The last entry to be removed. Can be <c>null</c> if everything starting from <paramref name="first"/> has to be removed.</param>
-        /// <param name="parameters">Inline parser parameters.</param>
-        public static void RemoveStackEntry(InlineStack first, Subject subj, InlineStack last, InlineParserParameters parameters)
+        /// <param name="settings">The object containing settings for the parsing process.</param>
+        public static void RemoveStackEntry(InlineStack first, Subject subj, InlineStack last, CommonMarkSettings settings)
         {
             var curPriority = first.Priority;
 
@@ -208,7 +208,7 @@ namespace CommonMark.Parser
             // this is not done automatically because the initial * is recognized as a potential closer (assuming
             // potential scenario '*[*' ).
             if (curPriority > 0)
-                PostProcessInlineStack(null, first, last, curPriority, parameters);
+                PostProcessInlineStack(null, first, last, curPriority, settings);
         }
 
         /// <summary>
@@ -218,11 +218,11 @@ namespace CommonMark.Parser
         /// <param name="first">First stack element.</param>
         /// <param name="last">Last stack element.</param>
         /// <param name="ignorePriority">Initial priority.</param>
-        /// <param name="parameters">Inline parser parameters.</param>
-        public static void PostProcessInlineStack(Subject subj, InlineStack first, InlineStack last, InlineStackPriority ignorePriority, InlineParserParameters parameters)
+        /// <param name="settings">The object containing settings for the parsing process.</param>
+        public static void PostProcessInlineStack(Subject subj, InlineStack first, InlineStack last, InlineStackPriority ignorePriority, CommonMarkSettings settings)
         {
-            var singleChars = parameters.SingleChars;
-            var doubleChars = parameters.DoubleChars;
+            var singleChars = settings.InlineParserParameters.SingleChars;
+            var doubleChars = settings.InlineParserParameters.DoubleChars;
             while (ignorePriority > 0)
             {
                 var istack = first;
@@ -230,7 +230,7 @@ namespace CommonMark.Parser
                 {
                     if (istack.Priority >= ignorePriority)
                     {
-                        RemoveStackEntry(istack, subj, istack, parameters);
+                        RemoveStackEntry(istack, subj, istack, settings);
                     }
                     else if (0 != (istack.Flags & InlineStackFlags.Closer))
                     {
@@ -244,7 +244,7 @@ namespace CommonMark.Parser
                             var doubleChar = delimeter < doubleChars.Length ? doubleChars[delimeter] : InlineDelimiterParameters.Empty;
                             if (!singleChar.IsEmpty || !doubleChar.IsEmpty)
                             {
-                                var useDelims = InlineMethods.MatchInlineStack(iopener, subj, istack.DelimeterCount, istack, singleChar, doubleChar, parameters);
+                                var useDelims = InlineMethods.MatchInlineStack(iopener, subj, istack.DelimeterCount, istack, singleChar, doubleChar, settings);
                                 if (istack.DelimeterCount > 0)
                                     retry = true;
                             }
@@ -253,14 +253,14 @@ namespace CommonMark.Parser
                             {
                                 // remove everything between opened and closer (not inclusive).
                                 if (istack.Previous != null && iopener.Next != istack.Previous)
-                                    RemoveStackEntry(iopener.Next, subj, istack.Previous, parameters);
+                                    RemoveStackEntry(iopener.Next, subj, istack.Previous, settings);
 
                                 continue;
                             }
                             else
                             {
                                 // remove opener, everything in between, and the closer
-                                RemoveStackEntry(iopener, subj, istack, parameters);
+                                RemoveStackEntry(iopener, subj, istack, settings);
                             }
                         }
                         else if (!canClose)

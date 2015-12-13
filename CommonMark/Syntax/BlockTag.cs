@@ -71,16 +71,19 @@ namespace CommonMark.Syntax
 
         /// <summary>
         /// A definition list element. Will contain <see cref="Term"/> and <see cref="Definition"/> blocks.
+        /// Only present if <see cref="Extension.DefinitionLists"/> are enabled.
         /// </summary>
         DefinitionList,
 
         /// <summary>
         /// A defined term in a <see cref="DefinitionList"/> block.
+        /// Only present if <see cref="Extension.DefinitionLists"/> are enabled.
         /// </summary>
         Term,
 
         /// <summary>
         /// A term definition in a <see cref="DefinitionList"/> block.
+        /// Only present if <see cref="Extension.DefinitionLists"/> are enabled.
         /// </summary>
         Definition,
 
@@ -97,7 +100,7 @@ namespace CommonMark.Syntax
 
         /// <summary>
         /// A table caption element.
-        /// Only present if both tables and table captions are enabled.
+        /// Only present if both tables and <see cref="Extension.TableCaptions"/> are enabled.
         /// </summary>
         TableCaption,
 
@@ -142,6 +145,18 @@ namespace CommonMark.Syntax
         /// Only present if tables are enabled.
         /// </summary>
         TableCell,
+
+        /// <summary>
+        /// A figure element.
+        /// Only present if <see cref="Extension.Figures"/> are enabled.
+        /// </summary>
+        Figure,
+
+        /// <summary>
+        /// A figure caption element.
+        /// Only present in a <see cref="Figure"/> block if <see cref="Extension.Figures"/> are enabled.
+        /// </summary>
+        FigureCaption,
 
         /// <summary>
         /// Block tag count. There should be no elements with this tag.

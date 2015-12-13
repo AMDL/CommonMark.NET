@@ -2,21 +2,21 @@
 
 namespace CommonMark.Formatters.Blocks
 {
-    internal class TableFooterFormatter : BlockFormatter
+    internal class TermFormatter : BlockFormatter
     {
-        public TableFooterFormatter(FormatterParameters parameters)
+        public TermFormatter(FormatterParameters parameters)
             : base(parameters)
         {
         }
 
         public override bool CanHandle(Block block)
         {
-            return block.Tag == BlockTag.TableFooter;
+            return block.Tag == BlockTag.Term;
         }
 
         protected override string GetTag(Block element)
         {
-            return "tfoot";
+            return "dt";
         }
     }
 }

@@ -280,7 +280,6 @@ namespace CommonMark.Parser
         {
             Stack<Inline> inlineStack = null;
             var stack = new Stack<Block>();
-            var inlineParameters = settings.InlineParserParameters;
             var subj = new Subject(refmap);
 
             StringContent sc;
@@ -297,7 +296,7 @@ namespace CommonMark.Parser
                         sc.FillSubject(subj);
                         delta = subj.Position;
 
-                        block.InlineContent = InlineMethods.parse_inlines(block, subj, refmap, inlineParameters);
+                        block.InlineContent = InlineMethods.parse_inlines(block, subj, refmap, settings);
                         block.StringContent = null;
 
                         if (sc.PositionTracker != null)
@@ -436,7 +435,6 @@ namespace CommonMark.Parser
         public static void IncorporateLine(LineInfo line, ref Block curptr, CommonMarkSettings settings)
         {
             var parameters = settings.BlockParserParameters;
-            var pipeTables = new Extension.PipeTables(new Extension.PipeTablesSettings(Extension.PipeTablesFeatures.All));
 
             var ln = line.Line;
 
@@ -462,6 +460,9 @@ namespace CommonMark.Parser
             var blank = false;
             char curChar;
             int indent;
+
+            BlockParserDelegate[] parsers = settings.BlockParserParameters.Parsers;
+            BlockParserDelegate parser;
 
             // container starts at the document root.
             var container = cur.Top;
@@ -725,7 +726,8 @@ namespace CommonMark.Parser
                     container = CreateChildBlock(container, line, BlockTag.ListItem, first_nonspace, settings);
                     container.ListData = data;
                 }
-                else if (pipeTables.IncorporateLine(container, ln, first_nonspace, indented, ref offset, ref column))
+                else if (curChar < parsers.Length && (parser = parsers[curChar]) != null
+                    && parser(container, ln, first_nonspace, indented, ref offset, ref column))
                 {
                 }
                 else if (indented && !maybeLazy && !blank)

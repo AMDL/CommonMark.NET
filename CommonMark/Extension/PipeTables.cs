@@ -1,36 +1,64 @@
-﻿using CommonMark.Extension;
+﻿using CommonMark.Formatters;
+using CommonMark.Formatters.Blocks;
 using CommonMark.Parser;
 using CommonMark.Syntax;
+using System.Collections.Generic;
 
 namespace CommonMark.Extension
 {
     /// <summary>
     /// Pipe tables.
     /// </summary>
-    public sealed class PipeTables : CommonMarkExtension
+    public sealed class PipeTables : Tables
     {
         private readonly PipeTablesSettings settings;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PipeTables"/> class.
         /// </summary>
-        /// <param name="settings">Pipe tables settings.</param>
-        public PipeTables(PipeTablesSettings settings)
+        /// <param name="settings">Common settings.</param>
+        /// <param name="pipeTablesSettings">Pipe tables settings.</param>
+        public PipeTables(CommonMarkSettings settings, PipeTablesSettings pipeTablesSettings)
+            : base(settings)
         {
-            this.settings = settings;
+            this.settings = pipeTablesSettings;
         }
 
         /// <summary>
-        /// Processes a single line, optionally modifying a block.
+        /// Creates the mapping from character to block parser delegate.
         /// </summary>
-        /// <param name="container">Container element.</param>
-        /// <param name="line">Line string.</param>
-        /// <param name="first_nonspace">The index of the first non-space character.</param>
-        /// <param name="indented"><c>true</c> if the line is indented.</param>
-        /// <param name="offset">Offset.</param>
-        /// <param name="column">Column index.</param>
-        /// <returns><c>true</c> if successful.</returns>
-        public bool IncorporateLine(Block container, string line, int first_nonspace, bool indented, ref int offset, ref int column)
+        protected override IDictionary<char, BlockParserDelegate> InitalizeBlockParsers()
+        {
+            var parsers = new Dictionary<char, BlockParserDelegate>();
+            parsers.Add('-', ParseLine);
+            parsers.Add('|', ParseLine);
+            if (IsEnabled(PipeTablesFeatures.HeaderEquals))
+                parsers.Add('=', ParseLine);
+            if (IsEnabled(PipeTablesFeatures.HeaderColon))
+                parsers.Add(':', ParseLine);
+            return parsers;
+        }
+
+        /// <summary>
+        /// Creates the mapping from block tag to block element formatter.
+        /// </summary>
+        /// <param name="parameters">Formatter parameters.</param>
+        protected override IDictionary<BlockTag, IBlockFormatter> InitializeBlockFormatters(FormatterParameters parameters)
+        {
+            var formatters = base.InitializeBlockFormatters(parameters);
+            if (IsEnabled(PipeTablesFeatures.Footers))
+            {
+                formatters.Add(BlockTag.TableFooter, new TableFooterFormatter(parameters));
+            }
+            if (IsEnabled(PipeTablesFeatures.ColumnGroups))
+            {
+                formatters.Add(BlockTag.TableColumn, new TableColumnFormatter(parameters));
+                formatters.Add(BlockTag.TableColumnGroup, new TableColumnGroupFormatter(parameters));
+            }
+            return formatters;
+        }
+
+        private bool ParseLine(Block container, string line, int first_nonspace, bool indented, ref int offset, ref int column)
         {
             TableData data;
             if (!indented && container.Tag == BlockTag.Paragraph && BlockMethods.ContainsSingleLine(container.StringContent)
@@ -336,7 +364,7 @@ namespace CommonMark.Extension
         /// </returns>
         private bool IsHeaderDelimiter(char c)
         {
-            return c == '-' || (c == '=' && 0 != (settings.Features & PipeTablesFeatures.HeaderEquals));
+            return c == '-' || (c == '=' && IsEnabled(PipeTablesFeatures.HeaderEquals));
         }
 
         /// <summary>
@@ -348,7 +376,7 @@ namespace CommonMark.Extension
         /// </returns>
         private bool IsHeaderColumnDelimiter(char c)
         {
-            return IsColumnDelimiter(c) || (c == '+' && 0 != (settings.Features & PipeTablesFeatures.HeaderPlus));
+            return IsColumnDelimiter(c) || (c == '+' && IsEnabled(PipeTablesFeatures.HeaderPlus));
         }
 
         /// <summary>
@@ -372,7 +400,12 @@ namespace CommonMark.Extension
         /// </returns>
         private bool IsHeaderAlignmentMarker(char c)
         {
-            return (c == ':' && 0 != (settings.Features & PipeTablesFeatures.HeaderColon));
+            return (c == ':' && IsEnabled(PipeTablesFeatures.HeaderColon));
+        }
+
+        private bool IsEnabled(PipeTablesFeatures feature)
+        {
+            return 0 != (settings.Features & feature);
         }
     }
 }

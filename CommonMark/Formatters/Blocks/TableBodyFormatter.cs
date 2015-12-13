@@ -14,24 +14,9 @@ namespace CommonMark.Formatters.Blocks
             return block.Tag == BlockTag.TableBody;
         }
 
-        public override bool WriteOpening(IHtmlTextWriter writer, Block block)
+        protected override string GetTag(Block element)
         {
-            writer.WriteConstant("<tbody>");
-            return true;
-        }
-
-        public override string GetClosing(Block block)
-        {
-            return "</tbody>";
-        }
-
-        public override string GetNodeTag(Block block)
-        {
-            return "table_body";
-        }
-
-        public override void Print(System.IO.TextWriter writer, Block block)
-        {
+            return "tbody";
         }
     }
 }

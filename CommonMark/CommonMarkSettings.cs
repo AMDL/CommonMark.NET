@@ -156,7 +156,8 @@ namespace CommonMark
         public void RegisterAll()
         {
             Register(new Extension.Strikeout(this));
-            Register(new Extension.PipeTables(new Extension.PipeTablesSettings(Extension.PipeTablesFeatures.All)));
+            Register(new Extension.DefinitionLists(this, new Extension.DefinitionListsSettings(Extension.DefinitionListsFeatures.All)));
+            Register(new Extension.PipeTables(this, new Extension.PipeTablesSettings(Extension.PipeTablesFeatures.All)));
             Register(new Extension.TableCaptions(this, new Extension.TableCaptionsSettings
             {
                 Features = Extension.TableCaptionsFeatures.All,
@@ -234,6 +235,7 @@ namespace CommonMark
                 }
 
                 this._uriResolver = value;
+                this._formatterParameters.UriResolver = value;
             }
         }
 
@@ -269,6 +271,27 @@ namespace CommonMark
 
         #region [ Properties that cache parser parameters ]
 
+        #region BlockParserParameters
+
+        private Lazy<Parser.BlockParserParameters> _blockParserParameters;
+
+        /// <summary>
+        /// Gets the block element parser parameters.
+        /// </summary>
+        internal Parser.BlockParserParameters BlockParserParameters
+        {
+            get { return _blockParserParameters.Value; }
+        }
+
+        private Parser.BlockParserParameters GetBlockParserParameters()
+        {
+            return new Parser.BlockParserParameters(this);
+        }
+
+        #endregion BlockParserParameters
+
+        #region InlineParserParameters
+
         private Lazy<Parser.StandardInlineParserParameters> _inlineParserParameters;
 
         /// <summary>
@@ -286,6 +309,10 @@ namespace CommonMark
         {
             return new Parser.StandardInlineParserParameters(this);
         }
+
+        #endregion InlineParserParameters
+
+        #region EmphasisInlineParserParameters
 
         private Lazy<Parser.EmphasisInlineParserParameters> _emphasisInlineParserParameters;
 
@@ -305,52 +332,13 @@ namespace CommonMark
             return new Parser.EmphasisInlineParserParameters();
         }
 
-        internal InlineParserDelegate[] GetInlineParsers()
-        {
-            return GetItems(Parser.InlineMethods.InitializeParsers(this),
-                extension => extension.InlineParsers,
-                key => key,
-                (inner, value) => new Parser.DelegateInlineParser(inner, value).ParseInline);
-        }
+        #endregion EmphasisInlineParserParameters
 
-        private Lazy<Parser.BlockParserParameters> _blockParserParameters;
-
-        /// <summary>
-        /// Gets the block element parser parameters.
-        /// </summary>
-        internal Parser.BlockParserParameters BlockParserParameters
-        {
-            get { return _blockParserParameters.Value; }
-        }
-
-        private Parser.BlockParserParameters GetBlockParserParameters()
-        {
-            return new Parser.BlockParserParameters(this);
-        }
-
-        internal Parser.InlineDelimiterParameters[] GetInlineSingleChars()
-        {
-            return GetItems(Parser.InlineMethods.EmphasisSingleChars,
-                extension => extension.InlineSingleChars,
-                key => key,
-                (inner, value) => {
-                    throw new InvalidOperationException(string.Format("Single-character value is already set: {0}.", value.Tag));
-                });
-        }
-
-        internal Parser.InlineDelimiterParameters[] GetInlineDoubleChars()
-        {
-            return GetItems(Parser.InlineMethods.EmphasisDoubleChars,
-                extension => extension.InlineDoubleChars,
-                key => key,
-                (inner, value) => {
-                    throw new InvalidOperationException(string.Format("Double-character value is already set: {0}.", value.Tag));
-                });
-        }
-
-        #endregion
+        #endregion [ Properties that cache parser parameters ]
 
         #region [ Properties that cache formatter parameters ]
+
+        #region FormatterParameters
 
         private Formatters.FormatterParameters _formatterParameters;
 
@@ -361,6 +349,10 @@ namespace CommonMark
         {
             get { return _formatterParameters; }
         }
+
+        #endregion FormatterParameters
+
+        #region BlockFormatters
 
         private Lazy<Formatters.IBlockFormatter[]> _blockFormatters;
 
@@ -375,10 +367,19 @@ namespace CommonMark
         private Formatters.IBlockFormatter[] GetBlockFormatters()
         {
             return GetItems(Formatters.BlockFormatter.InitializeFormatters(FormatterParameters),
-                ext => ext.BlockFormatters,
-                key => (int)key,
-                (inner, value) => new Formatters.Blocks.DelegateBlockFormatter(inner, value));
+                ext => ext.BlockFormatters, key => (int)key, GetBlockFormatter);
         }
+
+        private static Formatters.IBlockFormatter GetBlockFormatter(Formatters.IBlockFormatter inner, Formatters.IBlockFormatter outer)
+        {
+            return !inner.Equals(outer)
+                ? new Formatters.DelegateBlockFormatter(inner, outer)
+                : inner;
+        }
+
+        #endregion BlockFormatters
+
+        #region InlineFormatters
 
         private Lazy<Formatters.IInlineFormatter[]> _inlineFormatters;
 
@@ -393,19 +394,26 @@ namespace CommonMark
         private Formatters.IInlineFormatter[] GetInlineFormatters()
         {
             return GetItems(Formatters.InlineFormatter.InitializeFormatters(FormatterParameters),
-                ext => ext.InlineFormatters,
-                key => (int)key,
-                (inner, value) => new Formatters.Inlines.DelegateInlineFormatter(inner, value));
+                ext => ext.InlineFormatters, key => (int)key, GetInlineFormatter);
         }
 
-        #endregion
+        private static Formatters.IInlineFormatter GetInlineFormatter(Formatters.IInlineFormatter inner, Formatters.IInlineFormatter outer)
+        {
+            return !inner.Equals(outer)
+                ? new Formatters.DelegateInlineFormatter(inner, outer)
+                : inner;
+        }
 
-        #region Private helper methods
+        #endregion InlineFormatters
 
-        private TValue[] GetItems<TKey, TValue>(TValue[] initialItems,
+        #endregion [ Properties that cache formatter parameters ]
+
+        #region Helper methods
+
+        internal TValue[] GetItems<TKey, TValue>(TValue[] initialItems,
             Func<ICommonMarkExtension, IDictionary<TKey, TValue>> itemsFactory,
             Func<TKey, int> keyFactory, Func<TValue, TValue, TValue> valueFactory)
-            where TKey: struct
+            where TKey : struct
         {
             foreach (var extension in Extensions)
             {
@@ -417,7 +425,10 @@ namespace CommonMark
                         var value = kvp.Value;
                         if (value == null || value.Equals(default(TValue)))
                         {
-                            var message = string.Format("{0} value cannot be {1}: {2}.", typeof(TValue).Name, 0, extension.ToString());
+                            var message = string.Format("{0} value cannot be {1}: {2}.",
+                                typeof(TValue).Name,
+                                value == null ? "null" : "0",
+                                extension.ToString());
                             throw new InvalidOperationException(message);
                         }
                         var key = keyFactory(kvp.Key);
