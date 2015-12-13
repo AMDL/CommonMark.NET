@@ -41,7 +41,7 @@ namespace CommonMark.Formatters.Blocks
             return "td";
         }
 
-        public override IDictionary<string, object> GetPrinterData(Block block)
+        public override IDictionary<string, object> GetPrinterData(IPrinter printer, Block block)
         {
             return new Dictionary<string, object>
             {

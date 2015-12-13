@@ -1,6 +1,5 @@
 ﻿using CommonMark.Syntax;
 using System.Collections.Generic;
-using System.IO;
 
 namespace CommonMark.Formatters.Blocks
 {
@@ -21,7 +20,7 @@ namespace CommonMark.Formatters.Blocks
             return "table";
         }
 
-        public override IDictionary<string, object> GetPrinterData(Block block)
+        public override IDictionary<string, object> GetPrinterData(IPrinter printer, Block block)
         {
             return new Dictionary<string, object>
             {

@@ -20,7 +20,7 @@ namespace CommonMark.Formatters.Blocks
             return "figcaption";
         }
 
-        public override IDictionary<string, object> GetPrinterData(Block block)
+        public override IDictionary<string, object> GetPrinterData(IPrinter printer, Block block)
         {
             return new Dictionary<string, object>
             {
