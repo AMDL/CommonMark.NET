@@ -134,8 +134,27 @@ namespace CommonMark.Parser
     /// <summary>
     /// Parameters for parsing inline emphasis elements.
     /// </summary>
-    internal class EmphasisInlineParserParameters : InlineParserParameters
+    public class EmphasisInlineParserParameters : InlineParserParameters
     {
+        private static readonly Lazy<EmphasisInlineParserParameters> _instance;
+
+        static EmphasisInlineParserParameters()
+        {
+            _instance = new Lazy<EmphasisInlineParserParameters>(() => new EmphasisInlineParserParameters());
+        }
+
+        /// <summary>
+        /// Gets the single instance of the <see cref="EmphasisInlineParserParameters"/> class.
+        /// </summary>
+        public static EmphasisInlineParserParameters Instance
+        {
+            get { return _instance.Value; }
+        } 
+
+        private EmphasisInlineParserParameters()
+        {
+        }
+
         internal override InlineParserDelegate[] GetParsers()
         {
             return Parser.InlineMethods.InitializeEmphasisParsers(this);

@@ -17,7 +17,6 @@ namespace CommonMark
         public CommonMarkSettings()
         {
             this._extensions = new Lazy<List<ICommonMarkExtension>>(() => new List<ICommonMarkExtension>());
-            this._emphasisInlineParserParameters = new Lazy<Parser.EmphasisInlineParserParameters>(GetEmphasisInlineParserParameters);
             Reset();
         }
 
@@ -262,8 +261,6 @@ namespace CommonMark
             this._formatterParameters = new Lazy<Formatters.FormatterParameters>(GetFormatterParameters);
         }
 
-        #region [ Properties that cache parser parameters ]
-
         #region BlockParserParameters
 
         private Lazy<Parser.BlockParserParameters> _blockParserParameters;
@@ -304,30 +301,6 @@ namespace CommonMark
         }
 
         #endregion InlineParserParameters
-
-        #region EmphasisInlineParserParameters
-
-        private Lazy<Parser.EmphasisInlineParserParameters> _emphasisInlineParserParameters;
-
-        /// <summary>
-        /// Gets the parameters for parsing inline emphasis elements.
-        /// </summary>
-        public Parser.InlineParserParameters EmphasisInlineParserParameters
-        {
-#if OptimizeFor45
-            [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-#endif
-            get { return _emphasisInlineParserParameters.Value; }
-        }
-
-        private Parser.EmphasisInlineParserParameters GetEmphasisInlineParserParameters()
-        {
-            return new Parser.EmphasisInlineParserParameters();
-        }
-
-        #endregion EmphasisInlineParserParameters
-
-        #endregion [ Properties that cache parser parameters ]
 
         #region FormatterParameters
 
