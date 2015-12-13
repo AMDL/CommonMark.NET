@@ -94,55 +94,55 @@ namespace CommonMark.Syntax
         /// an optional <see cref="TableHeader"/> element,
         /// an optional <see cref="TableFooter"/> element,
         /// and zero or more <see cref="TableBody"/> elements.
-        /// Only present if <see cref="Extension.Tables"/> are enabled.
+        /// Only present if tables are enabled.
         /// </summary>
         Table,
 
         /// <summary>
         /// A table caption element.
-        /// Only present if both <see cref="Extension.Tables"/> and <see cref="Extension.TableCaptions"/> are enabled.
+        /// Only present if both tables and <see cref="Extension.TableCaptions"/> are enabled.
         /// </summary>
         TableCaption,
 
         /// <summary>
         /// A table column group element. Will contain <see cref="TableColumn"/> elements.
-        /// Only present if both <see cref="Extension.Tables"/> and <see cref="Extension.TableColumnGroups"/> are enabled.
+        /// Only present if both tables and table column groups are enabled.
         /// </summary>
         TableColumnGroup,
 
         /// <summary>
         /// A table column element.
-        /// Only present if both <see cref="Extension.Tables"/> and <see cref="Extension.TableColumnGroups"/> are enabled.
+        /// Only present if both tables and table column groups are enabled.
         /// </summary>
         TableColumn,
 
         /// <summary>
         /// A table header element. Will contain <see cref="TableRow"/> elements.
-        /// Only present if <see cref="Extension.Tables"/> are enabled.
+        /// Only present if tables are enabled.
         /// </summary>
         TableHeader,
 
         /// <summary>
         /// A table footer element. Will contain <see cref="TableRow"/> elements.
-        /// Only present if both <see cref="Extension.Tables"/> and <see cref="Extension.TableFooters"/> are enabled.
+        /// Only present if both tables and table footers are enabled.
         /// </summary>
         TableFooter,
 
         /// <summary>
         /// A table body element. Will contain <see cref="TableRow"/> elements.
-        /// Only present if <see cref="Extension.Tables"/> are enabled.
+        /// Only present if tables are enabled.
         /// </summary>
         TableBody,
 
         /// <summary>
         /// A table row element. Will contain <see cref="TableCell"/> elements.
-        /// Only present if <see cref="Extension.Tables"/> are enabled.
+        /// Only present if tables are enabled.
         /// </summary>
         TableRow,
 
         /// <summary>
         /// A table cell element.
-        /// Only present if <see cref="Extension.Tables"/> are enabled.
+        /// Only present if tables are enabled.
         /// </summary>
         TableCell,
 

@@ -12,24 +12,36 @@
         None = 0,
 
         /// <summary>
-        /// Equals will be recognized as header line markers.
-        /// If disabled, a pipe table with equals in its header line will not be parsed as one.
+        /// Equals will be recognized as header, footer and row group separator line markers.
         /// </summary>
         HeaderEquals = 1,
 
         /// <summary>
-        /// Pluses in the header line will be recognized as column markers
+        /// Pluses in header, footer and row group separator lines will be recognized as column markers
         /// (<c>---+---</c>, similar to org table syntax).
-        /// If disabled, a pipe table with pluses in its header line will not be parsed as one.
         /// </summary>
         HeaderPlus = 2,
 
         /// <summary>
-        /// Colons in the header line will be recognized as alignment markers
+        /// Colons in header and footer separator lines will be recognized as alignment markers
         /// (<c>:--</c> left, <c>--:</c> right, <c>:-:</c> center, <c>---</c> default).
-        /// If disabled, a pipe table with colons in its header line will not be parsed as one.
         /// </summary>
         HeaderColon = 4,
+
+        /// <summary>
+        /// Hyphens will be recognized as footer separator line markers.
+        /// </summary>
+        Footers = 8,
+
+        /// <summary>
+        /// Hyphens will be recognized as row group separator line markers.
+        /// </summary>
+        Groups = 16,
+
+        /// <summary>
+        /// Lines immediately preceding header lines will be recognized as column group lines.
+        /// </summary>
+        ColumnGroups = 32,
 
         /// <summary>
         /// All pipe tables features are enabled.

@@ -1,6 +1,8 @@
-﻿using CommonMark.Extension;
+﻿using CommonMark.Formatters;
+using CommonMark.Formatters.Blocks;
 using CommonMark.Parser;
 using CommonMark.Syntax;
+using System.Collections.Generic;
 
 namespace CommonMark.Extension
 {
@@ -44,6 +46,25 @@ namespace CommonMark.Extension
                 return true;
             }
             return false;
+        }
+
+        /// <summary>
+        /// Creates the mapping from block tag to block element formatter.
+        /// </summary>
+        /// <param name="parameters">Formatter parameters.</param>
+        protected override IDictionary<BlockTag, IBlockFormatter> InitializeBlockFormatters(FormatterParameters parameters)
+        {
+            var formatters = base.InitializeBlockFormatters(parameters);
+            if (IsEnabled(PipeTablesFeatures.Footers))
+            {
+                formatters.Add(BlockTag.TableFooter, new TableFooterFormatter(parameters));
+            }
+            if (IsEnabled(PipeTablesFeatures.ColumnGroups))
+            {
+                formatters.Add(BlockTag.TableColumn, new TableColumnFormatter(parameters));
+                formatters.Add(BlockTag.TableColumnGroup, new TableColumnGroupFormatter(parameters));
+            }
+            return formatters;
         }
 
         /// <summary>
@@ -338,7 +359,7 @@ namespace CommonMark.Extension
         /// </returns>
         private bool IsHeaderDelimiter(char c)
         {
-            return c == '-' || (c == '=' && 0 != (settings.Features & PipeTablesFeatures.HeaderEquals));
+            return c == '-' || (c == '=' && IsEnabled(PipeTablesFeatures.HeaderEquals));
         }
 
         /// <summary>
@@ -350,7 +371,7 @@ namespace CommonMark.Extension
         /// </returns>
         private bool IsHeaderColumnDelimiter(char c)
         {
-            return IsColumnDelimiter(c) || (c == '+' && 0 != (settings.Features & PipeTablesFeatures.HeaderPlus));
+            return IsColumnDelimiter(c) || (c == '+' && IsEnabled(PipeTablesFeatures.HeaderPlus));
         }
 
         /// <summary>
@@ -374,7 +395,12 @@ namespace CommonMark.Extension
         /// </returns>
         private bool IsHeaderAlignmentMarker(char c)
         {
-            return (c == ':' && 0 != (settings.Features & PipeTablesFeatures.HeaderColon));
+            return (c == ':' && IsEnabled(PipeTablesFeatures.HeaderColon));
+        }
+
+        private bool IsEnabled(PipeTablesFeatures feature)
+        {
+            return 0 != (settings.Features & feature);
         }
     }
 }
