@@ -97,12 +97,7 @@ namespace CommonMark.Formatters
                     writer.Write(formatter.GetPrinterTag(block));
                     PrintPosition(trackPositions, writer, block);
                     if ((data = formatter.GetPrinterData(PrinterImpl.Instance, block)) != null)
-                    {
-                        writer.Write(" (");
-                        foreach (var kvp in data)
-                            writer.Write(" " + kvp.Key + "=", kvp.Value);
-                        writer.Write(')');
-                    }
+                        PrintData(writer, data);
                 }
                 else switch (block.Tag)
                 {
@@ -244,12 +239,7 @@ namespace CommonMark.Formatters
                     writer.Write(formatter.GetPrinterTag(inline));
                     PrintPosition(trackPositions, writer, inline);
                     if ((data = formatter.GetPrinterData(PrinterImpl.Instance, inline)) != null)
-                    {
-                        writer.Write(" (");
-                        foreach (var kvp in data)
-                            writer.Write(" " + kvp.Key + "=", kvp.Value);
-                        writer.Write(')');
-                    }
+                        PrintData(writer, data);
                 }
                 else switch (inline.Tag)
                 {
@@ -339,6 +329,22 @@ namespace CommonMark.Formatters
                 {
                     inline = null;
                 }
+            }
+        }
+
+        private static void PrintData(TextWriter writer, IDictionary<string, object> data)
+        {
+            object value;
+            if (data.Count == 1 && data.TryGetValue(string.Empty, out value))
+            {
+                writer.Write(" {0}", value);
+            }
+            else
+            {
+                writer.Write(" (");
+                foreach (var kvp in data)
+                    writer.Write(" " + kvp.Key + "=", kvp.Value);
+                writer.Write(')');
             }
         }
 
