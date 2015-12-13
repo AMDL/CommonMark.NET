@@ -384,9 +384,14 @@ namespace CommonMark.Formatters
             this.buffer = new StringBuilder();
         }
 
+        string IPrinter.Format(string s)
+        {
+            return Printer.format_str(s, buffer);
+        }
+
         string IPrinter.Format(StringContent stringContent)
         {
-            return Printer.format_str(stringContent.ToString(buffer), buffer);
+            return ((IPrinter)this).Format(stringContent.ToString(buffer));
         }
     }
 }
