@@ -73,6 +73,11 @@ namespace CommonMark.Formatters
         void WriteEncodedHtml(StringPart part);
 
         /// <summary>
+        /// Encodes the given text with HTML encoding (ampersand-encoding) and writes the result.
+        /// </summary>
+        void WriteEncodedHtml(StringContent stringContent);
+
+        /// <summary>
         /// Encodes the given text with URL encoding (percent-encoding) and writes the result.
         /// </summary>
         void WriteEncodedUrl(string url);

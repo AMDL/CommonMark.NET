@@ -193,6 +193,11 @@ namespace CommonMark.Formatters
             HtmlFormatterSlim.EscapeHtml(part, this);
         }
 
+        void IHtmlTextWriter.WriteEncodedHtml(StringContent stringContent)
+        {
+            HtmlFormatterSlim.EscapeHtml(stringContent, this);
+        }
+
         void IHtmlTextWriter.WriteEncodedUrl(string url)
         {
             HtmlFormatterSlim.EscapeUrl(url, this);
