@@ -114,7 +114,7 @@ namespace CommonMark.Formatters
             ignoreChildNodes = false;
             int x;
 
-            var formatter = Settings.BlockFormatters[(int)block.Tag];
+            var formatter = Settings.FormatterParameters.BlockFormatters[(int)block.Tag];
             if (formatter != null)
             {
                 var stackTight = formatter.IsStackTight(block, false);
@@ -308,7 +308,7 @@ namespace CommonMark.Formatters
         {
             var plaintext = RenderPlainTextInlines.Peek();
 
-            var formatter = Settings.InlineFormatters[(int)inline.Tag];
+            var formatter = Settings.FormatterParameters.InlineFormatters[(int)inline.Tag];
             if (formatter != null)
             {
                 ignoreChildNodes = true;

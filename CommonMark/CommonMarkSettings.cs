@@ -16,7 +16,6 @@ namespace CommonMark
         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         public CommonMarkSettings()
         {
-            this._formatterParameters = new Formatters.FormatterParameters();
             this._extensions = new Lazy<List<ICommonMarkExtension>>(() => new List<ICommonMarkExtension>());
             Reset();
         }
@@ -64,11 +63,7 @@ namespace CommonMark
         public bool TrackSourcePosition
         {
             get { return _trackSourcePosition; }
-            set
-            {
-                _trackSourcePosition = value;
-                this._formatterParameters.TrackPositions = value;
-            }
+            set { _trackSourcePosition = value; }
         }
 
         #region Extensions
@@ -235,7 +230,6 @@ namespace CommonMark
                 }
 
                 this._uriResolver = value;
-                this._formatterParameters.UriResolver = value;
             }
         }
 
@@ -265,8 +259,7 @@ namespace CommonMark
             this._inlineParserParameters = new Lazy<Parser.StandardInlineParserParameters>(GetInlineParserParameters);
             this._emphasisInlineParserParameters = new Lazy<Parser.EmphasisInlineParserParameters>(GetEmphasisInlineParserParameters);
             this._blockParserParameters = new Lazy<Parser.BlockParserParameters>(GetBlockParserParameters);
-            this._blockFormatters = new Lazy<Formatters.IBlockFormatter[]>(GetBlockFormatters);
-            this._inlineFormatters = new Lazy<Formatters.IInlineFormatter[]>(GetInlineFormatters);
+            this._formatterParameters = new Lazy<Formatters.FormatterParameters>(GetFormatterParameters);
         }
 
         #region [ Properties that cache parser parameters ]
@@ -336,77 +329,24 @@ namespace CommonMark
 
         #endregion [ Properties that cache parser parameters ]
 
-        #region [ Properties that cache formatter parameters ]
-
         #region FormatterParameters
 
-        private Formatters.FormatterParameters _formatterParameters;
+        private Lazy<Formatters.FormatterParameters> _formatterParameters;
 
         /// <summary>
         /// Gets the formatter parameters.
         /// </summary>
         public Formatters.FormatterParameters FormatterParameters
         {
-            get { return _formatterParameters; }
+            get { return _formatterParameters.Value; }
+        }
+
+        private Formatters.FormatterParameters GetFormatterParameters()
+        {
+            return new Formatters.FormatterParameters(this);
         }
 
         #endregion FormatterParameters
-
-        #region BlockFormatters
-
-        private Lazy<Formatters.IBlockFormatter[]> _blockFormatters;
-
-        /// <summary>
-        /// Gets the block element formatters.
-        /// </summary>
-        internal Formatters.IBlockFormatter[] BlockFormatters
-        {
-            get { return _blockFormatters.Value; }
-        }
-
-        private Formatters.IBlockFormatter[] GetBlockFormatters()
-        {
-            return GetItems(Formatters.BlockFormatter.InitializeFormatters(FormatterParameters),
-                ext => ext.BlockFormatters, key => (int)key, GetBlockFormatter);
-        }
-
-        private static Formatters.IBlockFormatter GetBlockFormatter(Formatters.IBlockFormatter inner, Formatters.IBlockFormatter outer)
-        {
-            return !inner.Equals(outer)
-                ? new Formatters.DelegateBlockFormatter(inner, outer)
-                : inner;
-        }
-
-        #endregion BlockFormatters
-
-        #region InlineFormatters
-
-        private Lazy<Formatters.IInlineFormatter[]> _inlineFormatters;
-
-        /// <summary>
-        /// Gets the inline element formatters.
-        /// </summary>
-        internal Formatters.IInlineFormatter[] InlineFormatters
-        {
-            get { return _inlineFormatters.Value; }
-        }
-
-        private Formatters.IInlineFormatter[] GetInlineFormatters()
-        {
-            return GetItems(Formatters.InlineFormatter.InitializeFormatters(FormatterParameters),
-                ext => ext.InlineFormatters, key => (int)key, GetInlineFormatter);
-        }
-
-        private static Formatters.IInlineFormatter GetInlineFormatter(Formatters.IInlineFormatter inner, Formatters.IInlineFormatter outer)
-        {
-            return !inner.Equals(outer)
-                ? new Formatters.DelegateInlineFormatter(inner, outer)
-                : inner;
-        }
-
-        #endregion InlineFormatters
-
-        #endregion [ Properties that cache formatter parameters ]
 
         #region Helper methods
 

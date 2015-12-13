@@ -224,6 +224,7 @@ namespace CommonMark.Formatters
             bool trackPositions = settings.TrackSourcePosition;
             int x;
 
+            IBlockFormatter[] formatters = settings.FormatterParameters.BlockFormatters;
             IBlockFormatter formatter;
             bool? isStackTight;
 
@@ -231,7 +232,7 @@ namespace CommonMark.Formatters
             {
                 visitChildren = false;
 
-                formatter = settings.BlockFormatters[(int)block.Tag];
+                formatter = formatters[(int)block.Tag];
                 if (formatter != null)
                 {
                     visitChildren = formatter.WriteOpening(writer, block);
@@ -504,6 +505,7 @@ namespace CommonMark.Formatters
             bool visitChildren;
             bool trackPositions = settings.TrackSourcePosition;
             string stackLiteral = null;
+            IInlineFormatter[] formatters = settings.FormatterParameters.InlineFormatters;
             IInlineFormatter formatter;
             bool? isRenderPlainTextInlines;
 
@@ -511,7 +513,7 @@ namespace CommonMark.Formatters
             {
                 visitChildren = false;
 
-                formatter = settings.InlineFormatters[(int)inline.Tag];
+                formatter = formatters[(int)inline.Tag];
                 if (formatter != null)
                 {
                     visitChildren = formatter.WriteOpening(writer, inline);

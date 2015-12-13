@@ -82,6 +82,7 @@ namespace CommonMark.Formatters
             var inlineStack = new Stack<InlineStackEntry>();
             var buffer = new StringBuilder();
             var trackPositions = settings.TrackSourcePosition;
+            IBlockFormatter[] formatters = settings.FormatterParameters.BlockFormatters;
             IBlockFormatter formatter;
             IDictionary<string, object> data;
 
@@ -89,7 +90,7 @@ namespace CommonMark.Formatters
             {
                 writer.Write(new string(' ', indent));
 
-                formatter = settings.BlockFormatters[(int)block.Tag];
+                formatter = formatters[(int)block.Tag];
                 if (formatter != null)
                 {
                     writer.Write(formatter.GetPrinterTag(block));
@@ -228,6 +229,7 @@ namespace CommonMark.Formatters
         private static void PrintInlines(TextWriter writer, Inline inline, int indent, Stack<InlineStackEntry> stack, StringBuilder buffer, CommonMarkSettings settings)
         {
             var trackPositions = settings.TrackSourcePosition;
+            IInlineFormatter[] formatters = settings.FormatterParameters.InlineFormatters;
             IInlineFormatter formatter;
             IDictionary<string, object> data;
 
@@ -235,7 +237,7 @@ namespace CommonMark.Formatters
             {
                 writer.Write(new string(' ', indent));
 
-                formatter = settings.InlineFormatters[(int)inline.Tag];
+                formatter = formatters[(int)inline.Tag];
                 if (formatter != null)
                 {
                     writer.Write(formatter.GetPrinterTag(inline));
