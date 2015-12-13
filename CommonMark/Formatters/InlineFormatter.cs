@@ -20,14 +20,14 @@ namespace CommonMark.Formatters
         /// <summary>
         /// Returns the content rendering option for an inline element.
         /// </summary>
-        /// <param name="inline">Inline element.</param>
+        /// <param name="element">Inline element.</param>
         /// <param name="plaintext">The parent's rendering option.</param>
         /// <returns>
         /// <c>true</c> to render the child inlines as plain text,
         /// <c>false</c> to render the literal content as HTML,
         /// or <c>null</c> to skip content rendering.
         /// </returns>
-        public virtual bool? IsRenderPlainTextInlines(Inline inline, bool plaintext)
+        public virtual bool? IsRenderPlainTextInlines(Inline element, bool plaintext)
         {
             return null;
         }
@@ -36,10 +36,10 @@ namespace CommonMark.Formatters
         /// Writes the position of an inline element.
         /// </summary>
         /// <param name="writer">HTML writer.</param>
-        /// <param name="inline">Inline element.</param>
-        protected override void DoWritePosition(IHtmlTextWriter writer, Inline inline)
+        /// <param name="element">Inline element.</param>
+        protected override void DoWritePosition(IHtmlTextWriter writer, Inline element)
         {
-            writer.WritePosition(inline);
+            writer.WritePosition(element);
         }
 
         internal static IInlineFormatter[] InitializeFormatters(FormatterParameters parameters)

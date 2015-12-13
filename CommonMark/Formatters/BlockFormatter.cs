@@ -36,22 +36,22 @@ namespace CommonMark.Formatters
         /// Writes the opening of a block element.
         /// </summary>
         /// <param name="writer">HTML writer.</param>
-        /// <param name="block">Block element.</param>
+        /// <param name="element">Block element.</param>
         /// <returns><c>true</c> if the parent formatter should visit the child elements.</returns>
-        public override bool WriteOpening(IHtmlTextWriter writer, Block block)
+        public override bool WriteOpening(IHtmlTextWriter writer, Block element)
         {
             writer.EnsureLine();
-            return base.WriteOpening(writer, block);
+            return base.WriteOpening(writer, element);
         }
 
         /// <summary>
         /// Writes the position of a block element.
         /// </summary>
         /// <param name="writer">HTML writer.</param>
-        /// <param name="block">Block element.</param>
-        protected override void DoWritePosition(IHtmlTextWriter writer, Block block)
+        /// <param name="element">Block element.</param>
+        protected override void DoWritePosition(IHtmlTextWriter writer, Block element)
         {
-            writer.WritePosition(block);
+            writer.WritePosition(element);
         }
 
         internal static IBlockFormatter[] InitializeFormatters(FormatterParameters parameters)
