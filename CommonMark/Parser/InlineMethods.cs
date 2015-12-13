@@ -10,7 +10,8 @@ namespace CommonMark.Parser
         private static readonly char[] WhiteSpaceCharacters = new[] { '\n', ' ' };
         private static readonly char[] BracketSpecialCharacters = new[] { '\\', ']', '[' };
 
-        private static readonly InlineDelimiterCharacterParameters EmphasisDelimiters = InitializeEmphasisDelimiters();
+        private static readonly InlineDelimiterCharacterParameters AsteriskDelimiters = InitializeEmphasisDelimiters('*');
+        private static readonly InlineDelimiterCharacterParameters UnderscoreDelimiters = InitializeEmphasisDelimiters('_');
 
         internal static readonly InlineParserDelegate[] EmphasisParsers = InitializeEmphasisParsers();
         internal static readonly InlineDelimiterCharacterParameters[] EmphasisDelimiterCharacters = InitializeDelimiterCharacters();
@@ -46,24 +47,45 @@ namespace CommonMark.Parser
         private static InlineParserDelegate[] InitializeEmphasisParsers()
         {
             var p = new InlineParserDelegate[127];
-            p['_'] = p['*'] = (b, s) => HandleOpenerCloser(s, EmphasisDelimiters, null);
+            p['*'] = (b, s) => HandleOpenerCloser(s, AsteriskDelimiters, null);
+            p['_'] = (b, s) => HandleOpenerCloser(s, UnderscoreDelimiters, null);
             return p;
         }
 
         internal static InlineDelimiterCharacterParameters[] InitializeDelimiterCharacters()
         {
             var t = new InlineDelimiterCharacterParameters[127];
-            t['_'] = t['*'] = EmphasisDelimiters;
+            t['*'] = AsteriskDelimiters;
+            t['_'] = UnderscoreDelimiters;
             return t;
         }
 
-        private static InlineDelimiterCharacterParameters InitializeEmphasisDelimiters()
+        private static InlineDelimiterCharacterParameters InitializeEmphasisDelimiters(char c)
         {
-            return new InlineDelimiterCharacterParameters
+            var chars = new InlineDelimiterCharacterParameters
             {
-                SingleCharacter = new InlineDelimiterParameters { Tag = InlineTag.Emphasis },
-                DoubleCharacter = new InlineDelimiterParameters { Tag = InlineTag.Strong },
+                SingleCharacter = InitializeEmphasisDelimiters(InlineTag.Emphasis, c),
+                DoubleCharacter = InitializeEmphasisDelimiters(InlineTag.Strong, c),
             };
+            return chars;
+        }
+
+        private static InlineDelimiterParameters InitializeEmphasisDelimiters(InlineTag tag, char c)
+        {
+            var chars = new InlineDelimiterParameters
+            {
+                Tag = tag,
+            };
+            if (c == '_')
+                chars.Matcher = MatchUnderscore;
+            return chars;
+        }
+
+        private static void MatchUnderscore(Subject subj, int startpos, int len, bool beforeIsPunctuation, bool afterIsPunctuation, ref bool canOpen, ref bool canClose)
+        {
+            var temp = canOpen;
+            canOpen &= (!canClose || beforeIsPunctuation);
+            canClose &= (!temp || afterIsPunctuation);
         }
 
         /// <summary>
@@ -285,7 +307,7 @@ namespace CommonMark.Parser
         /// Scans the subject for a series of the given emphasis character, testing if they could open and/or close
         /// an emphasis element.
         /// </summary>
-        private static int ScanEmphasisDelimeters(Subject subj, char delimeter, out bool canOpen, out bool canClose)
+        private static int ScanEmphasisDelimeters(Subject subj, char delimeter, InlineDelimiterCharacterParameters parameters, out bool canOpen, out bool canClose)
         {
             int numdelims = 0;
             int startpos = subj.Position;
@@ -314,11 +336,12 @@ namespace CommonMark.Parser
             canOpen = !afterIsSpace && !(afterIsPunctuation && !beforeIsSpace && !beforeIsPunctuation);
             canClose = !beforeIsSpace && !(beforeIsPunctuation && !afterIsSpace && !afterIsPunctuation);
 
-            if (delimeter == '_')
+            var matcher = numdelims == 1
+                ? parameters.SingleCharacter.Matcher
+                : parameters.DoubleCharacter.Matcher;
+            if (matcher != null)
             {
-                var temp = canOpen;
-                canOpen &= (!canClose || beforeIsPunctuation);
-                canClose &= (!temp || afterIsPunctuation);
+                matcher(subj, startpos, len, beforeIsPunctuation, afterIsPunctuation, ref canOpen, ref canClose);
             }
 
             return numdelims;
@@ -416,7 +439,7 @@ namespace CommonMark.Parser
         {
             bool canOpen, canClose;
             var c = subj.Buffer[subj.Position];
-            var numdelims = ScanEmphasisDelimeters(subj, c, out canOpen, out canClose);
+            var numdelims = ScanEmphasisDelimeters(subj, c, delimiters, out canOpen, out canClose);
 
             if (canClose)
             {
