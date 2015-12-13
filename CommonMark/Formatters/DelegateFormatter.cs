@@ -62,6 +62,13 @@ namespace CommonMark.Formatters
                 ? inner.IsStackTight(block, tight)
                 : outer.IsStackTight(block, tight);
         }
+
+        public static IBlockFormatter Merge(IBlockFormatter inner, IBlockFormatter outer)
+        {
+            return !inner.Equals(outer)
+                ? new DelegateBlockFormatter(inner, outer)
+                : inner;
+        }
     }
 
     internal class DelegateInlineFormatter : DelegateFormatter<Inline, IInlineFormatter>, IInlineFormatter
@@ -76,6 +83,13 @@ namespace CommonMark.Formatters
             return inner.CanHandle(inline)
                 ? inner.IsRenderPlainTextInlines(inline, plaintext)
                 : outer.IsRenderPlainTextInlines(inline, plaintext);
+        }
+
+        public static IInlineFormatter Merge(IInlineFormatter inner, IInlineFormatter outer)
+        {
+            return !inner.Equals(outer)
+                ? new DelegateInlineFormatter(inner, outer)
+                : inner;
         }
     }
 }

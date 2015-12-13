@@ -93,36 +93,13 @@ namespace CommonMark.Parser
         internal override InlineParserDelegate[] GetParsers()
         {
             return Settings.GetItems(Parser.InlineMethods.InitializeParsers(this),
-                extension => extension.InlineParsers, key => key, GetParser);
+                extension => extension.InlineParsers, key => key, DelegateInlineParser.Merge);
         }
 
         internal override InlineDelimiterCharacterParameters[] GetDelimiterCharacters()
         {
             return Settings.GetItems(Parser.InlineMethods.InitializeDelimiterCharacters(),
-                ext => ext.InlineDelimiterCharacters, key => key, GetDelimiterCharacter);
-        }
-
-        private static InlineParserDelegate GetParser(InlineParserDelegate inner, InlineParserDelegate outer)
-        {
-            return !inner.Equals(outer)
-                ? new Parser.DelegateInlineParser(inner, outer).ParseInline
-                : inner;
-        }
-
-        private static InlineDelimiterCharacterParameters GetDelimiterCharacter(InlineDelimiterCharacterParameters inner, InlineDelimiterCharacterParameters outer)
-        {
-            return new InlineDelimiterCharacterParameters
-            {
-                SingleCharacter = GetDelimiter(inner.SingleCharacter, outer.SingleCharacter, "Single character"),
-                DoubleCharacter = GetDelimiter(inner.DoubleCharacter, outer.DoubleCharacter, "Double character"),
-            };
-        }
-
-        private static InlineDelimiterParameters GetDelimiter(InlineDelimiterParameters inner, InlineDelimiterParameters outer, string key)
-        {
-            if (!inner.IsEmpty && !outer.IsEmpty)
-                throw new InvalidOperationException(string.Format("{0} parameters value is already set: {1}.", key, inner));
-            return !inner.IsEmpty ? inner : outer;
+                ext => ext.InlineDelimiterCharacters, key => key, InlineDelimiterCharacterParameters.Merge);
         }
 
         private CommonMarkSettings Settings

@@ -30,14 +30,7 @@ namespace CommonMark.Parser
         private BlockParserDelegate[] GetParsers()
         {
             return Settings.GetItems(new BlockParserDelegate[127],
-                ext => ext.BlockParsers, key => key, GetParser);
-        }
-
-        private static BlockParserDelegate GetParser(BlockParserDelegate inner, BlockParserDelegate outer)
-        {
-            return !inner.Equals(outer)
-                ? new DelegateBlockParser(inner, outer).Parse
-                : inner;
+                ext => ext.BlockParsers, key => key, DelegateBlockParser.Merge);
         }
 
         #endregion Parsers
@@ -54,14 +47,7 @@ namespace CommonMark.Parser
         private BlockProcessorDelegate[] GetProcessors()
         {
             return Settings.GetItems(BlockMethods.InitializeProcessors(),
-                ext => ext.BlockProcessors, key => (int)key, GetProcessor);
-        }
-
-        private BlockProcessorDelegate GetProcessor(BlockProcessorDelegate inner, BlockProcessorDelegate outer)
-        {
-            return !inner.Equals(outer)
-                ? new DelegateBlockProcessor(inner, outer).Process
-                : inner;
+                ext => ext.BlockProcessors, key => (int)key, DelegateBlockProcessor.Merge);
         }
 
         #endregion Processors

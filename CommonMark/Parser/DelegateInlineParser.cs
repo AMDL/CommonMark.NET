@@ -11,9 +11,16 @@
             this.outer = outer;
         }
 
-        public Syntax.Inline ParseInline(Syntax.Block block, Parser.Subject subject)
+        public Syntax.Inline Parse(Syntax.Block block, Parser.Subject subject)
         {
             return inner(block, subject) ?? outer(block, subject);
+        }
+
+        public static InlineParserDelegate Merge(InlineParserDelegate inner, InlineParserDelegate outer)
+        {
+            return !inner.Equals(outer)
+                ? new Parser.DelegateInlineParser(inner, outer).Parse
+                : inner;
         }
     }
 }

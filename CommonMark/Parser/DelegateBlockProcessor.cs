@@ -19,5 +19,12 @@ namespace CommonMark.Parser
             return inner(container, subject, referenceMap, ref inlineStack, settings)
                 || outer(container, subject, referenceMap, ref inlineStack, settings);
         }
+
+        public static BlockProcessorDelegate Merge(BlockProcessorDelegate inner, BlockProcessorDelegate outer)
+        {
+            return !inner.Equals(outer)
+                ? new DelegateBlockProcessor(inner, outer).Process
+                : inner;
+        }
     }
 }

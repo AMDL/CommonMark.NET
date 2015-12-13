@@ -1,4 +1,5 @@
 ﻿using CommonMark.Syntax;
+using System;
 
 namespace CommonMark.Parser
 {
@@ -34,6 +35,21 @@ namespace CommonMark.Parser
         {
             get { return Tag == 0; }
         }
+
+        /// <summary>
+        /// Merges two parameters objects.
+        /// </summary>
+        /// <param name="params1">First parameters object.</param>
+        /// <param name="params2">Second parameters object.</param>
+        /// <param name="key">Identifier to use in an exception message.</param>
+        /// <returns>Merged parameters object.</returns>
+        /// <exception cref="InvalidOperationException">Both objects are non-empty.</exception>
+        internal static InlineDelimiterParameters Merge(InlineDelimiterParameters params1, InlineDelimiterParameters params2, string key)
+        {
+            if (!params1.IsEmpty && !params2.IsEmpty)
+                throw new InvalidOperationException(string.Format("{0} parameters value is already set: {1}.", key, params1));
+            return !params1.IsEmpty ? params1 : params2;
+        }
     }
 
     /// <summary>
@@ -58,5 +74,21 @@ namespace CommonMark.Parser
         /// Double character delimiter parameters.
         /// </summary>
         public InlineDelimiterParameters DoubleCharacter;
+
+        /// <summary>
+        /// Merges two parameters objects.
+        /// </summary>
+        /// <param name="params1">First parameters object.</param>
+        /// <param name="params2">Second parameters object.</param>
+        /// <returns>Merged parameters object.</returns>
+        /// <exception cref="InvalidOperationException">Child parameters of the same kind are non-empty in both objects.</exception>
+        internal static InlineDelimiterCharacterParameters Merge(InlineDelimiterCharacterParameters params1, InlineDelimiterCharacterParameters params2)
+        {
+            return new InlineDelimiterCharacterParameters
+            {
+                SingleCharacter = InlineDelimiterParameters.Merge(params1.SingleCharacter, params2.SingleCharacter, "Single character"),
+                DoubleCharacter = InlineDelimiterParameters.Merge(params1.DoubleCharacter, params2.DoubleCharacter, "Double character"),
+            };
+        }
     }
 }

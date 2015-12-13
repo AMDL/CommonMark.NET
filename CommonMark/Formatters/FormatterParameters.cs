@@ -61,14 +61,7 @@ namespace CommonMark.Formatters
         private Formatters.IBlockFormatter[] GetBlockFormatters()
         {
             return Settings.GetItems(Formatters.BlockFormatter.InitializeFormatters(this),
-                ext => ext.BlockFormatters, key => (int)key, GetBlockFormatter);
-        }
-
-        private static Formatters.IBlockFormatter GetBlockFormatter(Formatters.IBlockFormatter inner, Formatters.IBlockFormatter outer)
-        {
-            return !inner.Equals(outer)
-                ? new Formatters.DelegateBlockFormatter(inner, outer)
-                : inner;
+                ext => ext.BlockFormatters, key => (int)key, DelegateBlockFormatter.Merge);
         }
 
         #endregion BlockFormatters
@@ -88,14 +81,7 @@ namespace CommonMark.Formatters
         private Formatters.IInlineFormatter[] GetInlineFormatters()
         {
             return Settings.GetItems(Formatters.InlineFormatter.InitializeFormatters(this),
-                ext => ext.InlineFormatters, key => (int)key, GetInlineFormatter);
-        }
-
-        private static Formatters.IInlineFormatter GetInlineFormatter(Formatters.IInlineFormatter inner, Formatters.IInlineFormatter outer)
-        {
-            return !inner.Equals(outer)
-                ? new Formatters.DelegateInlineFormatter(inner, outer)
-                : inner;
+                ext => ext.InlineFormatters, key => (int)key, DelegateInlineFormatter.Merge);
         }
 
         #endregion InlineFormatters

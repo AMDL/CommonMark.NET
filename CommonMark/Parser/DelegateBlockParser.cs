@@ -18,5 +18,12 @@ namespace CommonMark.Parser
             return inner(container, line, first_nonspace, indented, ref offset, ref column)
                 || outer(container, line, first_nonspace, indented, ref offset, ref column);
         }
+
+        public static BlockParserDelegate Merge(BlockParserDelegate inner, BlockParserDelegate outer)
+        {
+            return !inner.Equals(outer)
+                ? new DelegateBlockParser(inner, outer).Parse
+                : inner;
+        }
     }
 }
