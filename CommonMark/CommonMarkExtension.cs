@@ -10,6 +10,8 @@ namespace CommonMark
     /// </summary>
     public abstract class CommonMarkExtension : ICommonMarkExtension
     {
+        private readonly Lazy<IDictionary<char, BlockParserDelegate>> _blockParsers;
+        private readonly Lazy<IDictionary<char, InlineParserDelegate>> _inlineParsers;
         private readonly Lazy<IDictionary<BlockTag, IBlockFormatter>> _blockFormatters;
         private readonly Lazy<IDictionary<InlineTag, IInlineFormatter>> _inlineFormatters;
 
@@ -20,16 +22,26 @@ namespace CommonMark
         protected CommonMarkExtension(CommonMarkSettings settings)
         {
             var parameters = settings.FormatterParameters;
+            this._blockParsers = new Lazy<IDictionary<char, BlockParserDelegate>>(() => InitalizeBlockParsers());
+            this._inlineParsers = new Lazy<IDictionary<char, InlineParserDelegate>>(() => InitalizeInlineParsers());
             this._blockFormatters = new Lazy<IDictionary<BlockTag, IBlockFormatter>>(() => InitializeBlockFormatters(parameters));
             this._inlineFormatters = new Lazy<IDictionary<InlineTag, IInlineFormatter>>(() => InitializeInlineFormatters(parameters));
         }
 
         /// <summary>
+        /// Gets the mapping from character to block parser delegate.
+        /// </summary>
+        public IDictionary<char, BlockParserDelegate> BlockParsers
+        {
+            get { return _blockParsers.Value; }
+        }
+
+        /// <summary>
         /// Gets the mapping from character to inline parser delegate.
         /// </summary>
-        public virtual IDictionary<char, InlineParserDelegate> InlineParsers
+        public IDictionary<char, InlineParserDelegate> InlineParsers
         {
-            get { return null; }
+            get { return _inlineParsers.Value; }
         }
 
         /// <summary>
@@ -90,6 +102,22 @@ namespace CommonMark
         public override string ToString()
         {
             return GetType().Name;
+        }
+
+        /// <summary>
+        /// Creates the mapping from character to block parser delegate.
+        /// </summary>
+        protected virtual IDictionary<char, BlockParserDelegate> InitalizeBlockParsers()
+        {
+            return null;
+        }
+
+        /// <summary>
+        /// Creates the mapping from character to inline parser delegate.
+        /// </summary>
+        protected virtual IDictionary<char, InlineParserDelegate> InitalizeInlineParsers()
+        {
+            return null;
         }
 
         /// <summary>

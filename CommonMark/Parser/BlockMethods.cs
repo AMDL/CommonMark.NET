@@ -463,6 +463,9 @@ namespace CommonMark.Parser
             char curChar;
             int indent;
 
+            BlockParserDelegate[] parsers = settings.BlockParserParameters.Parsers;
+            BlockParserDelegate parser;
+
             // container starts at the document root.
             var container = cur.Top;
 
@@ -726,6 +729,10 @@ namespace CommonMark.Parser
                     container.ListData = data;
                 }
                 else if (pipeTables.IncorporateLine(container, ln, first_nonspace, indented, ref offset, ref column))
+                {
+                }
+                else if (curChar < parsers.Length && (parser = parsers[curChar]) != null
+                    && parser(container, ln, first_nonspace, indented, ref offset, ref column))
                 {
                 }
                 else if (indented && !maybeLazy && !blank)

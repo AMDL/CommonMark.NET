@@ -455,12 +455,12 @@ namespace CommonMark
 
         #endregion [ Properties that cache formatter parameters ]
 
-        #region Private helper methods
+        #region Helper methods
 
-        private TValue[] GetItems<TKey, TValue>(TValue[] initialItems,
+        internal TValue[] GetItems<TKey, TValue>(TValue[] initialItems,
             Func<ICommonMarkExtension, IDictionary<TKey, TValue>> itemsFactory,
             Func<TKey, int> keyFactory, Func<TValue, TValue, TValue> valueFactory)
-            where TKey: struct
+            where TKey : struct
         {
             foreach (var extension in Extensions)
             {
@@ -472,7 +472,10 @@ namespace CommonMark
                         var value = kvp.Value;
                         if (value == null || value.Equals(default(TValue)))
                         {
-                            var message = string.Format("{0} value cannot be {1}: {2}.", typeof(TValue).Name, 0, extension.ToString());
+                            var message = string.Format("{0} value cannot be {1}: {2}.",
+                                typeof(TValue).Name,
+                                value == null ? "null" : "0",
+                                extension.ToString());
                             throw new InvalidOperationException(message);
                         }
                         var key = keyFactory(kvp.Key);
