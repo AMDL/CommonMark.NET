@@ -25,27 +25,18 @@ namespace CommonMark.Extension
         }
 
         /// <summary>
-        /// Processes a single line, optionally modifying a block.
+        /// Creates the mapping from character to block parser delegate.
         /// </summary>
-        /// <param name="container">Container element.</param>
-        /// <param name="line">Line string.</param>
-        /// <param name="first_nonspace">The index of the first non-space character.</param>
-        /// <param name="indented"><c>true</c> if the line is indented.</param>
-        /// <param name="offset">Offset.</param>
-        /// <param name="column">Column index.</param>
-        /// <returns><c>true</c> if successful.</returns>
-        public bool IncorporateLine(Block container, string line, int first_nonspace, bool indented, ref int offset, ref int column)
+        protected override IDictionary<char, BlockParserDelegate> InitalizeBlockParsers()
         {
-            TableData data;
-            if (!indented && container.Tag == BlockTag.Paragraph && BlockMethods.ContainsSingleLine(container.StringContent)
-                && null != (data = ScanHeaderLine(line, first_nonspace, line.Length)))
-            {
-                container.Tag = BlockTag.Table;
-                container.TableData = data;
-                BlockMethods.AdvanceOffset(line, line.Length - 1 - offset, false, ref offset, ref column);
-                return true;
-            }
-            return false;
+            var parsers = new Dictionary<char, BlockParserDelegate>();
+            parsers.Add('-', ParseLine);
+            parsers.Add('|', ParseLine);
+            if (IsEnabled(PipeTablesFeatures.HeaderEquals))
+                parsers.Add('=', ParseLine);
+            if (IsEnabled(PipeTablesFeatures.HeaderColon))
+                parsers.Add(':', ParseLine);
+            return parsers;
         }
 
         /// <summary>
@@ -65,6 +56,20 @@ namespace CommonMark.Extension
                 formatters.Add(BlockTag.TableColumnGroup, new TableColumnGroupFormatter(parameters));
             }
             return formatters;
+        }
+
+        private bool ParseLine(Block container, string line, int first_nonspace, bool indented, ref int offset, ref int column)
+        {
+            TableData data;
+            if (!indented && container.Tag == BlockTag.Paragraph && BlockMethods.ContainsSingleLine(container.StringContent)
+                && null != (data = ScanHeaderLine(line, first_nonspace, line.Length)))
+            {
+                container.Tag = BlockTag.Table;
+                container.TableData = data;
+                BlockMethods.AdvanceOffset(line, line.Length - 1 - offset, false, ref offset, ref column);
+                return true;
+            }
+            return false;
         }
 
         /// <summary>
