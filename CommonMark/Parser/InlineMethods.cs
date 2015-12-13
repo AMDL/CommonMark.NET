@@ -335,6 +335,8 @@ namespace CommonMark.Parser
             if (closingDelimeterCount < 3 || openerDelims < 3)
             {
                 useDelims = closingDelimeterCount <= openerDelims ? closingDelimeterCount : openerDelims;
+                if (useDelims == 2 && doubleChar.IsEmpty)
+                    useDelims = 1;
                 if (useDelims == 1 && singleChar.IsEmpty)
                     return 0;
             }
