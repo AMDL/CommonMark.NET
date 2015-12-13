@@ -36,9 +36,9 @@ namespace CommonMark.Extension
 
         internal bool IncorporateCaption(Block block)
         {
-            return ((0 != (settings.Features & TableCaptionsFeatures.After) && block.Tag == BlockTag.Table
+            return ((IsEnabled(TableCaptionsFeatures.After) && block.Tag == BlockTag.Table
                         && !HasCaption(block) && Preprocess(block.NextSibling) && IncorporateTrailing(block))
-                    || (0 != (settings.Features & TableCaptionsFeatures.Before) && block.NextSibling?.NextSibling?.Tag == BlockTag.Table
+                    || (IsEnabled(TableCaptionsFeatures.Before) && block.NextSibling?.NextSibling?.Tag == BlockTag.Table
                         && !HasCaption(block.NextSibling.NextSibling) && Preprocess(block.NextSibling) && IncorporateLeading(block)));
         }
 
@@ -66,19 +66,18 @@ namespace CommonMark.Extension
                 return false;
 
             var content = inline.LiteralContent;
-            if (content == null)
+            if (content == null || content.Length <= 1)
                 return false;
 
-            var index = content.IndexOf(':');
-            if (0 != (settings.Features & TableCaptionsFeatures.ColonDefinition) && index == 0)
-                return PreprocessEmptyLead(block, inline, content, index, ':');
+            if ((IsEnabled(TableCaptionsFeatures.ColonDefinition) && PreprocessEmptyLead(block, inline, content, ':'))
+                || (IsEnabled(TableCaptionsFeatures.TildeDefinition) && PreprocessEmptyLead(block, inline, content, '~')))
+                return true;
 
             if (settings.Leads == null || settings.Leads.Length == 0)
-                return (0 != (settings.Features & TableCaptionsFeatures.TildeDefinition) && content[0] == '~'
-                    && PreprocessEmptyLead(block, inline, content, index, '~'));
-
+                return false;
+            var index = content.IndexOf(':');
             var prefix = content.Substring(0, index);
-            if (0 != (settings.Features & TableCaptionsFeatures.TrimLead))
+            if (IsEnabled(TableCaptionsFeatures.TrimLead))
                 prefix = prefix.TrimEnd();
 
             foreach (var lead in settings.Leads)
@@ -90,8 +89,8 @@ namespace CommonMark.Extension
 
         private bool PreprocessDefinition(Block block)
         {
-            if ((0 != (settings.Features & TableCaptionsFeatures.ColonDefinition) && block.ListData.BulletChar == ':')
-                || (0 != (settings.Features & TableCaptionsFeatures.TildeDefinition) && block.ListData.BulletChar == '~'))
+            if ((IsEnabled(TableCaptionsFeatures.ColonDefinition) && block.ListData.BulletChar == ':')
+                || (IsEnabled(TableCaptionsFeatures.TildeDefinition) && block.ListData.BulletChar == '~'))
             {
                 block.CaptionData = new CaptionData();
                 return true;
@@ -99,13 +98,15 @@ namespace CommonMark.Extension
             return false;
         }
 
-        private static bool PreprocessEmptyLead(Block block, Inline inline, string content, int index, char delimiter)
+        private static bool PreprocessEmptyLead(Block block, Inline inline, string content, char delimiter)
         {
+            if (content[0] != delimiter || !Utilities.IsWhitespace(content[1]))
+                return false;
             block.ListData = new ListData
             {
                 BulletChar = delimiter,
             };
-            return PreprocessMatch(block, inline, content, index, null);
+            return PreprocessMatch(block, inline, content, 1, null);
         }
 
         private static bool PreprocessMatch(Block block, Inline inline, string content, int index, string prefix)
@@ -163,6 +164,11 @@ namespace CommonMark.Extension
             caption.NextSibling = first;
 
             return caption;
+        }
+
+        private bool IsEnabled(TableCaptionsFeatures feature)
+        {
+            return 0 != (settings.Features & feature);
         }
     }
 }
