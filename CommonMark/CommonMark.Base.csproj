@@ -52,6 +52,7 @@
     <Compile Include="CommonMarkExtensionCollection.cs" />
     <Compile Include="CommonMarkSettings.cs" />
     <Compile Include="CommonMarkExtension.cs" />
+    <Compile Include="Formatters\Blocks\CodeBlockFormatter.cs" />
     <Compile Include="Formatters\Blocks\FencedCodeFormatter.cs" />
     <Compile Include="Formatters\Blocks\IndentedCodeFormatter.cs" />
     <Compile Include="Formatters\IPrinter.cs" />

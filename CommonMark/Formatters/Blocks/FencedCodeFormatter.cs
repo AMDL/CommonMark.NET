@@ -6,7 +6,7 @@ namespace CommonMark.Formatters.Blocks
     /// <summary>
     /// <see cref="BlockTag.FencedCode"/> element formatter.
     /// </summary>
-    public class FencedCodeFormatter : BlockFormatter
+    public class FencedCodeFormatter : CodeBlockFormatter
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="FencedCodeFormatter"/> class.
@@ -28,17 +28,22 @@ namespace CommonMark.Formatters.Blocks
         }
 
         /// <summary>
-        /// Writes the opening of an element.
+        /// Returns the syntax tree node tag for an element.
+        /// </summary>
+        /// <param name="element">Element.</param>
+        /// <returns>Tag.</returns>
+        public override string GetPrinterTag(Block element)
+        {
+            return "fenced_code";
+        }
+
+        /// <summary>
+        /// Writes the additional information that applies to the element.
         /// </summary>
         /// <param name="writer">HTML writer.</param>
         /// <param name="element">Element.</param>
-        /// <returns><c>true</c> if the parent formatter should visit the child elements.</returns>
-        public override bool WriteOpening(IHtmlTextWriter writer, Block element)
+        protected override void WriteInfo(IHtmlTextWriter writer, Block element)
         {
-            writer.EnsureLine();
-            writer.WriteConstant("<pre><code");
-            WritePosition(writer, element);
-
             var info = element.FencedCodeData?.Info;
             if (info != null && info.Length > 0)
             {
@@ -50,58 +55,21 @@ namespace CommonMark.Formatters.Blocks
                 writer.WriteEncodedHtml(new StringPart(info, 0, x));
                 writer.Write('\"');
             }
-
-            writer.Write('>');
-            writer.WriteEncodedHtml(element.StringContent);
-            writer.WriteLineConstant("</code></pre>");
-            return false;
         }
 
         /// <summary>
-        /// Returns the closing of an element.
-        /// </summary>
-        /// <param name="formatter">HTML formatter.</param>
-        /// <param name="element">Element.</param>
-        /// <returns>The closing.</returns>
-        public override string GetClosing(IHtmlFormatter formatter, Block element)
-        {
-            return null;
-        }
-
-        /// <summary>
-        /// Returns the syntax tree node tag for an element.
-        /// </summary>
-        /// <param name="element">Element.</param>
-        /// <returns>Tag.</returns>
-        public override string GetPrinterTag(Block element)
-        {
-            return "fenced_code";
-        }
-
-        /// <summary>
-        /// Returns the properties of an element.
+        /// Returns the additional properties of an element.
         /// </summary>
         /// <param name="printer">Printer.</param>
         /// <param name="element">Element.</param>
-        /// <returns>Properties or <c>null</c>.</returns>
-        public override IDictionary<string, object> GetPrinterData(IPrinter printer, Block element)
+        /// <returns>Additional properties.</returns>
+        protected override Dictionary<string, object> GetData(IPrinter printer, Block element)
         {
             return new Dictionary<string, object>
             {
                 { "length", element.FencedCodeData?.FenceLength },
                 { "info", printer.Format(element.FencedCodeData?.Info) },
-                { string.Empty, printer.Format(element.StringContent) },
             };
-        }
-
-        /// <summary>
-        /// Gets the HTML tag for the element.
-        /// </summary>
-        /// <param name="element">Element.</param>
-        /// <returns>Tag.</returns>
-        protected override string GetTag(Block element)
-        {
-            throw new System.NotImplementedException();
         }
     }
 }
