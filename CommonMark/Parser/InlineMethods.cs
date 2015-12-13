@@ -10,16 +10,10 @@ namespace CommonMark.Parser
         private static readonly char[] WhiteSpaceCharacters = new[] { '\n', ' ' };
         private static readonly char[] BracketSpecialCharacters = new[] { '\\', ']', '[' };
 
+        private static readonly InlineDelimiterCharacterParameters EmphasisDelimiters = InitializeEmphasisDelimiters();
+
         internal static readonly InlineParserDelegate[] EmphasisParsers = InitializeEmphasisParsers();
-
-        private static readonly InlineDelimiterParameters EmphasisSingleChar =
-            new InlineDelimiterParameters { Tag = InlineTag.Emphasis };
-
-        private static readonly InlineDelimiterParameters EmphasisDoubleChar =
-            new InlineDelimiterParameters { Tag = InlineTag.Strong };
-
-        internal static readonly InlineDelimiterParameters[] EmphasisSingleChars = InitializeSingleChars();
-        internal static readonly InlineDelimiterParameters[] EmphasisDoubleChars = InitializeDoubleChars();
+        internal static readonly InlineDelimiterCharacterParameters[] EmphasisDelimiterCharacters = InitializeDelimiterCharacters();
 
         /// <summary>
         /// Initializes the array of delegates for inline parsing.
@@ -27,13 +21,9 @@ namespace CommonMark.Parser
         /// <returns></returns>
         internal static InlineParserDelegate[] InitializeParsers(CommonMarkSettings settings)
         {
-            var singleChars = settings.InlineParserParameters.SingleChars;
-            var doubleChars = settings.InlineParserParameters.DoubleChars;
-            var length = singleChars.Length >= doubleChars.Length
-                ? singleChars.Length
-                : doubleChars.Length;
+            var delimChars = settings.InlineParserParameters.DelimiterCharacters;
 
-            var p = new InlineParserDelegate[length];
+            var p = new InlineParserDelegate[delimChars.Length];
             p['\n'] = (b, s) => handle_newline(s);
             p['`'] = (b, s) => handle_backticks(s);
             p['\\'] = (b, s) => handle_backslash(s);
@@ -43,12 +33,11 @@ namespace CommonMark.Parser
             p[']'] = (b, s) => HandleRightSquareBracket(s, settings);
             p['!'] = (b, s) => HandleExclamation(s, settings);
 
-            for (int i = 0; i < length; i++)
+            for (int i = 0; i < delimChars.Length; i++)
             {
-                var singleChar = i < singleChars.Length ? singleChars[i] : InlineDelimiterParameters.Empty;
-                var doubleChar = i < doubleChars.Length ? doubleChars[i] : InlineDelimiterParameters.Empty;
-                if (!singleChar.IsEmpty || !doubleChar.IsEmpty)
-                    p[i] = (b, s) => HandleOpenerCloser(s, singleChar, doubleChar, settings);
+                var delimiters = delimChars[i];
+                if (!delimiters.IsEmpty)
+                    p[i] = (b, s) => HandleOpenerCloser(s, delimiters, settings);
             }
 
             return p;
@@ -57,22 +46,24 @@ namespace CommonMark.Parser
         private static InlineParserDelegate[] InitializeEmphasisParsers()
         {
             var p = new InlineParserDelegate[127];
-            p['_'] = p['*'] = (b, s) => HandleOpenerCloser(s, EmphasisSingleChar, EmphasisDoubleChar, null);
+            p['_'] = p['*'] = (b, s) => HandleOpenerCloser(s, EmphasisDelimiters, null);
             return p;
         }
 
-        internal static Parser.InlineDelimiterParameters[] InitializeSingleChars()
+        internal static InlineDelimiterCharacterParameters[] InitializeDelimiterCharacters()
         {
-            var t = new InlineDelimiterParameters[127];
-            t['_'] = t['*'] = EmphasisSingleChar;
+            var t = new InlineDelimiterCharacterParameters[127];
+            t['_'] = t['*'] = EmphasisDelimiters;
             return t;
         }
 
-        internal static Parser.InlineDelimiterParameters[] InitializeDoubleChars()
+        private static InlineDelimiterCharacterParameters InitializeEmphasisDelimiters()
         {
-            var t = new InlineDelimiterParameters[127];
-            t['_'] = t['*'] = EmphasisDoubleChar;
-            return t;
+            return new InlineDelimiterCharacterParameters
+            {
+                SingleCharacter = new InlineDelimiterParameters { Tag = InlineTag.Emphasis },
+                DoubleCharacter = new InlineDelimiterParameters { Tag = InlineTag.Strong },
+            };
         }
 
         /// <summary>
@@ -333,12 +324,14 @@ namespace CommonMark.Parser
             return numdelims;
         }
 
-        internal static int MatchInlineStack(InlineStack opener, Subject subj, int closingDelimeterCount, InlineStack closer, InlineDelimiterParameters singleChar, InlineDelimiterParameters doubleChar, CommonMarkSettings settings)
+        internal static int MatchInlineStack(InlineStack opener, Subject subj, int closingDelimeterCount, InlineStack closer, InlineDelimiterCharacterParameters delimiters, CommonMarkSettings settings)
         {
             // calculate the actual number of delimeters used from this closer
             int useDelims;
             var openerDelims = opener.DelimeterCount;
 
+            var singleChar = delimiters.SingleCharacter;
+            var doubleChar = delimiters.DoubleCharacter;
             if (closingDelimeterCount < 3 || openerDelims < 3)
             {
                 useDelims = closingDelimeterCount <= openerDelims ? closingDelimeterCount : openerDelims;
@@ -417,7 +410,7 @@ namespace CommonMark.Parser
             return useDelims;
         }
 
-        private static Inline HandleOpenerCloser(Subject subj, InlineDelimiterParameters singleChar, InlineDelimiterParameters doubleChar, CommonMarkSettings settings)
+        private static Inline HandleOpenerCloser(Subject subj, InlineDelimiterCharacterParameters delimiters, CommonMarkSettings settings)
         {
             bool canOpen, canClose;
             var c = subj.Buffer[subj.Position];
@@ -429,7 +422,7 @@ namespace CommonMark.Parser
                 var istack = InlineStack.FindMatchingOpener(subj.LastPendingInline, InlineStack.InlineStackPriority.Emphasis, c, out canClose);
                 if (istack != null)
                 {
-                    var useDelims = MatchInlineStack(istack, subj, numdelims, null, singleChar, doubleChar, settings);
+                    var useDelims = MatchInlineStack(istack, subj, numdelims, null, delimiters, settings);
 
                     // if the closer was not fully used, move back a char or two and try again.
                     if (useDelims < numdelims)
@@ -438,7 +431,7 @@ namespace CommonMark.Parser
 
                         // use recursion only if it will not be very deep.
                         if (numdelims < 10)
-                            return HandleOpenerCloser(subj, singleChar, doubleChar, settings);
+                            return HandleOpenerCloser(subj, delimiters, settings);
                     }
 
                     return null;

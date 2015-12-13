@@ -9,9 +9,9 @@ namespace CommonMark.Parser
     public struct InlineDelimiterParameters
     {
         /// <summary>
-        /// Empty parameters instance.
+        /// The tag to use for the inline element when the opener is matched.
         /// </summary>
-        public static readonly InlineDelimiterParameters Empty = new InlineDelimiterParameters();
+        public InlineTag Tag { get; set; }
 
         /// <summary>
         /// Determines whether the parameters instance is empty.
@@ -20,11 +20,35 @@ namespace CommonMark.Parser
         {
             get { return Tag == 0; }
         }
+    }
+
+    /// <summary>
+    /// Inline stack delimiter character parameters.
+    /// </summary>
+    public struct InlineDelimiterCharacterParameters
+    {
+        /// <summary>
+        /// Empty parameters instance.
+        /// </summary>
+        public static readonly InlineDelimiterCharacterParameters Empty = new InlineDelimiterCharacterParameters();
 
         /// <summary>
-        /// The tag to use for the inline element when the opener is matched.
+        /// Determines whether the parameters instance is empty.
         /// </summary>
-        public InlineTag Tag { get; set; }
+        public bool IsEmpty
+        {
+            get { return SingleCharacter.IsEmpty && DoubleCharacter.IsEmpty; }
+        }
+
+        /// <summary>
+        /// Single character delimiter parameters.
+        /// </summary>
+        public InlineDelimiterParameters SingleCharacter { get; set; }
+
+        /// <summary>
+        /// Double character delimiter parameters.
+        /// </summary>
+        public InlineDelimiterParameters DoubleCharacter { get; set; }
     }
 
     /// <summary>
@@ -34,8 +58,7 @@ namespace CommonMark.Parser
     {
         private readonly Lazy<InlineParserDelegate[]> _parsers;
         private readonly Lazy<char[]> _specialCharacters;
-        private readonly Lazy<InlineDelimiterParameters[]> _singleChars;
-        private readonly Lazy<InlineDelimiterParameters[]> _doubleChars;
+        private readonly Lazy<InlineDelimiterCharacterParameters[]> _delimiters;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="InlineParserParameters"/> class.
@@ -44,8 +67,7 @@ namespace CommonMark.Parser
         {
             this._parsers = new Lazy<InlineParserDelegate[]>(GetParsers);
             this._specialCharacters = new Lazy<char[]>(GetSpecialCharacters);
-            this._singleChars = new Lazy<InlineDelimiterParameters[]>(GetSingleChars);
-            this._doubleChars = new Lazy<InlineDelimiterParameters[]>(GetDoubleChars);
+            this._delimiters = new Lazy<InlineDelimiterCharacterParameters[]>(GetDelimiterCharacters);
         }
 
         /// <summary>
@@ -71,32 +93,19 @@ namespace CommonMark.Parser
         }
 
         /// <summary>
-        /// Gets the parameters to use when single-character inline openers are being matched.
+        /// Gets the parameters to use when inline openers are being matched.
         /// </summary>
-        public InlineDelimiterParameters[] SingleChars
+        public InlineDelimiterCharacterParameters[] DelimiterCharacters
         {
 #if OptimizeFor45
             [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
 #endif
-            get { return _singleChars.Value; }
-        }
-
-        /// <summary>
-        /// Gets the parameters to use when double-character inline openers are being matched.
-        /// </summary>
-        public InlineDelimiterParameters[] DoubleChars
-        {
-#if OptimizeFor45
-            [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-#endif
-            get { return _doubleChars.Value; }
+            get { return _delimiters.Value; }
         }
 
         internal abstract InlineParserDelegate[] GetParsers();
 
-        internal abstract InlineDelimiterParameters[] GetSingleChars();
-
-        internal abstract InlineDelimiterParameters[] GetDoubleChars();
+        internal abstract InlineDelimiterCharacterParameters[] GetDelimiterCharacters();
 
         private char[] GetSpecialCharacters()
         {
@@ -133,36 +142,36 @@ namespace CommonMark.Parser
         internal override InlineParserDelegate[] GetParsers()
         {
             return Settings.GetItems(Parser.InlineMethods.InitializeParsers(Settings),
-                extension => extension.InlineParsers, key => key, GetInlineParser);
+                extension => extension.InlineParsers, key => key, GetParser);
         }
 
-        internal override InlineDelimiterParameters[] GetSingleChars()
+        internal override InlineDelimiterCharacterParameters[] GetDelimiterCharacters()
         {
-            return Settings.GetItems(Parser.InlineMethods.InitializeSingleChars(),
-                ext => ext.InlineSingleChars, key => key, GetInlineSingleChar);
+            return Settings.GetItems(Parser.InlineMethods.InitializeDelimiterCharacters(),
+                ext => ext.InlineDelimiterCharacters, key => key, GetDelimiterCharacter);
         }
 
-        internal override InlineDelimiterParameters[] GetDoubleChars()
-        {
-            return Settings.GetItems(Parser.InlineMethods.InitializeDoubleChars(),
-                ext => ext.InlineDoubleChars, key => key, GetInlineDoubleChar);
-        }
-
-        private static InlineParserDelegate GetInlineParser(InlineParserDelegate inner, InlineParserDelegate outer)
+        private static InlineParserDelegate GetParser(InlineParserDelegate inner, InlineParserDelegate outer)
         {
             return !inner.Equals(outer)
                 ? new Parser.DelegateInlineParser(inner, outer).ParseInline
                 : inner;
         }
 
-        private static InlineDelimiterParameters GetInlineSingleChar(InlineDelimiterParameters inner, InlineDelimiterParameters outer)
+        private static InlineDelimiterCharacterParameters GetDelimiterCharacter(InlineDelimiterCharacterParameters inner, InlineDelimiterCharacterParameters outer)
         {
-            throw new InvalidOperationException(string.Format("Single character parameters value is already set: {0}.", inner));
+            return new InlineDelimiterCharacterParameters
+            {
+                SingleCharacter = GetDelimiter(inner.SingleCharacter, outer.SingleCharacter, "Single character"),
+                DoubleCharacter = GetDelimiter(inner.DoubleCharacter, outer.DoubleCharacter, "Double character"),
+            };
         }
 
-        private static InlineDelimiterParameters GetInlineDoubleChar(InlineDelimiterParameters inner, InlineDelimiterParameters value)
+        private static InlineDelimiterParameters GetDelimiter(InlineDelimiterParameters inner, InlineDelimiterParameters outer, string key)
         {
-            throw new InvalidOperationException(string.Format("Double character parameters value is already set: {0}.", inner));
+            if (!inner.IsEmpty && !outer.IsEmpty)
+                throw new InvalidOperationException(string.Format("{0} parameters value is already set: {1}.", key, inner));
+            return !inner.IsEmpty ? inner : outer;
         }
 
         private CommonMarkSettings Settings
@@ -181,14 +190,9 @@ namespace CommonMark.Parser
             return Parser.InlineMethods.EmphasisParsers;
         }
 
-        internal override InlineDelimiterParameters[] GetSingleChars()
+        internal override InlineDelimiterCharacterParameters[] GetDelimiterCharacters()
         {
-            return Parser.InlineMethods.EmphasisSingleChars;
-        }
-
-        internal override InlineDelimiterParameters[] GetDoubleChars()
-        {
-            return Parser.InlineMethods.EmphasisDoubleChars;
+            return Parser.InlineMethods.EmphasisDelimiterCharacters;
         }
     }
 }

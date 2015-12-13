@@ -1,4 +1,5 @@
 ﻿using CommonMark.Formatters;
+using CommonMark.Parser;
 using CommonMark.Syntax;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,7 @@ namespace CommonMark
     {
         private readonly Lazy<IDictionary<char, BlockParserDelegate>> _blockParsers;
         private readonly Lazy<IDictionary<char, InlineParserDelegate>> _inlineParsers;
+        private readonly Lazy<IDictionary<char, InlineDelimiterCharacterParameters>> _inlineDelimiterCharacters;
         private readonly Lazy<IDictionary<BlockTag, IBlockFormatter>> _blockFormatters;
         private readonly Lazy<IDictionary<InlineTag, IInlineFormatter>> _inlineFormatters;
 
@@ -22,8 +24,9 @@ namespace CommonMark
         protected CommonMarkExtension(CommonMarkSettings settings)
         {
             var parameters = settings.FormatterParameters;
-            this._blockParsers = new Lazy<IDictionary<char, BlockParserDelegate>>(() => InitalizeBlockParsers());
-            this._inlineParsers = new Lazy<IDictionary<char, InlineParserDelegate>>(() => InitalizeInlineParsers());
+            this._blockParsers = new Lazy<IDictionary<char, BlockParserDelegate>>(InitalizeBlockParsers);
+            this._inlineParsers = new Lazy<IDictionary<char, InlineParserDelegate>>(InitalizeInlineParsers);
+            this._inlineDelimiterCharacters = new Lazy<IDictionary<char, InlineDelimiterCharacterParameters>>(InitializeInlineDelimiterCharacters);
             this._blockFormatters = new Lazy<IDictionary<BlockTag, IBlockFormatter>>(() => InitializeBlockFormatters(parameters));
             this._inlineFormatters = new Lazy<IDictionary<InlineTag, IInlineFormatter>>(() => InitializeInlineFormatters(parameters));
         }
@@ -45,19 +48,11 @@ namespace CommonMark
         }
 
         /// <summary>
-        /// Gets the mapping from character to inline delimiter parameters for matched single-character openers.
+        /// Gets the mapping from character to inline delimiter character parameters.
         /// </summary>
-        public virtual IDictionary<char, Parser.InlineDelimiterParameters> InlineSingleChars
+        public IDictionary<char, InlineDelimiterCharacterParameters> InlineDelimiterCharacters
         {
-            get { return null; }
-        }
-
-        /// <summary>
-        /// Gets the mapping from character to inline delimiter parameters for matched double-character openers.
-        /// </summary>
-        public virtual IDictionary<char, Parser.InlineDelimiterParameters> InlineDoubleChars
-        {
-            get { return null; }
+            get { return _inlineDelimiterCharacters.Value; }
         }
 
         /// <summary>
@@ -116,6 +111,14 @@ namespace CommonMark
         /// Creates the mapping from character to inline parser delegate.
         /// </summary>
         protected virtual IDictionary<char, InlineParserDelegate> InitalizeInlineParsers()
+        {
+            return null;
+        }
+
+        /// <summary>
+        /// Creates the mapping from character to inline delimiter character parameters.
+        /// </summary>
+        protected virtual IDictionary<char, InlineDelimiterCharacterParameters> InitializeInlineDelimiterCharacters()
         {
             return null;
         }

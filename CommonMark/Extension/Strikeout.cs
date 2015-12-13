@@ -11,8 +11,6 @@ namespace CommonMark.Extension
     /// </summary>
     public class Strikeout : CommonMarkExtension
     {
-        private static readonly InlineDelimiterParameters DoubleChar = InitializeDoubleChar();
-
         /// <summary>
         /// Initializes a new instance of the <see cref="Strikeout"/> class.
         /// </summary>
@@ -23,17 +21,14 @@ namespace CommonMark.Extension
         }
 
         /// <summary>
-        /// Gets the mapping from character to inline delimiter parameters for matched double-character openers.
+        /// Creates the mapping from character to inline delimiter character parameters.
         /// </summary>
-        public override IDictionary<char, InlineDelimiterParameters> InlineDoubleChars
+        protected override IDictionary<char, InlineDelimiterCharacterParameters> InitializeInlineDelimiterCharacters()
         {
-            get
+            return new Dictionary<char, InlineDelimiterCharacterParameters>
             {
-                return new Dictionary<char, InlineDelimiterParameters>
-                {
-                    { '~', DoubleChar }
-                };
-            }
+                { '~', InitializeDelimiters() }
+            };
         }
 
         /// <summary>
@@ -47,7 +42,15 @@ namespace CommonMark.Extension
             };
         }
 
-        private static InlineDelimiterParameters InitializeDoubleChar()
+        private static InlineDelimiterCharacterParameters InitializeDelimiters()
+        {
+            return new InlineDelimiterCharacterParameters
+            {
+                DoubleCharacter = InitializeDoubleCharacter()
+            };
+        }
+
+        private static InlineDelimiterParameters InitializeDoubleCharacter()
         {
             return new InlineDelimiterParameters
             {

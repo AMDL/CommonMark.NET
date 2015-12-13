@@ -40,14 +40,9 @@ namespace CommonMark
         IDictionary<char, InlineParserDelegate> InlineParsers { get; }
 
         /// <summary>
-        /// Gets the mapping from character to inline delimiter parameters for matched single-character openers.
+        /// Gets the mapping from character to inline delimiter character parameters.
         /// </summary>
-        IDictionary<char, Parser.InlineDelimiterParameters> InlineSingleChars { get; }
-
-        /// <summary>
-        /// Gets the mapping from character to inline delimiter parameters for matched double-character openers.
-        /// </summary>
-        IDictionary<char, Parser.InlineDelimiterParameters> InlineDoubleChars { get; }
+        IDictionary<char, Parser.InlineDelimiterCharacterParameters> InlineDelimiterCharacters { get; }
 
         /// <summary>
         /// Gets the mapping from block tag to block element formatter.
