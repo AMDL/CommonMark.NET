@@ -27,15 +27,15 @@ namespace CommonMark.Extension
         /// <summary>
         /// Creates the mapping from character to block parser delegate.
         /// </summary>
-        protected override IDictionary<char, BlockParserDelegate> InitalizeBlockParsers()
+        protected override IDictionary<char, BlockInitializerDelegate> InitializeBlockInitializers()
         {
-            var parsers = new Dictionary<char, BlockParserDelegate>();
-            parsers.Add('-', ParseLine);
-            parsers.Add('|', ParseLine);
+            var parsers = new Dictionary<char, BlockInitializerDelegate>();
+            parsers.Add('-', Initialize);
+            parsers.Add('|', Initialize);
             if (IsEnabled(PipeTablesFeatures.HeaderEquals))
-                parsers.Add('=', ParseLine);
+                parsers.Add('=', Initialize);
             if (IsEnabled(PipeTablesFeatures.HeaderColon))
-                parsers.Add(':', ParseLine);
+                parsers.Add(':', Initialize);
             return parsers;
         }
 
@@ -58,7 +58,7 @@ namespace CommonMark.Extension
             return formatters;
         }
 
-        private bool ParseLine(Block container, string line, int first_nonspace, bool indented, ref int offset, ref int column)
+        private bool Initialize(ref Block container, LineInfo lineInfo, string line, int first_nonspace, int indent, bool indented, bool all_matched, ref int offset, ref int column, CommonMarkSettings settings)
         {
             TableData data;
             if (!indented && container.Tag == BlockTag.Paragraph && BlockMethods.ContainsSingleLine(container.StringContent)
@@ -67,9 +67,9 @@ namespace CommonMark.Extension
                 container.Tag = BlockTag.Table;
                 container.TableData = data;
                 BlockMethods.AdvanceOffset(line, line.Length - 1 - offset, false, ref offset, ref column);
-                return true;
+                return false;
             }
-            return false;
+            return true;
         }
 
         /// <summary>
