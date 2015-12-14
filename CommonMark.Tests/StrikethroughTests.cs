@@ -15,7 +15,7 @@ namespace CommonMark.Tests
                 if (s == null)
                 {
                     s = CommonMarkSettings.Default.Clone();
-                    s.Register(new Strikeout(s));
+                    s.Extensions.Register(new Strikeout(s));
                     _settings = s;
                 }
                 return s;
