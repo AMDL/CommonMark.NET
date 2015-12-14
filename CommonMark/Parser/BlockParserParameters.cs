@@ -16,10 +16,10 @@ namespace CommonMark.Parser
         public BlockParserParameters(CommonMarkSettings settings)
         {
             this.Settings = settings;
-            this._advancers = new Lazy<BlockAdvancerDelegate[]>(GetAdvancers);
-            this._initializers = new Lazy<BlockInitializerDelegate[]>(GetInitializers);
-            this._finalizers = new Lazy<BlockFinalizerDelegate[]>(GetFinalizers);
-            this._processors = new Lazy<BlockProcessorDelegate[]>(GetProcessors);
+            this._advancers = settings.GetLazy(GetAdvancers);
+            this._initializers = settings.GetLazy(GetInitializers);
+            this._finalizers = settings.GetLazy(GetFinalizers);
+            this._processors = settings.GetLazy(GetProcessors);
         }
 
         #endregion Constructor

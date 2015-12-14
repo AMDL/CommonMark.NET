@@ -16,8 +16,8 @@ namespace CommonMark.Formatters
         public FormatterParameters(CommonMarkSettings settings)
         {
             this.Settings = settings;
-            this._blockFormatters = new Lazy<Formatters.IBlockFormatter[]>(GetBlockFormatters);
-            this._inlineFormatters = new Lazy<Formatters.IInlineFormatter[]>(GetInlineFormatters);
+            this._blockFormatters = settings.GetLazy(GetBlockFormatters);
+            this._inlineFormatters = settings.GetLazy(GetInlineFormatters);
         }
 
         #endregion Constructor

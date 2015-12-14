@@ -33,18 +33,18 @@ namespace CommonMark
         /// <param name="settings">Common settings.</param>
         protected CommonMarkExtension(CommonMarkSettings settings)
         {
-            this._blockAdvancers = new Lazy<IDictionary<BlockTag, BlockAdvancerDelegate>>(InitializeBlockAdvancers);
-            this._blockInitializers = new Lazy<IDictionary<char, BlockInitializerDelegate>>(InitializeBlockInitializers);
-            this._blockFinalizers = new Lazy<IDictionary<BlockTag, BlockFinalizerDelegate>>(InitializeBlockFinalizers);
-            this._blockProcessors = new Lazy<IDictionary<BlockTag, BlockProcessorDelegate>>(InitializeBlockProcessors);
+            this._blockAdvancers = settings.GetLazy(InitializeBlockAdvancers);
+            this._blockInitializers = settings.GetLazy(InitializeBlockInitializers);
+            this._blockFinalizers = settings.GetLazy(InitializeBlockFinalizers);
+            this._blockProcessors = settings.GetLazy(InitializeBlockProcessors);
 
-            this._inlineParsers = new Lazy<IDictionary<char, InlineParserDelegate>>(InitalizeInlineParsers);
-            this._inlineDelimiterCharacters = new Lazy<IDictionary<char, InlineDelimiterCharacterParameters>>(InitializeInlineDelimiterCharacters);
-            this._referenceNormalizer = new Lazy<StringNormalizerDelegate>(InitializeReferenceNormalizer);
+            this._inlineParsers = settings.GetLazy(InitalizeInlineParsers);
+            this._inlineDelimiterCharacters = settings.GetLazy(InitializeInlineDelimiterCharacters);
+            this._referenceNormalizer = settings.GetLazy(InitializeReferenceNormalizer);
 
             var parameters = settings.FormatterParameters;
-            this._blockFormatters = new Lazy<IDictionary<BlockTag, IBlockFormatter>>(() => InitializeBlockFormatters(parameters));
-            this._inlineFormatters = new Lazy<IDictionary<InlineTag, IInlineFormatter>>(() => InitializeInlineFormatters(parameters));
+            this._blockFormatters = settings.GetLazy(() => InitializeBlockFormatters(parameters));
+            this._inlineFormatters = settings.GetLazy(() => InitializeInlineFormatters(parameters));
         }
 
         #endregion

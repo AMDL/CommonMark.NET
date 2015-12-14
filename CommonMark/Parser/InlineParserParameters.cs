@@ -15,12 +15,13 @@ namespace CommonMark.Parser
         /// <summary>
         /// Initializes a new instance of the <see cref="InlineParserParameters"/> class.
         /// </summary>
-        protected InlineParserParameters()
+        /// <param name="settings">Common settings.</param>
+        protected InlineParserParameters(CommonMarkSettings settings)
         {
-            this._parsers = new Lazy<InlineParserDelegate[]>(GetParsers);
-            this._specialCharacters = new Lazy<char[]>(GetSpecialCharacters);
-            this._delimiters = new Lazy<InlineDelimiterCharacterParameters[]>(GetDelimiterCharacters);
-            this._referenceNormalizer = new Lazy<StringNormalizerDelegate>(GetReferenceNormalizer);
+            this._parsers = settings.GetLazy(GetParsers);
+            this._specialCharacters = settings.GetLazy(GetSpecialCharacters);
+            this._delimiters = settings.GetLazy(GetDelimiterCharacters);
+            this._referenceNormalizer = settings.GetLazy(GetReferenceNormalizer);
         }
 
         /// <summary>
@@ -103,6 +104,7 @@ namespace CommonMark.Parser
     internal class StandardInlineParserParameters : InlineParserParameters
     {
         public StandardInlineParserParameters(CommonMarkSettings settings)
+            : base(settings)
         {
             this.Settings = settings;
         }
@@ -143,22 +145,12 @@ namespace CommonMark.Parser
     /// </summary>
     public class EmphasisInlineParserParameters : InlineParserParameters
     {
-        private static readonly Lazy<EmphasisInlineParserParameters> _instance;
-
-        static EmphasisInlineParserParameters()
-        {
-            _instance = new Lazy<EmphasisInlineParserParameters>(() => new EmphasisInlineParserParameters());
-        }
-
         /// <summary>
-        /// Gets the single instance of the <see cref="EmphasisInlineParserParameters"/> class.
+        /// Initializes a new instance of the <see cref="EmphasisInlineParserParameters"/> class.
         /// </summary>
-        public static EmphasisInlineParserParameters Instance
-        {
-            get { return _instance.Value; }
-        } 
-
-        private EmphasisInlineParserParameters()
+        /// <param name="settings">Common settings.</param>
+        public EmphasisInlineParserParameters(CommonMarkSettings settings)
+            : base(settings)
         {
         }
 

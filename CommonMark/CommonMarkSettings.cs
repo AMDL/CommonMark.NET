@@ -158,9 +158,14 @@ namespace CommonMark
 
         internal void Reset()
         {
-            this._blockParserParameters = new Lazy<Parser.BlockParserParameters>(GetBlockParserParameters);
-            this._inlineParserParameters = new Lazy<Parser.StandardInlineParserParameters>(GetInlineParserParameters);
-            this._formatterParameters = new Lazy<Formatters.FormatterParameters>(GetFormatterParameters);
+            this._blockParserParameters = GetLazy(GetBlockParserParameters);
+            this._inlineParserParameters = GetLazy(GetInlineParserParameters);
+            this._formatterParameters = GetLazy(GetFormatterParameters);
+        }
+
+        internal Lazy<T> GetLazy<T>(Func<T> valueFactory)
+        {
+            return new Lazy<T>(valueFactory, isThreadSafe: false);
         }
 
         #region BlockParserParameters
