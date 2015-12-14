@@ -10,9 +10,19 @@ namespace CommonMark
     public interface ICommonMarkExtension
     {
         /// <summary>
-        /// Gets the mapping from character to block parser delegate.
+        /// Gets the mapping from block tag to block advancer delegate.
         /// </summary>
-        IDictionary<char, BlockParserDelegate> BlockParsers { get; }
+        IDictionary<Syntax.BlockTag, BlockAdvancerDelegate> BlockAdvancers { get; }
+
+        /// <summary>
+        /// Gets the mapping from character to block initializer delegate.
+        /// </summary>
+        IDictionary<char, BlockInitializerDelegate> BlockInitializers { get; }
+
+        /// <summary>
+        /// Gets the mapping from block tag to block finalizer delegate.
+        /// </summary>
+        IDictionary<Syntax.BlockTag, BlockFinalizerDelegate> BlockFinalizers { get; }
 
         /// <summary>
         /// Gets the mapping from block tag to block processor delegate.

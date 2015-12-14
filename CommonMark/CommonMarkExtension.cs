@@ -11,12 +11,20 @@ namespace CommonMark
     /// </summary>
     public abstract class CommonMarkExtension : ICommonMarkExtension
     {
-        private readonly Lazy<IDictionary<char, BlockParserDelegate>> _blockParsers;
+        #region Fields
+
+        private readonly Lazy<IDictionary<BlockTag, BlockAdvancerDelegate>> _blockAdvancers;
+        private readonly Lazy<IDictionary<char, BlockInitializerDelegate>> _blockInitializers;
+        private readonly Lazy<IDictionary<BlockTag, BlockFinalizerDelegate>> _blockFinalizers;
         private readonly Lazy<IDictionary<BlockTag, BlockProcessorDelegate>> _blockProcessors;
         private readonly Lazy<IDictionary<char, InlineParserDelegate>> _inlineParsers;
         private readonly Lazy<IDictionary<char, InlineDelimiterCharacterParameters>> _inlineDelimiterCharacters;
         private readonly Lazy<IDictionary<BlockTag, IBlockFormatter>> _blockFormatters;
         private readonly Lazy<IDictionary<InlineTag, IInlineFormatter>> _inlineFormatters;
+
+        #endregion
+
+        #region Constructor
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CommonMarkExtension"/> class.
@@ -24,21 +32,45 @@ namespace CommonMark
         /// <param name="settings">Common settings.</param>
         protected CommonMarkExtension(CommonMarkSettings settings)
         {
-            var parameters = settings.FormatterParameters;
-            this._blockParsers = new Lazy<IDictionary<char, BlockParserDelegate>>(InitalizeBlockParsers);
+            this._blockAdvancers = new Lazy<IDictionary<BlockTag, BlockAdvancerDelegate>>(InitializeBlockAdvancers);
+            this._blockInitializers = new Lazy<IDictionary<char, BlockInitializerDelegate>>(InitializeBlockInitializers);
+            this._blockFinalizers = new Lazy<IDictionary<BlockTag, BlockFinalizerDelegate>>(InitializeBlockFinalizers);
             this._blockProcessors = new Lazy<IDictionary<BlockTag, BlockProcessorDelegate>>(InitializeBlockProcessors);
+
             this._inlineParsers = new Lazy<IDictionary<char, InlineParserDelegate>>(InitalizeInlineParsers);
             this._inlineDelimiterCharacters = new Lazy<IDictionary<char, InlineDelimiterCharacterParameters>>(InitializeInlineDelimiterCharacters);
+
+            var parameters = settings.FormatterParameters;
             this._blockFormatters = new Lazy<IDictionary<BlockTag, IBlockFormatter>>(() => InitializeBlockFormatters(parameters));
             this._inlineFormatters = new Lazy<IDictionary<InlineTag, IInlineFormatter>>(() => InitializeInlineFormatters(parameters));
         }
 
+        #endregion
+
+        #region Block Parsers
+
         /// <summary>
-        /// Gets the mapping from character to block parser delegate.
+        /// Gets the mapping from block tag to block advancer delegate.
         /// </summary>
-        public IDictionary<char, BlockParserDelegate> BlockParsers
+        public IDictionary<BlockTag, BlockAdvancerDelegate> BlockAdvancers
         {
-            get { return _blockParsers.Value; }
+            get { return _blockAdvancers.Value; }
+        }
+
+        /// <summary>
+        /// Gets the mapping from character to block initializer delegate.
+        /// </summary>
+        public IDictionary<char, BlockInitializerDelegate> BlockInitializers
+        {
+            get { return _blockInitializers.Value; }
+        }
+
+        /// <summary>
+        /// Gets the mapping from block tag to block finalizer delegate.
+        /// </summary>
+        public IDictionary<BlockTag, BlockFinalizerDelegate> BlockFinalizers
+        {
+            get { return _blockFinalizers.Value; }
         }
 
         /// <summary>
@@ -48,6 +80,10 @@ namespace CommonMark
         {
             get { return _blockProcessors.Value; }
         }
+
+        #endregion
+
+        #region Inline Parsers
 
         /// <summary>
         /// Gets the mapping from character to inline parser delegate.
@@ -65,6 +101,10 @@ namespace CommonMark
             get { return _inlineDelimiterCharacters.Value; }
         }
 
+        #endregion
+
+        #region Formatters
+
         /// <summary>
         /// Gets the mapping from block tag to block element formatter.
         /// </summary>
@@ -80,6 +120,10 @@ namespace CommonMark
         {
             get { return _inlineFormatters.Value; }
         }
+
+        #endregion
+
+        #region Object overrides
 
         /// <summary>
         /// Determines whether the specified object has the same type.
@@ -109,10 +153,30 @@ namespace CommonMark
             return GetType().Name;
         }
 
+        #endregion
+
+        #region Initialize methods
+
         /// <summary>
-        /// Creates the mapping from character to block parser delegate.
+        /// Creates the mapping from block tag to block advancer delegate.
         /// </summary>
-        protected virtual IDictionary<char, BlockParserDelegate> InitalizeBlockParsers()
+        protected virtual IDictionary<BlockTag, BlockAdvancerDelegate> InitializeBlockAdvancers()
+        {
+            return null;
+        }
+
+        /// <summary>
+        /// Creates the mapping from character to block initializer delegate.
+        /// </summary>
+        protected virtual IDictionary<char, BlockInitializerDelegate> InitializeBlockInitializers()
+        {
+            return null;
+        }
+
+        /// <summary>
+        /// Creates the mapping from block tag to block finalizer delegate.
+        /// </summary>
+        protected virtual IDictionary<BlockTag, BlockFinalizerDelegate> InitializeBlockFinalizers()
         {
             return null;
         }
@@ -157,6 +221,10 @@ namespace CommonMark
             return null;
         }
 
+        #endregion
+
+        #region Helper methods
+		
         /// <summary>
         /// Processes the inline contents of a block element.
         /// </summary>
@@ -170,5 +238,7 @@ namespace CommonMark
         {
             return BlockMethods.ProcessInlines(block, subject, refmap, ref inlineStack, parameters);
         }
+
+	    #endregion
     }
 }

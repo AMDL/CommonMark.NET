@@ -1,18 +1,25 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace CommonMark.Parser
 {
-    internal sealed class LineInfo
+    /// <summary>
+    /// Line information.
+    /// </summary>
+    public sealed class LineInfo
     {
-        public LineInfo(bool trackPositions)
+        internal LineInfo(bool trackPositions)
         {
             this.IsTrackingPositions = trackPositions;
         }
 
+        /// <summary>
+        /// Determines whether position tracking is enabled.
+        /// </summary>
         public readonly bool IsTrackingPositions;
 
+        /// <summary>
+        /// Line string.
+        /// </summary>
         public string Line;
 
         /// <summary>
@@ -20,12 +27,20 @@ namespace CommonMark.Parser
         /// </summary>
         public int LineOffset;
 
+        /// <summary>
+        /// Line number.
+        /// </summary>
         public int LineNumber;
 
-        public PositionOffset[] Offsets = new PositionOffset[20];
+        internal PositionOffset[] Offsets = new PositionOffset[20];
 
-        public int OffsetCount;
+        internal int OffsetCount;
 
+        /// <summary>
+        /// Adds a position offset.
+        /// </summary>
+        /// <param name="position">Position.</param>
+        /// <param name="offset">Offset.</param>
         public void AddOffset(int position, int offset)
         {
             if (offset == 0)
@@ -37,6 +52,10 @@ namespace CommonMark.Parser
             this.Offsets[this.OffsetCount++] = new PositionOffset(position, offset);
         }
 
+        /// <summary>
+        /// Converts the instance to string.
+        /// </summary>
+        /// <returns>String.</returns>
         public override string ToString()
         {
             string ln;
@@ -51,6 +70,12 @@ namespace CommonMark.Parser
                 + ": " + ln;
         }
 
+        /// <summary>
+        /// Returns the origin of the specified position.
+        /// </summary>
+        /// <param name="position">Position.</param>
+        /// <param name="isStartPosition"><c>true</c> if <paramref name="position"/> is a start position.</param>
+        /// <returns>Origin.</returns>
         public int CalculateOrigin(int position, bool isStartPosition)
         {
             return PositionTracker.CalculateOrigin(this.Offsets, this.OffsetCount, this.LineOffset + position, true, isStartPosition);

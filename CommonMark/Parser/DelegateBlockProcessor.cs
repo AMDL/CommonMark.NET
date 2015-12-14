@@ -14,7 +14,7 @@ namespace CommonMark.Parser
             this.outer = outer;
         }
 
-        public bool Process(Syntax.Block container, Subject subject, Dictionary<string, Reference> referenceMap, ref Stack<Inline> inlineStack, CommonMarkSettings settings)
+        private bool Process(Block container, Subject subject, Dictionary<string, Reference> referenceMap, ref Stack<Inline> inlineStack, CommonMarkSettings settings)
         {
             return inner(container, subject, referenceMap, ref inlineStack, settings)
                 || outer(container, subject, referenceMap, ref inlineStack, settings);

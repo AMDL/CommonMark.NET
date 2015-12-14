@@ -5,45 +5,92 @@ namespace CommonMark.Parser
     /// <summary>
     /// Block element parser parameters.
     /// </summary>
-    internal sealed class BlockParserParameters
+    public class BlockParserParameters
     {
         #region Constructor
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BlockParserParameters"/> class.
+        /// </summary>
+        /// <param name="settings">Common settings.</param>
         public BlockParserParameters(CommonMarkSettings settings)
         {
             this.Settings = settings;
-            this._parsers = new Lazy<BlockParserDelegate[]>(GetParsers);
+            this._advancers = new Lazy<BlockAdvancerDelegate[]>(GetAdvancers);
+            this._initializers = new Lazy<BlockInitializerDelegate[]>(GetInitializers);
+            this._finalizers = new Lazy<BlockFinalizerDelegate[]>(GetFinalizers);
             this._processors = new Lazy<BlockProcessorDelegate[]>(GetProcessors);
         }
 
         #endregion Constructor
 
-        #region Parsers
+        #region Advancers
 
-        private readonly Lazy<BlockParserDelegate[]> _parsers;
+        private readonly Lazy<BlockAdvancerDelegate[]> _advancers;
 
-        public BlockParserDelegate[] Parsers
+        /// <summary>
+        /// Gets the advancer delegates.
+        /// </summary>
+        public BlockAdvancerDelegate[] Advancers
         {
-            get { return _parsers.Value; }
+            get { return _advancers.Value; }
         }
 
-        private BlockParserDelegate[] GetParsers()
+        private BlockAdvancerDelegate[] GetAdvancers()
         {
-            return Settings.Extensions.GetItems(InitializeParsers,
-                ext => ext.BlockParsers, key => key, DelegateBlockParser.Merge);
+            return Settings.Extensions.GetItems(BlockMethods.InitializeAdvancers,
+                ext => ext.BlockAdvancers, key => (int)key, DelegateBlockAdvancer.Merge);
         }
 
-        private static BlockParserDelegate[] InitializeParsers()
+        #endregion Advancers
+
+        #region Initializers
+
+        private readonly Lazy<BlockInitializerDelegate[]> _initializers;
+
+        /// <summary>
+        /// Gets the initializer delegates.
+        /// </summary>
+        public BlockInitializerDelegate[] Initializers
         {
-            return new BlockParserDelegate[127];
+            get { return _initializers.Value; }
         }
 
-        #endregion Parsers
+        private BlockInitializerDelegate[] GetInitializers()
+        {
+            return Settings.Extensions.GetItems(BlockMethods.InitializeInitializers,
+                ext => ext.BlockInitializers, key => key, DelegateBlockInitializer.Merge);
+        }
+
+        #endregion Initializers
+
+        #region Finalizers
+
+        private readonly Lazy<BlockFinalizerDelegate[]> _finalizers;
+
+        /// <summary>
+        /// Gets the finalizer delegates.
+        /// </summary>
+        public BlockFinalizerDelegate[] Finalizers
+        {
+            get { return _finalizers.Value; }
+        } 
+
+        private BlockFinalizerDelegate[] GetFinalizers()
+        {
+            return Settings.Extensions.GetItems(BlockMethods.InitializeFinalizers,
+                ext => ext.BlockFinalizers, key => (int)key, DelegateBlockFinalizer.Merge);
+        }
+
+        #endregion Finalizers
 
         #region Processors
 
         private readonly Lazy<BlockProcessorDelegate[]> _processors;
 
+        /// <summary>
+        /// Gets the processor delegates.
+        /// </summary>
         public BlockProcessorDelegate[] Processors
         {
             get { return _processors.Value; }
