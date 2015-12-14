@@ -112,6 +112,18 @@ namespace CommonMark.Formatters
         /// <returns>Tag.</returns>
         protected abstract string GetTag(T element);
 
+        /// <summary>
+        /// Resolves a URI using <see cref="FormatterParameters.UriResolver"/>.
+        /// </summary>
+        /// <param name="targetUri">Target URI.</param>
+        /// <returns>Resolved URI, or the target URI if the URI resolver is not set.</returns>
+        protected string ResolveUri(string targetUri)
+        {
+            return parameters.UriResolver != null
+                ? parameters.UriResolver(targetUri)
+                : targetUri;
+        }
+
         #endregion
 
         #region Object overrides

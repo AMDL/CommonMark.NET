@@ -20,20 +20,6 @@ namespace CommonMark.Formatters
             return inner.CanHandle(element) || outer.CanHandle(element);
         }
 
-        public bool WriteOpening(IHtmlTextWriter writer, T element)
-        {
-            return inner.CanHandle(element)
-                ? inner.WriteOpening(writer, element)
-                : outer.WriteOpening(writer, element);
-        }
-
-        public string GetClosing(IHtmlFormatter formatter, T element)
-        {
-            return inner.CanHandle(element)
-                ? inner.GetClosing(formatter, element)
-                : outer.GetClosing(formatter, element);
-        }
-
         public string GetPrinterTag(T element)
         {
             return inner.CanHandle(element)
@@ -54,6 +40,20 @@ namespace CommonMark.Formatters
         public DelegateBlockFormatter(IBlockFormatter inner, IBlockFormatter outer)
             : base(inner, outer)
         {
+        }
+
+        public bool WriteOpening(IHtmlTextWriter writer, Block block)
+        {
+            return inner.CanHandle(block)
+                ? inner.WriteOpening(writer, block)
+                : outer.WriteOpening(writer, block);
+        }
+
+        public string GetClosing(IHtmlFormatter formatter, Block block)
+        {
+            return inner.CanHandle(block)
+                ? inner.GetClosing(formatter, block)
+                : outer.GetClosing(formatter, block);
         }
 
         public bool? IsStackTight(Block block, bool tight)
@@ -90,6 +90,27 @@ namespace CommonMark.Formatters
             return !inner.Equals(outer)
                 ? new DelegateInlineFormatter(inner, outer)
                 : inner;
+        }
+
+        public bool WriteOpening(IHtmlTextWriter writer, Inline inline, bool withinLink)
+        {
+            return inner.CanHandle(inline)
+                ? inner.WriteOpening(writer, inline, withinLink)
+                : outer.WriteOpening(writer, inline, withinLink);
+        }
+
+        public string GetClosing(IHtmlFormatter formatter, Inline inline, bool withinLink)
+        {
+            return inner.CanHandle(inline)
+                ? inner.GetClosing(formatter, inline, withinLink)
+                : outer.GetClosing(formatter, inline, withinLink);
+        }
+
+        public bool IsStackWithinLink(Inline inline, bool withinLink)
+        {
+            return inner.CanHandle(inline)
+                ? inner.IsStackWithinLink(inline, withinLink)
+                : outer.IsStackWithinLink(inline, withinLink);
         }
     }
 }

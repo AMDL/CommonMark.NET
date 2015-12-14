@@ -285,13 +285,13 @@ namespace CommonMark.Formatters
             var plaintext = RenderPlainTextInlines.Peek();
 
             var formatter = Settings.FormatterParameters.InlineFormatters[(int)inline.Tag];
-            if (formatter != null)
+            if (inline.Tag != InlineTag.Link && formatter != null) //TODO
             {
                 ignoreChildNodes = true;
                 var isRenderPlainTextInlines = formatter.IsRenderPlainTextInlines(inline, plaintext);
                 if (isOpening)
                 {
-                    ignoreChildNodes = !formatter.WriteOpening(_target, inline);
+                    ignoreChildNodes = !formatter.WriteOpening(_target, inline, false);
                     if (!isClosing && isRenderPlainTextInlines.HasValue)
                         RenderPlainTextInlines.Push(isRenderPlainTextInlines.Value);
                 }
@@ -300,7 +300,7 @@ namespace CommonMark.Formatters
                 {
                     if (!isOpening && isRenderPlainTextInlines.HasValue)
                         RenderPlainTextInlines.Pop();
-                    var closing = formatter.GetClosing(HtmlFormatterImpl.Instance, inline);
+                    var closing = formatter.GetClosing(HtmlFormatterImpl.Instance, inline, false);
                     if (closing != null)
                         Write(closing);
                 }

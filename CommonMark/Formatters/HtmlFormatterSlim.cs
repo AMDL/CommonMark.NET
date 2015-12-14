@@ -494,13 +494,14 @@ namespace CommonMark.Formatters
                 formatter = formatters[(int)inline.Tag];
                 if (formatter != null)
                 {
-                    visitChildren = formatter.WriteOpening(writer, inline);
+                    visitChildren = formatter.WriteOpening(writer, inline, withinLink);
                     isRenderPlainTextInlines = formatter.IsRenderPlainTextInlines(inline, false);
                     if (isRenderPlainTextInlines == true)
                         InlinesToPlainText(writer, inline.FirstChild, stack);
                     else if (isRenderPlainTextInlines == false)
                         EscapeHtml(inline.LiteralContentValue, writer);
-                    stackLiteral = formatter.GetClosing(HtmlFormatterImpl.Instance, inline);
+                    stackLiteral = formatter.GetClosing(HtmlFormatterImpl.Instance, inline, withinLink);
+                    stackWithinLink = formatter.IsStackWithinLink(inline, withinLink);
                 }
                 else switch (inline.Tag)
                 {
@@ -542,40 +543,6 @@ namespace CommonMark.Formatters
                     case InlineTag.RawHtml:
                         // cannot output source position for HTML blocks
                         writer.Write(inline.LiteralContentValue);
-                        break;
-
-                    case InlineTag.Link:
-                        if (withinLink)
-                        {
-                            writer.Write('[');
-                            stackLiteral = "]";
-                            stackWithinLink = true;
-                            visitChildren = true;
-                        }
-                        else
-                        {
-                            writer.WriteConstant("<a href=\"");
-                            if (uriResolver != null)
-                                EscapeUrl(uriResolver(inline.TargetUrl), writer);
-                            else
-                                EscapeUrl(inline.TargetUrl, writer);
-
-                            writer.Write('\"');
-                            if (inline.LiteralContentValue.Length > 0)
-                            {
-                                writer.WriteConstant(" title=\"");
-                                EscapeHtml(inline.LiteralContentValue, writer);
-                                writer.Write('\"');
-                            }
-
-                            if (trackPositions) PrintPosition(writer, inline);
-
-                            writer.Write('>');
-
-                            visitChildren = true;
-                            stackWithinLink = true;
-                            stackLiteral = "</a>";
-                        }
                         break;
 
                     case InlineTag.Image:
