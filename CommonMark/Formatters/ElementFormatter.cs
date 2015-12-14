@@ -42,7 +42,7 @@ namespace CommonMark.Formatters
         /// <param name="writer">HTML writer.</param>
         /// <param name="element">Element.</param>
         /// <returns><c>true</c> if the parent formatter should visit the child elements.</returns>
-        public virtual bool WriteOpening(IHtmlTextWriter writer, T element)
+        protected bool DoWriteOpening(IHtmlTextWriter writer, T element)
         {
             var value = "<" + GetTag(element);
             writer.WriteConstant(value);
@@ -54,10 +54,9 @@ namespace CommonMark.Formatters
         /// <summary>
         /// Returns the closing of an element.
         /// </summary>
-        /// <param name="formatter">HTML formatter.</param>
         /// <param name="element">Element.</param>
         /// <returns>The closing.</returns>
-        public virtual string GetClosing(IHtmlFormatter formatter, T element)
+        protected string DoGetClosing(T element)
         {
             return "</" + GetTag(element) + '>';
         }

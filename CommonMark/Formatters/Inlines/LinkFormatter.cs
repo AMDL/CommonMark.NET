@@ -68,7 +68,7 @@ namespace CommonMark.Formatters.Inlines
         public override string GetClosing(IHtmlFormatter formatter, Inline element, bool withinLink)
         {
             return !withinLink
-                ? base.GetClosing(formatter, element)
+                ? base.GetClosing(formatter, element, withinLink)
                 : "]";
         }
 

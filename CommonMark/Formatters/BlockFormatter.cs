@@ -38,10 +38,21 @@ namespace CommonMark.Formatters
         /// <param name="writer">HTML writer.</param>
         /// <param name="element">Block element.</param>
         /// <returns><c>true</c> if the parent formatter should visit the child elements.</returns>
-        public override bool WriteOpening(IHtmlTextWriter writer, Block element)
+        public virtual bool WriteOpening(IHtmlTextWriter writer, Block element)
         {
             writer.EnsureLine();
-            return base.WriteOpening(writer, element);
+            return DoWriteOpening(writer, element);
+        }
+
+        /// <summary>
+        /// Returns the closing of a block element.
+        /// </summary>
+        /// <param name="formatter">HTML formatter.</param>
+        /// <param name="element">Block element.</param>
+        /// <returns>The closing.</returns>
+        public virtual string GetClosing(IHtmlFormatter formatter, Block element)
+        {
+            return base.DoGetClosing(element);
         }
 
         /// <summary>

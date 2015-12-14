@@ -26,7 +26,7 @@ namespace CommonMark.Formatters
         /// <returns><c>true</c> if the parent formatter should visit the child elements.</returns>
         public virtual bool WriteOpening(IHtmlTextWriter writer, Inline element, bool withinLink)
         {
-            return base.WriteOpening(writer, element);
+            return base.DoWriteOpening(writer, element);
         }
 
         /// <summary>
@@ -38,7 +38,7 @@ namespace CommonMark.Formatters
         /// <returns>The closing.</returns>
         public virtual string GetClosing(IHtmlFormatter formatter, Inline element, bool withinLink)
         {
-            return base.GetClosing(formatter, element);
+            return base.DoGetClosing(element);
         }
 
         /// <summary>
