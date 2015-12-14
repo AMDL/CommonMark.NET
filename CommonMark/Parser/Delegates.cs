@@ -76,4 +76,11 @@ namespace CommonMark.Parser
     /// <param name="canOpen"><c>true</c> if the delimiter can serve as an opener.</param>
     /// <param name="canClose"><c>true</c> if the delimiter can serve as a closer.</param>
     public delegate void InlineDelimiterMatcherDelegate(Subject subj, int startIndex, int length, bool beforeIsPunctuation, bool afterIsPunctuation, ref bool canOpen, ref bool canClose);
+
+    /// <summary>
+    /// String normalizer delegate.
+    /// </summary>
+    /// <param name="s">String.</param>
+    /// <returns>Normalized string.</returns>
+    public delegate string StringNormalizerDelegate(string s);
 }

@@ -89,6 +89,7 @@ namespace CommonMark
         public void RegisterAll()
         {
             Register(new Extension.Strikeout(Settings));
+            Register(new Extension.ReferenceCase(Settings, new Extension.ReferenceCaseSettings(Extension.ReferenceCaseType.UpperInvariant)));
             Register(new Extension.DefinitionLists(Settings, new Extension.DefinitionListsSettings(Extension.DefinitionListsFeatures.All)));
             Register(new Extension.PipeTables(Settings, new Extension.PipeTablesSettings(Extension.PipeTablesFeatures.All)));
             Register(new Extension.TableCaptions(Settings, new Extension.TableCaptionsSettings

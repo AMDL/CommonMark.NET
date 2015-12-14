@@ -10,6 +10,7 @@ namespace CommonMark.Parser
         private readonly Lazy<InlineParserDelegate[]> _parsers;
         private readonly Lazy<char[]> _specialCharacters;
         private readonly Lazy<InlineDelimiterCharacterParameters[]> _delimiters;
+        private readonly Lazy<StringNormalizerDelegate> _referenceNormalizer;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="InlineParserParameters"/> class.
@@ -19,6 +20,7 @@ namespace CommonMark.Parser
             this._parsers = new Lazy<InlineParserDelegate[]>(GetParsers);
             this._specialCharacters = new Lazy<char[]>(GetSpecialCharacters);
             this._delimiters = new Lazy<InlineDelimiterCharacterParameters[]>(GetDelimiterCharacters);
+            this._referenceNormalizer = new Lazy<StringNormalizerDelegate>(GetReferenceNormalizer);
         }
 
         /// <summary>
@@ -54,6 +56,23 @@ namespace CommonMark.Parser
             get { return _delimiters.Value; }
         }
 
+        /// <summary>
+        /// Gets the reference normalizer.
+        /// </summary>
+        public StringNormalizerDelegate ReferenceNormalizer
+        {
+            get { return _referenceNormalizer.Value; }
+        }
+
+        /// <summary>
+        /// Creates the reference normalizer.
+        /// </summary>
+        /// <returns>Reference normalizer delegate.</returns>
+        protected virtual StringNormalizerDelegate GetReferenceNormalizer()
+        {
+            return s => s.ToUpperInvariant();
+        }
+
         internal abstract InlineParserDelegate[] GetParsers();
 
         internal abstract InlineDelimiterCharacterParameters[] GetDelimiterCharacters();
@@ -83,11 +102,9 @@ namespace CommonMark.Parser
     /// </summary>
     internal class StandardInlineParserParameters : InlineParserParameters
     {
-        private readonly CommonMarkSettings _settings;
-
         public StandardInlineParserParameters(CommonMarkSettings settings)
         {
-            this._settings = settings;
+            this.Settings = settings;
         }
 
         internal override InlineParserDelegate[] GetParsers()
@@ -102,9 +119,22 @@ namespace CommonMark.Parser
                 ext => ext.InlineDelimiterCharacters, key => key, InlineDelimiterCharacterParameters.Merge);
         }
 
+        /// <summary>
+        /// Creates the reference normalizer.
+        /// </summary>
+        /// <returns>Reference normalizer delegate.</returns>
+        protected override StringNormalizerDelegate GetReferenceNormalizer()
+        {
+            StringNormalizerDelegate normalizer;
+            foreach (var ext in Settings.Extensions)
+                if ((normalizer = ext.ReferenceNormalizer) != null)
+                    return normalizer;
+            return base.GetReferenceNormalizer();
+        }
+
         private CommonMarkSettings Settings
         {
-            get { return _settings; }
+            get;
         }
     }
 

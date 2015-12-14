@@ -19,6 +19,7 @@ namespace CommonMark
         private readonly Lazy<IDictionary<BlockTag, BlockProcessorDelegate>> _blockProcessors;
         private readonly Lazy<IDictionary<char, InlineParserDelegate>> _inlineParsers;
         private readonly Lazy<IDictionary<char, InlineDelimiterCharacterParameters>> _inlineDelimiterCharacters;
+        private readonly Lazy<StringNormalizerDelegate> _referenceNormalizer;
         private readonly Lazy<IDictionary<BlockTag, IBlockFormatter>> _blockFormatters;
         private readonly Lazy<IDictionary<InlineTag, IInlineFormatter>> _inlineFormatters;
 
@@ -39,6 +40,7 @@ namespace CommonMark
 
             this._inlineParsers = new Lazy<IDictionary<char, InlineParserDelegate>>(InitalizeInlineParsers);
             this._inlineDelimiterCharacters = new Lazy<IDictionary<char, InlineDelimiterCharacterParameters>>(InitializeInlineDelimiterCharacters);
+            this._referenceNormalizer = new Lazy<StringNormalizerDelegate>(InitializeReferenceNormalizer);
 
             var parameters = settings.FormatterParameters;
             this._blockFormatters = new Lazy<IDictionary<BlockTag, IBlockFormatter>>(() => InitializeBlockFormatters(parameters));
@@ -99,6 +101,14 @@ namespace CommonMark
         public IDictionary<char, InlineDelimiterCharacterParameters> InlineDelimiterCharacters
         {
             get { return _inlineDelimiterCharacters.Value; }
+        }
+
+        /// <summary>
+        /// Gets the reference normalizer.
+        /// </summary>
+        public StringNormalizerDelegate ReferenceNormalizer
+        {
+            get { return _referenceNormalizer.Value; }
         }
 
         #endregion
@@ -217,6 +227,15 @@ namespace CommonMark
         /// Creates the mapping from inline tag to inline element formatter.
         /// </summary>
         protected virtual IDictionary<InlineTag, IInlineFormatter> InitializeInlineFormatters(FormatterParameters parameters)
+        {
+            return null;
+        }
+
+        /// <summary>
+        /// Creates the reference normalizer.
+        /// </summary>
+        /// <returns>Reference normalizer delegate.</returns>
+        protected virtual StringNormalizerDelegate InitializeReferenceNormalizer()
         {
             return null;
         }

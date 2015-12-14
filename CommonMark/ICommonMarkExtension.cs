@@ -40,6 +40,11 @@ namespace CommonMark
         IDictionary<char, InlineDelimiterCharacterParameters> InlineDelimiterCharacters { get; }
 
         /// <summary>
+        /// Gets the reference normalizer.
+        /// </summary>
+        StringNormalizerDelegate ReferenceNormalizer { get; }
+
+        /// <summary>
         /// Gets the mapping from block tag to block element formatter.
         /// </summary>
         IDictionary<Syntax.BlockTag, IBlockFormatter> BlockFormatters { get; }

@@ -95,7 +95,8 @@ namespace CommonMark.Parser
             if (s.Length == 0)
                 return string.Empty;
 
-            return NormalizeWhitespace(s.Source, s.StartIndex, s.Length).ToUpperInvariant();
+            var result = NormalizeWhitespace(s.Source, s.StartIndex, s.Length);
+            return parameters.ReferenceNormalizer(result);
         }
 
         /// <summary>
