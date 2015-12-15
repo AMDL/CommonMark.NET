@@ -12,17 +12,17 @@ namespace CommonMark
         /// <summary>
         /// Gets the mapping from block tag to block advancer delegate.
         /// </summary>
-        IDictionary<Syntax.BlockTag, BlockAdvancerDelegate> BlockAdvancers { get; }
+        IDictionary<Syntax.BlockTag, BlockParserDelegate> BlockAdvancers { get; }
 
         /// <summary>
         /// Gets the mapping from character to block initializer delegate.
         /// </summary>
-        IDictionary<char, BlockInitializerDelegate> BlockInitializers { get; }
+        IDictionary<char, BlockParserDelegate> BlockInitializers { get; }
 
         /// <summary>
         /// Gets the mapping from block tag to block finalizer delegate.
         /// </summary>
-        IDictionary<Syntax.BlockTag, BlockFinalizerDelegate> BlockFinalizers { get; }
+        IDictionary<Syntax.BlockTag, BlockParserDelegate> BlockFinalizers { get; }
 
         /// <summary>
         /// Gets the mapping from block tag to block processor delegate.

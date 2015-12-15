@@ -26,60 +26,60 @@ namespace CommonMark.Parser
 
         #region Advancers
 
-        private readonly Lazy<BlockAdvancerDelegate[]> _advancers;
+        private readonly Lazy<BlockParserDelegate[]> _advancers;
 
         /// <summary>
         /// Gets the advancer delegates.
         /// </summary>
-        public BlockAdvancerDelegate[] Advancers
+        public BlockParserDelegate[] Advancers
         {
             get { return _advancers.Value; }
         }
 
-        private BlockAdvancerDelegate[] GetAdvancers()
+        private BlockParserDelegate[] GetAdvancers()
         {
             return Settings.Extensions.GetItems(BlockMethods.InitializeAdvancers,
-                ext => ext.BlockAdvancers, key => (int)key, DelegateBlockAdvancer.Merge);
+                ext => ext.BlockAdvancers, key => (int)key, DelegateBlockParser.Merge);
         }
 
         #endregion Advancers
 
         #region Initializers
 
-        private readonly Lazy<BlockInitializerDelegate[]> _initializers;
+        private readonly Lazy<BlockParserDelegate[]> _initializers;
 
         /// <summary>
         /// Gets the initializer delegates.
         /// </summary>
-        public BlockInitializerDelegate[] Initializers
+        public BlockParserDelegate[] Initializers
         {
             get { return _initializers.Value; }
         }
 
-        private BlockInitializerDelegate[] GetInitializers()
+        private BlockParserDelegate[] GetInitializers()
         {
-            return Settings.Extensions.GetItems(BlockMethods.InitializeInitializers,
-                ext => ext.BlockInitializers, key => key, DelegateBlockInitializer.Merge);
+            return Settings.Extensions.GetItems(BlockMethods.InitializeInitializers(Settings),
+                ext => ext.BlockInitializers, key => key, DelegateBlockParser.Merge);
         }
 
         #endregion Initializers
 
         #region Finalizers
 
-        private readonly Lazy<BlockFinalizerDelegate[]> _finalizers;
+        private readonly Lazy<BlockParserDelegate[]> _finalizers;
 
         /// <summary>
         /// Gets the finalizer delegates.
         /// </summary>
-        public BlockFinalizerDelegate[] Finalizers
+        public BlockParserDelegate[] Finalizers
         {
             get { return _finalizers.Value; }
         } 
 
-        private BlockFinalizerDelegate[] GetFinalizers()
+        private BlockParserDelegate[] GetFinalizers()
         {
-            return Settings.Extensions.GetItems(BlockMethods.InitializeFinalizers,
-                ext => ext.BlockFinalizers, key => (int)key, DelegateBlockFinalizer.Merge);
+            return Settings.Extensions.GetItems(BlockMethods.InitializeFinalizers(Settings),
+                ext => ext.BlockFinalizers, key => (int)key, DelegateBlockParser.Merge);
         }
 
         #endregion Finalizers

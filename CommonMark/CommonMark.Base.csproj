@@ -60,9 +60,8 @@
     <Compile Include="Formatters\IInlineFormatter.cs" />
     <Compile Include="Formatters\Inlines\LinkFormatter.cs" />
     <Compile Include="Formatters\IPrinter.cs" />
-    <Compile Include="Parser\DelegateBlockAdvancer.cs" />
-    <Compile Include="Parser\DelegateBlockFinalizer.cs" />
-    <Compile Include="Parser\DelegateBlockInitializer.cs" />
+    <Compile Include="Parser\BlockParserInfo.cs" />
+    <Compile Include="Parser\DelegateBlockParser.cs" />
     <Compile Include="Extension\Figures.cs" />
     <Compile Include="Extension\DefinitionLists.cs" />
     <Compile Include="Extension\DefinitionListsFeatures.cs" />

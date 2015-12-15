@@ -13,9 +13,9 @@ namespace CommonMark
     {
         #region Fields
 
-        private readonly Lazy<IDictionary<BlockTag, BlockAdvancerDelegate>> _blockAdvancers;
-        private readonly Lazy<IDictionary<char, BlockInitializerDelegate>> _blockInitializers;
-        private readonly Lazy<IDictionary<BlockTag, BlockFinalizerDelegate>> _blockFinalizers;
+        private readonly Lazy<IDictionary<BlockTag, BlockParserDelegate>> _blockAdvancers;
+        private readonly Lazy<IDictionary<char, BlockParserDelegate>> _blockInitializers;
+        private readonly Lazy<IDictionary<BlockTag, BlockParserDelegate>> _blockFinalizers;
         private readonly Lazy<IDictionary<BlockTag, BlockProcessorDelegate>> _blockProcessors;
         private readonly Lazy<IDictionary<char, InlineParserDelegate>> _inlineParsers;
         private readonly Lazy<IDictionary<char, InlineDelimiterCharacterParameters>> _inlineDelimiterCharacters;
@@ -54,7 +54,7 @@ namespace CommonMark
         /// <summary>
         /// Gets the mapping from block tag to block advancer delegate.
         /// </summary>
-        public IDictionary<BlockTag, BlockAdvancerDelegate> BlockAdvancers
+        public IDictionary<BlockTag, BlockParserDelegate> BlockAdvancers
         {
             get { return _blockAdvancers.Value; }
         }
@@ -62,7 +62,7 @@ namespace CommonMark
         /// <summary>
         /// Gets the mapping from character to block initializer delegate.
         /// </summary>
-        public IDictionary<char, BlockInitializerDelegate> BlockInitializers
+        public IDictionary<char, BlockParserDelegate> BlockInitializers
         {
             get { return _blockInitializers.Value; }
         }
@@ -70,7 +70,7 @@ namespace CommonMark
         /// <summary>
         /// Gets the mapping from block tag to block finalizer delegate.
         /// </summary>
-        public IDictionary<BlockTag, BlockFinalizerDelegate> BlockFinalizers
+        public IDictionary<BlockTag, BlockParserDelegate> BlockFinalizers
         {
             get { return _blockFinalizers.Value; }
         }
@@ -170,7 +170,7 @@ namespace CommonMark
         /// <summary>
         /// Creates the mapping from block tag to block advancer delegate.
         /// </summary>
-        protected virtual IDictionary<BlockTag, BlockAdvancerDelegate> InitializeBlockAdvancers()
+        protected virtual IDictionary<BlockTag, BlockParserDelegate> InitializeBlockAdvancers()
         {
             return null;
         }
@@ -178,7 +178,7 @@ namespace CommonMark
         /// <summary>
         /// Creates the mapping from character to block initializer delegate.
         /// </summary>
-        protected virtual IDictionary<char, BlockInitializerDelegate> InitializeBlockInitializers()
+        protected virtual IDictionary<char, BlockParserDelegate> InitializeBlockInitializers()
         {
             return null;
         }
@@ -186,7 +186,7 @@ namespace CommonMark
         /// <summary>
         /// Creates the mapping from block tag to block finalizer delegate.
         /// </summary>
-        protected virtual IDictionary<BlockTag, BlockFinalizerDelegate> InitializeBlockFinalizers()
+        protected virtual IDictionary<BlockTag, BlockParserDelegate> InitializeBlockFinalizers()
         {
             return null;
         }
