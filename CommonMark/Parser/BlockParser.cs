@@ -5,7 +5,7 @@ using System.Globalization;
 namespace CommonMark.Parser
 {
     /// <summary>
-    /// Base Stage 1 block parser class.
+    /// Base block parser class.
     /// </summary>
     public abstract class BlockParser : ElementParser, IBlockParser
     {

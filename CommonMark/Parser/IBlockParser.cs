@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace CommonMark.Parser
 {
     /// <summary>
-    /// Stage 1 block parser.
+    /// Block parser.
     /// </summary>
     public interface IBlockParser
     {
