@@ -18,9 +18,9 @@
 
         public static InlineParserDelegate Merge(InlineParserDelegate inner, InlineParserDelegate outer)
         {
-            return !inner.Equals(outer)
+            return inner != null && !inner.Equals(outer)
                 ? new Parser.DelegateInlineParser(inner, outer).Parse
-                : inner;
+                : outer;
         }
     }
 }

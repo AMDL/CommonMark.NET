@@ -1,43 +1,87 @@
 ﻿using CommonMark.Syntax;
+using System.Collections.Generic;
 
 namespace CommonMark.Parser
 {
-    internal sealed class DelegateBlockParser
+    internal sealed class DelegateBlockParser : IBlockParser
     {
-        private readonly BlockParserDelegate inner;
-        private readonly BlockParserDelegate outer;
+        private readonly IBlockParser inner;
+        private readonly IBlockParser outer;
 
-        public DelegateBlockParser(BlockParserDelegate inner, BlockParserDelegate outer)
+        public DelegateBlockParser(IBlockParser inner, IBlockParser outer)
         {
             this.inner = inner;
             this.outer = outer;
         }
 
-        private bool Initialize(ref BlockParserInfo info)
+        public char[] Characters
         {
-            return inner(ref info)
-                || outer(ref info);
+            get
+            {
+                var c = new List<char>(inner.Characters);
+                c.AddRange(outer.Characters);
+                return c.ToArray();
+            }
         }
 
-        public static BlockParserDelegate Merge(BlockParserDelegate inner, BlockParserDelegate outer)
+        public bool IsCodeBlock
         {
-            return !inner.Equals(outer)
-                ? new DelegateBlockParser(inner, outer).Initialize
-                : inner;
+            get
+            {
+                return inner.IsCodeBlock
+                    || outer.IsCodeBlock;
+            }
         }
 
-        public static BlockParserDelegate Merge(params BlockParserDelegate[] delegates)
+        public bool IsAcceptsLines
         {
-            if (delegates == null || delegates.Length == 0)
-                return null;
+            get
+            {
+                return inner.IsAcceptsLines
+                    || outer.IsAcceptsLines;
+            }
+        }
 
-            if (delegates.Length == 1)
-                return delegates[0];
+        public bool IsDiscardLastBlank(BlockParserInfo info)
+        {
+            return inner.IsDiscardLastBlank(info)
+                || outer.IsDiscardLastBlank(info);
+        }
 
-            var skip1 = new BlockParserDelegate[delegates.Length - 1];
-            System.Array.Copy(delegates, 1, skip1, 0, delegates.Length - 1);
+        public bool Advance(ref BlockParserInfo info)
+        {
+            return inner.Advance(ref info)
+                || outer.Advance(ref info);
+        }
 
-            return Merge(delegates[0], Merge(skip1));
+        public bool Open(ref BlockParserInfo info)
+        {
+            return inner.Open(ref info) || outer.Open(ref info);
+        }
+
+        public bool Close(BlockParserInfo info)
+        {
+            return inner.Close(info)
+                || outer.Close(info);
+        }
+
+        public bool Finalize(Block container)
+        {
+            return inner.Finalize(container)
+                || outer.Finalize(container);
+        }
+
+        public bool Process(Block block, Subject subject, ref Stack<Inline> inlineStack)
+        {
+            return inner.Process(block, subject, ref inlineStack)
+                || outer.Process(block, subject, ref inlineStack);
+        }
+
+        public static IBlockParser Merge(IBlockParser inner, IBlockParser outer)
+        {
+            return inner != null && !inner.Equals(outer)
+                ? new DelegateBlockParser(inner, outer)
+                : outer;
         }
     }
 }

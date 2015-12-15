@@ -5,7 +5,7 @@ namespace CommonMark.Parser
     /// <summary>
     /// Stage 1 block parser state.
     /// </summary>
-    public class BlockParserInfo
+    public sealed class BlockParserInfo
     {
         private const int CODE_INDENT = 4;
         private const int TabSize = 4;
@@ -76,6 +76,11 @@ namespace CommonMark.Parser
         /// Gets the first non-space character.
         /// </summary>
         public char CurrentCharacter { get; private set; }
+
+        /// <summary>
+        /// Gets or sets the value indicating whether this is the first line in a paragraph.
+        /// </summary>
+        public bool IsMaybeLazy { get; set; }
 
         /// <summary>
         /// Gets or sets the value indicating whether all containers have been matched.

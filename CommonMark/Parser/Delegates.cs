@@ -4,22 +4,41 @@ using System.Collections.Generic;
 namespace CommonMark.Parser
 {
     /// <summary>
-    /// Stage 1 block parser delegate.
+    /// Stage 1 block advancer delegate.
     /// </summary>
     /// <param name="info">Parser state.</param>
     /// <returns><c>true</c> if successful.</returns>
-    public delegate bool BlockParserDelegate(ref BlockParserInfo info);
+    internal delegate bool BlockAdvancerDelegate(ref BlockParserInfo info);
+
+    /// <summary>
+    /// Stage 1 block opener delegate.
+    /// </summary>
+    /// <param name="info">Parser state.</param>
+    /// <returns><c>true</c> if successful.</returns>
+    internal delegate bool BlockOpenerDelegate(ref BlockParserInfo info);
+
+    /// <summary>
+    /// Stage 1 block closer delegate.
+    /// </summary>
+    /// <param name="info">Parser state.</param>
+    /// <returns><c>true</c> if successful.</returns>
+    internal delegate bool BlockCloserDelegate(BlockParserInfo info);
+
+    /// <summary>
+    /// Stage 1 block finalizer delegate.
+    /// </summary>
+    /// <param name="container">Container element.</param>
+    /// <returns><c>true</c> if successful.</returns>
+    internal delegate bool BlockFinalizerDelegate(Block container);
 
     /// <summary>
     /// Stage 2 block processor delegate.
     /// </summary>
     /// <param name="container">Container element.</param>
     /// <param name="subject">Subject.</param>
-    /// <param name="referenceMap">The reference mapping used when parsing links.</param>
     /// <param name="inlineStack">Inline stack.</param>
-    /// <param name="settings">Common settings.</param>
     /// <returns><c>true</c> if successful.</returns>
-    public delegate bool BlockProcessorDelegate(Block container, Subject subject, Dictionary<string, Reference> referenceMap, ref Stack<Inline> inlineStack, CommonMarkSettings settings);
+    internal delegate bool BlockProcessorDelegate(Block container, Subject subject, ref Stack<Inline> inlineStack);
 
     /// <summary>
     /// Inline parser delegate.
