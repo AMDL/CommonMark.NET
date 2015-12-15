@@ -105,14 +105,31 @@ namespace CommonMark.Parser
         #endregion Processors
 
         /// <summary>
+        /// Checks if a character can serve as a fence opener.
+        /// </summary>
+        /// <param name="c">The character to check.</param>
+        /// <returns><c>true</c> if the character can be used for opening a fence.</returns>
+        public virtual bool IsFenceOpener(char c)
+        {
+            return IsFenceDelimiter(c);
+        }
+
+        /// <summary>
+        /// Checks if a character can serve as a fence closer.
+        /// </summary>
+        /// <param name="c">The character to check.</param>
+        /// <returns><c>true</c> if the character can be used for closing a fence.</returns>
+        public virtual bool IsFenceCloser(char c)
+        {
+            return IsFenceDelimiter(c);
+        }
+
+        /// <summary>
         /// Checks if a character can serve as a fence delimiter.
         /// </summary>
         /// <param name="c">The character to check.</param>
-        /// <returns><c>true</c> if the character can be used for opening/closing a fence.</returns>
-#if OptimizeFor45
-        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-#endif
-        internal bool IsFenceDelimiter(char c)
+        /// <returns><c>true</c> if the character can be used for both opening and closing a fence.</returns>
+        protected virtual bool IsFenceDelimiter(char c)
         {
             return c == '`' || c == '~';
         }

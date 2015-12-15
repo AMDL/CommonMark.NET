@@ -387,7 +387,7 @@ namespace CommonMark.Parser
                 return 0;
 
             var fchar = s[pos];
-            if (!parameters.IsFenceDelimiter(fchar))
+            if (!parameters.IsFenceOpener(fchar))
                 return 0;
 
             var cnt = 1;
@@ -437,7 +437,7 @@ namespace CommonMark.Parser
                 return 0;
 
             var c1 = s[pos];
-            if (!parameters.IsFenceDelimiter(c1))
+            if (!parameters.IsFenceCloser(c1))
                 return 0;
 
             var cnt = 1;
