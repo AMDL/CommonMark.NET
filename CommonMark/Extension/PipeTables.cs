@@ -25,18 +25,15 @@ namespace CommonMark.Extension
         }
 
         /// <summary>
-        /// Creates the mapping from character to block parser delegate.
+        /// Creates the mapping from block tag to block parser.
         /// </summary>
-        protected override IDictionary<char, BlockParserDelegate> InitializeBlockInitializers()
+        /// <param name="settings">Common settings.</param>
+        protected override IDictionary<BlockTag, IBlockParser> InitializeBlockParsers(CommonMarkSettings settings)
         {
-            var parsers = new Dictionary<char, BlockParserDelegate>();
-            parsers.Add('-', Initialize);
-            parsers.Add('|', Initialize);
-            if (IsEnabled(PipeTablesFeatures.HeaderEquals))
-                parsers.Add('=', Initialize);
-            if (IsEnabled(PipeTablesFeatures.HeaderColon))
-                parsers.Add(':', Initialize);
-            return parsers;
+            return new Dictionary<BlockTag, IBlockParser>
+            {
+                { BlockTag.TableRow, new TableRowParser(settings, this.settings) },
+            };
         }
 
         /// <summary>
@@ -46,23 +43,52 @@ namespace CommonMark.Extension
         protected override IDictionary<BlockTag, IBlockFormatter> InitializeBlockFormatters(FormatterParameters parameters)
         {
             var formatters = base.InitializeBlockFormatters(parameters);
-            if (IsEnabled(PipeTablesFeatures.Footers))
+            if (0 != (settings.Features & PipeTablesFeatures.Footers))
             {
                 formatters.Add(BlockTag.TableFooter, new TableFooterFormatter(parameters));
             }
-            if (IsEnabled(PipeTablesFeatures.ColumnGroups))
+            if (0 != (settings.Features & PipeTablesFeatures.ColumnGroups))
             {
                 formatters.Add(BlockTag.TableColumn, new TableColumnFormatter(parameters));
                 formatters.Add(BlockTag.TableColumnGroup, new TableColumnGroupFormatter(parameters));
             }
             return formatters;
         }
+    }
 
-        private bool Initialize(ref BlockParserInfo info)
+    internal sealed class TableRowParser : BlockParser
+    {
+        private readonly PipeTablesSettings settings;
+
+        public TableRowParser(CommonMarkSettings settings, PipeTablesSettings pipeTableSettings)
+            : base(settings)
+        {
+            this.settings = pipeTableSettings;
+        }
+
+        public override char[] Characters
+        {
+            get
+            {
+                var c = new List<char> { '-', '|' };
+                if (IsEnabled(PipeTablesFeatures.HeaderEquals))
+                    c.Add('=');
+                if (IsEnabled(PipeTablesFeatures.HeaderColon))
+                    c.Add(':');
+                return c.ToArray();
+            }
+        }
+
+        public override bool Advance(ref BlockParserInfo info)
+        {
+            return false;
+        }
+
+        public override bool Open(ref BlockParserInfo info)
         {
             TableData data;
-            if (!info.IsIndented && info.Container.Tag == BlockTag.Paragraph && BlockMethods.ContainsSingleLine(info.Container.StringContent)
-                && null != (data = ScanHeaderLine(info.Line, info.FirstNonspace, info.Line.Length)))
+            if (!info.IsIndented && info.Container.Tag == BlockTag.Paragraph && null != (data = ScanHeaderLine(info.Line, info.FirstNonspace, info.Line.Length))
+                && ContainsSingleLine(info.Container.StringContent))
             {
                 info.Container.Tag = BlockTag.Table;
                 info.Container.TableData = data;
@@ -70,6 +96,11 @@ namespace CommonMark.Extension
                 return false;
             }
             return true;
+        }
+
+        public override bool Close(BlockParserInfo info)
+        {
+            return false;
         }
 
         /// <summary>
