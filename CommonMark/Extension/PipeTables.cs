@@ -27,9 +27,9 @@ namespace CommonMark.Extension
         /// <summary>
         /// Creates the mapping from character to block parser delegate.
         /// </summary>
-        protected override IDictionary<char, BlockInitializerDelegate> InitializeBlockInitializers()
+        protected override IDictionary<char, BlockParserDelegate> InitializeBlockInitializers()
         {
-            var parsers = new Dictionary<char, BlockInitializerDelegate>();
+            var parsers = new Dictionary<char, BlockParserDelegate>();
             parsers.Add('-', Initialize);
             parsers.Add('|', Initialize);
             if (IsEnabled(PipeTablesFeatures.HeaderEquals))
@@ -58,15 +58,15 @@ namespace CommonMark.Extension
             return formatters;
         }
 
-        private bool Initialize(ref Block container, LineInfo lineInfo, string line, int first_nonspace, int indent, bool indented, bool all_matched, ref int offset, ref int column, CommonMarkSettings settings)
+        private bool Initialize(ref BlockParserInfo info)
         {
             TableData data;
-            if (!indented && container.Tag == BlockTag.Paragraph && BlockMethods.ContainsSingleLine(container.StringContent)
-                && null != (data = ScanHeaderLine(line, first_nonspace, line.Length)))
+            if (!info.IsIndented && info.Container.Tag == BlockTag.Paragraph && BlockMethods.ContainsSingleLine(info.Container.StringContent)
+                && null != (data = ScanHeaderLine(info.Line, info.FirstNonspace, info.Line.Length)))
             {
-                container.Tag = BlockTag.Table;
-                container.TableData = data;
-                BlockMethods.AdvanceOffset(line, line.Length - 1 - offset, false, ref offset, ref column);
+                info.Container.Tag = BlockTag.Table;
+                info.Container.TableData = data;
+                info.AdvanceOffset(info.Line.Length - 1 - info.Offset, false);
                 return false;
             }
             return true;
