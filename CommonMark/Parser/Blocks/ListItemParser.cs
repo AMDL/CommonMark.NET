@@ -73,7 +73,7 @@ namespace CommonMark.Parser.Blocks
             int indent = info.Indent;
             int matched = 0;
             ListData data;
-            if ((!info.IsIndented || info.Container.Tag == BlockTag.List) && 0 != (matched = ParseListMarker(info.Line, info.FirstNonspace, out data)))
+            if ((!info.IsIndented || info.Container.Tag == BlockTag.List) && 0 != (matched = ParseListMarker(info, out data)))
             {
                 // compute padding:
                 info.AdvanceOffset(info.FirstNonspace + matched - info.Offset, false);
@@ -136,21 +136,23 @@ namespace CommonMark.Parser.Blocks
 
         /// <summary>
         /// Attempts to parse a list item marker (bullet or enumerated).
-        /// On success, returns length of the marker, and populates
-        /// data with the details.  On failure, returns 0.
         /// </summary>
+        /// <param name="info">Parser state.</param>
+        /// <param name="data">List data.</param>
+        /// <returns>Length of the marker, or 0 for no match.</returns>
         /// <remarks>Original: int parse_list_marker(string ln, int pos, ref ListData dataptr)</remarks>
-        private static int ParseListMarker(string ln, int pos, out ListData data)
+        private int ParseListMarker(BlockParserInfo info, out ListData data)
         {
-            char c;
-            int startpos;
+            var ln = info.Line;
+            var pos = info.FirstNonspace;
+
             data = null;
             var len = ln.Length;
 
-            startpos = pos;
-            c = ln[pos];
+            int startpos = pos;
+            char c = ln[pos];
 
-            if (c == '+' || c == '•' || ((c == '*' || c == '-') && 0 == Scanner.scan_hrule(ln, pos, len)))
+            if (c == '+' || c == '•' || ((c == '*' || c == '-') && 0 == ScanHorizontalRule(info)))
             {
                 pos++;
                 if (pos == len || (ln[pos] != ' ' && ln[pos] != '\n'))

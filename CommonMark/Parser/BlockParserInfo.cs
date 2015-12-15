@@ -59,6 +59,9 @@ namespace CommonMark.Parser
         /// </summary>
         public int FirstNonspace
         {
+#if OptimizeFor45
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+#endif
             get;
             private set;
         }
@@ -68,6 +71,9 @@ namespace CommonMark.Parser
         /// </summary>
         public int FirstNonspaceColumn
         {
+#if OptimizeFor45
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+#endif
             get;
             private set;
         }
@@ -92,7 +98,21 @@ namespace CommonMark.Parser
         /// </summary>
         public string Line
         {
+#if OptimizeFor45
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+#endif
             get { return LineInfo.Line; }
+        }
+
+        /// <summary>
+        /// Gets the length of the line with the leading spaces excluded.
+        /// </summary>
+        public int NonspaceLength
+        {
+#if OptimizeFor45
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+#endif
+            get { return Line.Length - FirstNonspace; }
         }
 
         /// <summary>

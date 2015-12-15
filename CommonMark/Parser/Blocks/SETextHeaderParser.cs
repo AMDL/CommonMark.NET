@@ -25,7 +25,7 @@ namespace CommonMark.Parser.Blocks
         {
             get
             {
-                return new[] { '-', '=' };
+                return GetHeaderLevels();
             }
         }
 
@@ -62,12 +62,12 @@ namespace CommonMark.Parser.Blocks
         /// <returns><c>true</c> if successful.</returns>
         public override bool Open(ref BlockParserInfo info)
         {
-            int matched;
-            if (!info.IsIndented && info.Container.Tag == BlockTag.Paragraph && 0 != (matched = Scanner.scan_setext_header_line(info.Line, info.FirstNonspace, info.Line.Length))
+            int headerLevel;
+            if (!info.IsIndented && IsOpening(info) && 0 != (headerLevel = ScanLine(info))
                 && ContainsSingleLine(info.Container.StringContent))
             {
                 info.Container.Tag = BlockTag.SETextHeader;
-                info.Container.HeaderLevel = matched;
+                info.Container.HeaderLevel = headerLevel;
                 info.AdvanceOffset(info.Line.Length - 1 - info.Offset, false);
                 return true;
             }
@@ -94,6 +94,73 @@ namespace CommonMark.Parser.Blocks
         public override bool Process(Block container, Subject subject, ref Stack<Inline> inlineStack)
         {
             return ProcessInlines(container, subject, ref inlineStack, Settings.InlineParserParameters);
+        }
+
+        /// <summary>
+        /// Determines whether the current line can serve as a setext header line.
+        /// </summary>
+        /// <param name="info">Parser state.</param>
+        /// <returns><c>true</c> if the line can be a setext header line.</returns>
+        protected virtual bool IsOpening(BlockParserInfo info)
+        {
+            return info.Container.Tag == BlockTag.Paragraph;
+        }
+
+        /// <summary>
+        /// Gets the header level characters.
+        /// </summary>
+        /// <returns>Mapping from (level-1) to character.</returns>
+        protected virtual char[] GetHeaderLevels()
+        {
+            return new[] { '=', '-' };
+        }
+
+        /// <summary>
+        /// Matches sexext header line.
+        /// </summary>
+        /// <param name="info">Parser state.</param>
+        /// <returns>Header level, or 0 for no match.</returns>
+        /// <remarks>Original: int scan_setext_header_line(string s, int pos, int sourceLength)</remarks>
+        private int ScanLine(BlockParserInfo info)
+        {
+            var s = info.Line;
+            var pos = info.FirstNonspace;
+            var sourceLength = s.Length;
+
+            /*!re2c
+              [=]+ [ ]* [\n] { return 1; }
+              [-]+ [ ]* [\n] { return 2; }
+              .? { return 0; }
+            */
+
+            if (pos >= sourceLength)
+                return 0;
+
+            var c1 = s[pos];
+
+            var chars = GetHeaderLevels();
+            var matched = System.Array.IndexOf(chars, c1) + 1;
+            if (matched == 0)
+                return 0;
+
+            var fin = false;
+            for (var i = pos + 1; i < sourceLength; i++)
+            {
+                var c = s[i];
+                if (c == c1 && !fin)
+                    continue;
+
+                fin = true;
+                if (c == ' ')
+                    continue;
+
+                if (c == '\n')
+                    break;
+
+                return 0;
+            }
+
+            return matched;
         }
     }
 }

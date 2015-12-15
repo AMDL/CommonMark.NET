@@ -7,7 +7,7 @@ namespace CommonMark.Parser
     /// <summary>
     /// Base Stage 1 block parser class.
     /// </summary>
-    public abstract class BlockParser : IBlockParser
+    public abstract class BlockParser : ElementParser, IBlockParser
     {
         #region Constructor
 
@@ -264,6 +264,64 @@ namespace CommonMark.Parser
                     inline = null;
                 }
             }
+        }
+
+        /// <summary>
+        /// Determines whether a character can serve as a horizontal rule delimiter.
+        /// </summary>
+        /// <param name="c">The character to check.</param>
+        /// <returns><c>true</c> if the character can serve as a horizontal rule delimiter.</returns>
+        protected virtual bool IsHorizontalRuleDelimiter(char c)
+        {
+            return c == '*' || c == '-' || c == '_';
+        }
+
+        /// <summary>
+        /// Scans a horizontal rule line: "...three or more hyphens, asterisks,
+        /// or underscores on a line by themselves. If you wish, you may use
+        /// spaces between the hyphens or asterisks."
+        /// </summary>
+        /// <param name="info">Parser state.</param>
+        /// <returns>Offset, or 0 for no match.</returns>
+        /// <remarks>Original: int scan_hrule(string s, int pos, int sourceLength)</remarks>
+        protected int ScanHorizontalRule(BlockParserInfo info)
+        {
+            var s = info.Line;
+            var pos = info.FirstNonspace;
+            var sourceLength = s.Length;
+
+            // @"^([\*][ ]*){3,}[\s]*$",
+            // @"^([_][ ]*){3,}[\s]*$",
+            // @"^([-][ ]*){3,}[\s]*$",
+
+            var count = 0;
+            var x = '\0';
+            var ipos = pos;
+            while (ipos < sourceLength)
+            {
+                var c = s[ipos++];
+
+                if (c == ' ' || c == '\n')
+                    continue;
+                if (count == 0)
+                {
+                    if (IsHorizontalRuleDelimiter(c))
+                        x = c;
+                    else
+                        return 0;
+
+                    count = 1;
+                }
+                else if (c == x)
+                    count++;
+                else
+                    return 0;
+            }
+
+            if (count < 3)
+                return 0;
+
+            return sourceLength - pos;
         }
 
         #region InitializeParsers

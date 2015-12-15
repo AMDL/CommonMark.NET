@@ -94,10 +94,13 @@ namespace CommonMark.Parser
                 {
                     foreach (var c in chars)
                     {
-                        i.TryGetValue(c, out opener);
-                        i[c] = DelegateBlockOpener.Merge(opener, parser.Open);
-                        if (c > max)
-                            max = c;
+                        if (c != (char)0)
+                        {
+                            i.TryGetValue(c, out opener);
+                            i[c] = DelegateBlockOpener.Merge(opener, parser.Open);
+                            if (c > max)
+                                max = c;
+                        }
                     }
                 }
             }
@@ -191,36 +194,6 @@ namespace CommonMark.Parser
                 }
             }
             return items;
-        }
-
-        /// <summary>
-        /// Checks if a character can serve as a fence opener.
-        /// </summary>
-        /// <param name="c">The character to check.</param>
-        /// <returns><c>true</c> if the character can be used for opening a fence.</returns>
-        public virtual bool IsFenceOpener(char c)
-        {
-            return IsFenceDelimiter(c);
-        }
-
-        /// <summary>
-        /// Checks if a character can serve as a fence closer.
-        /// </summary>
-        /// <param name="c">The character to check.</param>
-        /// <returns><c>true</c> if the character can be used for closing a fence.</returns>
-        public virtual bool IsFenceCloser(char c)
-        {
-            return IsFenceDelimiter(c);
-        }
-
-        /// <summary>
-        /// Checks if a character can serve as a fence delimiter.
-        /// </summary>
-        /// <param name="c">The character to check.</param>
-        /// <returns><c>true</c> if the character can be used for both opening and closing a fence.</returns>
-        protected virtual bool IsFenceDelimiter(char c)
-        {
-            return c == '`' || c == '~';
         }
 
         private CommonMarkSettings Settings { get; }

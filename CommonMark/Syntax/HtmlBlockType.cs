@@ -50,5 +50,10 @@ namespace CommonMark.Syntax
         /// This HTML block cannot interrupt paragraphs.
         /// </summary>
         NonInterruptingBlock = 7,
+
+        /// <summary>
+        /// HTML block type count. There should be no blocks with this type.
+        /// </summary>
+        Count
     }
 }

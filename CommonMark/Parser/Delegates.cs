@@ -25,6 +25,13 @@ namespace CommonMark.Parser
     internal delegate bool BlockCloserDelegate(BlockParserInfo info);
 
     /// <summary>
+    /// Stage 1 HTML block closer delegate.
+    /// </summary>
+    /// <param name="info">Parser state.</param>
+    /// <returns><c>true</c> if successful.</returns>
+    internal delegate bool HtmlBlockCloserDelegate(BlockParserInfo info);
+
+    /// <summary>
     /// Stage 1 block finalizer delegate.
     /// </summary>
     /// <param name="container">Container element.</param>

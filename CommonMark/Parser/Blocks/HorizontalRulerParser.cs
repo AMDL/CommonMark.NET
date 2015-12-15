@@ -45,7 +45,7 @@ namespace CommonMark.Parser.Blocks
         /// <returns><c>true</c> if successful.</returns>
         public override bool Open(ref BlockParserInfo info)
         {
-            if (!info.IsIndented && !(info.Container.Tag == BlockTag.Paragraph && !info.IsAllMatched) && 0 != (Scanner.scan_hrule(info.Line, info.FirstNonspace, info.Line.Length)))
+            if (!info.IsIndented && IsOpening(info) && 0 != ScanHorizontalRule(info))
             {
                 // it's only now that we know the line is not part of a setext header:
                 info.Container = CreateChildBlock(info, BlockTag.HorizontalRuler, info.FirstNonspace);
@@ -65,6 +65,16 @@ namespace CommonMark.Parser.Blocks
         public override bool Close(BlockParserInfo info)
         {
             return true;
+        }
+
+        /// <summary>
+        /// Determines whether the current line can serve as a horizontal rule.
+        /// </summary>
+        /// <param name="info">Parser state.</param>
+        /// <returns><c>true</c> if the current line can be a horizontal rule.</returns>
+        protected virtual bool IsOpening(BlockParserInfo info)
+        {
+            return info.Container.Tag != BlockTag.Paragraph || info.IsAllMatched;
         }
     }
 }

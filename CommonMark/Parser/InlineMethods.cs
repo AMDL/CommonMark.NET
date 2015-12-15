@@ -894,7 +894,7 @@ namespace CommonMark.Parser
             subj.Position++;  
 
             // first try to match a URL autolink
-            matchlen = Scanner.scan_autolink_uri(subj.Buffer, subj.Position, subj.Length);
+            matchlen = Inlines.LinkParser.ScanAutolinkUri(subj.Buffer, subj.Position, subj.Length);
             if (matchlen > 0)
             {
                 contents = subj.Buffer.Substring(subj.Position, matchlen - 1);
@@ -911,7 +911,7 @@ namespace CommonMark.Parser
             }
 
             // next try to match an email autolink
-            matchlen = Scanner.scan_autolink_email(subj.Buffer, subj.Position, subj.Length);
+            matchlen = Inlines.LinkParser.ScanAutolinkEmail(subj.Buffer, subj.Position, subj.Length);
             if (matchlen > 0)
             {
                 contents = subj.Buffer.Substring(subj.Position, matchlen - 1);
@@ -928,7 +928,7 @@ namespace CommonMark.Parser
             }
 
             // finally, try to match an html tag
-            matchlen = Scanner.scan_html_tag(subj.Buffer, subj.Position, subj.Length);
+            matchlen = Inlines.RawHtmlParser.Scan(subj.Buffer, subj.Position, subj.Length);
             if (matchlen > 0)
             {
                 var result = new Inline(InlineTag.RawHtml, subj.Buffer, subj.Position - 1, matchlen + 1);
