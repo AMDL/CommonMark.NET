@@ -285,17 +285,16 @@ namespace CommonMark.Parser
 
         #region InitializeParsers
 
-        internal static IEnumerable<IInlineParser> InitializeParsers(CommonMarkSettings settings)
+        internal static IEnumerable<IInlineParser> InitializeParsers(InlineParserParameters parameters)
         {
-            var parameters = settings.InlineParserParameters;
-            var parsers = new List<IInlineParser>(InitializeBaseParsers(settings));
+            var parsers = new List<IInlineParser>(InitializeBaseParsers(parameters.Settings));
 
             var delimChars = parameters.DelimiterCharacters;
             for (var i = 0; i < delimChars.Length; i++)
             {
                 var delimiters = delimChars[i];
                 if (!delimiters.IsEmpty)
-                    parsers.Add(new Inlines.EmphasisParser(delimiters, parameters, settings, (char)i));
+                    parsers.Add(new Inlines.EmphasisParser(delimiters, parameters, (char)i));
             }
 
             return parsers;
@@ -321,10 +320,10 @@ namespace CommonMark.Parser
 
         internal static readonly InlineDelimiterCharacterParameters[] EmphasisDelimiterCharacters = InitializeDelimiterCharacters();
 
-        internal static IEnumerable<IInlineParser> InitializeEmphasisParsers(InlineParserParameters parameters, CommonMarkSettings settings)
+        internal static IEnumerable<IInlineParser> InitializeEmphasisParsers(InlineParserParameters parameters)
         {
-            yield return new Inlines.AsteriskParser(parameters, settings);
-            yield return new Inlines.UnderscoreParser(parameters, settings);
+            yield return new Inlines.AsteriskParser(parameters);
+            yield return new Inlines.UnderscoreParser(parameters);
         }
 
         internal static InlineDelimiterCharacterParameters[] InitializeDelimiterCharacters()

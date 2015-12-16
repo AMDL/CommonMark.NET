@@ -11,9 +11,8 @@ namespace CommonMark.Parser.Inlines
         /// Initializes a new instance of the <see cref="UnderscoreParser"/> class.
         /// </summary>
         /// <param name="parameters">Inline parser parameters.</param>
-        /// <param name="settings">Common settings.</param>
-        public UnderscoreParser(InlineParserParameters parameters, CommonMarkSettings settings)
-            : base(InlineTag.Emphasis, InlineTag.Strong, parameters, settings, '_')
+        public UnderscoreParser(InlineParserParameters parameters)
+            : base(InlineTag.Emphasis, InlineTag.Strong, parameters, '_')
         {
         }
 

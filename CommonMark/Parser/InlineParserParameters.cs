@@ -181,7 +181,7 @@ namespace CommonMark.Parser
         /// <summary>
         /// Gets the common settings object.
         /// </summary>
-        protected CommonMarkSettings Settings
+        public CommonMarkSettings Settings
         {
             get;
         }
@@ -201,7 +201,7 @@ namespace CommonMark.Parser
 
         internal override IEnumerable<IInlineParser> GetParsers()
         {
-            var parsers = new List<IInlineParser>(InlineParser.InitializeParsers(Settings));
+            var parsers = new List<IInlineParser>(InlineParser.InitializeParsers(this));
             foreach (var ext in Settings.Extensions)
             {
                 if (ext.InlineParsers != null)
@@ -248,7 +248,7 @@ namespace CommonMark.Parser
 
         internal override IEnumerable<IInlineParser> GetParsers()
         {
-            return InlineParser.InitializeEmphasisParsers(this, Settings);
+            return InlineParser.InitializeEmphasisParsers(this);
         }
 
         internal override InlineDelimiterCharacterParameters[] GetDelimiterCharacters()

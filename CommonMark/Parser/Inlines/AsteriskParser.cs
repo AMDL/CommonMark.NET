@@ -11,9 +11,8 @@ namespace CommonMark.Parser.Inlines
         /// Initializes a new instance of the <see cref="AsteriskParser"/> class.
         /// </summary>
         /// <param name="parameters">Inline parser parameters.</param>
-        /// <param name="settings">Common settings.</param>
-        public AsteriskParser(InlineParserParameters parameters, CommonMarkSettings settings)
-            : base(InlineTag.Emphasis, InlineTag.Strong, parameters, settings, '*')
+        public AsteriskParser(InlineParserParameters parameters)
+            : base(InlineTag.Emphasis, InlineTag.Strong, parameters, '*')
         {
         }
     }

@@ -13,10 +13,9 @@ namespace CommonMark.Parser.Inlines
         /// <param name="singleCharTag">Single-character delimiter parameters.</param>
         /// <param name="doubleCharTag">Double-character delimiter parameters.</param>
         /// <param name="parameters">Inline parser parameters.</param>
-        /// <param name="settings">Common settings.</param>
         /// <param name="c">Handled character.</param>
-        public EmphasisParser(InlineTag singleCharTag, InlineTag doubleCharTag, InlineParserParameters parameters, CommonMarkSettings settings, char c)
-            : base(settings, c)
+        public EmphasisParser(InlineTag singleCharTag, InlineTag doubleCharTag, InlineParserParameters parameters, char c)
+            : base(parameters.Settings, c)
         {
             this.Delimiters = InitializeDelimiters(singleCharTag, doubleCharTag);
             this.Parameters = parameters;
@@ -27,10 +26,9 @@ namespace CommonMark.Parser.Inlines
         /// </summary>
         /// <param name="delimiters">Inline delimiter character parameters.</param>
         /// <param name="parameters">Inline parser parameters.</param>
-        /// <param name="settings">Common settings.</param>
         /// <param name="c">Handled character.</param>
-        public EmphasisParser(InlineDelimiterCharacterParameters delimiters, InlineParserParameters parameters, CommonMarkSettings settings, char c)
-            : base(settings, c)
+        public EmphasisParser(InlineDelimiterCharacterParameters delimiters, InlineParserParameters parameters, char c)
+            : base(parameters.Settings, c)
         {
             this.Delimiters = delimiters;
             this.Parameters = parameters;
