@@ -114,7 +114,8 @@ namespace CommonMark.Formatters
             ignoreChildNodes = false;
             int x;
 
-            var formatter = Settings.FormatterParameters.BlockFormatters[(int)block.Tag];
+            var parameters = Settings.FormatterParameters;
+            var formatter = parameters.BlockFormatters[(int)block.Tag];
             if (formatter != null)
             {
                 var stackTight = formatter.IsStackTight(block, false);
@@ -129,7 +130,7 @@ namespace CommonMark.Formatters
                 {
                     if (stackTight.HasValue)
                         RenderTightParagraphs.Pop();
-                    var closing = formatter.GetClosing(HtmlFormatterImpl.Instance, block);
+                    var closing = formatter.GetClosing(parameters.HtmlFormatter, block);
                     if (closing != null)
                         WriteLine(closing);
                 }
@@ -284,7 +285,8 @@ namespace CommonMark.Formatters
         {
             var plaintext = RenderPlainTextInlines.Peek();
 
-            var formatter = Settings.FormatterParameters.InlineFormatters[(int)inline.Tag];
+            var parameters = Settings.FormatterParameters;
+            var formatter = parameters.InlineFormatters[(int)inline.Tag];
             if (inline.Tag != InlineTag.Link && formatter != null) //TODO
             {
                 ignoreChildNodes = true;
@@ -300,7 +302,7 @@ namespace CommonMark.Formatters
                 {
                     if (!isOpening && isRenderPlainTextInlines.HasValue)
                         RenderPlainTextInlines.Pop();
-                    var closing = formatter.GetClosing(HtmlFormatterImpl.Instance, inline, false);
+                    var closing = formatter.GetClosing(parameters.HtmlFormatter, inline, false);
                     if (closing != null)
                         Write(closing);
                 }

@@ -83,7 +83,9 @@ namespace CommonMark.Formatters
             var inlineStack = new Stack<InlineStackEntry>();
             var buffer = new StringBuilder();
             var trackPositions = settings.TrackSourcePosition;
-            IBlockFormatter[] formatters = settings.FormatterParameters.BlockFormatters;
+
+            var parameters = settings.FormatterParameters;
+            IBlockFormatter[] formatters = parameters.BlockFormatters;
             IBlockFormatter formatter;
             IDictionary<string, object> data;
 
@@ -96,7 +98,7 @@ namespace CommonMark.Formatters
                 {
                     writer.Write(formatter.GetPrinterTag(block));
                     PrintPosition(trackPositions, writer, block);
-                    if ((data = formatter.GetPrinterData(PrinterImpl.Instance, block)) != null)
+                    if ((data = formatter.GetPrinterData(parameters.Printer, block)) != null)
                         PrintData(writer, data);
                 }
                 else switch (block.Tag)
@@ -209,7 +211,8 @@ namespace CommonMark.Formatters
         private static void PrintInlines(TextWriter writer, Inline inline, int indent, Stack<InlineStackEntry> stack, StringBuilder buffer, CommonMarkSettings settings)
         {
             var trackPositions = settings.TrackSourcePosition;
-            IInlineFormatter[] formatters = settings.FormatterParameters.InlineFormatters;
+            var parameters = settings.FormatterParameters;
+            IInlineFormatter[] formatters = parameters.InlineFormatters;
             IInlineFormatter formatter;
             IDictionary<string, object> data;
 
@@ -222,7 +225,7 @@ namespace CommonMark.Formatters
                 {
                     writer.Write(formatter.GetPrinterTag(inline));
                     PrintPosition(trackPositions, writer, inline);
-                    if ((data = formatter.GetPrinterData(PrinterImpl.Instance, inline)) != null)
+                    if ((data = formatter.GetPrinterData(parameters.Printer, inline)) != null)
                         PrintData(writer, data);
                 }
                 else switch (inline.Tag)
@@ -347,21 +350,10 @@ namespace CommonMark.Formatters
 
     internal class PrinterImpl : IPrinter
     {
-        private static readonly Lazy<PrinterImpl> _instance;
-
-        static PrinterImpl()
-        {
-            _instance = new Lazy<PrinterImpl>(() => new PrinterImpl());
-        }
-
-        public static PrinterImpl Instance
-        {
-            get { return _instance.Value; }
-        }
 
         private StringBuilder buffer;
 
-        private PrinterImpl()
+        internal PrinterImpl()
         {
             this.buffer = new StringBuilder();
         }

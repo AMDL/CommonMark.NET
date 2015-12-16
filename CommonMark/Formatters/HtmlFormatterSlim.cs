@@ -224,7 +224,8 @@ namespace CommonMark.Formatters
             bool trackPositions = settings.TrackSourcePosition;
             int x;
 
-            IBlockFormatter[] formatters = settings.FormatterParameters.BlockFormatters;
+            var parameters = settings.FormatterParameters;
+            IBlockFormatter[] formatters = parameters.BlockFormatters;
             IBlockFormatter formatter;
             bool? isStackTight;
 
@@ -236,7 +237,7 @@ namespace CommonMark.Formatters
                 if (formatter != null)
                 {
                     visitChildren = formatter.WriteOpening(writer, block);
-                    stackLiteral = formatter.GetClosing(HtmlFormatterImpl.Instance, block);
+                    stackLiteral = formatter.GetClosing(parameters.HtmlFormatter, block);
                     isStackTight = formatter.IsStackTight(block, tight);
                     if (isStackTight.HasValue)
                         stackTight = isStackTight.Value;
@@ -483,7 +484,9 @@ namespace CommonMark.Formatters
             bool visitChildren;
             bool trackPositions = settings.TrackSourcePosition;
             string stackLiteral = null;
-            IInlineFormatter[] formatters = settings.FormatterParameters.InlineFormatters;
+
+            var parameters = settings.FormatterParameters;
+            IInlineFormatter[] formatters = parameters.InlineFormatters;
             IInlineFormatter formatter;
             bool? isRenderPlainTextInlines;
 
@@ -500,7 +503,7 @@ namespace CommonMark.Formatters
                         InlinesToPlainText(writer, inline.FirstChild, stack);
                     else if (isRenderPlainTextInlines == false)
                         EscapeHtml(inline.LiteralContentValue, writer);
-                    stackLiteral = formatter.GetClosing(HtmlFormatterImpl.Instance, inline, withinLink);
+                    stackLiteral = formatter.GetClosing(parameters.HtmlFormatter, inline, withinLink);
                     stackWithinLink = formatter.IsStackWithinLink(inline, withinLink);
                 }
                 else switch (inline.Tag)
@@ -643,19 +646,7 @@ namespace CommonMark.Formatters
 
     internal sealed class HtmlFormatterImpl : IHtmlFormatter
     {
-        private static readonly Lazy<HtmlFormatterImpl> _instance;
-
-        public static HtmlFormatterImpl Instance
-        {
-            get { return HtmlFormatterImpl._instance.Value; }
-        }
-
-        static HtmlFormatterImpl()
-        {
-            _instance = new Lazy<HtmlFormatterImpl>(() => new HtmlFormatterImpl());
-        }
-
-        private HtmlFormatterImpl()
+        internal HtmlFormatterImpl()
         {
         }
 

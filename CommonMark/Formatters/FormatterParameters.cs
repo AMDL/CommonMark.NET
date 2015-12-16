@@ -16,8 +16,10 @@ namespace CommonMark.Formatters
         public FormatterParameters(CommonMarkSettings settings)
         {
             this.Settings = settings;
-            this._blockFormatters = settings.GetLazy(GetBlockFormatters);
-            this._inlineFormatters = settings.GetLazy(GetInlineFormatters);
+            this._blockFormatters = Settings.GetLazy(GetBlockFormatters);
+            this._inlineFormatters = Settings.GetLazy(GetInlineFormatters);
+            this._htmlFormatter = Settings.GetLazy(() => new HtmlFormatterImpl());
+            this._printer = Settings.GetLazy(() => new PrinterImpl());
         }
 
         #endregion Constructor
@@ -85,6 +87,28 @@ namespace CommonMark.Formatters
         }
 
         #endregion InlineFormatters
+
+        #region HtmlFormatter
+
+        private Lazy<HtmlFormatterImpl> _htmlFormatter;
+
+        internal IHtmlFormatter HtmlFormatter
+        {
+            get { return _htmlFormatter.Value; }
+        }
+
+        #endregion HtmlFormatter
+
+        #region Printer
+
+        private Lazy<PrinterImpl> _printer;
+
+        internal IPrinter Printer
+        {
+            get { return _printer.Value; }
+        }
+
+        #endregion Printer
 
         #region Settings
 
