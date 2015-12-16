@@ -180,7 +180,7 @@ namespace CommonMark
 
             try
             {
-                BlockMethods.ProcessInlines(document, document.ReferenceMap, settings);
+                BlockMethods.ProcessInlines(document, document.DocumentData, settings);
             }
             catch(CommonMarkException)
             {

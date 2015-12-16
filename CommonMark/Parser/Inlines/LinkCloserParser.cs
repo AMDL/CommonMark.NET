@@ -55,7 +55,7 @@ namespace CommonMark.Parser.Inlines
                     var startpos = istack.StartPosition;
                     var label = new StringPart(subj.Buffer, startpos, endpos - startpos - 1);
 
-                    details = InlineMethods.LookupReference(subj.ReferenceMap, label, parameters);
+                    details = InlineMethods.LookupReference(subj.DocumentData.ReferenceMap, label, parameters);
                 }
 
                 if (details == Reference.InvalidReference)
@@ -123,7 +123,7 @@ namespace CommonMark.Parser.Inlines
                     if (label.Value.Length == 0)
                         return Reference.SelfReference;
 
-                    var details = InlineMethods.LookupReference(subj.ReferenceMap, label.Value, parameters);
+                    var details = InlineMethods.LookupReference(subj.DocumentData.ReferenceMap, label.Value, parameters);
                     if (details != null)
                         return details;
 

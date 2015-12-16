@@ -144,6 +144,7 @@
     <Compile Include="Syntax\Block.cs" />
     <Compile Include="Parser\BlockMethods.cs" />
     <Compile Include="Syntax\CaptionData.cs" />
+    <Compile Include="Syntax\DocumentData.cs" />
     <Compile Include="Syntax\HtmlBlockType.cs" />
     <Compile Include="Syntax\BlockTag.cs" />
     <Compile Include="Syntax\Enumerable.cs" />

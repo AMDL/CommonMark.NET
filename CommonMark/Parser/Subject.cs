@@ -13,22 +13,22 @@ namespace CommonMark.Parser
         /// <summary>
         /// Initializes a new instance of the <see cref="Subject"/> class.
         /// </summary>
-        /// <param name="referenceMap">Reference map.</param>
-        public Subject(Dictionary<string, Reference> referenceMap)
+        /// <param name="documentData">Document data.</param>
+        public Subject(DocumentData documentData)
         {
-            this.ReferenceMap = referenceMap;
+            this.DocumentData = documentData;
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Subject"/> class.
         /// </summary>
         /// <param name="buffer">String buffer.</param>
-        /// <param name="referenceMap">Reference map.</param>
-        public Subject(string buffer, Dictionary<string, Reference> referenceMap)
+        /// <param name="documentData">Document data.</param>
+        public Subject(string buffer, DocumentData documentData)
         {
             this.Buffer = buffer;
             this.Length = buffer.Length;
-            this.ReferenceMap = referenceMap;
+            this.DocumentData = documentData;
         }
 
 #if DEBUG
@@ -72,9 +72,9 @@ namespace CommonMark.Parser
         public StringBuilder ReusableStringBuilder = new StringBuilder();
 
         /// <summary>
-        /// A mapping from reference labels to reference link definitions.
+        /// Additional properties that apply to document nodes.
         /// </summary>
-        public readonly Dictionary<string, Reference> ReferenceMap;
+        public readonly DocumentData DocumentData;
 
 #if !NETCore
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Used by [DebuggerDisplay]")]

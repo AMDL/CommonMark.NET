@@ -86,7 +86,7 @@ namespace CommonMark.Parser.Blocks
             var sc = container.StringContent;
             if (sc.StartsWith('['))
             {
-                var subj = new Subject(container.Top.ReferenceMap);
+                var subj = new Subject(container.Top.DocumentData);
                 sc.FillSubject(subj);
                 var origPos = subj.Position;
                 while (subj.Position < subj.Buffer.Length
