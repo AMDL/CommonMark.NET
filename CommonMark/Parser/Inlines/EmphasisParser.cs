@@ -10,13 +10,13 @@ namespace CommonMark.Parser.Inlines
         /// <summary>
         /// Initializes a new instance of the <see cref="EmphasisParser"/> class.
         /// </summary>
-        /// <param name="c">Handled character.</param>
         /// <param name="singleCharTag">Single-character delimiter parameters.</param>
         /// <param name="doubleCharTag">Double-character delimiter parameters.</param>
         /// <param name="parameters">Inline parser parameters.</param>
         /// <param name="settings">Common settings.</param>
-        public EmphasisParser(char c, InlineTag singleCharTag, InlineTag doubleCharTag, InlineParserParameters parameters, CommonMarkSettings settings)
-            : base(c, settings)
+        /// <param name="c">Handled character.</param>
+        public EmphasisParser(InlineTag singleCharTag, InlineTag doubleCharTag, InlineParserParameters parameters, CommonMarkSettings settings, char c)
+            : base(settings, c)
         {
             this.Delimiters = InitializeDelimiters(singleCharTag, doubleCharTag);
             this.Parameters = parameters;
@@ -25,12 +25,12 @@ namespace CommonMark.Parser.Inlines
         /// <summary>
         /// Initializes a new instance of the <see cref="EmphasisParser"/> class.
         /// </summary>
-        /// <param name="c">Handled character.</param>
         /// <param name="delimiters">Inline delimiter character parameters.</param>
         /// <param name="parameters">Inline parser parameters.</param>
         /// <param name="settings">Common settings.</param>
-        public EmphasisParser(char c, InlineDelimiterCharacterParameters delimiters, InlineParserParameters parameters, CommonMarkSettings settings)
-            : base(c, settings)
+        /// <param name="c">Handled character.</param>
+        public EmphasisParser(InlineDelimiterCharacterParameters delimiters, InlineParserParameters parameters, CommonMarkSettings settings, char c)
+            : base(settings, c)
         {
             this.Delimiters = delimiters;
             this.Parameters = parameters;

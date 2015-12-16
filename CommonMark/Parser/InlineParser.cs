@@ -15,12 +15,12 @@ namespace CommonMark.Parser
         /// <summary>
         /// Initializes a new instance of the <see cref="InlineParser"/> class.
         /// </summary>
-        /// <param name="c">Handled character.</param>
         /// <param name="settings">Common settings.</param>
-        public InlineParser(char c, CommonMarkSettings settings)
+        /// <param name="c">Handled character.</param>
+        public InlineParser(CommonMarkSettings settings, char c)
         {
-            this.Character = c;
             this.Settings = settings;
+            this.Character = c;
             this._singleCharContent = Settings.GetLazy(GetSingleCharContent);
         }
 
@@ -295,7 +295,7 @@ namespace CommonMark.Parser
             {
                 var delimiters = delimChars[i];
                 if (!delimiters.IsEmpty)
-                    parsers.Add(new Inlines.EmphasisParser((char)i, delimiters, parameters, settings));
+                    parsers.Add(new Inlines.EmphasisParser(delimiters, parameters, settings, (char)i));
             }
 
             return parsers;
@@ -313,7 +313,7 @@ namespace CommonMark.Parser
             yield return new Inlines.AutoUriParser(settings);
             yield return new Inlines.AutoEmailParser(settings);
             yield return new Inlines.HtmlTagParser(settings);
-            yield return new InlineParser('<', settings);
+            yield return new InlineParser(settings, '<');
         }
 
         private static readonly InlineDelimiterCharacterParameters AsteriskDelimiters = InitializeEmphasisDelimiters('*');

@@ -13,7 +13,7 @@ namespace CommonMark.Parser.Inlines
         /// <param name="parameters">Inline parser parameters.</param>
         /// <param name="settings">Common settings.</param>
         public AsteriskParser(InlineParserParameters parameters, CommonMarkSettings settings)
-            : base('*', InlineTag.Emphasis, InlineTag.Strong, parameters, settings)
+            : base(InlineTag.Emphasis, InlineTag.Strong, parameters, settings, '*')
         {
         }
 

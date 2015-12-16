@@ -18,7 +18,7 @@ namespace CommonMark.Parser.Inlines
         /// </summary>
         /// <param name="settings">Common settings.</param>
         public AutoUriParser(CommonMarkSettings settings)
-            : base('<', settings)
+            : base(settings, '<')
         {
         }
 

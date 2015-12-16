@@ -12,7 +12,7 @@ namespace CommonMark.Parser.Inlines
         /// </summary>
         /// <param name="settings">Common settings.</param>
         public LineBreakParser(CommonMarkSettings settings)
-            : base('\n', settings)
+            : base(settings, '\n')
         {
         }
 

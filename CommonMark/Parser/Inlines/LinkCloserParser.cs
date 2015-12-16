@@ -14,7 +14,7 @@ namespace CommonMark.Parser.Inlines
         /// </summary>
         /// <param name="settings">Common settings.</param>
         public LinkCloserParser(CommonMarkSettings settings)
-            : base(']', settings)
+            : base(settings, ']')
         {
         }
 
