@@ -48,12 +48,12 @@ namespace CommonMark.Parser
     internal delegate bool BlockProcessorDelegate(Block container, Subject subject, ref Stack<Inline> inlineStack);
 
     /// <summary>
-    /// Inline parser delegate.
+    /// Inline handler delegate.
     /// </summary>
-    /// <param name="parent">Parent block.</param>
+    /// <param name="parent">Parent container.</param>
     /// <param name="subject">Subject.</param>
     /// <returns>Inline element or <c>null</c>.</returns>
-    public delegate Inline InlineParserDelegate(Block parent, Subject subject);
+    internal delegate Inline InlineHandlerDelegate(Block parent, Subject subject);
 
     /// <summary>
     /// Inline stack delimiter matcher delegate.

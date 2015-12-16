@@ -208,7 +208,7 @@ namespace CommonMark.Parser
             sc.FillSubject(subj);
             var delta = subj.Position;
 
-            block.InlineContent = InlineMethods.parse_inlines(block, subj, subj.ReferenceMap, parameters);
+            block.InlineContent = InlineParser.ParseInlines(block, subj, parameters);
             block.StringContent = null;
 
             if (sc.PositionTracker != null)

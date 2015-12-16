@@ -15,9 +15,9 @@ namespace CommonMark
         IDictionary<Syntax.BlockTag, IBlockParser> BlockParsers { get; }
 
         /// <summary>
-        /// Gets the mapping from character to inline parser delegate.
+        /// Gets the inline parsers.
         /// </summary>
-        IDictionary<char, InlineParserDelegate> InlineParsers { get; }
+        IEnumerable<IInlineParser> InlineParsers { get; }
 
         /// <summary>
         /// Gets the mapping from character to inline delimiter character parameters.

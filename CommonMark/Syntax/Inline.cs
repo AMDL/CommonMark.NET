@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace CommonMark.Syntax
 {
@@ -91,17 +89,6 @@ namespace CommonMark.Syntax
         {
             this.Tag = tag;
             this.FirstChild = content;
-        }
-
-        internal static Inline CreateLink(Inline label, string url, string title)
-        {
-            return new Inline()
-            {
-                Tag = InlineTag.Link,
-                FirstChild = label,
-                TargetUrl = url,
-                LiteralContent = title
-            };
         }
 
         /// <summary>

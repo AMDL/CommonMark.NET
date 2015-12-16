@@ -1,19 +1,48 @@
-﻿using System;
+﻿using CommonMark.Syntax;
+using System;
 
 namespace CommonMark.Parser.Inlines
 {
     /// <summary>
-    /// <see cref="Syntax.InlineTag.RawHtml"/> element parser.
+    /// HTML tag parser.
     /// </summary>
-    public class RawHtmlParser : InlineParser
+    public class HtmlTagParser : InlineParser
     {
         /// <summary>
-        /// Gets the opening characters that are handled by this parser.
+        /// Initializes a new instance of the <see cref="HtmlTagParser"/> class.
         /// </summary>
-        /// <value>Array containing the characters that can open a handled element.</value>
-        public override char[] Characters
+        /// <param name="settings">Common settings.</param>
+        public HtmlTagParser(CommonMarkSettings settings)
+            : base('<', settings)
         {
-            get { return new[] { '<' }; }
+        }
+
+        /// <summary>
+        /// Attempts to match an html tag.
+        /// </summary>
+        /// <param name="container">Parent container.</param>
+        /// <param name="subj">Subject.</param>
+        /// <returns>Inline element or <c>null</c>.</returns>
+        public override Inline Handle(Block container, Subject subj)
+        {
+            // advance past first <
+            subj.Position++;
+
+            var matchlen = Scan(subj.Buffer, subj.Position, subj.Length);
+            if (matchlen == 0)
+            {
+                subj.Position--;
+                return null;
+            }
+
+            var result = new Inline(InlineTag.RawHtml, subj.Buffer, subj.Position - 1, matchlen + 1)
+            {
+                SourcePosition = subj.Position - 1,
+                SourceLastPosition = subj.Position + matchlen,
+            };
+
+            subj.Position += matchlen;
+            return result;
         }
 
         /// <summary>
@@ -21,7 +50,7 @@ namespace CommonMark.Parser.Inlines
         /// </summary>
         /// <returns>Number of chars matched, or 0 for no match.</returns>
         /// <remarks>Original: int scan_html_tag(string s, int pos, int sourceLength)</remarks>
-        internal static int Scan(string s, int pos, int sourceLength)
+        private static int Scan(string s, int pos, int sourceLength)
         {
             if (pos + 2 >= sourceLength)
                 return 0;

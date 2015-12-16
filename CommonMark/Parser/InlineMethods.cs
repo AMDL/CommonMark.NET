@@ -10,83 +10,6 @@ namespace CommonMark.Parser
         private static readonly char[] WhiteSpaceCharacters = new[] { '\n', ' ' };
         private static readonly char[] BracketSpecialCharacters = new[] { '\\', ']', '[' };
 
-        private static readonly InlineDelimiterCharacterParameters AsteriskDelimiters = InitializeEmphasisDelimiters('*');
-        private static readonly InlineDelimiterCharacterParameters UnderscoreDelimiters = InitializeEmphasisDelimiters('_');
-
-        internal static readonly InlineDelimiterCharacterParameters[] EmphasisDelimiterCharacters = InitializeDelimiterCharacters();
-
-        /// <summary>
-        /// Initializes the array of delegates for inline parsing.
-        /// </summary>
-        /// <returns></returns>
-        internal static InlineParserDelegate[] InitializeParsers(InlineParserParameters parameters)
-        {
-            var delimChars = parameters.DelimiterCharacters;
-
-            var p = new InlineParserDelegate[delimChars.Length];
-            p['\n'] = (b, s) => handle_newline(s);
-            p['`'] = (b, s) => handle_backticks(s);
-            p['\\'] = (b, s) => handle_backslash(s);
-            p['&'] = (b, s) => HandleEntity(s);
-            p['<'] = (b, s) => handle_pointy_brace(s);
-            p['['] = (b, s) => HandleLeftSquareBracket(s, parameters);
-            p[']'] = (b, s) => HandleRightSquareBracket(s, parameters);
-            p['!'] = (b, s) => HandleExclamation(s, parameters);
-
-            for (int i = 0; i < delimChars.Length; i++)
-            {
-                var delimiters = delimChars[i];
-                if (!delimiters.IsEmpty)
-                    p[i] = (b, s) => HandleOpenerCloser(s, delimiters, parameters);
-            }
-
-            return p;
-        }
-
-        internal static InlineParserDelegate[] InitializeEmphasisParsers(InlineParserParameters parameters)
-        {
-            var p = new InlineParserDelegate[127];
-            p['*'] = (b, s) => HandleOpenerCloser(s, AsteriskDelimiters, parameters);
-            p['_'] = (b, s) => HandleOpenerCloser(s, UnderscoreDelimiters, parameters);
-            return p;
-        }
-
-        internal static InlineDelimiterCharacterParameters[] InitializeDelimiterCharacters()
-        {
-            var t = new InlineDelimiterCharacterParameters[127];
-            t['*'] = AsteriskDelimiters;
-            t['_'] = UnderscoreDelimiters;
-            return t;
-        }
-
-        private static InlineDelimiterCharacterParameters InitializeEmphasisDelimiters(char c)
-        {
-            var chars = new InlineDelimiterCharacterParameters
-            {
-                SingleCharacter = InitializeEmphasisDelimiters(InlineTag.Emphasis, c),
-                DoubleCharacter = InitializeEmphasisDelimiters(InlineTag.Strong, c),
-            };
-            return chars;
-        }
-
-        private static InlineDelimiterParameters InitializeEmphasisDelimiters(InlineTag tag, char c)
-        {
-            var chars = new InlineDelimiterParameters
-            {
-                Tag = tag,
-            };
-            if (c == '_')
-                chars.Matcher = MatchUnderscore;
-            return chars;
-        }
-
-        private static void MatchUnderscore(Subject subj, int startpos, int len, bool beforeIsPunctuation, bool afterIsPunctuation, ref bool canOpen, ref bool canClose)
-        {
-            var temp = canOpen;
-            canOpen &= (!canClose || beforeIsPunctuation);
-            canClose &= (!temp || afterIsPunctuation);
-        }
-
         /// <summary>
         /// Collapses internal whitespace to single space, removes leading/trailing whitespace, folds case.
         /// </summary>
@@ -100,11 +23,12 @@ namespace CommonMark.Parser
         }
 
         /// <summary>
-        /// Checks if the reference dictionary contains a reference with the given label and returns it,
-        /// otherwise returns <c>null</c>.
-        /// Returns <see cref="Reference.InvalidReference"/> if the reference label is not valid.
+        /// Looks up a reference with the given label in the reference dictionary.
         /// </summary>
-        private static Reference LookupReference(Dictionary<string, Reference> refmap, StringPart lab, InlineParserParameters parameters)
+        /// <returns>
+        /// A valid reference, <see cref="Reference.InvalidReference"/> if the reference label is not valid, or <c>null</c>.
+        /// </returns>
+        public static Reference LookupReference(Dictionary<string, Reference> refmap, StringPart lab, InlineParserParameters parameters)
         {
             if (refmap == null)
                 return null;
@@ -139,51 +63,9 @@ namespace CommonMark.Parser
 #if OptimizeFor45
         [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
 #endif
-        private static char peek_char(Subject subj)
+        public static char peek_char(Subject subj)
         {
             return subj.Length <= subj.Position ? '\0' : subj.Buffer[subj.Position];
-        }
-
-        /// <summary>
-        /// Searches the subject for a span of backticks that matches the given length.
-        /// Returns <c>0</c> if the closing backticks cannot be found, otherwise returns
-        /// the position in the subject after the closing backticks.
-        /// Also updates the position on the subject itself.
-        /// </summary>
-        private static int ScanToClosingBackticks(Subject subj, int openticklength)
-        {
-            // note - attempt to optimize by using string.IndexOf("````",...) proved to
-            // be ~2x times slower than the current implementation.
-            // but - buf.IndexOf('`') gives ~1.5x better performance than iterating over
-            // every char in the loop.
-
-            var buf = subj.Buffer;
-            var len = buf.Length;
-            var cc = 0;
-
-            for (var i = subj.Position; i < len; i++)
-            {
-                if (buf[i] == '`')
-                {
-                    cc++;
-                }
-                else
-                {
-                    if (cc == openticklength)
-                        return subj.Position = i;
-
-                    i = buf.IndexOf('`', i, len - i) - 1;
-                    if (i == -2)
-                        return 0;
-
-                    cc = 0;
-                }
-            }
-
-            if (cc == openticklength)
-                return subj.Position = len;
-
-            return 0;
         }
 
         /// <summary>
@@ -273,80 +155,6 @@ namespace CommonMark.Parser
             return sb.ToString();
         }
 
-        // Parse backtick code section or raw backticks, return an inline.
-        // Assumes that the subject has a backtick at the current position.
-        static Inline handle_backticks(Subject subj)
-        {
-            int ticklength = 0;
-            var bl = subj.Length;
-            while (subj.Position < bl && (subj.Buffer[subj.Position] == '`'))
-            {
-                ticklength++;
-                subj.Position++;
-            }
-
-            int startpos = subj.Position;
-            int endpos = ScanToClosingBackticks(subj, ticklength);
-            if (endpos == 0)
-            {
-                // closing not found
-                subj.Position = startpos; // rewind to right after the opening ticks
-                return new Inline(new string('`', ticklength), startpos - ticklength, startpos);
-            }
-            else
-            {
-                return new Inline(InlineTag.Code, NormalizeWhitespace(subj.Buffer, startpos, endpos - startpos - ticklength))
-                    {
-                        SourcePosition = startpos - ticklength,
-                        SourceLastPosition = endpos
-                    };
-            }
-        }
-
-        /// <summary>
-        /// Scans the subject for a series of the given emphasis character, testing if they could open and/or close
-        /// an emphasis element.
-        /// </summary>
-        private static int ScanEmphasisDelimeters(Subject subj, char delimeter, InlineDelimiterCharacterParameters parameters, out bool canOpen, out bool canClose)
-        {
-            int numdelims = 0;
-            int startpos = subj.Position;
-            int len = subj.Length;
-
-            while (startpos + numdelims < len && subj.Buffer[startpos + numdelims] == delimeter)
-                numdelims++;
-
-            if (numdelims == 0)
-            {
-                canOpen = false;
-                canClose = false;
-                return numdelims;
-            }
-
-            char charBefore, charAfter;
-            bool beforeIsSpace, beforeIsPunctuation, afterIsSpace, afterIsPunctuation;
-
-            charBefore = startpos == 0 ? '\n' : subj.Buffer[startpos - 1];
-            subj.Position = (startpos += numdelims);
-            charAfter = len == startpos ? '\n' : subj.Buffer[startpos];
-            
-            Utilities.CheckUnicodeCategory(charBefore, out beforeIsSpace, out beforeIsPunctuation);
-            Utilities.CheckUnicodeCategory(charAfter, out afterIsSpace, out afterIsPunctuation);
-
-            canOpen = !afterIsSpace && !(afterIsPunctuation && !beforeIsSpace && !beforeIsPunctuation);
-            canClose = !beforeIsSpace && !(beforeIsPunctuation && !afterIsSpace && !afterIsPunctuation);
-
-            var matcher = numdelims == 1
-                ? parameters.SingleCharacter.Matcher
-                : parameters.DoubleCharacter.Matcher;
-            if (matcher != null)
-            {
-                matcher(subj, startpos, len, beforeIsPunctuation, afterIsPunctuation, ref canOpen, ref canClose);
-            }
-
-            return numdelims;
-        }
-
         internal static int MatchInlineStack(InlineStack opener, Subject subj, int closingDelimeterCount, InlineStack closer, InlineDelimiterCharacterParameters delimiters, InlineParserParameters parameters)
         {
             // calculate the actual number of delimeters used from this closer
@@ -433,332 +241,6 @@ namespace CommonMark.Parser
             }
 
             return useDelims;
-        }
-
-        private static Inline HandleOpenerCloser(Subject subj, InlineDelimiterCharacterParameters delimiters, InlineParserParameters parameters)
-        {
-            bool canOpen, canClose;
-            var c = subj.Buffer[subj.Position];
-            var numdelims = ScanEmphasisDelimeters(subj, c, delimiters, out canOpen, out canClose);
-
-            if (canClose)
-            {
-                // walk the stack and find a matching opener, if there is one
-                var istack = InlineStack.FindMatchingOpener(subj.LastPendingInline, InlineStack.InlineStackPriority.Emphasis, c, out canClose);
-                if (istack != null)
-                {
-                    var useDelims = MatchInlineStack(istack, subj, numdelims, null, delimiters, parameters);
-
-                    // if the closer was not fully used, move back a char or two and try again.
-                    if (useDelims < numdelims)
-                    {
-                        subj.Position = subj.Position - numdelims + useDelims;
-
-                        // use recursion only if it will not be very deep.
-                        if (numdelims < 10)
-                            return HandleOpenerCloser(subj, delimiters, parameters);
-                    }
-
-                    return null;
-                }
-            }
-
-            var inlText = new Inline(subj.Buffer, subj.Position - numdelims, numdelims, subj.Position - numdelims, subj.Position, c);
-
-            if (canOpen || canClose)
-            {
-                var istack = new InlineStack();
-                istack.DelimeterCount = numdelims;
-                istack.Delimeter = c;
-                istack.StartingInline = inlText;
-                istack.Priority = InlineStack.InlineStackPriority.Emphasis;
-                istack.Flags = (canOpen ? InlineStack.InlineStackFlags.Opener : 0)
-                             | (canClose ? InlineStack.InlineStackFlags.Closer : 0);
-
-                InlineStack.AppendStackEntry(istack, subj);
-            }
-
-            return inlText;
-        }
-
-        private static Inline HandleExclamation(Subject subj, InlineParserParameters parameters)
-        {
-            subj.Position++;
-            if (peek_char(subj) == '[')
-                return HandleLeftSquareBracket(subj, true, parameters);
-            else
-                return new Inline("!", subj.Position - 1, subj.Position);
-        }
-
-        private static Inline HandleLeftSquareBracket(Subject subj, InlineParserParameters parameters)
-        {
-            return HandleLeftSquareBracket(subj, false, parameters);
-        }
-
-        private static Inline HandleLeftSquareBracket(Subject subj, bool isImage, InlineParserParameters parameters)
-        {
-            Inline inlText;
-            
-            if (isImage)
-            {
-                inlText = new Inline("![", subj.Position - 1, subj.Position + 1);
-            }
-            else
-            {
-                inlText = new Inline("[", subj.Position, subj.Position + 1);
-            }
-
-            // move past the '['
-            subj.Position++;
-
-            var istack = new InlineStack();
-            istack.Delimeter = '[';
-            istack.StartingInline = inlText;
-            istack.StartPosition = subj.Position;
-            istack.Priority = InlineStack.InlineStackPriority.Links;
-            istack.Flags = InlineStack.InlineStackFlags.Opener | (isImage ? InlineStack.InlineStackFlags.ImageLink : InlineStack.InlineStackFlags.None);
-
-            InlineStack.AppendStackEntry(istack, subj);
-
-            return inlText;
-        }
-
-        internal static void MatchSquareBracketStack(InlineStack opener, Subject subj, Reference details, InlineParserParameters parameters)
-        {
-            if (details != null)
-            {
-                var inl = opener.StartingInline;
-                var isImage = 0 != (opener.Flags & InlineStack.InlineStackFlags.ImageLink);
-                inl.Tag = isImage ? InlineTag.Image : InlineTag.Link;
-                inl.FirstChild = inl.NextSibling;
-                inl.NextSibling = null;
-                inl.SourceLastPosition = subj.Position;
-
-                inl.TargetUrl = details.Url;
-                inl.LiteralContent = details.Title;
-
-                if (!isImage)
-                {
-                    // since there cannot be nested links, remove any other link openers before this
-                    var temp = opener.Previous;
-                    while (temp != null && temp.Priority <= InlineStack.InlineStackPriority.Links)
-                    {
-                        if (temp.Delimeter == '[' && temp.Flags == opener.Flags)
-                        {
-                            // mark the previous entries as "inactive"
-                            if (temp.DelimeterCount == -1)
-                                break;
-
-                            temp.DelimeterCount = -1;
-                        }
-
-                        temp = temp.Previous;
-                    }
-                }
-
-                InlineStack.RemoveStackEntry(opener, subj, null, parameters);
-
-                subj.LastInline = inl;
-            }
-            else
-            {
-                // this looked like a link, but was not.
-                // remove the opener stack entry but leave the inbetween intact
-                InlineStack.RemoveStackEntry(opener, subj, opener, parameters);
-
-                var inl = new Inline("]", subj.Position - 1, subj.Position);
-                subj.LastInline.LastSibling.NextSibling = inl;
-                subj.LastInline = inl;
-            }
-        }
-
-        private static Inline HandleRightSquareBracket(Subject subj, InlineParserParameters parameters)
-        {
-            // move past ']'
-            subj.Position++;
-
-            bool canClose;
-            var istack = InlineStack.FindMatchingOpener(subj.LastPendingInline, InlineStack.InlineStackPriority.Links, '[', out canClose);
-
-            if (istack != null)
-            {
-                // if the opener is "inactive" then it means that there was a nested link
-                if (istack.DelimeterCount == -1)
-                {
-                    InlineStack.RemoveStackEntry(istack, subj, istack, parameters);
-                    return new Inline("]", subj.Position - 1, subj.Position);
-                }
-
-                var endpos = subj.Position;
-
-                // try parsing details for '[foo](/url "title")' or '[foo][bar]'
-                var details = ParseLinkDetails(subj, parameters);
-
-                // try lookup of the brackets themselves
-                if (details == null || details == Reference.SelfReference)
-                {
-                    var startpos = istack.StartPosition;
-                    var label = new StringPart(subj.Buffer, startpos, endpos - startpos - 1);
-
-                    details = LookupReference(subj.ReferenceMap, label, parameters);
-                }
-
-                if (details == Reference.InvalidReference)
-                    details = null;
-
-                MatchSquareBracketStack(istack, subj, details, parameters);
-                return null;
-            }
-
-            var inlText = new Inline("]", subj.Position - 1, subj.Position);
-
-            if (canClose)
-            {
-                // note that the current implementation will not work if there are other inlines with priority
-                // higher than Links.
-                // to fix this the parsed link details should be added to the closer element in the stack.
-
-                throw new NotSupportedException("It is not supported to have inline stack priority higher than Links.");
-
-                ////istack = new InlineStack();
-                ////istack.Delimeter = '[';
-                ////istack.StartingInline = inlText;
-                ////istack.StartPosition = subj.Position;
-                ////istack.Priority = InlineStack.InlineStackPriority.Links;
-                ////istack.Flags = InlineStack.InlineStackFlags.Closer;
-
-                ////InlineStack.AppendStackEntry(istack, subj);
-            }
-
-            return inlText;
-        }
-
-        // Parse backslash-escape or just a backslash, returning an inline.
-        private static Inline handle_backslash(Subject subj)
-        {
-            subj.Position++;
-
-            if (subj.Position >= subj.Length)
-                return new Inline("\\", subj.Position - 1, subj.Position); 
-
-            var nextChar = subj.Buffer[subj.Position];
-
-            if (Utilities.IsEscapableSymbol(nextChar))
-            {
-                // only ascii symbols and newline can be escaped
-                // the exception is the unicode bullet char since it can be used for defining list items
-                subj.Position++;
-                return new Inline(nextChar.ToString(), subj.Position - 2, subj.Position);
-            }
-            else if (nextChar == '\n')
-            {
-                subj.Position++;
-                return new Inline(InlineTag.LineBreak) 
-                {
-                    SourcePosition = subj.Position - 2,
-                    SourceLastPosition = subj.Position
-                };
-            }
-            else
-            {
-                return new Inline("\\", subj.Position - 1, subj.Position);
-            }
-        }
-
-        /// <summary>
-        /// Parses the entity at the current position. Returns a new string inline.
-        /// Assumes that there is a <c>&amp;</c> at the current position.
-        /// </summary>
-        private static Inline HandleEntity(Subject subj)
-        {
-            var origPos = subj.Position;
-            return new Inline(ParseEntity(subj), origPos, subj.Position);
-        }
-
-        /// <summary>
-        /// Parses the entity at the current position.
-        /// Assumes that there is a <c>&amp;</c> at the current position.
-        /// </summary>
-        private static string ParseEntity(Subject subj)
-        {
-            int match;
-            string entity;
-            int numericEntity;
-            var origPos = subj.Position;
-            match = Scanner.scan_entity(subj.Buffer, subj.Position, subj.Length - subj.Position, out entity, out numericEntity);
-            if (match > 0)
-            {
-                subj.Position += match;
-
-                if (entity != null)
-                {
-                    entity = EntityDecoder.DecodeEntity(entity);
-                    if (entity != null)
-                        return entity;
-
-                    return subj.Buffer.Substring(origPos, match);
-                }
-                else if (numericEntity > 0)
-                {
-                    entity = EntityDecoder.DecodeEntity(numericEntity);
-                    if (entity != null)
-                        return entity;
-                }
-
-                return "\uFFFD";
-            }
-            else
-            {
-                subj.Position++;
-                return "&";
-            }
-        }
-
-        /// <summary>
-        /// Creates a new <see cref="Inline"/> element that represents string content but the given content
-        /// is processed to decode any HTML entities in it.
-        /// This method is guaranteed to return just one Inline, without nested elements.
-        /// </summary>
-        private static Inline ParseStringEntities(string s)
-        {
-            string result = null;
-            StringBuilder builder = null;
-
-            int searchpos;
-            char c;
-            var subj = new Subject(s, null);
-
-            while ('\0' != (c = peek_char(subj)))
-            {
-                if (result != null)
-                {
-                    if (builder == null)
-                        builder = new StringBuilder(result, s.Length);
-                    else
-                        builder.Append(result);
-                }
-
-                if (c == '&')
-                {
-                    result = ParseEntity(subj);
-                }
-                else
-                {
-                    searchpos = subj.Buffer.IndexOf('&', subj.Position);
-                    if (searchpos == -1)
-                        searchpos = subj.Length;
-
-                    result = subj.Buffer.Substring(subj.Position, searchpos - subj.Position);
-                    subj.Position = searchpos;
-                }
-            }
-
-            if (builder == null)
-                return new Inline(result);
-
-            builder.Append(result);
-
-            return new Inline(builder.ToString());
         }
 
         /// <summary>
@@ -850,7 +332,7 @@ namespace CommonMark.Parser
         /// Clean a URL: remove surrounding whitespace and surrounding &lt; &gt; and remove \ that escape punctuation and other symbols.
         /// </summary>
         /// <remarks>Original: clean_url(ref string)</remarks>
-        private static string CleanUrl(string url)
+        public static string CleanUrl(string url)
         {
             if (url.Length == 0)
                 return url;
@@ -868,7 +350,7 @@ namespace CommonMark.Parser
         /// Clean a title: remove surrounding quotes and remove \ that escape punctuation.
         /// </summary>
         /// <remarks>Original: clean_title(ref string)</remarks>
-        private static string CleanTitle(string title)
+        internal static string CleanTitle(string title)
         {
             // remove surrounding quotes if any:
             int titlelength = title.Length;
@@ -881,205 +363,6 @@ namespace CommonMark.Parser
                 title = title.Substring(1, titlelength - 2);
 
             return Unescape(title);
-        }
-
-        // Parse an autolink or HTML tag.
-        // Assumes the subject has a '<' character at the current position.
-        static Inline handle_pointy_brace(Subject subj)
-        {
-            int matchlen;
-            string contents;
-
-            // advance past first <
-            subj.Position++;  
-
-            // first try to match a URL autolink
-            matchlen = Inlines.LinkParser.ScanAutolinkUri(subj.Buffer, subj.Position, subj.Length);
-            if (matchlen > 0)
-            {
-                contents = subj.Buffer.Substring(subj.Position, matchlen - 1);
-                var resultContents = ParseStringEntities(contents);
-                var result = Inline.CreateLink(resultContents, contents, string.Empty);
-
-                result.SourcePosition = subj.Position - 1;
-                resultContents.SourcePosition = subj.Position;
-                subj.Position += matchlen;
-                result.SourceLastPosition = subj.Position;
-                resultContents.SourceLastPosition = subj.Position - 1;
-                
-                return result;
-            }
-
-            // next try to match an email autolink
-            matchlen = Inlines.LinkParser.ScanAutolinkEmail(subj.Buffer, subj.Position, subj.Length);
-            if (matchlen > 0)
-            {
-                contents = subj.Buffer.Substring(subj.Position, matchlen - 1);
-                var resultContents = ParseStringEntities(contents);
-                var result = Inline.CreateLink(resultContents, "mailto:" + contents, string.Empty);
-                
-                result.SourcePosition = subj.Position - 1;
-                resultContents.SourcePosition = subj.Position;
-                subj.Position += matchlen;
-                result.SourceLastPosition = subj.Position;
-                resultContents.SourceLastPosition = subj.Position - 1;
-
-                return result;
-            }
-
-            // finally, try to match an html tag
-            matchlen = Inlines.RawHtmlParser.Scan(subj.Buffer, subj.Position, subj.Length);
-            if (matchlen > 0)
-            {
-                var result = new Inline(InlineTag.RawHtml, subj.Buffer, subj.Position - 1, matchlen + 1);
-                result.SourcePosition = subj.Position - 1;
-                subj.Position += matchlen;
-                result.SourceLastPosition = subj.Position;
-                return result;
-            }
-            else
-            {
-                // if nothing matches, just return the opening <:
-                return new Inline("<", subj.Position - 1, subj.Position);
-            }
-        }
-
-        // Parse a link or the link portion of an image, or return a fallback.
-        static Reference ParseLinkDetails(Subject subj, InlineParserParameters parameters)
-        {
-            int n;
-            int sps;
-            int endlabel, starturl, endurl, starttitle, endtitle, endall;
-            string url, title;
-            endlabel = subj.Position;
-
-            var c = peek_char(subj);
-
-            if (c == '(' &&
-                    ((sps = Scanner.scan_spacechars(subj.Buffer, subj.Position + 1, subj.Length)) > -1) &&
-                    ((n = Scanner.scan_link_url(subj.Buffer, subj.Position + 1 + sps, subj.Length)) > -1))
-            {
-                // try to parse an explicit link:
-                starturl = subj.Position + 1 + sps; // after (
-                endurl = starturl + n;
-                starttitle = endurl + Scanner.scan_spacechars(subj.Buffer, endurl, subj.Length);
-                // ensure there are spaces btw url and title
-                endtitle = (starttitle == endurl) ? starttitle :
-                           starttitle + Scanner.scan_link_title(subj.Buffer, starttitle, subj.Length);
-                endall = endtitle + Scanner.scan_spacechars(subj.Buffer, endtitle, subj.Length);
-                if (endall < subj.Length && subj.Buffer[endall] == ')')
-                {
-                    subj.Position = endall + 1;
-                    url = subj.Buffer.Substring(starturl, endurl - starturl);
-                    url = CleanUrl(url);
-                    title = subj.Buffer.Substring(starttitle, endtitle - starttitle);
-                    title = CleanTitle(title);
-
-                    return new Reference() { Title = title, Url = url };
-                }
-            }
-            else if (c == '[' || c == ' ' || c == '\n')
-            {
-                var label = ParseReferenceLabel(subj);
-                if (label != null)
-                {
-                    if (label.Value.Length == 0)
-                        return Reference.SelfReference;
-
-                    var details = LookupReference(subj.ReferenceMap, label.Value, parameters);
-                    if (details != null)
-                        return details;
-
-                    // rollback the subject but return InvalidReference so that the caller knows not to
-                    // parse 'foo' from [foo][bar].
-                    subj.Position = endlabel;
-                    return Reference.InvalidReference;
-                }
-            }
-
-            // rollback the subject position because didn't match anything.
-            subj.Position = endlabel;
-            return null;
-        }
-
-        // Parse a hard or soft linebreak, returning an inline.
-        // Assumes the subject has a newline at the current position.
-        static Inline handle_newline(Subject subj)
-        {
-            int nlpos = subj.Position;
-
-            // skip over newline
-            subj.Position++;
-
-            // skip spaces at beginning of line
-            var len = subj.Length;
-            while (subj.Position < len && subj.Buffer[subj.Position] == ' ')
-                subj.Position++;
-
-            if (nlpos > 1 && subj.Buffer[nlpos - 1] == ' ' && subj.Buffer[nlpos - 2] == ' ')
-                return new Inline(InlineTag.LineBreak) { SourcePosition = nlpos - 2, SourceLastPosition = nlpos + 1 };
-            else
-                return new Inline(InlineTag.SoftBreak) { SourcePosition = nlpos, SourceLastPosition = nlpos + 1 };
-        }
-
-        /// <summary>
-        /// Parse an inline element from the subject. The subject position is updated to after the element.
-        /// </summary>
-        public static Inline ParseInline(Block parent, Subject subj, InlineParserParameters parameters)
-        {
-            var parsers = parameters.Parsers;
-            var specialCharacters = parameters.SpecialCharacters;
-
-            var c = subj.Buffer[subj.Position];
-
-            var parser = c < parsers.Length ? parsers[c] : null;
-
-            if (parser != null)
-                return parser(parent, subj);
-
-            var startpos = subj.Position;
-
-            // we read until we hit a special character
-            // +1 is so that any special character at the current position is ignored.
-            var endpos = subj.Buffer.IndexOfAny(specialCharacters, startpos + 1, subj.Length - startpos - 1);
-
-            if (endpos == -1)
-                endpos = subj.Length;
-
-            subj.Position = endpos;
-
-            // if we're at a newline, strip trailing spaces.
-            if (endpos < subj.Length && subj.Buffer[endpos] == '\n')
-                while (endpos > startpos && subj.Buffer[endpos - 1] == ' ')
-                    endpos--;
-
-            return new Inline(subj.Buffer, startpos, endpos - startpos, startpos, endpos, c);
-        }
-
-        public static Inline parse_inlines(Block parent, Subject subj, Dictionary<string, Reference> refmap, InlineParserParameters parameters)
-        {
-            var len = subj.Length;
-
-            if (len == 0)
-                return null;
-
-            var first = ParseInline(parent, subj, parameters);
-            subj.LastInline = first.LastSibling;
-
-            Inline cur;
-            while (subj.Position < len)
-            {
-                cur = ParseInline(parent, subj, parameters);
-                if (cur != null)
-                {
-                    subj.LastInline.NextSibling = cur;
-                    subj.LastInline = cur.LastSibling;
-                }
-            }
-
-            InlineStack.PostProcessInlineStack(subj, subj.FirstPendingInline, subj.LastPendingInline, InlineStack.InlineStackPriority.Maximum, parameters);
-
-            return first;
         }
 
         // Parse zero or more space characters, including at most one newline.
@@ -1109,7 +392,7 @@ namespace CommonMark.Parser
         /// markers. So, 2 below contains a link while 1 does not:
         /// 1. [a link `with a ](/url)` character
         /// 2. [a link *with emphasized ](/url) text*        /// </summary>
-        private static StringPart? ParseReferenceLabel(Subject subj)
+        public static StringPart? ParseReferenceLabel(Subject subj)
         {
             var startPos = subj.Position;
             var source = subj.Buffer;
@@ -1183,7 +466,7 @@ namespace CommonMark.Parser
             if (lab == null || lab.Value.Length > Reference.MaximumReferenceLabelLength)
                 goto INVALID;
 
-            if (!Scanner.HasNonWhitespace(lab.Value))
+            if (!HasNonWhitespace(lab.Value))
                 goto INVALID;
 
             // colon:
@@ -1252,6 +535,26 @@ namespace CommonMark.Parser
         INVALID:
             subj.Position = startPos;
             return 0;
+        }
+
+        /// <summary>
+        /// Determines if the given string has non-whitespace characters in it.
+        /// </summary>
+        private static bool HasNonWhitespace(Syntax.StringPart part)
+        {
+            var s = part.Source;
+            var i = part.StartIndex;
+            var l = i + part.Length;
+
+            while (i < l)
+            {
+                if (!Utilities.IsWhitespace(s[i]))
+                    return true;
+
+                i++;
+            }
+
+            return false;
         }
     }
 }

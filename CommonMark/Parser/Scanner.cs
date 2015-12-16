@@ -113,27 +113,6 @@ namespace CommonMark.Parser
         }
 
         /// <summary>
-        /// Match space characters, including newlines.
-        /// </summary>
-        public static int scan_spacechars(string s, int pos, int sourceLength)
-        {
-            /*!re2c
-              [ \t\n]* { return (p - start); }
-              . { return 0; }
-            */
-            if (pos >= sourceLength)
-                return 0;
-
-            for (var i = pos; i < sourceLength; i++)
-            {
-                if (!Utilities.IsWhitespace(s[i]))
-                    return i - pos;
-            }
-
-            return sourceLength - pos;
-        }
-
-        /// <summary>
         /// Scans an entity.
         /// Returns number of chars matched.
         /// </summary>
@@ -242,26 +221,6 @@ namespace CommonMark.Parser
             }
 
             return 0;
-        }
-
-        /// <summary>
-        /// Determines if the given string has non-whitespace characters in it
-        /// </summary>
-        public static bool HasNonWhitespace(Syntax.StringPart part)
-        {
-            var s = part.Source;
-            var i = part.StartIndex;
-            var l = i + part.Length;
-
-            while (i < l)
-            {
-                if (!Utilities.IsWhitespace(s[i]))
-                    return true;
-
-                i++;
-            }
-
-            return false;
         }
     }
 }

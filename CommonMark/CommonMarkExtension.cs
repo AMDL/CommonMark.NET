@@ -14,7 +14,7 @@ namespace CommonMark
         #region Fields
 
         private readonly Lazy<IDictionary<BlockTag, IBlockParser>> _blockParsers;
-        private readonly Lazy<IDictionary<char, InlineParserDelegate>> _inlineParsers;
+        private readonly Lazy<IEnumerable<IInlineParser>> _inlineParsers;
         private readonly Lazy<IDictionary<char, InlineDelimiterCharacterParameters>> _inlineDelimiterCharacters;
         private readonly Lazy<StringNormalizerDelegate> _referenceNormalizer;
         private readonly Lazy<IDictionary<BlockTag, IBlockFormatter>> _blockFormatters;
@@ -31,7 +31,8 @@ namespace CommonMark
         protected CommonMarkExtension(CommonMarkSettings settings)
         {
             this._blockParsers = settings.GetLazy(() => InitializeBlockParsers(settings));
-            this._inlineParsers = settings.GetLazy(InitalizeInlineParsers);
+            this._inlineParsers = settings.GetLazy(() => InitializeInlineParsers(settings));
+
             this._inlineDelimiterCharacters = settings.GetLazy(InitializeInlineDelimiterCharacters);
             this._referenceNormalizer = settings.GetLazy(InitializeReferenceNormalizer);
 
@@ -57,9 +58,9 @@ namespace CommonMark
         #region Inline Parsers
 
         /// <summary>
-        /// Gets the mapping from character to inline parser delegate.
+        /// Gets the inline parsers.
         /// </summary>
-        public IDictionary<char, InlineParserDelegate> InlineParsers
+        public IEnumerable<IInlineParser> InlineParsers
         {
             get { return _inlineParsers.Value; }
         }
@@ -137,9 +138,10 @@ namespace CommonMark
         #region Initialize methods
 
         /// <summary>
-        /// Creates the mapping from character to inline parser delegate.
+        /// Creates the inline parsers.
         /// </summary>
-        protected virtual IDictionary<char, InlineParserDelegate> InitalizeInlineParsers()
+        /// <param name="settings">Common settings.</param>
+        protected virtual IEnumerable<IInlineParser> InitializeInlineParsers(CommonMarkSettings settings)
         {
             return null;
         }
