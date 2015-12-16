@@ -4,6 +4,21 @@ using System.Collections.Generic;
 namespace CommonMark.Parser
 {
     /// <summary>
+    /// Inline handler delegate.
+    /// </summary>
+    /// <param name="parent">Parent container.</param>
+    /// <param name="subject">Subject.</param>
+    /// <returns>Inline element or <c>null</c>.</returns>
+    internal delegate Syntax.Inline InlineHandlerDelegate(Syntax.Block parent, Subject subject);
+
+    /// <summary>
+    /// String normalizer delegate.
+    /// </summary>
+    /// <param name="s">String.</param>
+    /// <returns>Normalized string.</returns>
+    public delegate string StringNormalizerDelegate(string s);
+
+    /// <summary>
     /// Inline parser parameters.
     /// </summary>
     public abstract class InlineParserParameters

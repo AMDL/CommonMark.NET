@@ -114,7 +114,6 @@
     <Compile Include="OutputFormat.cs" />
     <Compile Include="Parser\BlockParserParameters.cs" />
     <Compile Include="Parser\DelegateInlineHandler.cs" />
-    <Compile Include="Parser\Delegates.cs" />
     <Compile Include="Parser\ElementParser.cs" />
     <Compile Include="Parser\EntityDecoder.cs" />
     <Compile Include="Parser\IBlockParser.cs" />

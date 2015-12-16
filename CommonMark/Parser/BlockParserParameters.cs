@@ -5,6 +5,43 @@ using System.Collections.Generic;
 namespace CommonMark.Parser
 {
     /// <summary>
+    /// Stage 1 block initializer delegate.
+    /// </summary>
+    /// <param name="info">Parser state.</param>
+    /// <returns><c>true</c> if successful.</returns>
+    internal delegate bool BlockInitializerDelegate(ref BlockParserInfo info);
+
+    /// <summary>
+    /// Stage 1 block opener delegate.
+    /// </summary>
+    /// <param name="info">Parser state.</param>
+    /// <returns><c>true</c> if successful.</returns>
+    internal delegate bool BlockOpenerDelegate(ref BlockParserInfo info);
+
+    /// <summary>
+    /// Stage 1 block closer delegate.
+    /// </summary>
+    /// <param name="info">Parser state.</param>
+    /// <returns><c>true</c> if successful.</returns>
+    internal delegate bool BlockCloserDelegate(BlockParserInfo info);
+
+    /// <summary>
+    /// Stage 1 block finalizer delegate.
+    /// </summary>
+    /// <param name="container">Container element.</param>
+    /// <returns><c>true</c> if successful.</returns>
+    internal delegate bool BlockFinalizerDelegate(Block container);
+
+    /// <summary>
+    /// Stage 2 block processor delegate.
+    /// </summary>
+    /// <param name="container">Container element.</param>
+    /// <param name="subject">Subject.</param>
+    /// <param name="inlineStack">Inline stack.</param>
+    /// <returns><c>true</c> if successful.</returns>
+    internal delegate bool BlockProcessorDelegate(Block container, Subject subject, ref Stack<Inline> inlineStack);
+
+    /// <summary>
     /// Block element parser parameters.
     /// </summary>
     public class BlockParserParameters

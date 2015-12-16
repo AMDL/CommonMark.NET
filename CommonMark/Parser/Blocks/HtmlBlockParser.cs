@@ -4,6 +4,13 @@ using System;
 namespace CommonMark.Parser.Blocks
 {
     /// <summary>
+    /// Stage 1 HTML block closer delegate.
+    /// </summary>
+    /// <param name="info">Parser state.</param>
+    /// <returns><c>true</c> if successful.</returns>
+    internal delegate bool HtmlBlockCloserDelegate(BlockParserInfo info);
+
+    /// <summary>
     /// <see cref="BlockTag.HtmlBlock"/> element parser.
     /// </summary>
     public class HtmlBlockParser : BlockParser
