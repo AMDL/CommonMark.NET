@@ -48,6 +48,12 @@ namespace CommonMark.Parser
                 || outer.IsDiscardLastBlank(info);
         }
 
+        public bool CanContain(BlockTag childTag)
+        {
+            return inner.CanContain(childTag)
+                || outer.CanContain(childTag);
+        }
+
         public bool Initialize(ref BlockParserInfo info)
         {
             return inner.Initialize(ref info)

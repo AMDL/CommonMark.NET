@@ -64,6 +64,7 @@
     <Compile Include="Parser\BlockParserInfo.cs" />
     <Compile Include="Parser\Blocks\AtxHeaderParser.cs" />
     <Compile Include="Parser\Blocks\BlockQuoteParser.cs" />
+    <Compile Include="Parser\Blocks\DocumentParser.cs" />
     <Compile Include="Parser\Blocks\FencedCodeParser.cs" />
     <Compile Include="Parser\Blocks\HorizontalRulerParser.cs" />
     <Compile Include="Parser\Blocks\HtmlBlockParser.cs" />

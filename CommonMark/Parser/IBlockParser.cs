@@ -34,6 +34,13 @@ namespace CommonMark.Parser
         bool IsDiscardLastBlank(BlockParserInfo info);
 
         /// <summary>
+        /// Determines whether a handled element can contain child elements of the specified kind.
+        /// </summary>
+        /// <param name="childTag">Block element tag.</param>
+        /// <returns><c>true</c> if handled elements can contain elements having <paramref name="childTag"/>.</returns>
+        bool CanContain(BlockTag childTag);
+
+        /// <summary>
         /// Initializes a handled element.
         /// </summary>
         /// <param name="info">Parser state.</param>

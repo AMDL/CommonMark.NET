@@ -61,6 +61,7 @@ namespace CommonMark.Parser
             this._closers = Settings.GetLazy(GetClosers);
             this._finalizers = Settings.GetLazy(GetFinalizers);
             this._processors = Settings.GetLazy(GetProcessors);
+            this._canContain = Settings.GetLazy(GetCanContain);
         }
 
         #endregion Constructor
@@ -212,6 +213,41 @@ namespace CommonMark.Parser
         }
 
         #endregion Processors
+
+        #region CanContain
+
+        private Lazy<long[]> _canContain; // assuming we won't get past 63 tags
+
+        internal bool CanContain(BlockTag parentTag, BlockTag childTag)
+        {
+            return 0 != (_canContain.Value[(int)parentTag] & (1 << (int)childTag));
+        }
+
+        private long[] GetCanContain()
+        {
+            var canContain = new long[(int)BlockTag.Count];
+            IBlockParser parser;
+            BlockTag parentTag, childTag;
+            long c, m;
+            for (parentTag = 0; parentTag < BlockTag.Count; parentTag++)
+            {
+                if ((parser = Parsers[(int)parentTag]) != null)
+                {
+                    c = 0;
+                    m = 1;
+                    for (childTag = 0; childTag < BlockTag.Count; childTag++)
+                    {
+                        if (parser.CanContain(childTag))
+                            c |= m;
+                        m <<= 1;
+                    }
+                    canContain[(int)parentTag] = c;
+                }
+            }
+            return canContain;
+        }
+
+        #endregion CanContain
 
         /// <summary>
         /// Returns the parser delegates of the specified type.

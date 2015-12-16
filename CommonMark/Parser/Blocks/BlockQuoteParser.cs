@@ -28,6 +28,16 @@ namespace CommonMark.Parser.Blocks
         }
 
         /// <summary>
+        /// Determines whether a handled element can contain child elements of the specified kind.
+        /// </summary>
+        /// <param name="childTag">Block element tag.</param>
+        /// <returns><c>true</c> if handled elements can contain elements having <paramref name="childTag"/>.</returns>
+        public override bool CanContain(BlockTag childTag)
+        {
+            return true;
+        }
+
+        /// <summary>
         /// Initializes a handled element.
         /// </summary>
         /// <param name="info">Parser state.</param>

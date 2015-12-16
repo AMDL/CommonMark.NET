@@ -75,6 +75,16 @@ namespace CommonMark.Parser
         }
 
         /// <summary>
+        /// Determines whether a handled element can contain child elements of the specified kind.
+        /// </summary>
+        /// <param name="childTag">Block element tag.</param>
+        /// <returns><c>true</c> if handled elements can contain elements having <paramref name="childTag"/>.</returns>
+        public virtual bool CanContain(BlockTag childTag)
+        {
+            return false;
+        }
+
+        /// <summary>
         /// Initializes a handled element.
         /// </summary>
         /// <param name="info">Parser state.</param>
@@ -242,18 +252,9 @@ namespace CommonMark.Parser
             return true;
         }
 
-        /// <summary>
-        /// Determines whether elements of the specified kind can be contained one in another.
-        /// </summary>
-        /// <param name="parentTag">Block element tag.</param>
-        /// <param name="childTag">Block element tag.</param>
-        /// <returns><c>true</c> if elements having <paramref name="parentTag"/> can contain elements having <paramref name="childTag"/>.</returns>
-        protected virtual bool CanContain(BlockTag parentTag, BlockTag childTag)
+        private bool CanContain(BlockTag parentTag, BlockTag childTag)
         {
-            return (parentTag == BlockTag.Document ||
-                     parentTag == BlockTag.BlockQuote ||
-                     parentTag == BlockTag.ListItem ||
-                     (parentTag == BlockTag.List && childTag == BlockTag.ListItem));
+            return Settings.BlockParserParameters.CanContain(parentTag, childTag);
         }
 
         private static void AdjustInlineSourcePosition(Inline inline, PositionTracker tracker, ref Stack<Inline> stack)
@@ -343,6 +344,7 @@ namespace CommonMark.Parser
         {
             var parsers = new IBlockParser[(int)BlockTag.Count];
 
+            parsers[(int)BlockTag.Document] = new Blocks.DocumentParser(settings);
             parsers[(int)BlockTag.BlockQuote] = new Blocks.BlockQuoteParser(settings);
             parsers[(int)BlockTag.List] = new Blocks.ListParser(settings);
             parsers[(int)BlockTag.ListItem] = new Blocks.ListItemParser(settings);
