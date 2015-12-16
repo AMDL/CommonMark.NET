@@ -60,28 +60,10 @@ namespace CommonMark.Extension
     {
         private readonly PipeTablesSettings settings;
 
-        public TableRowParser(CommonMarkSettings settings, PipeTablesSettings pipeTableSettings)
-            : base(settings)
+        public TableRowParser(CommonMarkSettings settings, PipeTablesSettings pipeTablesSettings)
+            : base(settings, GetCharacters(pipeTablesSettings))
         {
-            this.settings = pipeTableSettings;
-        }
-
-        public override char[] Characters
-        {
-            get
-            {
-                var c = new List<char> { '-', '|' };
-                if (IsEnabled(PipeTablesFeatures.HeaderEquals))
-                    c.Add('=');
-                if (IsEnabled(PipeTablesFeatures.HeaderColon))
-                    c.Add(':');
-                return c.ToArray();
-            }
-        }
-
-        public override bool Advance(ref BlockParserInfo info)
-        {
-            return false;
+            this.settings = pipeTablesSettings;
         }
 
         public override bool Open(ref BlockParserInfo info)
@@ -96,11 +78,6 @@ namespace CommonMark.Extension
                 return false;
             }
             return true;
-        }
-
-        public override bool Close(BlockParserInfo info)
-        {
-            return false;
         }
 
         /// <summary>
@@ -432,6 +409,16 @@ namespace CommonMark.Extension
         private bool IsHeaderAlignmentMarker(char c)
         {
             return (c == ':' && IsEnabled(PipeTablesFeatures.HeaderColon));
+        }
+
+        private static char[] GetCharacters(PipeTablesSettings pipeTableSettings)
+        {
+            var c = new List<char> { '-', '|' };
+            if (0 != (pipeTableSettings.Features & PipeTablesFeatures.HeaderEquals))
+                c.Add('=');
+            if (0 != (pipeTableSettings.Features & PipeTablesFeatures.HeaderColon))
+                c.Add(':');
+            return c.ToArray();
         }
 
         private bool IsEnabled(PipeTablesFeatures feature)
