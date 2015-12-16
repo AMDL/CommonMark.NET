@@ -12,20 +12,8 @@ namespace CommonMark.Parser.Blocks
         /// </summary>
         /// <param name="settings">Common settings.</param>
         public ListItemParser(CommonMarkSettings settings)
-            : base(settings)
+            : base(settings, '+', '•', '*', '-', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9')
         {
-        }
-
-        /// <summary>
-        /// Gets the opening characters that are handled by this parser.
-        /// </summary>
-        /// <value>Array containing the characters that can open a handled element.</value>
-        public override char[] Characters
-        {
-            get
-            {
-                return new[] { '+', '•', '*', '-', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
-            }
         }
 
         /// <summary>
@@ -41,11 +29,11 @@ namespace CommonMark.Parser.Blocks
         }
 
         /// <summary>
-        /// Advances the offset and column values.
+        /// Initializes a handled element.
         /// </summary>
         /// <param name="info">Parser state.</param>
         /// <returns><c>true</c> if successful.</returns>
-        public override bool Advance(ref BlockParserInfo info)
+        public override bool Initialize(ref BlockParserInfo info)
         {
             if (info.Indent >= info.Container.ListData.MarkerOffset + info.Container.ListData.Padding)
             {
@@ -116,16 +104,6 @@ namespace CommonMark.Parser.Blocks
             return matched > 0;
         }
 
-        /// <summary>
-        /// Closes a handled element.
-        /// </summary>
-        /// <param name="info">Parser state.</param>
-        /// <returns><c>true</c> if successful.</returns>
-        public override bool Close(BlockParserInfo info)
-        {
-            return false;
-        }
-
         private static bool ListsMatch(ListData listData, ListData itemData)
         {
             return (listData.ListType == itemData.ListType &&
@@ -152,7 +130,7 @@ namespace CommonMark.Parser.Blocks
             int startpos = pos;
             char c = ln[pos];
 
-            if (c == '+' || c == '•' || ((c == '*' || c == '-') && 0 == ScanHorizontalRule(info)))
+            if (c == '+' || c == '•' || ((c == '*' || c == '-') && 0 == ScanHorizontalRule(info, '*', '-')))
             {
                 pos++;
                 if (pos == len || (ln[pos] != ' ' && ln[pos] != '\n'))

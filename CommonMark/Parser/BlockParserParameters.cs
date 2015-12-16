@@ -19,7 +19,7 @@ namespace CommonMark.Parser
         {
             this.Settings = settings;
             this._parsers = Settings.GetLazy(GetParsers);
-            this._advancers = Settings.GetLazy(GetAdvancers);
+            this._initializers = Settings.GetLazy(GetInitializers);
             this._openers = Settings.GetLazy(GetOpeners);
             this._closers = Settings.GetLazy(GetClosers);
             this._finalizers = Settings.GetLazy(GetFinalizers);
@@ -49,25 +49,25 @@ namespace CommonMark.Parser
 
         #endregion Parsers
 
-        #region Advancers
+        #region Initializers
 
-        private readonly Lazy<BlockAdvancerDelegate[]> _advancers;
+        private readonly Lazy<BlockInitializerDelegate[]> _initializers;
 
         /// <summary>
-        /// Gets the advancer delegates.
+        /// Gets the initializer delegates.
         /// </summary>
-        /// <value>Mapping from block element to advancer delegate.</value>
-        internal BlockAdvancerDelegate[] Advancers
+        /// <value>Mapping from block element to initializer delegate.</value>
+        internal BlockInitializerDelegate[] Initializers
         {
-            get { return _advancers.Value; }
+            get { return _initializers.Value; }
         }
 
-        private BlockAdvancerDelegate[] GetAdvancers()
+        private BlockInitializerDelegate[] GetInitializers()
         {
-            return GetItems<BlockAdvancerDelegate>(p => p.Advance);
+            return GetItems<BlockInitializerDelegate>(p => p.Initialize);
         }
 
-        #endregion Advancers
+        #endregion Initializers
 
         #region Openers
 

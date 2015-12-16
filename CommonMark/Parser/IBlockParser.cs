@@ -34,11 +34,11 @@ namespace CommonMark.Parser
         bool IsDiscardLastBlank(BlockParserInfo info);
 
         /// <summary>
-        /// Advances the offset and column values.
+        /// Initializes a handled element.
         /// </summary>
         /// <param name="info">Parser state.</param>
         /// <returns><c>true</c> if successful.</returns>
-        bool Advance(ref BlockParserInfo info);
+        bool Initialize(ref BlockParserInfo info);
 
         /// <summary>
         /// Opens a handled element.

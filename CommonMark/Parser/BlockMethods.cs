@@ -125,7 +125,7 @@ namespace CommonMark.Parser
         {
             var info = new BlockParserInfo(curptr, line);
 
-            Advance(ref info, settings);
+            Initialize(ref info, settings);
 
             Open(ref info, settings);
 
@@ -136,12 +136,12 @@ namespace CommonMark.Parser
 
         #endregion IncorporateLine
 
-        #region Advance
+        #region Initialize
 
-        private static void Advance(ref BlockParserInfo info, CommonMarkSettings settings)
+        private static void Initialize(ref BlockParserInfo info, CommonMarkSettings settings)
         {
-            var advancers = settings.BlockParserParameters.Advancers;
-            BlockAdvancerDelegate advancer;
+            var initializers = settings.BlockParserParameters.Initializers;
+            BlockInitializerDelegate initializer;
 
             // for each containing block, try to parse the associated line start.
             // bail out on failure:  container will point to the last matching block.
@@ -152,10 +152,10 @@ namespace CommonMark.Parser
 
                 info.FindFirstNonspace();
 
-                if ((advancer = advancers[(int)info.Container.Tag]) != null)
+                if ((initializer = initializers[(int)info.Container.Tag]) != null)
                 {
-                    // The advancer will do the job
-                    info.IsAllMatched &= advancer(ref info);
+                    // The initializer will do the job
+                    info.IsAllMatched &= initializer(ref info);
                 }
 
                 if (!info.IsAllMatched)
@@ -172,7 +172,7 @@ namespace CommonMark.Parser
                 BreakOutOfLists(ref info, settings);
         }
 
-        #endregion Advance
+        #endregion Initialize
 
         #region Open
 

@@ -17,42 +17,13 @@ namespace CommonMark.Parser.Blocks
         }
 
         /// <summary>
-        /// Gets the opening characters that are handled by this parser.
-        /// </summary>
-        /// <value>Array containing the characters that can open a handled element.</value>
-        public override char[] Characters
-        {
-            get { return null; }
-        }
-
-        /// <summary>
-        /// Advances the offset and column values.
+        /// Initializes a handled element.
         /// </summary>
         /// <param name="info">Parser state.</param>
         /// <returns><c>true</c> if successful.</returns>
-        public override bool Advance(ref BlockParserInfo info)
+        public override bool Initialize(ref BlockParserInfo info)
         {
             return true;
-        }
-
-        /// <summary>
-        /// Opens a handled element.
-        /// </summary>
-        /// <param name="info">Parser state.</param>
-        /// <returns><c>true</c> if successful.</returns>
-        public override bool Open(ref BlockParserInfo info)
-        {
-            return false;
-        }
-
-        /// <summary>
-        /// Closes a handled element.
-        /// </summary>
-        /// <param name="info">Parser state.</param>
-        /// <returns><c>true</c> if successful.</returns>
-        public override bool Close(BlockParserInfo info)
-        {
-            return false;
         }
 
         /// <summary>

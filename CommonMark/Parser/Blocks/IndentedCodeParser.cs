@@ -14,41 +14,16 @@ namespace CommonMark.Parser.Blocks
         public IndentedCodeParser(CommonMarkSettings settings)
             : base(settings)
         {
+            IsCodeBlock = true;
+            IsAcceptsLines = true;
         }
 
         /// <summary>
-        /// Gets the opening characters that are handled by this parser.
-        /// </summary>
-        /// <value>Array containing the characters that can open a handled element.</value>
-        public override char[] Characters
-        {
-            get { return null; }
-        }
-
-        /// <summary>
-        /// Gets the value indicating whether a handled element is a code block.
-        /// </summary>
-        /// <value><c>true</c> if a handled element is a code block.</value>
-        public override bool IsCodeBlock
-        {
-            get { return true; }
-        }
-
-        /// <summary>
-        /// Gets the value indicating whether a handled element accepts new lines.
-        /// </summary>
-        /// <value><c>true</c> if new lines can be added to a handled element.</value>
-        public override bool IsAcceptsLines
-        {
-            get { return true; }
-        }
-
-        /// <summary>
-        /// Advances the offset and column values.
+        /// Initializes a handled element.
         /// </summary>
         /// <param name="info">Parser state.</param>
         /// <returns><c>true</c> if successful.</returns>
-        public override bool Advance(ref BlockParserInfo info)
+        public override bool Initialize(ref BlockParserInfo info)
         {
             if (info.IsIndented)
             {

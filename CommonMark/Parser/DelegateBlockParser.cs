@@ -48,10 +48,10 @@ namespace CommonMark.Parser
                 || outer.IsDiscardLastBlank(info);
         }
 
-        public bool Advance(ref BlockParserInfo info)
+        public bool Initialize(ref BlockParserInfo info)
         {
-            return inner.Advance(ref info)
-                || outer.Advance(ref info);
+            return inner.Initialize(ref info)
+                || outer.Initialize(ref info);
         }
 
         public bool Open(ref BlockParserInfo info)

@@ -9,18 +9,29 @@ namespace CommonMark.Parser
     /// </summary>
     public abstract class BlockParser : ElementParser, IBlockParser
     {
-        #region Constructor
+        #region Constructors
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BlockParser"/> class.
         /// </summary>
         /// <param name="settings">Common settings.</param>
+        /// <param name="characters">Handled characters. May contain 0s.</param>
+        protected BlockParser(CommonMarkSettings settings, params char[] characters)
+            : this(settings)
+        {
+            this.Characters = characters;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="settings"></param>
         protected BlockParser(CommonMarkSettings settings)
         {
             this.Settings = settings;
         }
 
-        #endregion Constructor
+        #endregion Constructors
 
         #region IBlockParser Members
 
@@ -28,27 +39,29 @@ namespace CommonMark.Parser
         /// Gets the opening characters that are handled by this parser.
         /// </summary>
         /// <value>Array containing the characters that can open a handled element.</value>
-        public abstract char[] Characters
+        public char[] Characters
         {
             get;
         }
 
         /// <summary>
-        /// Gets the value indicating whether a handled element is a code block.
+        /// Gets or sets the value indicating whether a handled element is a code block.
         /// </summary>
         /// <value><c>true</c> if a handled element is a code block.</value>
-        public virtual bool IsCodeBlock
+        public bool IsCodeBlock
         {
-            get { return false; }
+            get;
+            protected set;
         }
 
         /// <summary>
-        /// Gets the value indicating whether a handled element accepts new lines.
+        /// Gets or sets the value indicating whether a handled element accepts new lines.
         /// </summary>
         /// <value><c>true</c> if new lines can be added to a handled element.</value>
-        public virtual bool IsAcceptsLines
+        public bool IsAcceptsLines
         {
-            get { return false; }
+            get;
+            protected set;
         }
 
         /// <summary>
@@ -62,25 +75,34 @@ namespace CommonMark.Parser
         }
 
         /// <summary>
-        /// Advances the offset and column values.
+        /// Initializes a handled element.
         /// </summary>
         /// <param name="info">Parser state.</param>
         /// <returns><c>true</c> if successful.</returns>
-        public abstract bool Advance(ref BlockParserInfo info);
+        public virtual bool Initialize(ref BlockParserInfo info)
+        {
+            return false;
+        }
 
         /// <summary>
         /// Opens a handled element.
         /// </summary>
         /// <param name="info">Parser state.</param>
         /// <returns><c>true</c> if successful.</returns>
-        public abstract bool Open(ref BlockParserInfo info);
+        public virtual bool Open(ref BlockParserInfo info)
+        {
+            return false;
+        }
 
         /// <summary>
         /// Closes a handled element.
         /// </summary>
         /// <param name="info">Parser state.</param>
         /// <returns><c>true</c> if successful.</returns>
-        public abstract bool Close(BlockParserInfo info);
+        public virtual bool Close(BlockParserInfo info)
+        {
+            return false;
+        }
 
         /// <summary>
         /// Finalizes a handled element.
@@ -267,24 +289,15 @@ namespace CommonMark.Parser
         }
 
         /// <summary>
-        /// Determines whether a character can serve as a horizontal rule delimiter.
-        /// </summary>
-        /// <param name="c">The character to check.</param>
-        /// <returns><c>true</c> if the character can serve as a horizontal rule delimiter.</returns>
-        protected virtual bool IsHorizontalRuleDelimiter(char c)
-        {
-            return c == '*' || c == '-' || c == '_';
-        }
-
-        /// <summary>
         /// Scans a horizontal rule line: "...three or more hyphens, asterisks,
         /// or underscores on a line by themselves. If you wish, you may use
         /// spaces between the hyphens or asterisks."
         /// </summary>
         /// <param name="info">Parser state.</param>
+        /// <param name="chars">Horizontal rule characters.</param>
         /// <returns>Offset, or 0 for no match.</returns>
         /// <remarks>Original: int scan_hrule(string s, int pos, int sourceLength)</remarks>
-        protected int ScanHorizontalRule(BlockParserInfo info)
+        protected int ScanHorizontalRule(BlockParserInfo info, params char[] chars)
         {
             var s = info.Line;
             var pos = info.FirstNonspace;
@@ -305,7 +318,7 @@ namespace CommonMark.Parser
                     continue;
                 if (count == 0)
                 {
-                    if (IsHorizontalRuleDelimiter(c))
+                    if (System.Array.IndexOf(chars, c) >= 0)
                         x = c;
                     else
                         return 0;

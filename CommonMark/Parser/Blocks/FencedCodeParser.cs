@@ -1,4 +1,5 @@
 ﻿using CommonMark.Syntax;
+using System.Collections.Generic;
 
 namespace CommonMark.Parser.Blocks
 {
@@ -12,38 +13,23 @@ namespace CommonMark.Parser.Blocks
         /// </summary>
         /// <param name="settings">Common settings.</param>
         public FencedCodeParser(CommonMarkSettings settings)
-            : base(settings)
+            : this(settings, new[] { '`', '~' })
         {
+            IsCodeBlock = true;
         }
 
         /// <summary>
-        /// Gets the opening characters that are handled by this parser.
+        /// Initializes a new instance of the <see cref="FencedCodeParser"/> class.
         /// </summary>
-        /// <value>Array containing the characters that can open a handled element.</value>
-        public override char[] Characters
+        /// <param name="settings">Common settings.</param>
+        /// <param name="openers">Opening characters.</param>
+        /// <param name="closers">Closing characters. If unspecified, <paramref name="openers"/> will be used.</param>
+        protected FencedCodeParser(CommonMarkSettings settings, char[] openers, char[] closers = null)
+            : base(settings, GetCharacters(openers, closers))
         {
-            get
-            {
-                return new[] { '`', '~' };
-            }
-        }
-
-        /// <summary>
-        /// Gets the value indicating whether a handled element is a code block.
-        /// </summary>
-        /// <value><c>true</c> if a handled element is a code block.</value>
-        public override bool IsCodeBlock
-        {
-            get { return true; }
-        }
-
-        /// <summary>
-        /// Gets the value indicating whether a handled element accepts new lines.
-        /// </summary>
-        /// <value><c>true</c> if new lines can be added to a handled element.</value>
-        public override bool IsAcceptsLines
-        {
-            get { return true; }
+            IsAcceptsLines = true;
+            Openers = openers;
+            Closers = closers != null ? closers : openers;
         }
 
         /// <summary>
@@ -58,11 +44,11 @@ namespace CommonMark.Parser.Blocks
         }
 
         /// <summary>
-        /// Advances the offset and column values.
+        /// Initializes a handled element.
         /// </summary>
         /// <param name="info">Parser state.</param>
         /// <returns><c>true</c> if successful.</returns>
-        public override bool Advance(ref BlockParserInfo info)
+        public override bool Initialize(ref BlockParserInfo info)
         {
             // -1 means we've seen closer 
             if (info.Container.FencedCodeData.FenceLength == -1)
@@ -92,7 +78,7 @@ namespace CommonMark.Parser.Blocks
         public override bool Open(ref BlockParserInfo info)
         {
             int fenceLength;
-            if (!info.IsIndented && IsOpening(info) && 0 != (fenceLength = ScanOpening(info)))
+            if (!info.IsIndented && 0 != (fenceLength = ScanOpening(info)))
             {
                 info.Container = CreateChildBlock(info, BlockTag.FencedCode, info.FirstNonspace);
                 info.Container.FencedCodeData = new FencedCodeData
@@ -140,23 +126,13 @@ namespace CommonMark.Parser.Blocks
         }
 
         /// <summary>
-        /// Determines whether the current line can serve as an opening fence.
-        /// </summary>
-        /// <param name="info">Parser state.</param>
-        /// <returns><c>true</c> if the line can be an opening fence.</returns>
-        protected virtual bool IsOpening(BlockParserInfo info)
-        {
-            return true;
-        }
-
-        /// <summary>
         /// Determines whether the current line can serve as a closing fence.
         /// </summary>
         /// <param name="info">Parser state.</param>
         /// <returns><c>true</c> if the line can be a closing fence.</returns>
-        protected virtual bool IsClosing(BlockParserInfo info)
+        private bool IsClosing(BlockParserInfo info)
         {
-            return info.CurrentCharacter == info.Container.FencedCodeData.FenceChar;
+            return Openers[0] != Closers[0] || info.CurrentCharacter == info.Container.FencedCodeData.FenceChar;
         }
 
         /// <summary>
@@ -255,6 +231,35 @@ namespace CommonMark.Parser.Blocks
             }
 
             return 0;
+        }
+
+        /// <summary>
+        /// Gets the fence opener characters.
+        /// </summary>
+        /// <value>Opener characters.</value>
+        private char[] Closers
+        {
+            get;
+        }
+
+        /// <summary>
+        /// Gets the fence closer character.
+        /// </summary>
+        /// <value>Closer character.</value>
+        private char[] Openers
+        {
+            get;
+        }
+
+        private static char[] GetCharacters(char[] openers, char[] closers)
+        {
+            if (closers == null)
+                return openers;
+            var chars = new List<char>(openers);
+            foreach (var c in closers)
+                if (!chars.Contains(c))
+                    chars.Add(c);
+            return chars.ToArray();
         }
     }
 }

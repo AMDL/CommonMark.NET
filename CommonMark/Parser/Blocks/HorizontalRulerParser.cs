@@ -12,30 +12,8 @@ namespace CommonMark.Parser.Blocks
         /// </summary>
         /// <param name="settings">Common settings.</param>
         public HorizontalRulerParser(CommonMarkSettings settings)
-            : base(settings)
+            : base(settings, '*', '-', '_')
         {
-        }
-
-        /// <summary>
-        /// Gets the opening characters that are handled by this parser.
-        /// </summary>
-        /// <value>Array containing the characters that can open a handled element.</value>
-        public override char[] Characters
-        {
-            get
-            {
-                return new[] { '*', '-', '_' };
-            }
-        }
-
-        /// <summary>
-        /// Advances the offset and column values.
-        /// </summary>
-        /// <param name="info">Parser state.</param>
-        /// <returns><c>true</c> if successful.</returns>
-        public override bool Advance(ref BlockParserInfo info)
-        {
-            return false;
         }
 
         /// <summary>
@@ -45,7 +23,7 @@ namespace CommonMark.Parser.Blocks
         /// <returns><c>true</c> if successful.</returns>
         public override bool Open(ref BlockParserInfo info)
         {
-            if (!info.IsIndented && IsOpening(info) && 0 != ScanHorizontalRule(info))
+            if (!info.IsIndented && (info.Container.Tag != BlockTag.Paragraph || info.IsAllMatched) && 0 != ScanHorizontalRule(info, Characters))
             {
                 // it's only now that we know the line is not part of a setext header:
                 info.Container = CreateChildBlock(info, BlockTag.HorizontalRuler, info.FirstNonspace);
@@ -65,16 +43,6 @@ namespace CommonMark.Parser.Blocks
         public override bool Close(BlockParserInfo info)
         {
             return true;
-        }
-
-        /// <summary>
-        /// Determines whether the current line can serve as a horizontal rule.
-        /// </summary>
-        /// <param name="info">Parser state.</param>
-        /// <returns><c>true</c> if the current line can be a horizontal rule.</returns>
-        protected virtual bool IsOpening(BlockParserInfo info)
-        {
-            return info.Container.Tag != BlockTag.Paragraph || info.IsAllMatched;
         }
     }
 }

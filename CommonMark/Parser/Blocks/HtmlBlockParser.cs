@@ -15,38 +15,18 @@ namespace CommonMark.Parser.Blocks
         /// </summary>
         /// <param name="settings">Common settings.</param>
         public HtmlBlockParser(CommonMarkSettings settings)
-            : base(settings)
+            : base(settings, '<')
         {
+            IsCodeBlock = true;
             _endScanners = settings.GetLazy(InitializeEndScanners);
         }
 
         /// <summary>
-        /// Gets the value indicating whether a handled element is a code block.
-        /// </summary>
-        /// <value><c>true</c> if a handled element is a code block.</value>
-        public override bool IsCodeBlock
-        {
-            get { return true; }
-        }
-
-        /// <summary>
-        /// Gets the opening characters that are handled by this parser.
-        /// </summary>
-        /// <value>Array containing the characters that can open a handled element.</value>
-        public override char[] Characters
-        {
-            get
-            {
-                return new[] { '<' };
-            }
-        }
-
-        /// <summary>
-        /// Advances the offset and column values.
+        /// Initializes a handled element.
         /// </summary>
         /// <param name="info">Parser state.</param>
         /// <returns><c>true</c> if successful.</returns>
-        public override bool Advance(ref BlockParserInfo info)
+        public override bool Initialize(ref BlockParserInfo info)
         {
             // all other block types can accept blanks
             if (info.IsBlank && info.Container.HtmlBlockType >= HtmlBlockType.InterruptingBlock)

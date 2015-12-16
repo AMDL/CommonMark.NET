@@ -4,11 +4,11 @@ using System.Collections.Generic;
 namespace CommonMark.Parser
 {
     /// <summary>
-    /// Stage 1 block advancer delegate.
+    /// Stage 1 block initializer delegate.
     /// </summary>
     /// <param name="info">Parser state.</param>
     /// <returns><c>true</c> if successful.</returns>
-    internal delegate bool BlockAdvancerDelegate(ref BlockParserInfo info);
+    internal delegate bool BlockInitializerDelegate(ref BlockParserInfo info);
 
     /// <summary>
     /// Stage 1 block opener delegate.

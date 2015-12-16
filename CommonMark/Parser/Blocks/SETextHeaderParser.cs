@@ -13,20 +13,18 @@ namespace CommonMark.Parser.Blocks
         /// </summary>
         /// <param name="settings">Common settings.</param>
         public SETextHeaderParser(CommonMarkSettings settings)
-            : base(settings)
+            : this(settings, new[] { '=', '-' })
         {
         }
 
         /// <summary>
-        /// Gets the opening characters that are handled by this parser.
+        /// Initializes a new instance of the <see cref="SETextHeaderParser"/> class.
         /// </summary>
-        /// <value>Array containing the characters that can open a handled element.</value>
-        public override char[] Characters
+        /// <param name="settings">Common settings.</param>
+        /// <param name="headerLevels">Mapping from (level-1) to character.</param>
+        protected SETextHeaderParser(CommonMarkSettings settings, char[] headerLevels)
+            : base(settings, headerLevels)
         {
-            get
-            {
-                return GetHeaderLevels();
-            }
         }
 
         /// <summary>
@@ -41,11 +39,11 @@ namespace CommonMark.Parser.Blocks
         }
 
         /// <summary>
-        /// Advances the offset and column values.
+        /// Initializes a handled element.
         /// </summary>
         /// <param name="info">Parser state.</param>
         /// <returns><c>true</c> if successful.</returns>
-        public override bool Advance(ref BlockParserInfo info)
+        public override bool Initialize(ref BlockParserInfo info)
         {
             // a header can never contain more than one line
             if (info.IsBlank)
@@ -63,7 +61,7 @@ namespace CommonMark.Parser.Blocks
         public override bool Open(ref BlockParserInfo info)
         {
             int headerLevel;
-            if (!info.IsIndented && IsOpening(info) && 0 != (headerLevel = ScanLine(info))
+            if (!info.IsIndented && info.Container.Tag == BlockTag.Paragraph && 0 != (headerLevel = ScanLine(info))
                 && ContainsSingleLine(info.Container.StringContent))
             {
                 info.Container.Tag = BlockTag.SETextHeader;
@@ -97,25 +95,6 @@ namespace CommonMark.Parser.Blocks
         }
 
         /// <summary>
-        /// Determines whether the current line can serve as a setext header line.
-        /// </summary>
-        /// <param name="info">Parser state.</param>
-        /// <returns><c>true</c> if the line can be a setext header line.</returns>
-        protected virtual bool IsOpening(BlockParserInfo info)
-        {
-            return info.Container.Tag == BlockTag.Paragraph;
-        }
-
-        /// <summary>
-        /// Gets the header level characters.
-        /// </summary>
-        /// <returns>Mapping from (level-1) to character.</returns>
-        protected virtual char[] GetHeaderLevels()
-        {
-            return new[] { '=', '-' };
-        }
-
-        /// <summary>
         /// Matches sexext header line.
         /// </summary>
         /// <param name="info">Parser state.</param>
@@ -138,7 +117,7 @@ namespace CommonMark.Parser.Blocks
 
             var c1 = s[pos];
 
-            var chars = GetHeaderLevels();
+            var chars = Characters;
             var matched = System.Array.IndexOf(chars, c1) + 1;
             if (matched == 0)
                 return 0;

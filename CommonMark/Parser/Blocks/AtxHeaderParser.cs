@@ -13,37 +13,30 @@ namespace CommonMark.Parser.Blocks
         /// </summary>
         /// <param name="settings">Common settings.</param>
         public AtxHeaderParser(CommonMarkSettings settings)
-            : base(settings)
+            : this(settings, '#')
         {
         }
 
         /// <summary>
-        /// Gets the opening characters that are handled by this parser.
+        /// Initializes a new instance of the <see cref="AtxHeaderParser"/> class.
         /// </summary>
-        /// <value>Array containing the characters that can open a handled element.</value>
-        public override char[] Characters
+        /// <param name="settings">Common settings.</param>
+        /// <param name="opener">Opening character.</param>
+        /// <param name="closer">Closing character. If unspecified, <paramref name="opener"/> will be used.</param>
+        protected AtxHeaderParser(CommonMarkSettings settings, char opener, char closer = (char)0)
+            : base(settings, GetCharacters(opener, closer))
         {
-            get
-            {
-                return new[] { Opener };
-            }
+            IsAcceptsLines = true;
+            Opener = opener;
+            Closer = closer != (char)0 ? closer : opener;
         }
 
         /// <summary>
-        /// Gets the value indicating whether a handled element accepts new lines.
-        /// </summary>
-        /// <value><c>true</c> if new lines can be added to a handled element.</value>
-        public override bool IsAcceptsLines
-        {
-            get { return true; }
-        }
-
-        /// <summary>
-        /// Advances the offset and column values.
+        /// Initializes a handled element.
         /// </summary>
         /// <param name="info">Parser state.</param>
         /// <returns><c>true</c> if successful.</returns>
-        public override bool Advance(ref BlockParserInfo info)
+        public override bool Initialize(ref BlockParserInfo info)
         {
             // a header can never contain more than one line
             if (info.IsBlank)
@@ -62,7 +55,7 @@ namespace CommonMark.Parser.Blocks
         {
             int offset;
             int headerLevel;
-            if (!info.IsIndented && IsOpening(info) && 0 != (offset = ScanStart(info, out headerLevel)))
+            if (!info.IsIndented && 0 != (offset = ScanStart(info, out headerLevel)))
             {
                 info.AdvanceOffset(info.FirstNonspace + offset - info.Offset, false);
                 info.Container = CreateChildBlock(info, BlockTag.AtxHeader, info.FirstNonspace);
@@ -104,31 +97,21 @@ namespace CommonMark.Parser.Blocks
         }
 
         /// <summary>
-        /// Determines whether the current line can contain an ATX header.
-        /// </summary>
-        /// <param name="info">Parser state.</param>
-        /// <returns><c>true</c> if the line can contain an ATX header.</returns>
-        protected virtual bool IsOpening(BlockParserInfo info)
-        {
-            return true;
-        }
-
-        /// <summary>
         /// Gets the header opener character.
         /// </summary>
         /// <value>Opener character.</value>
-        protected virtual char Opener
+        private char Opener
         {
-            get { return '#'; }
+            get;
         }
 
         /// <summary>
         /// Gets the header closer character.
         /// </summary>
         /// <value>Closer character.</value>
-        protected virtual char Closer
+        private char Closer
         {
-            get { return '#'; }
+            get;
         }
 
         /// <summary>
@@ -212,6 +195,13 @@ namespace CommonMark.Parser.Blocks
                 p = info.Line.Length - 1;
 
             return p - info.FirstNonspace + 1;
+        }
+
+        private static char[] GetCharacters(char opener, char closer)
+        {
+            return opener != closer && closer != (char)0
+                ? new[] { opener, closer }
+                : new[] { opener };
         }
     }
 }

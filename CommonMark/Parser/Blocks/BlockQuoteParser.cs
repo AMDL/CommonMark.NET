@@ -12,20 +12,8 @@ namespace CommonMark.Parser.Blocks
         /// </summary>
         /// <param name="settings">Common settings.</param>
         public BlockQuoteParser(CommonMarkSettings settings)
-            : base(settings)
+            : base(settings, '>')
         {
-        }
-
-        /// <summary>
-        /// Gets the opening characters that are handled by this parser.
-        /// </summary>
-        /// <value>Array containing the characters that can open a handled element.</value>
-        public override char[] Characters
-        {
-            get
-            {
-                return new[] { '>' };
-            }
         }
 
         /// <summary>
@@ -40,11 +28,11 @@ namespace CommonMark.Parser.Blocks
         }
 
         /// <summary>
-        /// Advances the offset and column values.
+        /// Initializes a handled element.
         /// </summary>
         /// <param name="info">Parser state.</param>
         /// <returns><c>true</c> if successful.</returns>
-        public override bool Advance(ref BlockParserInfo info)
+        public override bool Initialize(ref BlockParserInfo info)
         {
             if (!info.IsIndented && info.CurrentCharacter == '>')
             {
@@ -76,16 +64,6 @@ namespace CommonMark.Parser.Blocks
             }
             info.Container = CreateChildBlock(info, BlockTag.BlockQuote, info.FirstNonspace);
             return true;
-        }
-
-        /// <summary>
-        /// Closes a handled element.
-        /// </summary>
-        /// <param name="info">Parser state.</param>
-        /// <returns><c>true</c> if successful.</returns>
-        public override bool Close(BlockParserInfo info)
-        {
-            return false;
         }
     }
 }
