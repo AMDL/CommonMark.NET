@@ -123,7 +123,6 @@
     <Compile Include="Parser\InlineParser.cs" />
     <Compile Include="Parser\InlineParserParameters.cs" />
     <Compile Include="Parser\InlineStack.cs" />
-    <Compile Include="Parser\Inlines\AsteriskParser.cs" />
     <Compile Include="Parser\Inlines\AutoEmailParser.cs" />
     <Compile Include="Parser\Inlines\AutoUriParser.cs" />
     <Compile Include="Parser\Inlines\CodeParser.cs" />
@@ -135,7 +134,6 @@
     <Compile Include="Parser\Inlines\LineBreakParser.cs" />
     <Compile Include="Parser\Inlines\LinkCloserParser.cs" />
     <Compile Include="Parser\Inlines\LinkOpenerParser.cs" />
-    <Compile Include="Parser\Inlines\UnderscoreParser.cs" />
     <Compile Include="Parser\LineInfo.cs" />
     <Compile Include="Parser\PositionOffset.cs" />
     <Compile Include="Parser\PositionTracker.cs" />

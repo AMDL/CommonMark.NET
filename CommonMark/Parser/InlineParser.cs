@@ -1,5 +1,4 @@
 ﻿using CommonMark.Syntax;
-using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -318,15 +317,9 @@ namespace CommonMark.Parser
         private static readonly InlineDelimiterCharacterParameters AsteriskDelimiters = InitializeEmphasisDelimiters('*');
         private static readonly InlineDelimiterCharacterParameters UnderscoreDelimiters = InitializeEmphasisDelimiters('_');
 
-        internal static readonly InlineDelimiterCharacterParameters[] EmphasisDelimiterCharacters = InitializeDelimiterCharacters();
+        internal static readonly InlineDelimiterCharacterParameters[] EmphasisDelimiterCharacters = InitializeEmphasisDelimiterCharacters();
 
-        internal static IEnumerable<IInlineParser> InitializeEmphasisParsers(InlineParserParameters parameters)
-        {
-            yield return new Inlines.AsteriskParser(parameters);
-            yield return new Inlines.UnderscoreParser(parameters);
-        }
-
-        internal static InlineDelimiterCharacterParameters[] InitializeDelimiterCharacters()
+        internal static InlineDelimiterCharacterParameters[] InitializeEmphasisDelimiterCharacters()
         {
             var t = new InlineDelimiterCharacterParameters[127];
             t['*'] = AsteriskDelimiters;

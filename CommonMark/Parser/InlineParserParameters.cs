@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace CommonMark.Parser
 {
@@ -217,7 +216,7 @@ namespace CommonMark.Parser
 
         internal override InlineDelimiterCharacterParameters[] GetDelimiterCharacters()
         {
-            return Settings.Extensions.GetItems(InlineParser.InitializeDelimiterCharacters,
+            return Settings.Extensions.GetItems(InlineParser.InitializeEmphasisDelimiterCharacters,
                 ext => ext.InlineDelimiterCharacters, key => key, InlineDelimiterCharacterParameters.Merge);
         }
 
@@ -251,7 +250,7 @@ namespace CommonMark.Parser
 
         internal override IEnumerable<IInlineParser> GetParsers()
         {
-            return InlineParser.InitializeEmphasisParsers(this);
+            return new IInlineParser[0];
         }
 
         internal override InlineDelimiterCharacterParameters[] GetDelimiterCharacters()
