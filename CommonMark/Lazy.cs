@@ -3,6 +3,13 @@
 namespace CommonMark
 {
 #if v2_0 || v3_5
+    enum LazyThreadSafetyMode
+    {
+        None,
+        PublicationOnly,
+        ExecutionAndPublication
+    }
+
     class Lazy<T>
     {
         private readonly Func<T> valueFactory;
@@ -12,6 +19,11 @@ namespace CommonMark
 
         public Lazy(Func<T> valueFactory)
             : this(valueFactory, true)
+        {
+        }
+
+        public Lazy(Func<T> valueFactory, LazyThreadSafetyMode mode)
+            : this(valueFactory, mode != LazyThreadSafetyMode.None)
         {
         }
 

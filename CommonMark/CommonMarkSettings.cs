@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Threading;
 
 namespace CommonMark
 {
@@ -171,7 +171,7 @@ namespace CommonMark
 
         internal Lazy<T> GetLazy<T>(Func<T> valueFactory)
         {
-            return new Lazy<T>(valueFactory, isThreadSafe: false);
+            return new Lazy<T>(valueFactory, LazyThreadSafetyMode.None);
         }
 
         #region BlockParserParameters
