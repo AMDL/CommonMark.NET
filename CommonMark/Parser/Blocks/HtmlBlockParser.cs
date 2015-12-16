@@ -4,13 +4,6 @@ using System;
 namespace CommonMark.Parser.Blocks
 {
     /// <summary>
-    /// Stage 1 HTML block closer delegate.
-    /// </summary>
-    /// <param name="info">Parser state.</param>
-    /// <returns><c>true</c> if successful.</returns>
-    internal delegate bool HtmlBlockCloserDelegate(BlockParserInfo info);
-
-    /// <summary>
     /// <see cref="BlockTag.HtmlBlock"/> element parser.
     /// </summary>
     public class HtmlBlockParser : BlockParser
@@ -25,7 +18,6 @@ namespace CommonMark.Parser.Blocks
             : base(settings, '<')
         {
             IsCodeBlock = true;
-            _endScanners = settings.GetLazy(InitializeEndScanners);
         }
 
         /// <summary>
@@ -192,26 +184,21 @@ namespace CommonMark.Parser.Blocks
         /// <remarks>Original: bool scan_html_block_end(HtmlBlockType type, string s, int pos, int sourceLength)</remarks>
         private bool ScanEnd(BlockParserInfo info)
         {
-            var scanner = EndScanners[(int)info.Container.HtmlBlockType];
-            return scanner != null && scanner(info);
-        }
-
-        private Lazy<HtmlBlockCloserDelegate[]> _endScanners;
-
-        private HtmlBlockCloserDelegate[] EndScanners
-        {
-            get { return _endScanners.Value; }
-        }
-
-        private static HtmlBlockCloserDelegate[] InitializeEndScanners()
-        {
-            var s = new HtmlBlockCloserDelegate[(int)HtmlBlockType.Count];
-            s[(int)HtmlBlockType.InterruptingBlockWithEmptyLines] = ScanEndInterruptingBlockWithEmptyLines;
-            s[(int)HtmlBlockType.Comment] = ScanEndComment;
-            s[(int)HtmlBlockType.ProcessingInstruction] = ScanEndProcessingInstruction;
-            s[(int)HtmlBlockType.DocumentType] = ScanEndDocumentType;
-            s[(int)HtmlBlockType.CData] = ScanEndCData;
-            return s;
+            switch (info.Container.HtmlBlockType)
+            {
+                case HtmlBlockType.InterruptingBlockWithEmptyLines:
+                    return ScanEndInterruptingBlockWithEmptyLines(info);
+                case HtmlBlockType.Comment:
+                    return ScanEndComment(info);
+                case HtmlBlockType.ProcessingInstruction:
+                    return ScanEndProcessingInstruction(info);
+                case HtmlBlockType.DocumentType:
+                    return ScanEndDocumentType(info);
+                case HtmlBlockType.CData:
+                    return ScanEndCData(info);
+                default:
+                    return false;
+            }
         }
 
         /// <summary>
