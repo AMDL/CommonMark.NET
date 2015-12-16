@@ -13,12 +13,12 @@ namespace CommonMark
     {
         #region Fields
 
-        private readonly Lazy<IDictionary<BlockTag, IBlockParser>> _blockParsers;
-        private readonly Lazy<IEnumerable<IInlineParser>> _inlineParsers;
-        private readonly Lazy<IDictionary<char, InlineDelimiterCharacterParameters>> _inlineDelimiterCharacters;
-        private readonly Lazy<StringNormalizerDelegate> _referenceNormalizer;
-        private readonly Lazy<IDictionary<BlockTag, IBlockFormatter>> _blockFormatters;
-        private readonly Lazy<IDictionary<InlineTag, IInlineFormatter>> _inlineFormatters;
+        private readonly IDictionary<BlockTag, IBlockParser> _blockParsers;
+        private readonly IEnumerable<IInlineParser> _inlineParsers;
+        private readonly IDictionary<char, InlineDelimiterCharacterParameters> _inlineDelimiterCharacters;
+        private readonly StringNormalizerDelegate _referenceNormalizer;
+        private readonly IDictionary<BlockTag, IBlockFormatter> _blockFormatters;
+        private readonly IDictionary<InlineTag, IInlineFormatter> _inlineFormatters;
 
         #endregion
 
@@ -30,15 +30,15 @@ namespace CommonMark
         /// <param name="settings">Common settings.</param>
         protected CommonMarkExtension(CommonMarkSettings settings)
         {
-            this._blockParsers = settings.GetLazy(() => InitializeBlockParsers(settings));
-            this._inlineParsers = settings.GetLazy(() => InitializeInlineParsers(settings));
+            this._blockParsers = InitializeBlockParsers(settings);
+            this._inlineParsers = InitializeInlineParsers(settings);
 
-            this._inlineDelimiterCharacters = settings.GetLazy(InitializeInlineDelimiterCharacters);
-            this._referenceNormalizer = settings.GetLazy(InitializeReferenceNormalizer);
+            this._inlineDelimiterCharacters = InitializeInlineDelimiterCharacters();
+            this._referenceNormalizer = InitializeReferenceNormalizer();
 
             var parameters = settings.FormatterParameters;
-            this._blockFormatters = settings.GetLazy(() => InitializeBlockFormatters(parameters));
-            this._inlineFormatters = settings.GetLazy(() => InitializeInlineFormatters(parameters));
+            this._blockFormatters = InitializeBlockFormatters(parameters);
+            this._inlineFormatters = InitializeInlineFormatters(parameters);
         }
 
         #endregion
@@ -50,7 +50,7 @@ namespace CommonMark
         /// </summary>
         public IDictionary<BlockTag, IBlockParser> BlockParsers
         {
-            get { return _blockParsers.Value; }
+            get { return _blockParsers; }
         }
 
         #endregion
@@ -62,7 +62,7 @@ namespace CommonMark
         /// </summary>
         public IEnumerable<IInlineParser> InlineParsers
         {
-            get { return _inlineParsers.Value; }
+            get { return _inlineParsers; }
         }
 
         /// <summary>
@@ -70,7 +70,7 @@ namespace CommonMark
         /// </summary>
         public IDictionary<char, InlineDelimiterCharacterParameters> InlineDelimiterCharacters
         {
-            get { return _inlineDelimiterCharacters.Value; }
+            get { return _inlineDelimiterCharacters; }
         }
 
         /// <summary>
@@ -78,7 +78,7 @@ namespace CommonMark
         /// </summary>
         public StringNormalizerDelegate ReferenceNormalizer
         {
-            get { return _referenceNormalizer.Value; }
+            get { return _referenceNormalizer; }
         }
 
         #endregion
@@ -90,7 +90,7 @@ namespace CommonMark
         /// </summary>
         public IDictionary<BlockTag, IBlockFormatter> BlockFormatters
         {
-            get { return _blockFormatters.Value; }
+            get { return _blockFormatters; }
         }
 
         /// <summary>
@@ -98,7 +98,7 @@ namespace CommonMark
         /// </summary>
         public IDictionary<InlineTag, IInlineFormatter> InlineFormatters
         {
-            get { return _inlineFormatters.Value; }
+            get { return _inlineFormatters; }
         }
 
         #endregion

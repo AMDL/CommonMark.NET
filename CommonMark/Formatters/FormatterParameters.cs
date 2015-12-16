@@ -16,10 +16,10 @@ namespace CommonMark.Formatters
         public FormatterParameters(CommonMarkSettings settings)
         {
             this.Settings = settings;
-            this._blockFormatters = Settings.GetLazy(GetBlockFormatters);
-            this._inlineFormatters = Settings.GetLazy(GetInlineFormatters);
-            this._htmlFormatter = Settings.GetLazy(() => new HtmlFormatterImpl());
-            this._printer = Settings.GetLazy(() => new PrinterImpl());
+            this._blockFormatters = GetBlockFormatters();
+            this._inlineFormatters = GetInlineFormatters();
+            this._htmlFormatter = new HtmlFormatterImpl();
+            this._printer = new PrinterImpl();
         }
 
         #endregion Constructor
@@ -50,14 +50,14 @@ namespace CommonMark.Formatters
 
         #region BlockFormatters
 
-        private Lazy<Formatters.IBlockFormatter[]> _blockFormatters;
+        private Formatters.IBlockFormatter[] _blockFormatters;
 
         /// <summary>
         /// Gets the block element formatters.
         /// </summary>
         internal Formatters.IBlockFormatter[] BlockFormatters
         {
-            get { return _blockFormatters.Value; }
+            get { return _blockFormatters; }
         }
 
         private Formatters.IBlockFormatter[] GetBlockFormatters()
@@ -70,14 +70,14 @@ namespace CommonMark.Formatters
 
         #region InlineFormatters
 
-        private Lazy<Formatters.IInlineFormatter[]> _inlineFormatters;
+        private Formatters.IInlineFormatter[] _inlineFormatters;
 
         /// <summary>
         /// Gets the inline element formatters.
         /// </summary>
         internal Formatters.IInlineFormatter[] InlineFormatters
         {
-            get { return _inlineFormatters.Value; }
+            get { return _inlineFormatters; }
         }
 
         private Formatters.IInlineFormatter[] GetInlineFormatters()
@@ -90,22 +90,22 @@ namespace CommonMark.Formatters
 
         #region HtmlFormatter
 
-        private Lazy<HtmlFormatterImpl> _htmlFormatter;
+        private HtmlFormatterImpl _htmlFormatter;
 
         internal IHtmlFormatter HtmlFormatter
         {
-            get { return _htmlFormatter.Value; }
+            get { return _htmlFormatter; }
         }
 
         #endregion HtmlFormatter
 
         #region Printer
 
-        private Lazy<PrinterImpl> _printer;
+        private PrinterImpl _printer;
 
         internal IPrinter Printer
         {
-            get { return _printer.Value; }
+            get { return _printer; }
         }
 
         #endregion Printer

@@ -32,22 +32,44 @@ namespace CommonMark.Parser
         protected InlineParserParameters(CommonMarkSettings settings)
         {
             this.Settings = settings;
-            this._parsers = Settings.GetLazy(GetParsers);
-            this._handlers = Settings.GetLazy(GetHandlers);
-            this._specialCharacters = Settings.GetLazy(GetSpecialCharacters);
-            this._delimiterCharacters = Settings.GetLazy(GetDelimiterCharacters);
-            this._referenceNormalizer = Settings.GetLazy(GetReferenceNormalizer);
+            this._delimiterCharacters = GetDelimiterCharacters();
+            this._parsers = GetParsers();
+            this._handlers = GetHandlers();
+            this._specialCharacters = GetSpecialCharacters();
+            this._referenceNormalizer = GetReferenceNormalizer();
         }
 
         #endregion Constructor
 
+        #region DelimiterCharacters
+
+        private readonly InlineDelimiterCharacterParameters[] _delimiterCharacters;
+
+        /// <summary>
+        /// Gets the parameters to use when inline openers are being matched.
+        /// </summary>
+        public InlineDelimiterCharacterParameters[] DelimiterCharacters
+        {
+#if OptimizeFor45
+            [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+#endif
+            get { return _delimiterCharacters; }
+        }
+
+        internal abstract InlineDelimiterCharacterParameters[] GetDelimiterCharacters();
+
+        #endregion DelimiterCharacters
+
         #region Parsers
 
-        private readonly Lazy<IEnumerable<IInlineParser>> _parsers;
+        private readonly IEnumerable<IInlineParser> _parsers;
 
         private IEnumerable<IInlineParser> Parsers
         {
-            get { return _parsers.Value; }
+#if OptimizeFor45
+            [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+#endif
+            get { return _parsers; }
         }
 
         internal abstract IEnumerable<IInlineParser> GetParsers();
@@ -56,7 +78,7 @@ namespace CommonMark.Parser
 
         #region Handlers
 
-        private readonly Lazy<InlineHandlerDelegate[]> _handlers;
+        private readonly InlineHandlerDelegate[] _handlers;
 
         /// <summary>
         /// Gets the delegates that parse inline elements.
@@ -66,7 +88,7 @@ namespace CommonMark.Parser
 #if OptimizeFor45
             [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
 #endif
-            get { return _handlers.Value; }
+            get { return _handlers; }
         }
 
         private InlineHandlerDelegate[] GetHandlers()
@@ -97,7 +119,7 @@ namespace CommonMark.Parser
 
         #region SpecialCharacters
 
-        private readonly Lazy<char[]> _specialCharacters;
+        private readonly char[] _specialCharacters;
 
         /// <summary>
         /// Gets the characters that have special meaning for inline element parsers.
@@ -107,7 +129,7 @@ namespace CommonMark.Parser
 #if OptimizeFor45
             [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
 #endif
-            get { return _specialCharacters.Value; }
+            get { return _specialCharacters; }
         }
 
         private char[] GetSpecialCharacters()
@@ -131,28 +153,9 @@ namespace CommonMark.Parser
 
         #endregion SpecialCharacters
 
-        #region DelimiterCharacters
-
-        private readonly Lazy<InlineDelimiterCharacterParameters[]> _delimiterCharacters;
-
-        /// <summary>
-        /// Gets the parameters to use when inline openers are being matched.
-        /// </summary>
-        public InlineDelimiterCharacterParameters[] DelimiterCharacters
-        {
-#if OptimizeFor45
-            [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-#endif
-            get { return _delimiterCharacters.Value; }
-        }
-
-        internal abstract InlineDelimiterCharacterParameters[] GetDelimiterCharacters();
-
-        #endregion DelimiterCharacters
-
         #region ReferenceNormalizer
 
-        private readonly Lazy<StringNormalizerDelegate> _referenceNormalizer;
+        private readonly StringNormalizerDelegate _referenceNormalizer;
 
         /// <summary>
         /// Gets the reference normalizer.
@@ -162,7 +165,7 @@ namespace CommonMark.Parser
 #if OptimizeFor45
             [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
 #endif
-            get { return _referenceNormalizer.Value; }
+            get { return _referenceNormalizer; }
         }
 
         /// <summary>
@@ -214,7 +217,7 @@ namespace CommonMark.Parser
 
         internal override InlineDelimiterCharacterParameters[] GetDelimiterCharacters()
         {
-            return Settings.Extensions.GetItems(InlineParser.InitializeDelimiterCharacters(),
+            return Settings.Extensions.GetItems(InlineParser.InitializeDelimiterCharacters,
                 ext => ext.InlineDelimiterCharacters, key => key, InlineDelimiterCharacterParameters.Merge);
         }
 

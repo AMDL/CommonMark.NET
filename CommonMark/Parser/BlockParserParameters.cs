@@ -55,20 +55,20 @@ namespace CommonMark.Parser
         public BlockParserParameters(CommonMarkSettings settings)
         {
             this.Settings = settings;
-            this._parsers = Settings.GetLazy(GetParsers);
-            this._initializers = Settings.GetLazy(GetInitializers);
-            this._openers = Settings.GetLazy(GetOpeners);
-            this._closers = Settings.GetLazy(GetClosers);
-            this._finalizers = Settings.GetLazy(GetFinalizers);
-            this._processors = Settings.GetLazy(GetProcessors);
-            this._canContain = Settings.GetLazy(GetCanContain);
+            this._parsers = GetParsers();
+            this._initializers = GetInitializers();
+            this._openers = GetOpeners();
+            this._closers = GetClosers();
+            this._finalizers = GetFinalizers();
+            this._processors = GetProcessors();
+            this._canContain = GetCanContain();
         }
 
         #endregion Constructor
 
         #region Parsers
 
-        private readonly Lazy<IBlockParser[]> _parsers;
+        private readonly IBlockParser[] _parsers;
 
         /// <summary>
         /// Gets the array mapping from block tag to block element parser.
@@ -76,7 +76,7 @@ namespace CommonMark.Parser
         /// <value>Mapping from block element tag to parser.</value>
         public IBlockParser[] Parsers
         {
-            get { return _parsers.Value; }
+            get { return _parsers; }
         }
 
         private IBlockParser[] GetParsers()
@@ -89,7 +89,7 @@ namespace CommonMark.Parser
 
         #region Initializers
 
-        private readonly Lazy<BlockInitializerDelegate[]> _initializers;
+        private readonly BlockInitializerDelegate[] _initializers;
 
         /// <summary>
         /// Gets the initializer delegates.
@@ -97,7 +97,7 @@ namespace CommonMark.Parser
         /// <value>Mapping from block element to initializer delegate.</value>
         internal BlockInitializerDelegate[] Initializers
         {
-            get { return _initializers.Value; }
+            get { return _initializers; }
         }
 
         private BlockInitializerDelegate[] GetInitializers()
@@ -109,7 +109,7 @@ namespace CommonMark.Parser
 
         #region Openers
 
-        private readonly Lazy<BlockOpenerDelegate[]> _openers;
+        private readonly BlockOpenerDelegate[] _openers;
 
         /// <summary>
         /// Gets the opener delegates.
@@ -117,7 +117,7 @@ namespace CommonMark.Parser
         /// <value>Mapping from character tag to opener delegate.</value>
         internal BlockOpenerDelegate[] Openers
         {
-            get { return _openers.Value; }
+            get { return _openers; }
         }
 
         private BlockOpenerDelegate[] GetOpeners()
@@ -156,7 +156,7 @@ namespace CommonMark.Parser
 
         #region Closers
 
-        private readonly Lazy<BlockCloserDelegate[]> _closers;
+        private readonly BlockCloserDelegate[] _closers;
 
         /// <summary>
         /// Gets the closer delegates.
@@ -164,7 +164,7 @@ namespace CommonMark.Parser
         /// <value>Mapping from block element tag to closer delegate.</value>
         internal BlockCloserDelegate[] Closers
         {
-            get { return _closers.Value; }
+            get { return _closers; }
         }
 
         private BlockCloserDelegate[] GetClosers()
@@ -176,7 +176,7 @@ namespace CommonMark.Parser
 
         #region Finalizers
 
-        private readonly Lazy<BlockFinalizerDelegate[]> _finalizers;
+        private readonly BlockFinalizerDelegate[] _finalizers;
 
         /// <summary>
         /// Gets the finalizer delegates.
@@ -184,7 +184,7 @@ namespace CommonMark.Parser
         /// <value>Mapping from block element tag to finalizer delegate.</value>
         internal BlockFinalizerDelegate[] Finalizers
         {
-            get { return _finalizers.Value; }
+            get { return _finalizers; }
         }
 
         private BlockFinalizerDelegate[] GetFinalizers()
@@ -196,7 +196,7 @@ namespace CommonMark.Parser
 
         #region Processors
 
-        private readonly Lazy<BlockProcessorDelegate[]> _processors;
+        private readonly BlockProcessorDelegate[] _processors;
 
         /// <summary>
         /// Gets the processor delegates.
@@ -204,7 +204,7 @@ namespace CommonMark.Parser
         /// <value>Mapping from block element tag to processor delegate.</value>
         internal BlockProcessorDelegate[] Processors
         {
-            get { return _processors.Value; }
+            get { return _processors; }
         }
 
         private BlockProcessorDelegate[] GetProcessors()
@@ -216,11 +216,11 @@ namespace CommonMark.Parser
 
         #region CanContain
 
-        private Lazy<long[]> _canContain; // assuming we won't get past 63 tags
+        private long[] _canContain; // assuming we won't get past 63 tags
 
         internal bool CanContain(BlockTag parentTag, BlockTag childTag)
         {
-            return 0 != (_canContain.Value[(int)parentTag] & (1 << (int)childTag));
+            return 0 != (_canContain[(int)parentTag] & (1 << (int)childTag));
         }
 
         private long[] GetCanContain()

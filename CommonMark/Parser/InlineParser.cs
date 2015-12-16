@@ -21,7 +21,7 @@ namespace CommonMark.Parser
         {
             this.Settings = settings;
             this.Character = c;
-            this._singleCharContent = Settings.GetLazy(GetSingleCharContent);
+            this._singleCharContent = GetSingleCharContent();
         }
 
         #endregion Constructor
@@ -55,7 +55,7 @@ namespace CommonMark.Parser
         /// </summary>
         protected CommonMarkSettings Settings { get; }
 
-        private readonly Lazy<string> _singleCharContent;
+        private readonly string _singleCharContent;
 
         /// <summary>
         /// Gets the content string.
@@ -63,7 +63,7 @@ namespace CommonMark.Parser
         /// <value>Single-character string.</value>
         private string SingleCharContent
         {
-            get { return _singleCharContent.Value; }
+            get { return _singleCharContent; }
         }
 
         private string GetSingleCharContent()
