@@ -17,10 +17,16 @@
             return tag > 0 ? tag : outer.GetTag(numdelims);
         }
 
-        public bool Handle(Subject subj, int numdelims, int startpos, int len, bool beforeIsPunctuation, bool afterIsPunctuation, ref bool canOpen, ref bool canClose)
+        public bool IsCanOpen(Subject subj, int startpos, int len, CharacterType before, CharacterType after, bool canClose)
         {
-            return inner.Handle(subj, numdelims, startpos, len, beforeIsPunctuation, afterIsPunctuation, ref canOpen, ref canClose)
-                || outer.Handle(subj, numdelims, startpos, len, beforeIsPunctuation, afterIsPunctuation, ref canOpen, ref canClose);
+            return inner.IsCanOpen(subj, startpos, len, before, after, canClose)
+                || outer.IsCanOpen(subj, startpos, len, before, after, canClose);
+        }
+
+        public bool IsCanClose(Subject subj, int startpos, int len, CharacterType before, CharacterType after, bool canOpen)
+        {
+            return inner.IsCanClose(subj, startpos, len, before, after, canOpen)
+                || outer.IsCanClose(subj, startpos, len, before, after, canOpen);
         }
 
         public static IInlineDelimiterHandler Merge(IInlineDelimiterHandler inner, IInlineDelimiterHandler outer)

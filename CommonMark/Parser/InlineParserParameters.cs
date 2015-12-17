@@ -90,16 +90,31 @@ namespace CommonMark.Parser
             {
                 SingleCharacter = GetDelimiter(handler, 1),
                 DoubleCharacter = GetDelimiter(handler, 2),
-                Handler = handler.Handle,
             };
         }
 
         private static InlineDelimiterParameters GetDelimiter(IInlineDelimiterHandler handler, int delimiterCount)
         {
-            return new InlineDelimiterParameters
-            {
-                Tag = handler.GetTag(delimiterCount),
-            };
+            var tag = handler.GetTag(delimiterCount);
+            var parameters = new InlineDelimiterParameters(tag);
+            if (tag != 0)
+                parameters.Handler = GetHandler(handler);
+            return parameters;
+        }
+
+        private static InlineDelimiterHandlerDelegate GetHandler(IInlineDelimiterHandler handler)
+        {
+            return (Subject subject, int startIndex, int length, CharacterType before, CharacterType after, ref bool canOpen, ref bool canClose) =>
+                Handle(handler, subject, startIndex, length, before, after, ref canOpen, ref canClose);
+        }
+
+        private static bool Handle(IInlineDelimiterHandler handler, Subject subject, int startIndex, int length, CharacterType before, CharacterType after, ref bool canOpen, ref bool canClose)
+        {
+            bool couldOpen = canOpen;
+            bool couldClose = canClose;
+            canOpen &= handler.IsCanOpen(subject, startIndex, length, before, after, couldClose);
+            canClose &= handler.IsCanClose(subject, startIndex, length, before, after, couldOpen);
+            return true;
         }
 
         #endregion DelimiterCharacters

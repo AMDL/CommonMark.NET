@@ -71,8 +71,7 @@ namespace CommonMark.Parser.Inlines
         private InlineParserParameters Parameters { get; }
 
         /// <summary>
-        /// Scans the subject for a series of the given emphasis character, testing if they could open and/or close
-        /// an emphasis element.
+        /// Scans the subject for a series of the given character, testing if they could open and/or close a handled element.
         /// </summary>
         private int Scan(Subject subj, out bool canOpen, out bool canClose)
         {
@@ -90,23 +89,24 @@ namespace CommonMark.Parser.Inlines
                 return numdelims;
             }
 
-            char charBefore, charAfter;
-            bool beforeIsSpace, beforeIsPunctuation, afterIsSpace, afterIsPunctuation;
+            var charBefore = startpos == 0 ? '\n' : subj.Buffer[startpos - 1];
+            var before = Utilities.GetCharacterType(charBefore);
 
-            charBefore = startpos == 0 ? '\n' : subj.Buffer[startpos - 1];
             subj.Position = (startpos += numdelims);
-            charAfter = len == startpos ? '\n' : subj.Buffer[startpos];
 
-            Utilities.CheckUnicodeCategory(charBefore, out beforeIsSpace, out beforeIsPunctuation);
-            Utilities.CheckUnicodeCategory(charAfter, out afterIsSpace, out afterIsPunctuation);
+            var charAfter = len == startpos ? '\n' : subj.Buffer[startpos];
+            var after = Utilities.GetCharacterType(charAfter);
 
-            canOpen = !afterIsSpace && !(afterIsPunctuation && !beforeIsSpace && !beforeIsPunctuation);
-            canClose = !beforeIsSpace && !(beforeIsPunctuation && !afterIsSpace && !afterIsPunctuation);
+            canOpen = !after.IsSpace && !(after.IsPunctuation && !before.IsSpace && !before.IsPunctuation);
+            canClose = !before.IsSpace && !(before.IsPunctuation && !after.IsSpace && !after.IsPunctuation);
 
-            InlineDelimiterHandlerDelegate matcher;
-            if ((matcher = Delimiters.Handler) != null)
+            var delimParams = numdelims == 1
+                ? Delimiters.SingleCharacter
+                : Delimiters.DoubleCharacter;
+
+            if (delimParams.Handler != null)
             {
-                matcher(subj, numdelims, startpos, len, beforeIsPunctuation, afterIsPunctuation, ref canOpen, ref canClose);
+                delimParams.Handler(subj, startpos, len, before, after, ref canOpen, ref canClose);
             }
 
             return numdelims;

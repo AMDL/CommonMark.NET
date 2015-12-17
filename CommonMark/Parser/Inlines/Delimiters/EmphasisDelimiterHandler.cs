@@ -20,23 +20,6 @@ namespace CommonMark.Parser.Inlines.Delimiters
                 return InlineTag.Strong;
             return 0;
         }
-
-        /// <summary>
-        /// Handles a matched inline stack delimiter.
-        /// </summary>
-        /// <param name="subject">The source subject.</param>
-        /// <param name="delimiterCount">Delimiter character count.</param>
-        /// <param name="startIndex">The index of the first character.</param>
-        /// <param name="length">The length of the substring.</param>
-        /// <param name="beforeIsPunctuation"><c>true</c> if the substring is preceded by a punctuation character.</param>
-        /// <param name="afterIsPunctuation"><c>true</c> if the substring is followed by a punctuation character.</param>
-        /// <param name="canOpen"><c>true</c> if the delimiter can serve as an opener.</param>
-        /// <param name="canClose"><c>true</c> if the delimiter can serve as a closer.</param>
-        /// <returns><c>true</c> if successful.</returns>
-        public override bool Handle(Subject subject, int delimiterCount, int startIndex, int length, bool beforeIsPunctuation, bool afterIsPunctuation, ref bool canOpen, ref bool canClose)
-        {
-            return delimiterCount <= 2;
-        }
     }
 
     /// <summary>
@@ -52,25 +35,33 @@ namespace CommonMark.Parser.Inlines.Delimiters
     public class UnderscoreHandler : EmphasisHandler
     {
         /// <summary>
-        /// Handles a matched inline stack delimiter.
+        /// Handles a matched opener.
         /// </summary>
         /// <param name="subject">The source subject.</param>
-        /// <param name="delimiterCount">Delimiter character count.</param>
         /// <param name="startIndex">The index of the first character.</param>
         /// <param name="length">The length of the substring.</param>
-        /// <param name="beforeIsPunctuation"><c>true</c> if the substring is preceded by a punctuation character.</param>
-        /// <param name="afterIsPunctuation"><c>true</c> if the substring is followed by a punctuation character.</param>
-        /// <param name="canOpen"><c>true</c> if the delimiter can serve as an opener.</param>
+        /// <param name="before">The type of the preceding character.</param>
+        /// <param name="after">The type of the following character.</param>
         /// <param name="canClose"><c>true</c> if the delimiter can serve as a closer.</param>
-        /// <returns><c>true</c> if successful.</returns>
-        public override bool Handle(Subject subject, int delimiterCount, int startIndex, int length, bool beforeIsPunctuation, bool afterIsPunctuation, ref bool canOpen, ref bool canClose)
+        /// <returns><c>true</c> if the delimiter can serve as an opener.</returns>
+        public override bool IsCanOpen(Subject subject, int startIndex, int length, CharacterType before, CharacterType after, bool canClose)
         {
-            if (!base.Handle(subject, delimiterCount, startIndex, length, beforeIsPunctuation, afterIsPunctuation, ref canOpen, ref canClose))
-                return false;
-            var temp = canOpen;
-            canOpen &= (!canClose || beforeIsPunctuation);
-            canClose &= (!temp || afterIsPunctuation);
-            return true;
+            return !canClose || before.IsPunctuation;
+        }
+
+        /// <summary>
+        /// Handles a matched closer.
+        /// </summary>
+        /// <param name="subject">The source subject.</param>
+        /// <param name="startIndex">The index of the first character.</param>
+        /// <param name="length">The length of the substring.</param>
+        /// <param name="before">The type of the preceding character.</param>
+        /// <param name="after">The type of the following character.</param>
+        /// <param name="canOpen"><c>true</c> if the delimiter can serve as an opener.</param>
+        /// <returns><c>true</c> if the delimiter can serve as a closer.</returns>
+        public override bool IsCanClose(Subject subject, int startIndex, int length, CharacterType before, CharacterType after, bool canOpen)
+        {
+            return !canOpen || after.IsPunctuation;
         }
     }
 }

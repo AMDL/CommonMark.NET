@@ -1,9 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace CommonMark
+﻿namespace CommonMark
 {
+    /// <summary>
+    /// Character type.
+    /// </summary>
+    public struct CharacterType
+    {
+        /// <summary>
+        /// Gets or sets the value indicating whether the character is a space character.
+        /// </summary>
+        public bool IsSpace;
+
+        /// <summary>
+        /// Gets or sets the value indicating whether the character is a punctuation character.
+        /// </summary>
+        public bool IsPunctuation;
+
+        /// <summary>
+        /// Gets or sets the value indicating whether the character is a decimal digit.
+        /// </summary>
+        public bool IsDigit;
+    }
+
     /// <summary>
     /// Reusable utility functions, not directly related to parsing or formatting data.
     /// </summary>
@@ -50,31 +67,37 @@ namespace CommonMark
         }
 
         /// <summary>
-        /// Checks if the given character is an Unicode space or punctuation character.
+        /// Checks if the given character is a decimal digit, an Unicode space, or a punctuation character.
         /// </summary>
+        /// <remarks>Original: void CheckUnicodeCategory(char c, out bool space, out bool punctuation)</remarks>
 #if OptimizeFor45
         [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
 #endif
-        public static void CheckUnicodeCategory(char c, out bool space, out bool punctuation)
+        public static CharacterType GetCharacterType(char c)
         {
-            // This method does the same as would calling the two built-in methods:
+            // This method does the same as would calling the three built-in methods:
+            // // digit = char.IsDigit(c);
             // // space = char.IsWhiteSpace(c);
             // // punctuation = char.IsPunctuation(c);
             //
-            // The performance benefit for using this method is ~50% when calling only on ASCII characters
-            // and ~12% when calling only on Unicode characters.
+            // The performance benefit for using this method was ~50% when calling only on ASCII characters
+            // and ~12% when calling only on Unicode characters (measured before the digit addition).
 
+            bool digit, space, punctuation;
             if (c <= 'ÿ')
             {
+                digit = c >= '0' && c <= '9';
                 space = c == ' ' || (c >= '\t' && c <= '\r') || c == '\u00a0' || c == '\u0085';
                 punctuation = (c >= 33 && c <= 47) || (c >= 58 && c <= 64) || (c >= 91 && c <= 96) || (c >= 123 && c <= 126);
             }
             else
             {
                 var category = System.Globalization.CharUnicodeInfo.GetUnicodeCategory(c);
-                space = category == System.Globalization.UnicodeCategory.SpaceSeparator
+                digit = category == System.Globalization.UnicodeCategory.DecimalDigitNumber;
+                space = !digit &&
+                    (category == System.Globalization.UnicodeCategory.SpaceSeparator
                     || category == System.Globalization.UnicodeCategory.LineSeparator
-                    || category == System.Globalization.UnicodeCategory.ParagraphSeparator;
+                    || category == System.Globalization.UnicodeCategory.ParagraphSeparator);
                 punctuation = !space &&
                     (category == System.Globalization.UnicodeCategory.ConnectorPunctuation
                     || category == System.Globalization.UnicodeCategory.DashPunctuation
@@ -84,6 +107,13 @@ namespace CommonMark
                     || category == System.Globalization.UnicodeCategory.FinalQuotePunctuation
                     || category == System.Globalization.UnicodeCategory.OtherPunctuation);
             }
+
+            return new CharacterType
+            {
+                IsDigit = digit,
+                IsSpace = space,
+                IsPunctuation = punctuation,
+            };
         }
 
         /// <summary>
