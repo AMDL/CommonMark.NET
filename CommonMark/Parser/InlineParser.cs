@@ -287,15 +287,7 @@ namespace CommonMark.Parser
         internal static IEnumerable<IInlineParser> InitializeParsers(InlineParserParameters parameters)
         {
             var parsers = new List<IInlineParser>(InitializeBaseParsers(parameters.Settings));
-
-            var delimChars = parameters.DelimiterCharacters;
-            for (var i = 0; i < delimChars.Length; i++)
-            {
-                var delimiters = delimChars[i];
-                if (!delimiters.IsEmpty)
-                    parsers.Add(new Inlines.EmphasisParser(delimiters, parameters, (char)i));
-            }
-
+            parsers.AddRange(InitializeDelimiterParsers(parameters));
             return parsers;
         }
 
@@ -314,47 +306,30 @@ namespace CommonMark.Parser
             yield return new InlineParser(settings, '<');
         }
 
-        private static readonly InlineDelimiterCharacterParameters AsteriskDelimiters = InitializeEmphasisDelimiters('*');
-        private static readonly InlineDelimiterCharacterParameters UnderscoreDelimiters = InitializeEmphasisDelimiters('_');
-
-        internal static readonly InlineDelimiterCharacterParameters[] EmphasisDelimiterCharacters = InitializeEmphasisDelimiterCharacters();
-
-        internal static InlineDelimiterCharacterParameters[] InitializeEmphasisDelimiterCharacters()
+        private static IEnumerable<IInlineParser> InitializeDelimiterParsers(InlineParserParameters parameters)
         {
-            var t = new InlineDelimiterCharacterParameters[127];
-            t['*'] = AsteriskDelimiters;
-            t['_'] = UnderscoreDelimiters;
-            return t;
-        }
-
-        private static InlineDelimiterCharacterParameters InitializeEmphasisDelimiters(char c)
-        {
-            var chars = new InlineDelimiterCharacterParameters
+            var delimChars = parameters.DelimiterCharacters;
+            for (var i = 0; i < delimChars.Length; i++)
             {
-                SingleCharacter = InitializeEmphasisDelimiters(InlineTag.Emphasis, c),
-                DoubleCharacter = InitializeEmphasisDelimiters(InlineTag.Strong, c),
-            };
-            return chars;
-        }
-
-        private static InlineDelimiterParameters InitializeEmphasisDelimiters(InlineTag tag, char c)
-        {
-            var chars = new InlineDelimiterParameters
-            {
-                Tag = tag,
-            };
-            if (c == '_')
-                chars.Matcher = MatchUnderscore;
-            return chars;
-        }
-
-        private static void MatchUnderscore(Subject subj, int startpos, int len, bool beforeIsPunctuation, bool afterIsPunctuation, ref bool canOpen, ref bool canClose)
-        {
-            var temp = canOpen;
-            canOpen &= (!canClose || beforeIsPunctuation);
-            canClose &= (!temp || afterIsPunctuation);
+                var delimiters = delimChars[i];
+                if (!delimiters.IsEmpty)
+                    yield return new Inlines.DelimiterParser(delimiters, parameters, (char)i);
+            }
         }
 
         #endregion InitializeParsers
+
+        #region InitializeDelimiterHandlers
+
+        internal static IInlineDelimiterHandler[] InitializeDelimiterHandlers(int length)
+        {
+            length = length > '_' ? length : '_' + 1;
+            var h = new IInlineDelimiterHandler[length];
+            h['*'] = new Inlines.Delimiters.AsteriskHandler();
+            h['_'] = new Inlines.Delimiters.UnderscoreHandler();
+            return h;
+        }
+
+        #endregion InitializeDelimiterHandlers
     }
 }

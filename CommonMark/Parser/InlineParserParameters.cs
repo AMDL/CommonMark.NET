@@ -31,6 +31,7 @@ namespace CommonMark.Parser
         protected InlineParserParameters(CommonMarkSettings settings)
         {
             this.Settings = settings;
+            this._delimiterHandlers = GetDelimiterHandlers();
             this._delimiterCharacters = GetDelimiterCharacters();
             this._parsers = GetParsers();
             this._handlers = GetHandlers();
@@ -40,6 +41,19 @@ namespace CommonMark.Parser
 
         #endregion Constructor
 
+        #region DelimiterHandlers
+
+        private IInlineDelimiterHandler[] _delimiterHandlers;
+
+        internal IInlineDelimiterHandler[] DelimiterHandlers
+        {
+            get { return _delimiterHandlers; }
+        }
+
+        internal abstract IInlineDelimiterHandler[] GetDelimiterHandlers();
+
+        #endregion DelimiterHandlers
+
         #region DelimiterCharacters
 
         private readonly InlineDelimiterCharacterParameters[] _delimiterCharacters;
@@ -47,7 +61,7 @@ namespace CommonMark.Parser
         /// <summary>
         /// Gets the parameters to use when inline openers are being matched.
         /// </summary>
-        public InlineDelimiterCharacterParameters[] DelimiterCharacters
+        internal InlineDelimiterCharacterParameters[] DelimiterCharacters
         {
 #if OptimizeFor45
             [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
@@ -55,7 +69,38 @@ namespace CommonMark.Parser
             get { return _delimiterCharacters; }
         }
 
-        internal abstract InlineDelimiterCharacterParameters[] GetDelimiterCharacters();
+        private InlineDelimiterCharacterParameters[] GetDelimiterCharacters()
+        {
+            var handlers = DelimiterHandlers;
+            var parameters = new InlineDelimiterCharacterParameters[handlers.Length];
+            IInlineDelimiterHandler handler;
+            for (var c = 0; c < handlers.Length; c++)
+            {
+                if ((handler = handlers[c]) != null)
+                {
+                    parameters[c] = GetDelimiterCharacter(handler);
+                }
+            }
+            return parameters;
+        }
+
+        private static InlineDelimiterCharacterParameters GetDelimiterCharacter(IInlineDelimiterHandler handler)
+        {
+            return new InlineDelimiterCharacterParameters
+            {
+                SingleCharacter = GetDelimiter(handler, 1),
+                DoubleCharacter = GetDelimiter(handler, 2),
+                Handler = handler.Handle,
+            };
+        }
+
+        private static InlineDelimiterParameters GetDelimiter(IInlineDelimiterHandler handler, int delimiterCount)
+        {
+            return new InlineDelimiterParameters
+            {
+                Tag = handler.GetTag(delimiterCount),
+            };
+        }
 
         #endregion DelimiterCharacters
 
@@ -201,6 +246,12 @@ namespace CommonMark.Parser
         {
         }
 
+        internal override IInlineDelimiterHandler[] GetDelimiterHandlers()
+        {
+            return Settings.Extensions.GetItems(InlineParser.InitializeDelimiterHandlers,
+                ext => ext.InlineDelimiterHandlers, key => key, DelegateInlineDelimiterHandler.Merge);
+        }
+
         internal override IEnumerable<IInlineParser> GetParsers()
         {
             var parsers = new List<IInlineParser>(InlineParser.InitializeParsers(this));
@@ -212,12 +263,6 @@ namespace CommonMark.Parser
                 }
             }
             return parsers.ToArray();
-        }
-
-        internal override InlineDelimiterCharacterParameters[] GetDelimiterCharacters()
-        {
-            return Settings.Extensions.GetItems(InlineParser.InitializeEmphasisDelimiterCharacters,
-                ext => ext.InlineDelimiterCharacters, key => key, InlineDelimiterCharacterParameters.Merge);
         }
 
         /// <summary>
@@ -253,9 +298,9 @@ namespace CommonMark.Parser
             return new IInlineParser[0];
         }
 
-        internal override InlineDelimiterCharacterParameters[] GetDelimiterCharacters()
+        internal override IInlineDelimiterHandler[] GetDelimiterHandlers()
         {
-            return InlineParser.EmphasisDelimiterCharacters;
+            return InlineParser.InitializeDelimiterHandlers(0);
         }
     }
 }

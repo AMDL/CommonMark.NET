@@ -160,12 +160,53 @@ namespace CommonMark
             return GetEnumerator();
         }
 
-        internal TValue[] GetItems<TKey, TValue>(Func<TValue[]> itemsFactory,
+        internal TValue[] GetItems<TKey, TValue>(Func<int, TValue[]> itemsFactory,
             Func<ICommonMarkExtension, IDictionary<TKey, TValue>> itemMapFactory,
             Func<TKey, int> keyFactory, Func<TValue, TValue, TValue> valueFactory)
             where TKey : struct
         {
-            return GetItems<TKey, TValue>(itemsFactory(), itemMapFactory, keyFactory, valueFactory);
+            if (_list == null)
+                return itemsFactory(0);
+
+            var dictionary = new Dictionary<TKey, TValue>();
+            var maxKey = 0;
+
+            TValue inner;
+            foreach (var extension in _list)
+            {
+                var extensionItems = itemMapFactory(extension);
+                if (extensionItems != null)
+                {
+                    foreach (var kvp in extensionItems)
+                    {
+                        var value = kvp.Value;
+                        if (value == null || value.Equals(default(TValue)))
+                        {
+                            var message = string.Format("{0} value cannot be {1}: {2}.",
+                                typeof(TValue).Name,
+                                value == null ? "null" : "0",
+                                extension.ToString());
+                            throw new InvalidOperationException(message);
+                        }
+                        dictionary.TryGetValue(kvp.Key, out inner);
+                        if (inner != null && !inner.Equals(default(TValue)))
+                            value = valueFactory(inner, value);
+                        dictionary[kvp.Key] = value;
+                        var key = keyFactory(kvp.Key);
+                        maxKey = maxKey > key ? maxKey : key;
+                    }
+                }
+            }
+
+            var items = itemsFactory(maxKey + 1);
+
+            foreach (var kvp in dictionary)
+            {
+                var key = keyFactory(kvp.Key);
+                items[key] = valueFactory(items[key], kvp.Value);
+            }
+
+            return items;
         }
 
         internal TValue[] GetItems<TKey, TValue>(TValue[] items,

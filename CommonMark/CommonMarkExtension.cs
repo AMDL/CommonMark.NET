@@ -15,7 +15,7 @@ namespace CommonMark
 
         private readonly IDictionary<BlockTag, IBlockParser> _blockParsers;
         private readonly IEnumerable<IInlineParser> _inlineParsers;
-        private readonly IDictionary<char, InlineDelimiterCharacterParameters> _inlineDelimiterCharacters;
+        private readonly IDictionary<char, IInlineDelimiterHandler> _inlineDelimiterHandlers;
         private readonly StringNormalizerDelegate _referenceNormalizer;
         private readonly IDictionary<BlockTag, IBlockFormatter> _blockFormatters;
         private readonly IDictionary<InlineTag, IInlineFormatter> _inlineFormatters;
@@ -33,7 +33,7 @@ namespace CommonMark
             this._blockParsers = InitializeBlockParsers(settings);
             this._inlineParsers = InitializeInlineParsers(settings);
 
-            this._inlineDelimiterCharacters = InitializeInlineDelimiterCharacters();
+            this._inlineDelimiterHandlers = InitializeInlineDelimiterHandlers();
             this._referenceNormalizer = InitializeReferenceNormalizer();
 
             var parameters = settings.FormatterParameters;
@@ -66,11 +66,11 @@ namespace CommonMark
         }
 
         /// <summary>
-        /// Gets the mapping from character to inline delimiter character parameters.
+        /// Gets the mapping from character to inline delimiter handler.
         /// </summary>
-        public IDictionary<char, InlineDelimiterCharacterParameters> InlineDelimiterCharacters
+        public IDictionary<char, IInlineDelimiterHandler> InlineDelimiterHandlers
         {
-            get { return _inlineDelimiterCharacters; }
+            get { return _inlineDelimiterHandlers; }
         }
 
         /// <summary>
@@ -127,7 +127,7 @@ namespace CommonMark
         /// <summary>
         /// Returns the type name.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Type name.</returns>
         public override string ToString()
         {
             return GetType().Name;
@@ -147,9 +147,9 @@ namespace CommonMark
         }
 
         /// <summary>
-        /// Creates the mapping from character to inline delimiter character parameters.
+        /// Creates the mapping from character to inline delimiter handler.
         /// </summary>
-        protected virtual IDictionary<char, InlineDelimiterCharacterParameters> InitializeInlineDelimiterCharacters()
+        protected virtual IDictionary<char, IInlineDelimiterHandler> InitializeInlineDelimiterHandlers()
         {
             return null;
         }

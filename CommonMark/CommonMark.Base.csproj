@@ -114,11 +114,15 @@
     <Compile Include="Lazy.cs" />
     <Compile Include="OutputFormat.cs" />
     <Compile Include="Parser\BlockParserParameters.cs" />
+    <Compile Include="Parser\DelegateInlineDelimiterHandler.cs" />
+    <Compile Include="Parser\DelegateInlineDelimiterMatcher.cs" />
     <Compile Include="Parser\DelegateInlineHandler.cs" />
     <Compile Include="Parser\ElementParser.cs" />
     <Compile Include="Parser\EntityDecoder.cs" />
     <Compile Include="Parser\IBlockParser.cs" />
+    <Compile Include="Parser\IInlineDelimiterHandler.cs" />
     <Compile Include="Parser\IInlineParser.cs" />
+    <Compile Include="Parser\InlineDelimiterHandler.cs" />
     <Compile Include="Parser\InlineDelimiterParameters.cs" />
     <Compile Include="Parser\InlineParser.cs" />
     <Compile Include="Parser\InlineParserParameters.cs" />
@@ -126,7 +130,9 @@
     <Compile Include="Parser\Inlines\AutoEmailParser.cs" />
     <Compile Include="Parser\Inlines\AutoUriParser.cs" />
     <Compile Include="Parser\Inlines\CodeParser.cs" />
-    <Compile Include="Parser\Inlines\EmphasisParser.cs" />
+    <Compile Include="Parser\Inlines\Delimiters\EmphasisDelimiterHandler.cs" />
+    <Compile Include="Parser\Inlines\Delimiters\StrikeoutTildeHandler.cs" />
+    <Compile Include="Parser\Inlines\DelimiterParser.cs" />
     <Compile Include="Parser\Inlines\EntityParser.cs" />
     <Compile Include="Parser\Inlines\EscapeParser.cs" />
     <Compile Include="Parser\Inlines\HtmlTagParser.cs" />

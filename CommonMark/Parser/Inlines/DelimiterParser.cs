@@ -3,31 +3,17 @@
 namespace CommonMark.Parser.Inlines
 {
     /// <summary>
-    /// Emphasis parser.
+    /// Delimiter parser.
     /// </summary>
-    public class EmphasisParser : InlineParser
+    internal class DelimiterParser : InlineParser
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="EmphasisParser"/> class.
-        /// </summary>
-        /// <param name="singleCharTag">Single-character delimiter parameters.</param>
-        /// <param name="doubleCharTag">Double-character delimiter parameters.</param>
-        /// <param name="parameters">Inline parser parameters.</param>
-        /// <param name="c">Handled character.</param>
-        public EmphasisParser(InlineTag singleCharTag, InlineTag doubleCharTag, InlineParserParameters parameters, char c)
-            : base(parameters.Settings, c)
-        {
-            this.Delimiters = InitializeDelimiters(singleCharTag, doubleCharTag);
-            this.Parameters = parameters;
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="EmphasisParser"/> class.
+        /// Initializes a new instance of the <see cref="DelimiterParser"/> class.
         /// </summary>
         /// <param name="delimiters">Inline delimiter character parameters.</param>
         /// <param name="parameters">Inline parser parameters.</param>
         /// <param name="c">Handled character.</param>
-        public EmphasisParser(InlineDelimiterCharacterParameters delimiters, InlineParserParameters parameters, char c)
+        public DelimiterParser(InlineDelimiterCharacterParameters delimiters, InlineParserParameters parameters, char c)
             : base(parameters.Settings, c)
         {
             this.Delimiters = delimiters;
@@ -80,41 +66,9 @@ namespace CommonMark.Parser.Inlines
             return inlText;
         }
 
-        /// <summary>
-        /// Attempts to match a stack delimiter.
-        /// </summary>
-        /// <param name="subj">The source subject.</param>
-        /// <param name="startpos">The index of the first character.</param>
-        /// <param name="length">The length of the substring.</param>
-        /// <param name="beforeIsPunctuation"><c>true</c> if the substring is preceded by a punctuation character.</param>
-        /// <param name="afterIsPunctuation"><c>true</c> if the substring is followed by a punctuation character.</param>
-        /// <param name="canOpen"><c>true</c> if the delimiter can serve as an opener.</param>
-        /// <param name="canClose"><c>true</c> if the delimiter can serve as a closer.</param>
-        protected virtual void Match(Subject subj, int startpos, int length, bool beforeIsPunctuation, bool afterIsPunctuation, ref bool canOpen, ref bool canClose)
-        {
-        }
-
         private InlineDelimiterCharacterParameters Delimiters { get; }
 
         private InlineParserParameters Parameters { get; }
-
-        private InlineDelimiterCharacterParameters InitializeDelimiters(InlineTag singleCharTag, InlineTag doubleCharTag)
-        {
-            return new InlineDelimiterCharacterParameters
-            {
-                SingleCharacter = InitializeDelimiter(singleCharTag),
-                DoubleCharacter = InitializeDelimiter(doubleCharTag),
-            };
-        }
-
-        private InlineDelimiterParameters InitializeDelimiter(InlineTag tag)
-        {
-            return new InlineDelimiterParameters
-            {
-                Tag = tag,
-                Matcher = Match,
-            };
-        }
 
         /// <summary>
         /// Scans the subject for a series of the given emphasis character, testing if they could open and/or close
@@ -149,12 +103,10 @@ namespace CommonMark.Parser.Inlines
             canOpen = !afterIsSpace && !(afterIsPunctuation && !beforeIsSpace && !beforeIsPunctuation);
             canClose = !beforeIsSpace && !(beforeIsPunctuation && !afterIsSpace && !afterIsPunctuation);
 
-            var matcher = numdelims == 1
-                ? Delimiters.SingleCharacter.Matcher
-                : Delimiters.DoubleCharacter.Matcher;
-            if (matcher != null)
+            InlineDelimiterHandlerDelegate matcher;
+            if ((matcher = Delimiters.Handler) != null)
             {
-                matcher(subj, startpos, len, beforeIsPunctuation, afterIsPunctuation, ref canOpen, ref canClose);
+                matcher(subj, numdelims, startpos, len, beforeIsPunctuation, afterIsPunctuation, ref canOpen, ref canClose);
             }
 
             return numdelims;

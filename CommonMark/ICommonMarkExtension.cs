@@ -20,9 +20,9 @@ namespace CommonMark
         IEnumerable<IInlineParser> InlineParsers { get; }
 
         /// <summary>
-        /// Gets the mapping from character to inline delimiter character parameters.
+        /// Gets the mapping from character to inline delimiter handler.
         /// </summary>
-        IDictionary<char, InlineDelimiterCharacterParameters> InlineDelimiterCharacters { get; }
+        IDictionary<char, IInlineDelimiterHandler> InlineDelimiterHandlers { get; }
 
         /// <summary>
         /// Gets the reference normalizer.

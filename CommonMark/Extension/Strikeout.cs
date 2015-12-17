@@ -1,6 +1,7 @@
 ﻿using CommonMark.Formatters;
 using CommonMark.Formatters.Inlines;
 using CommonMark.Parser;
+using CommonMark.Parser.Inlines.Delimiters;
 using CommonMark.Syntax;
 using System.Collections.Generic;
 
@@ -21,13 +22,13 @@ namespace CommonMark.Extension
         }
 
         /// <summary>
-        /// Creates the mapping from character to inline delimiter character parameters.
+        /// Creates the mapping from character to inline delimiter handler.
         /// </summary>
-        protected override IDictionary<char, InlineDelimiterCharacterParameters> InitializeInlineDelimiterCharacters()
+        protected override IDictionary<char, IInlineDelimiterHandler> InitializeInlineDelimiterHandlers()
         {
-            return new Dictionary<char, InlineDelimiterCharacterParameters>
+            return new Dictionary<char, IInlineDelimiterHandler>
             {
-                { '~', InitializeDelimiters() }
+                { '~', new StrikeoutTildeHandler() }
             };
         }
 
@@ -39,22 +40,6 @@ namespace CommonMark.Extension
             return new Dictionary<InlineTag, IInlineFormatter>
             {
                 { InlineTag.Strikethrough, new StrikethroughFormatter(parameters) }
-            };
-        }
-
-        private static InlineDelimiterCharacterParameters InitializeDelimiters()
-        {
-            return new InlineDelimiterCharacterParameters
-            {
-                DoubleCharacter = InitializeDoubleCharacter()
-            };
-        }
-
-        private static InlineDelimiterParameters InitializeDoubleCharacter()
-        {
-            return new InlineDelimiterParameters
-            {
-                Tag = InlineTag.Strikethrough,
             };
         }
     }
