@@ -1,8 +1,6 @@
-﻿using CommonMark.Syntax;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
-
 
 namespace CommonMark
 {
@@ -17,7 +15,7 @@ namespace CommonMark
             }
 
             var fname = System.Diagnostics.Process.GetCurrentProcess().ProcessName;
-            Console.WriteLine("Usage:   " + fname + " [FILE*] [--out FILE]");
+            Console.WriteLine("Usage:   " + fname + " [FILE*] [--out FILE] [--ext extension1 [...] ]");
             Console.WriteLine("Options: --help, -h    Print usage information");
             Console.WriteLine("         --ast         Print AST instead of HTML");
             Console.WriteLine("         --sourcepos   Enable source position tracking and output");
@@ -35,6 +33,7 @@ namespace CommonMark
             var benchmarkIterations = 20;
             var target = Console.Out;
             var runPerlTests = false;
+            List<string> extensions = null;
             var settings = CommonMarkSettings.Default.Clone();
 
             try
@@ -87,15 +86,49 @@ namespace CommonMark
                         i++;
                         target = new System.IO.StreamWriter(args[i]);
                     }
+                    else if (string.Equals(args[i], "--ext", StringComparison.OrdinalIgnoreCase))
+                    {
+                        if (i == args.Length - 1 || args[i + 1].StartsWith("-"))
+                        {
+                            PrintUsage();
+                            return 1;
+                        }
+
+                        extensions = extensions ?? new List<string>();
+                    }
                     else if (args[i].StartsWith("-"))
                     {
                         PrintUsage(args[i]);
                         return 1;
                     }
+                    else if (extensions != null)
+                    {
+                        extensions.Add(args[i]);
+                    }
                     else
                     {
                         // treat as file argument
                         sources.Add(new System.IO.StreamReader(args[i]));
+                    }
+                }
+
+                if (extensions != null)
+                {
+                    var assembly = settings.GetType().Assembly;
+                    foreach (var ext in extensions)
+                    {
+                        var split = ext.Split('_');
+                        for (var i = 0; i < split.Length; ++i)
+                            split[i] = System.Globalization.CultureInfo.InvariantCulture.TextInfo.ToTitleCase(split[i]);
+                        var normExt = "CommonMark.Extension." + string.Concat(split);
+                        var type = assembly.GetType(normExt, ignoreCase: false, throwOnError: false);
+                        if (type == null)
+                        {
+                            Console.Error.WriteLine("Extension not found: {0}", ext);
+                            continue;
+                        }
+                        var extension = (ICommonMarkExtension)Activator.CreateInstance(type, settings);
+                        settings.Extensions.Register(extension);
                     }
                 }
 
