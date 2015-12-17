@@ -76,7 +76,7 @@ namespace CommonMark.Tests
         [TestCategory("Inlines - Subscript")]
         public void SubscriptExample2()
         {
-            Helpers.ExecuteTest("foo ~~bar~", "<p>foo ~<sub>bar</sub></p>", Settings);
+            Helpers.ExecuteTest("foo ~bar~~", "<p>foo <sub>bar</sub>~</p>", Settings);
         }
 
         [TestMethod]
