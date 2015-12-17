@@ -91,6 +91,7 @@ namespace CommonMark
             Register(new Extension.Strikeout(Settings));
             Register(new Extension.Subscript(Settings));
             Register(new Extension.Superscript(Settings));
+            Register(new Extension.MathDollars(Settings));
             Register(new Extension.ReferenceCase(Settings, new Extension.ReferenceCaseSettings(Extension.ReferenceCaseType.UpperInvariant)));
             Register(new Extension.DefinitionLists(Settings, new Extension.DefinitionListsSettings(Extension.DefinitionListsFeatures.All)));
             Register(new Extension.PipeTables(Settings, new Extension.PipeTablesSettings(Extension.PipeTablesFeatures.All)));

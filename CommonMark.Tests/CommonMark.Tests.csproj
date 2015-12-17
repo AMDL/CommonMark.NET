@@ -67,6 +67,7 @@
     <Compile Include="GeneralTests.cs" />
     <Compile Include="SubscriptTests.cs" />
     <Compile Include="SuperscriptTests.cs" />
+    <Compile Include="MathTests.cs" />
     <Compile Include="UrlTests.cs" />
     <Compile Include="EmphasisTests.cs" />
     <Compile Include="Helpers.cs" />

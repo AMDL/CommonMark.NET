@@ -87,6 +87,12 @@ namespace CommonMark.Syntax
         Superscript,
 
         /// <summary>
+        /// Represents a math element.
+        /// Only present if <see cref="Extension.MathDollars"/> is registered.
+        /// </summary>
+        Math,
+
+        /// <summary>
         /// Represents a custom inline element.
         /// Any additional properties are set through <see cref="Inline.CustomData"/>.
         /// </summary>

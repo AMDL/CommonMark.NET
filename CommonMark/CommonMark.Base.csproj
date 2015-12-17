@@ -52,11 +52,14 @@
     <Compile Include="CommonMarkExtensionCollection.cs" />
     <Compile Include="CommonMarkSettings.cs" />
     <Compile Include="CommonMarkExtension.cs" />
+    <Compile Include="Extension\MathDollars.cs" />
     <Compile Include="Extension\ReferenceCase.cs" />
     <Compile Include="Extension\Subscript.cs" />
     <Compile Include="Extension\Superscript.cs" />
+    <Compile Include="Formatters\Inlines\MathFormatter.cs" />
     <Compile Include="Formatters\Inlines\SubscriptFormatter.cs" />
     <Compile Include="Formatters\Inlines\SuperscriptFormatter.cs" />
+    <Compile Include="Parser\Inlines\Delimiters\MathDollarHandler.cs" />
     <Compile Include="Parser\Inlines\Delimiters\SubscriptTildeHandler.cs" />
     <Compile Include="Formatters\Blocks\CodeBlockFormatter.cs" />
     <Compile Include="Formatters\Blocks\FencedCodeFormatter.cs" />
