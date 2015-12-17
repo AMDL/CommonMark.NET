@@ -81,6 +81,12 @@ namespace CommonMark.Syntax
         Subscript,
 
         /// <summary>
+        /// Represents a superscript element.
+        /// Only present if <see cref="Extension.Superscript"/> is registered.
+        /// </summary>
+        Superscript,
+
+        /// <summary>
         /// Represents a custom inline element.
         /// Any additional properties are set through <see cref="Inline.CustomData"/>.
         /// </summary>
