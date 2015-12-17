@@ -6,18 +6,8 @@ namespace CommonMark.Formatters.Blocks
     internal class TableFormatter : BlockFormatter
     {
         public TableFormatter(FormatterParameters parameters)
-            : base(parameters)
+            : base(parameters, BlockTag.Table, "table")
         {
-        }
-
-        public override bool CanHandle(Block block)
-        {
-            return block.Tag == BlockTag.Table;
-        }
-
-        protected override string GetTag(Block element)
-        {
-            return "table";
         }
 
         public override IDictionary<string, object> GetPrinterData(IPrinter printer, Block block)

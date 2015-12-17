@@ -27,8 +27,8 @@ namespace CommonMark.Extension
         {
             return new Dictionary<BlockTag, IBlockFormatter>
             {
-                { BlockTag.FigureCaption, new FigureCaptionFormatter(parameters) },
-                { BlockTag.Figure, new FigureFormatter(parameters) },
+                { BlockTag.FigureCaption, new CaptionFormatter(parameters, BlockTag.FigureCaption, "figcaption") },
+                { BlockTag.Figure, new BlockFormatter(parameters, BlockTag.Figure, "figure") },
             };
         }
     }

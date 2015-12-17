@@ -28,9 +28,9 @@ namespace CommonMark.Extension
             return new Dictionary<BlockTag, IBlockFormatter>
             {
                 { BlockTag.TableCell, new TableCellFormatter(parameters) },
-                { BlockTag.TableRow, new TableRowFormatter(parameters) },
-                { BlockTag.TableBody, new TableBodyFormatter(parameters) },
-                { BlockTag.TableHeader, new TableHeaderFormatter(parameters) },
+                { BlockTag.TableRow, new BlockFormatter(parameters, BlockTag.TableRow, "tr") },
+                { BlockTag.TableBody, new BlockFormatter(parameters, BlockTag.TableBody, "tbody") },
+                { BlockTag.TableHeader, new BlockFormatter(parameters, BlockTag.TableHeader, "thead") },
                 { BlockTag.Table, new TableFormatter(parameters) },
             };
         }

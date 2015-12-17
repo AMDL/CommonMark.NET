@@ -1,5 +1,4 @@
 ﻿using CommonMark.Formatters;
-using CommonMark.Formatters.Blocks;
 using CommonMark.Syntax;
 using System.Collections.Generic;
 
@@ -30,9 +29,9 @@ namespace CommonMark.Extension
         {
             return new Dictionary<BlockTag, IBlockFormatter>
             {
-                { BlockTag.DefinitionList, new DefinitionListFormatter(parameters) },
-                { BlockTag.Term, new TermFormatter(parameters) },
-                { BlockTag.Definition, new DefinitionFormatter(parameters) },
+                { BlockTag.DefinitionList, new BlockFormatter(parameters, BlockTag.DefinitionList, "dl") },
+                { BlockTag.Term, new BlockFormatter(parameters, BlockTag.Term, "dt") },
+                { BlockTag.Definition, new BlockFormatter(parameters, BlockTag.Definition, "dd") },
             };
         }
     }

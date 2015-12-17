@@ -6,7 +6,7 @@ namespace CommonMark.Formatters.Blocks
     internal sealed class TableBodyCellFormatter : BlockFormatter
     {
         public TableBodyCellFormatter(FormatterParameters parameters)
-            : base(parameters)
+            : base(parameters, BlockTag.TableCell, "td")
         {
         }
 
@@ -36,11 +36,6 @@ namespace CommonMark.Formatters.Blocks
             return true;
         }
 
-        protected override string GetTag(Block element)
-        {
-            return "td";
-        }
-
         public override IDictionary<string, object> GetPrinterData(IPrinter printer, Block block)
         {
             return new Dictionary<string, object>
@@ -53,7 +48,7 @@ namespace CommonMark.Formatters.Blocks
     internal sealed class TableHeaderCellFormatter : BlockFormatter
     {
         public TableHeaderCellFormatter(FormatterParameters parameters)
-            : base(parameters)
+            : base(parameters, BlockTag.TableCell, "th")
         {
         }
 
@@ -61,17 +56,12 @@ namespace CommonMark.Formatters.Blocks
         {
             return element.Tag == BlockTag.TableCell && element.Parent.Tag != BlockTag.TableBody;
         }
-
-        protected override string GetTag(Block element)
-        {
-            return "th";
-        }
     }
 
     internal sealed class TableCellFormatter : DelegateBlockFormatter
     {
         public TableCellFormatter(FormatterParameters parameters)
-            : base(new TableBodyCellFormatter(parameters), new TableHeaderCellFormatter(parameters))
+            : base(BlockTag.TableCell, new TableBodyCellFormatter(parameters), new TableHeaderCellFormatter(parameters))
         {
         }
     }

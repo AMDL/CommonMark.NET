@@ -30,7 +30,7 @@ namespace CommonMark.Extension
         {
             return new Dictionary<BlockTag, Formatters.IBlockFormatter>
             {
-                { BlockTag.TableCaption, new TableCaptionFormatter(parameters) }
+                { BlockTag.TableCaption, new CaptionFormatter(parameters, BlockTag.TableCaption, "caption") }
             };
         }
 
