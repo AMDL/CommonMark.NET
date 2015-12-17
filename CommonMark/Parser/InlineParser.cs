@@ -193,7 +193,7 @@ namespace CommonMark.Parser
         /// <summary>
         /// Creates an inline link element and adjusts the subject and label positions.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Inline element.</returns>
         protected static Inline CreateLink(Subject subj, Inline label, string url, string title, int matchlen)
         {
             var result = new Inline

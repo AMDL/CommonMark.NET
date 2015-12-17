@@ -104,7 +104,7 @@ namespace CommonMark.Parser
         /// <param name="priority">Priority.</param>
         /// <param name="delimeter">Delimiter character.</param>
         /// <param name="canClose"><c>true</c> if a matching opener was found.</param>
-        /// <returns></returns>
+        /// <returns>Inline stack.</returns>
         public static InlineStack FindMatchingOpener(InlineStack seachBackwardsFrom, InlineStackPriority priority, char delimeter, out bool canClose)
         {
             canClose = true;

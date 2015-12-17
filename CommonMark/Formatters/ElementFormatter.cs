@@ -149,7 +149,7 @@ namespace CommonMark.Formatters
         /// <summary>
         /// Returns the type name.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Type name.</returns>
         public override string ToString()
         {
             return GetType().Name;
