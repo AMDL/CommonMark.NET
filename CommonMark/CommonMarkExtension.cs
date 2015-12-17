@@ -36,10 +36,7 @@ namespace CommonMark
 
         private readonly Lazy<IDictionary<BlockTag, IBlockParser>> _blockParsers;
 
-        /// <summary>
-        /// Initializes the mapping from block tag to block element parser.
-        /// </summary>
-        public IDictionary<BlockTag, IBlockParser> BlockParsers
+        IDictionary<BlockTag, IBlockParser> ICommonMarkExtension.BlockParsers
         {
             get { return _blockParsers.Value; }
         }
@@ -70,10 +67,7 @@ namespace CommonMark
 
         private readonly Lazy<ICollection<IInlineParser>> _inlineParsers;
 
-        /// <summary>
-        /// Gets the inline parsers.
-        /// </summary>
-        public IEnumerable<IInlineParser> InlineParsers
+        IEnumerable<IInlineParser> ICommonMarkExtension.InlineParsers
         {
             get { return _inlineParsers.Value; }
         }
@@ -105,10 +99,7 @@ namespace CommonMark
 
         private readonly Lazy<IDictionary<char, IInlineDelimiterHandler>> _inlineDelimiterHandlers;
 
-        /// <summary>
-        /// Gets the mapping from character to inline delimiter handler.
-        /// </summary>
-        public IDictionary<char, IInlineDelimiterHandler> InlineDelimiterHandlers
+        IDictionary<char, IInlineDelimiterHandler> ICommonMarkExtension.InlineDelimiterHandlers
         {
             get { return _inlineDelimiterHandlers.Value; }
         }
@@ -138,10 +129,7 @@ namespace CommonMark
 
         private readonly Lazy<StringNormalizerDelegate> _referenceNormalizer;
 
-        /// <summary>
-        /// Gets the reference normalizer.
-        /// </summary>
-        public StringNormalizerDelegate ReferenceNormalizer
+        StringNormalizerDelegate ICommonMarkExtension.ReferenceNormalizer
         {
             get { return _referenceNormalizer.Value; }
         }
@@ -161,10 +149,7 @@ namespace CommonMark
 
         private readonly Lazy<IDictionary<BlockTag, IBlockFormatter>> _blockFormatters;
 
-        /// <summary>
-        /// Gets the mapping from block tag to block element formatter.
-        /// </summary>
-        public IDictionary<BlockTag, IBlockFormatter> BlockFormatters
+        IDictionary<BlockTag, IBlockFormatter> ICommonMarkExtension.BlockFormatters
         {
             get { return _blockFormatters.Value; }
         }
@@ -194,10 +179,7 @@ namespace CommonMark
 
         private readonly Lazy<IDictionary<InlineTag, IInlineFormatter>> _inlineFormatters;
 
-        /// <summary>
-        /// Gets the mapping from inline tag to inline element formatter.
-        /// </summary>
-        public IDictionary<InlineTag, IInlineFormatter> InlineFormatters
+        IDictionary<InlineTag, IInlineFormatter> ICommonMarkExtension.InlineFormatters
         {
             get { return _inlineFormatters.Value; }
         }
