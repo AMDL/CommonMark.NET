@@ -37,20 +37,20 @@ namespace CommonMark.Extension
         }
 
         /// <summary>
-        /// Creates the mapping from block tag to block element formatter.
+        /// Initializes the block formatters.
         /// </summary>
         /// <param name="parameters">Formatter parameters.</param>
-        protected override IDictionary<BlockTag, IBlockFormatter> InitializeBlockFormatters(FormatterParameters parameters)
+        protected override IEnumerable<IBlockFormatter> InitializeBlockFormatters(FormatterParameters parameters)
         {
-            var formatters = base.InitializeBlockFormatters(parameters);
+            var formatters = new List<IBlockFormatter>(base.InitializeBlockFormatters(parameters));
             if (0 != (settings.Features & PipeTablesFeatures.Footers))
             {
-                formatters.Add(BlockTag.TableFooter, new BlockFormatter(parameters, BlockTag.TableFooter, "tfoot"));
+                formatters.Add(new BlockFormatter(parameters, BlockTag.TableFooter, "tfoot"));
             }
             if (0 != (settings.Features & PipeTablesFeatures.ColumnGroups))
             {
-                formatters.Add(BlockTag.TableColumn, new TableColumnFormatter(parameters));
-                formatters.Add(BlockTag.TableColumnGroup, new BlockFormatter(parameters, BlockTag.TableColumnGroup, "colgroup"));
+                formatters.Add(new TableColumnFormatter(parameters));
+                formatters.Add(new BlockFormatter(parameters, BlockTag.TableColumnGroup, "colgroup"));
             }
             return formatters;
         }

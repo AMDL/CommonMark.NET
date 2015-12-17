@@ -20,19 +20,16 @@ namespace CommonMark.Extension
         }
 
         /// <summary>
-        /// Creates the mapping from block tag to block element formatter.
+        /// Initializes the block formatters.
         /// </summary>
         /// <param name="parameters">Formatter parameters.</param>
-        protected override IDictionary<BlockTag, IBlockFormatter> InitializeBlockFormatters(FormatterParameters parameters)
+        protected override IEnumerable<IBlockFormatter> InitializeBlockFormatters(FormatterParameters parameters)
         {
-            return new Dictionary<BlockTag, IBlockFormatter>
-            {
-                { BlockTag.TableCell, new TableCellFormatter(parameters) },
-                { BlockTag.TableRow, new BlockFormatter(parameters, BlockTag.TableRow, "tr") },
-                { BlockTag.TableBody, new BlockFormatter(parameters, BlockTag.TableBody, "tbody") },
-                { BlockTag.TableHeader, new BlockFormatter(parameters, BlockTag.TableHeader, "thead") },
-                { BlockTag.Table, new TableFormatter(parameters) },
-            };
+            yield return new TableCellFormatter(parameters);
+            yield return new BlockFormatter(parameters, BlockTag.TableRow, "tr");
+            yield return new BlockFormatter(parameters, BlockTag.TableBody, "tbody");
+            yield return new BlockFormatter(parameters, BlockTag.TableHeader, "thead");
+            yield return new TableFormatter(parameters);
         }
     }
 }

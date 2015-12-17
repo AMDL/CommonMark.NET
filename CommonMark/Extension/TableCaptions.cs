@@ -24,14 +24,11 @@ namespace CommonMark.Extension
         }
 
         /// <summary>
-        /// Creates the mapping from block tag to block element formatter.
+        /// Initializes the block formatters.
         /// </summary>
-        protected override IDictionary<BlockTag, Formatters.IBlockFormatter> InitializeBlockFormatters(FormatterParameters parameters)
+        protected override IEnumerable<IBlockFormatter> InitializeBlockFormatters(FormatterParameters parameters)
         {
-            return new Dictionary<BlockTag, Formatters.IBlockFormatter>
-            {
-                { BlockTag.TableCaption, new CaptionFormatter(parameters, BlockTag.TableCaption, "caption") }
-            };
+            yield return new CaptionFormatter(parameters, BlockTag.TableCaption, "caption");
         }
 
         internal bool IncorporateCaption(Block block)
