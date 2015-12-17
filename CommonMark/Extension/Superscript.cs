@@ -28,11 +28,11 @@ namespace CommonMark.Extension
         }
 
         /// <summary>
-        /// Creates the mapping from inline tag to inline element formatter.
+        /// Initializes the inline formatters.
         /// </summary>
-        protected override IDictionary<InlineTag, IInlineFormatter> InitializeInlineFormatters(FormatterParameters parameters)
+        protected override IEnumerable<IInlineFormatter> InitializeInlineFormatters(FormatterParameters parameters)
         {
-            return Register(InlineTag.Superscript, new InlineFormatter(parameters, InlineTag.Superscript, "sup"));
+            yield return new InlineFormatter(parameters, InlineTag.Superscript, "sup");
         }
     }
 }

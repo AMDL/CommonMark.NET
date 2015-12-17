@@ -65,7 +65,7 @@ namespace CommonMark
 
         #region Inline Parsers
 
-        private readonly Lazy<ICollection<IInlineParser>> _inlineParsers;
+        private readonly Lazy<IEnumerable<IInlineParser>> _inlineParsers;
 
         IEnumerable<IInlineParser> ICommonMarkExtension.InlineParsers
         {
@@ -76,21 +76,9 @@ namespace CommonMark
         /// Initializes the inline parsers.
         /// </summary>
         /// <param name="settings">Common settings.</param>
-        protected virtual ICollection<IInlineParser> InitializeInlineParsers(CommonMarkSettings settings)
+        protected virtual IEnumerable<IInlineParser> InitializeInlineParsers(CommonMarkSettings settings)
         {
             return null;
-        }
-
-        /// <summary>
-        /// Registers an inline element parser.
-        /// </summary>
-        /// <param name="inlineParser">Inline element parser.</param>
-        /// <returns>Inline element parsers.</returns>
-        protected ICollection<IInlineParser> Register(IInlineParser inlineParser)
-        {
-            var inlineParsers = _inlineParsers.IsValueCreated ? _inlineParsers.Value : new List<IInlineParser>();
-            inlineParsers.Add(inlineParser);
-            return inlineParsers;
         }
 
         #endregion
@@ -147,60 +135,38 @@ namespace CommonMark
 
         #region BlockFormatters
 
-        private readonly Lazy<IDictionary<BlockTag, IBlockFormatter>> _blockFormatters;
+        private readonly Lazy<IEnumerable<IBlockFormatter>> _blockFormatters;
 
-        IDictionary<BlockTag, IBlockFormatter> ICommonMarkExtension.BlockFormatters
+        IEnumerable<IBlockFormatter> ICommonMarkExtension.BlockFormatters
         {
             get { return _blockFormatters.Value; }
         }
 
         /// <summary>
-        /// Initializes the mapping from block tag to block element formatter.
+        /// Initializes the block formatters.
         /// </summary>
-        protected virtual IDictionary<BlockTag, IBlockFormatter> InitializeBlockFormatters(FormatterParameters parameters)
+        protected virtual IEnumerable<IBlockFormatter> InitializeBlockFormatters(FormatterParameters parameters)
         {
             return null;
-        }
-
-        /// <summary>
-        /// Registers a block element formatter.
-        /// </summary>
-        /// <param name="tag">Block element tag.</param>
-        /// <param name="formatter">Block element formatter.</param>
-        /// <returns>Mapping from block tag to block element formatter.</returns>
-        protected IDictionary<BlockTag, IBlockFormatter> Register(BlockTag tag, IBlockFormatter formatter)
-        {
-            return Register(_blockFormatters, tag, formatter);
         }
 
         #endregion
 
         #region InlineFormatters
 
-        private readonly Lazy<IDictionary<InlineTag, IInlineFormatter>> _inlineFormatters;
+        private readonly Lazy<IEnumerable<IInlineFormatter>> _inlineFormatters;
 
-        IDictionary<InlineTag, IInlineFormatter> ICommonMarkExtension.InlineFormatters
+        IEnumerable<IInlineFormatter> ICommonMarkExtension.InlineFormatters
         {
             get { return _inlineFormatters.Value; }
         }
 
         /// <summary>
-        /// Initializes the mapping from inline tag to inline element formatter.
+        /// Initializes the inline formatters.
         /// </summary>
-        protected virtual IDictionary<InlineTag, IInlineFormatter> InitializeInlineFormatters(FormatterParameters parameters)
+        protected virtual IEnumerable<IInlineFormatter> InitializeInlineFormatters(FormatterParameters parameters)
         {
             return null;
-        }
-
-        /// <summary>
-        /// Registers an inline element formatter.
-        /// </summary>
-        /// <param name="tag">Inline element tag.</param>
-        /// <param name="formatter">Inline element formatter.</param>
-        /// <returns>Mapping from inline tag to inline element formatter.</returns>
-        protected IDictionary<InlineTag, IInlineFormatter> Register(InlineTag tag, IInlineFormatter formatter)
-        {
-            return Register(_inlineFormatters, tag, formatter);
         }
 
         #endregion

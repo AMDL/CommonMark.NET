@@ -1,5 +1,6 @@
 ﻿using CommonMark.Formatters.Blocks;
 using CommonMark.Syntax;
+using System.Collections.Generic;
 
 namespace CommonMark.Formatters
 {
@@ -77,12 +78,10 @@ namespace CommonMark.Formatters
             writer.WritePosition(element);
         }
 
-        internal static IBlockFormatter[] InitializeFormatters(FormatterParameters parameters)
+        internal static IEnumerable<IBlockFormatter> InitializeFormatters(FormatterParameters parameters)
         {
-            var f = new IBlockFormatter[(int)BlockTag.Count];
-            f[(int)BlockTag.FencedCode] = new FencedCodeFormatter(parameters);
-            f[(int)BlockTag.IndentedCode] = new IndentedCodeFormatter(parameters);
-            return f;
+            yield return new FencedCodeFormatter(parameters);
+            yield return new IndentedCodeFormatter(parameters);
         }
     }
 }

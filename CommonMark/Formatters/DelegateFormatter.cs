@@ -69,9 +69,9 @@ namespace CommonMark.Formatters
 
         public static IBlockFormatter Merge(IBlockFormatter inner, IBlockFormatter outer)
         {
-            return !inner.Equals(outer)
+            return inner != null && !inner.Equals(outer)
                 ? new DelegateBlockFormatter(BlockTag.Custom, inner, outer)
-                : inner;
+                : outer;
         }
     }
 
@@ -91,9 +91,9 @@ namespace CommonMark.Formatters
 
         public static IInlineFormatter Merge(IInlineFormatter inner, IInlineFormatter outer)
         {
-            return !inner.Equals(outer)
+            return inner != null && !inner.Equals(outer)
                 ? new DelegateInlineFormatter(InlineTag.Custom, inner, outer)
-                : inner;
+                : outer;
         }
 
         public bool WriteOpening(IHtmlTextWriter writer, Inline inline, bool withinLink)

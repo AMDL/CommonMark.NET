@@ -163,6 +163,37 @@ namespace CommonMark
             return GetEnumerator();
         }
 
+        internal T[] GetItems<T>(IEnumerable<T> initItems, int count,
+            Func<ICommonMarkExtension, IEnumerable<T>> itemsFactory,
+            Func<T, int> keyFactory, Func<T, T, T> valueFactory)
+        {
+            var items = new T[count];
+
+            foreach (var item in initItems)
+            {
+                var key = keyFactory(item);
+                items[key] = item;
+            }
+
+            if (_list == null)
+                return items;
+
+            foreach (var extension in _list)
+            {
+                var extensionItems = itemsFactory(extension);
+                if (extensionItems != null)
+                {
+                    foreach (var item in extensionItems)
+                    {
+                        var key = keyFactory(item);
+                        items[key] = valueFactory(items[key], item);
+                    }
+                }
+            }
+
+            return items;
+        }
+
         internal TValue[] GetItems<TKey, TValue>(Func<int, TValue[]> itemsFactory,
             Func<ICommonMarkExtension, IDictionary<TKey, TValue>> itemMapFactory,
             Func<TKey, int> keyFactory, Func<TValue, TValue, TValue> valueFactory)

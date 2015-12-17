@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace CommonMark.Formatters
 {
@@ -62,8 +63,9 @@ namespace CommonMark.Formatters
 
         private Formatters.IBlockFormatter[] GetBlockFormatters()
         {
-            return Settings.Extensions.GetItems(Formatters.BlockFormatter.InitializeFormatters(this),
-                ext => ext.BlockFormatters, key => (int)key, DelegateBlockFormatter.Merge);
+            return Settings.Extensions.GetItems(
+                Formatters.BlockFormatter.InitializeFormatters(this), (int)Syntax.BlockTag.Count,
+                ext => ext.BlockFormatters, f => (int)f.Tag, DelegateBlockFormatter.Merge);
         }
 
         #endregion BlockFormatters
@@ -82,8 +84,9 @@ namespace CommonMark.Formatters
 
         private Formatters.IInlineFormatter[] GetInlineFormatters()
         {
-            return Settings.Extensions.GetItems(Formatters.InlineFormatter.InitializeFormatters(this),
-                ext => ext.InlineFormatters, key => (int)key, DelegateInlineFormatter.Merge);
+            return Settings.Extensions.GetItems(
+                Formatters.InlineFormatter.InitializeFormatters(this), (int)Syntax.InlineTag.Count,
+                ext => ext.InlineFormatters, f => (int)f.Tag, DelegateInlineFormatter.Merge);
         }
 
         #endregion InlineFormatters

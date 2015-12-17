@@ -1,5 +1,6 @@
 ﻿using CommonMark.Formatters.Inlines;
 using CommonMark.Syntax;
+using System.Collections.Generic;
 
 namespace CommonMark.Formatters
 {
@@ -89,11 +90,9 @@ namespace CommonMark.Formatters
             writer.WritePosition(element);
         }
 
-        internal static IInlineFormatter[] InitializeFormatters(FormatterParameters parameters)
+        internal static IEnumerable<IInlineFormatter> InitializeFormatters(FormatterParameters parameters)
         {
-            var f = new InlineFormatter[(int)InlineTag.Count];
-            f[(int)InlineTag.Link] = new LinkFormatter(parameters);
-            return f;
+            yield return new LinkFormatter(parameters);
         }
     }
 }

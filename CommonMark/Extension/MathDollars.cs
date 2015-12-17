@@ -2,7 +2,6 @@
 using CommonMark.Formatters.Inlines;
 using CommonMark.Parser;
 using CommonMark.Parser.Inlines.Delimiters;
-using CommonMark.Syntax;
 using System.Collections.Generic;
 
 namespace CommonMark.Extension
@@ -31,11 +30,11 @@ namespace CommonMark.Extension
         }
 
         /// <summary>
-        /// Initializes the mapping from inline tag to inline element formatter.
+        /// Initializes the inline formatters.
         /// </summary>
-        protected override IDictionary<InlineTag, IInlineFormatter> InitializeInlineFormatters(FormatterParameters parameters)
+        protected override IEnumerable<IInlineFormatter> InitializeInlineFormatters(FormatterParameters parameters)
         {
-            return Register(InlineTag.Math, new MathFormatter(parameters));
+            yield return new MathFormatter(parameters);
         }
     }
 }

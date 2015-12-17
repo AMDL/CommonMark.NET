@@ -30,13 +30,13 @@ namespace CommonMark
         StringNormalizerDelegate ReferenceNormalizer { get; }
 
         /// <summary>
-        /// Gets the mapping from block tag to block element formatter.
+        /// Gets the block formatters.
         /// </summary>
-        IDictionary<Syntax.BlockTag, IBlockFormatter> BlockFormatters { get; }
+        IEnumerable<IBlockFormatter> BlockFormatters { get; }
 
         /// <summary>
-        /// Gets the mapping from inline tag to inline element formatter.
+        /// Gets the inline formatters.
         /// </summary>
-        IDictionary<Syntax.InlineTag, IInlineFormatter> InlineFormatters { get; }
+        IEnumerable<IInlineFormatter> InlineFormatters { get; }
     }
 }
