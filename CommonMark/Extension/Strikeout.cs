@@ -26,10 +26,7 @@ namespace CommonMark.Extension
         /// </summary>
         protected override IDictionary<char, IInlineDelimiterHandler> InitializeInlineDelimiterHandlers()
         {
-            return new Dictionary<char, IInlineDelimiterHandler>
-            {
-                { '~', new StrikeoutTildeHandler() }
-            };
+            return Register('~', new StrikeoutTildeHandler());
         }
 
         /// <summary>
@@ -37,10 +34,7 @@ namespace CommonMark.Extension
         /// </summary>
         protected override IDictionary<InlineTag, IInlineFormatter> InitializeInlineFormatters(FormatterParameters parameters)
         {
-            return new Dictionary<InlineTag, IInlineFormatter>
-            {
-                { InlineTag.Strikethrough, new StrikethroughFormatter(parameters) }
-            };
+            return Register(InlineTag.Strikethrough, new StrikethroughFormatter(parameters));
         }
     }
 }
