@@ -3,31 +3,35 @@ using System.Collections.Generic;
 
 namespace CommonMark.Formatters
 {
-    internal abstract class DelegateFormatter<T, TFormatter> : IElementFormatter<T>
-        where TFormatter : IElementFormatter<T>
+    internal abstract class DelegateFormatter<TElement, TTag, TFormatter> : IElementFormatter<TElement, TTag>
+        where TFormatter : IElementFormatter<TElement, TTag>
     {
         protected readonly TFormatter inner;
         protected readonly TFormatter outer;
 
-        protected DelegateFormatter(TFormatter inner, TFormatter outer)
+        protected DelegateFormatter(TTag tag, TFormatter inner, TFormatter outer)
         {
+            this.Tag = tag;
             this.inner = inner;
             this.outer = outer;
         }
 
-        public bool CanHandle(T element)
+        public TTag Tag
+        {
+            get;
+        }
+
+        public string PrinterTag
+        {
+            get { return inner.PrinterTag ?? outer.PrinterTag; }
+        }
+
+        public bool CanHandle(TElement element)
         {
             return inner.CanHandle(element) || outer.CanHandle(element);
         }
 
-        public string GetPrinterTag(T element)
-        {
-            return inner.CanHandle(element)
-                ? inner.GetPrinterTag(element)
-                : outer.GetPrinterTag(element);
-        }
-
-        public IDictionary<string, object> GetPrinterData(IPrinter printer, T element)
+        public IDictionary<string, object> GetPrinterData(IPrinter printer, TElement element)
         {
             return inner.CanHandle(element)
                 ? inner.GetPrinterData(printer, element)
@@ -35,10 +39,10 @@ namespace CommonMark.Formatters
         }
     }
 
-    internal class DelegateBlockFormatter : DelegateFormatter<Block, IBlockFormatter>, IBlockFormatter
+    internal class DelegateBlockFormatter : DelegateFormatter<Block, BlockTag, IBlockFormatter>, IBlockFormatter
     {
-        public DelegateBlockFormatter(IBlockFormatter inner, IBlockFormatter outer)
-            : base(inner, outer)
+        public DelegateBlockFormatter(BlockTag tag, IBlockFormatter inner, IBlockFormatter outer)
+            : base(tag, inner, outer)
         {
         }
 
@@ -66,15 +70,15 @@ namespace CommonMark.Formatters
         public static IBlockFormatter Merge(IBlockFormatter inner, IBlockFormatter outer)
         {
             return !inner.Equals(outer)
-                ? new DelegateBlockFormatter(inner, outer)
+                ? new DelegateBlockFormatter(BlockTag.Custom, inner, outer)
                 : inner;
         }
     }
 
-    internal class DelegateInlineFormatter : DelegateFormatter<Inline, IInlineFormatter>, IInlineFormatter
+    internal class DelegateInlineFormatter : DelegateFormatter<Inline, InlineTag, IInlineFormatter>, IInlineFormatter
     {
-        public DelegateInlineFormatter(IInlineFormatter inner, IInlineFormatter outer)
-            : base(inner, outer)
+        public DelegateInlineFormatter(InlineTag tag, IInlineFormatter inner, IInlineFormatter outer)
+            : base(tag, inner, outer)
         {
         }
 
@@ -88,7 +92,7 @@ namespace CommonMark.Formatters
         public static IInlineFormatter Merge(IInlineFormatter inner, IInlineFormatter outer)
         {
             return !inner.Equals(outer)
-                ? new DelegateInlineFormatter(inner, outer)
+                ? new DelegateInlineFormatter(InlineTag.Custom, inner, outer)
                 : inner;
         }
 

@@ -13,18 +13,9 @@ namespace CommonMark.Formatters.Inlines
         /// </summary>
         /// <param name="parameters">Formatter parameters.</param>
         public LinkFormatter(FormatterParameters parameters)
-            : base(parameters)
+            : base(parameters, InlineTag.Link, "a")
         {
-        }
-
-        /// <summary>
-        /// Checks whether the formatter can handle an element.
-        /// </summary>
-        /// <param name="element">Element.</param>
-        /// <returns><c>true</c> if the formatter can handle <paramref name="element"/>.</returns>
-        public override bool CanHandle(Inline element)
-        {
-            return element.Tag == InlineTag.Link;
+            PrinterTag = "link";
         }
 
         /// <summary>
@@ -84,16 +75,6 @@ namespace CommonMark.Formatters.Inlines
         }
 
         /// <summary>
-        /// Returns the syntax tree node tag for an element.
-        /// </summary>
-        /// <param name="element">Element.</param>
-        /// <returns>Tag.</returns>
-        public override string GetPrinterTag(Inline element)
-        {
-            return "link";
-        }
-
-        /// <summary>
         /// Returns the properties of an element.
         /// </summary>
         /// <param name="printer">Printer.</param>
@@ -106,16 +87,6 @@ namespace CommonMark.Formatters.Inlines
                 { "url", printer.Format(element.TargetUrl) },
                 { "title", printer.Format(element.LiteralContent) },
             };
-        }
-
-        /// <summary>
-        /// Gets the HTML tag for the element.
-        /// </summary>
-        /// <param name="element">Element.</param>
-        /// <returns>Tag.</returns>
-        protected override string GetTag(Syntax.Inline element)
-        {
-            return "a";
         }
     }
 }

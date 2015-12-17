@@ -6,15 +6,27 @@ namespace CommonMark.Formatters
     /// <summary>
     /// Block element formatter.
     /// </summary>
-    public abstract class BlockFormatter : ElementFormatter<Block>, IBlockFormatter
+    public class BlockFormatter : ElementFormatter<Block, BlockTag>, IBlockFormatter
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="BlockFormatter"/> class.
         /// </summary>
         /// <param name="parameters">Formatter parameters.</param>
-        protected BlockFormatter(FormatterParameters parameters)
-            : base(parameters)
+        /// <param name="tag">Block element tag.</param>
+        /// <param name="htmlTag">HTML tag.</param>
+        public BlockFormatter(FormatterParameters parameters, BlockTag tag, string htmlTag = null)
+            : base(parameters, tag, htmlTag)
         {
+        }
+
+        /// <summary>
+        /// Checks whether the formatter can handle a block element.
+        /// </summary>
+        /// <param name="element">Block element.</param>
+        /// <returns><c>true</c> if the formatter can handle <paramref name="element"/>.</returns>
+        public override bool CanHandle(Block element)
+        {
+            return element.Tag == Tag;
         }
 
         /// <summary>

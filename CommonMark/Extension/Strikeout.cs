@@ -1,5 +1,4 @@
 ﻿using CommonMark.Formatters;
-using CommonMark.Formatters.Inlines;
 using CommonMark.Parser;
 using CommonMark.Syntax;
 using System.Collections.Generic;
@@ -33,7 +32,7 @@ namespace CommonMark.Extension
         /// </summary>
         protected override IDictionary<InlineTag, IInlineFormatter> InitializeInlineFormatters(FormatterParameters parameters)
         {
-            return Register(InlineTag.Strikethrough, new StrikethroughFormatter(parameters));
+            return Register(InlineTag.Strikethrough, new InlineFormatter(parameters, InlineTag.Strikethrough, "del"));
         }
     }
 }

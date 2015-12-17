@@ -13,28 +13,9 @@ namespace CommonMark.Formatters.Blocks
         /// </summary>
         /// <param name="parameters"></param>
         public FencedCodeFormatter(FormatterParameters parameters)
-            : base(parameters)
+            : base(parameters, BlockTag.FencedCode)
         {
-        }
-
-        /// <summary>
-        /// Checks whether the formatter can handle an element.
-        /// </summary>
-        /// <param name="element">Element.</param>
-        /// <returns><c>true</c> if the formatter can handle <paramref name="element"/>.</returns>
-        public override bool CanHandle(Block element)
-        {
-            return element.Tag == BlockTag.FencedCode;
-        }
-
-        /// <summary>
-        /// Returns the syntax tree node tag for an element.
-        /// </summary>
-        /// <param name="element">Element.</param>
-        /// <returns>Tag.</returns>
-        public override string GetPrinterTag(Block element)
-        {
-            return "fenced_code";
+            PrinterTag = "fenced_code";
         }
 
         /// <summary>

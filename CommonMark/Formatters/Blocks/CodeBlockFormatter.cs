@@ -11,9 +11,10 @@ namespace CommonMark.Formatters.Blocks
         /// <summary>
         /// Initializes a new instance of the <see cref="CodeBlockFormatter"/> class.
         /// </summary>
-        /// <param name="parameters"></param>
-        protected CodeBlockFormatter(FormatterParameters parameters)
-            : base(parameters)
+        /// <param name="parameters">Formatter parameters.</param>
+        /// <param name="tag">Block element tag.</param>
+        protected CodeBlockFormatter(FormatterParameters parameters, BlockTag tag)
+            : base(parameters, tag)
         {
         }
 
@@ -57,16 +58,6 @@ namespace CommonMark.Formatters.Blocks
             var data = GetData(printer, element);
             data.Add(string.Empty, printer.Format(element.StringContent));
             return data;
-        }
-
-        /// <summary>
-        /// Gets the HTML tag for the element.
-        /// </summary>
-        /// <param name="element">Element.</param>
-        /// <returns>Tag.</returns>
-        protected override string GetTag(Block element)
-        {
-            throw new System.NotImplementedException();
         }
 
         /// <summary>

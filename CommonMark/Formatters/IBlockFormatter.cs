@@ -5,7 +5,7 @@ namespace CommonMark.Formatters
     /// <summary>
     /// Block element formatter interface.
     /// </summary>
-    public interface IBlockFormatter : IElementFormatter<Block>
+    public interface IBlockFormatter : IElementFormatter<Block, BlockTag>
     {
         /// <summary>
         /// Writes the opening of a block element.

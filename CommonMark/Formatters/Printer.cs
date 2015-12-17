@@ -96,7 +96,7 @@ namespace CommonMark.Formatters
                 formatter = formatters[(int)block.Tag];
                 if (formatter != null)
                 {
-                    writer.Write(formatter.GetPrinterTag(block));
+                    writer.Write(formatter.PrinterTag);
                     PrintPosition(trackPositions, writer, block);
                     if ((data = formatter.GetPrinterData(parameters.Printer, block)) != null)
                         PrintData(writer, data);
@@ -223,7 +223,7 @@ namespace CommonMark.Formatters
                 formatter = formatters[(int)inline.Tag];
                 if (formatter != null)
                 {
-                    writer.Write(formatter.GetPrinterTag(inline));
+                    writer.Write(formatter.PrinterTag);
                     PrintPosition(trackPositions, writer, inline);
                     if ((data = formatter.GetPrinterData(parameters.Printer, inline)) != null)
                         PrintData(writer, data);

@@ -57,8 +57,6 @@
     <Compile Include="Extension\Subscript.cs" />
     <Compile Include="Extension\Superscript.cs" />
     <Compile Include="Formatters\Inlines\MathFormatter.cs" />
-    <Compile Include="Formatters\Inlines\SubscriptFormatter.cs" />
-    <Compile Include="Formatters\Inlines\SuperscriptFormatter.cs" />
     <Compile Include="Parser\Inlines\Delimiters\MathDollarHandler.cs" />
     <Compile Include="Formatters\Blocks\CodeBlockFormatter.cs" />
     <Compile Include="Formatters\Blocks\FencedCodeFormatter.cs" />
@@ -115,7 +113,6 @@
     <Compile Include="Formatters\Blocks\TableFormatter.cs" />
     <Compile Include="Formatters\Blocks\TableRowFormatter.cs" />
     <Compile Include="Formatters\InlineFormatter.cs" />
-    <Compile Include="Formatters\Inlines\StrikethroughFormatter.cs" />
     <Compile Include="Func.cs" />
     <Compile Include="ICommonMarkExtension.cs" />
     <Compile Include="Lazy.cs" />

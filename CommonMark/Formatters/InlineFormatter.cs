@@ -6,15 +6,27 @@ namespace CommonMark.Formatters
     /// <summary>
     /// Inline element formatter.
     /// </summary>
-    public abstract class InlineFormatter : ElementFormatter<Inline>, IInlineFormatter
+    public class InlineFormatter : ElementFormatter<Inline, InlineTag>, IInlineFormatter
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="InlineFormatter"/> class.
         /// </summary>
         /// <param name="parameters">Formatter parameters.</param>
-        protected InlineFormatter(FormatterParameters parameters)
-            : base(parameters)
+        /// <param name="tag">Inline element tag.</param>
+        /// <param name="htmlTag">HTML tag.</param>
+        public InlineFormatter(FormatterParameters parameters, InlineTag tag, string htmlTag = null)
+            : base(parameters, tag, htmlTag)
         {
+        }
+
+        /// <summary>
+        /// Checks whether the formatter can handle an inline element.
+        /// </summary>
+        /// <param name="element">Inline element.</param>
+        /// <returns><c>true</c> if the formatter can handle <paramref name="element"/>.</returns>
+        public override bool CanHandle(Inline element)
+        {
+            return element.Tag == Tag;
         }
 
         /// <summary>

@@ -5,7 +5,7 @@ namespace CommonMark.Formatters
     /// <summary>
     /// Inline element formatter interface.
     /// </summary>
-    public interface IInlineFormatter : IElementFormatter<Inline>
+    public interface IInlineFormatter : IElementFormatter<Inline, InlineTag>
     {
         /// <summary>
         /// Writes the opening of an inline element.

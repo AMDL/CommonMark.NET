@@ -5,13 +5,9 @@ namespace CommonMark.Formatters.Inlines
     internal sealed class MathFormatter : InlineFormatter
     {
         public MathFormatter(FormatterParameters parameters)
-            : base(parameters)
+            : base(parameters, InlineTag.Math)
         {
-        }
-
-        public override bool CanHandle(Inline element)
-        {
-            return element.Tag == InlineTag.Math;
+            PrinterTag = "math";
         }
 
         public override bool WriteOpening(IHtmlTextWriter writer, Inline element, bool withinLink)
@@ -25,16 +21,6 @@ namespace CommonMark.Formatters.Inlines
         public override string GetClosing(IHtmlFormatter formatter, Inline element, bool withinLink)
         {
             return "</span>";
-        }
-
-        public override string GetPrinterTag(Inline element)
-        {
-            return "math";
-        }
-
-        protected override string GetTag(Inline element)
-        {
-            throw new System.NotImplementedException();
         }
     }
 }
