@@ -1,7 +1,6 @@
 ﻿using CommonMark.Formatters;
 using CommonMark.Formatters.Inlines;
 using CommonMark.Parser;
-using CommonMark.Parser.Inlines.Delimiters;
 using CommonMark.Syntax;
 using System.Collections.Generic;
 
@@ -26,7 +25,7 @@ namespace CommonMark.Extension
         /// </summary>
         protected override IDictionary<char, IInlineDelimiterHandler> InitializeInlineDelimiterHandlers()
         {
-            return Register('~', new StrikeoutTildeHandler());
+            return Register('~', new InlineDelimiterHandler(doubleCharacterTag: InlineTag.Strikethrough));
         }
 
         /// <summary>

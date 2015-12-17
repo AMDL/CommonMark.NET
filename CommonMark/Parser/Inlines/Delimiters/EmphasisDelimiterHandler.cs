@@ -1,6 +1,4 @@
-﻿using CommonMark.Syntax;
-
-namespace CommonMark.Parser.Inlines.Delimiters
+﻿namespace CommonMark.Parser.Inlines.Delimiters
 {
     /// <summary>
     /// Base emphasis delimiter handler class.
@@ -8,17 +6,11 @@ namespace CommonMark.Parser.Inlines.Delimiters
     public abstract class EmphasisHandler : InlineDelimiterHandler
     {
         /// <summary>
-        /// Returns the inline element tag that corresponds to the specified delimiter count.
+        /// Initializes a new instance of the <see cref="EmphasisHandler"/> class.
         /// </summary>
-        /// <param name="delimiterCount">Delimiter character count.</param>
-        /// <returns>Tag or 0.</returns>
-        public override InlineTag GetTag(int delimiterCount)
+        protected EmphasisHandler()
+            : base(Syntax.InlineTag.Emphasis, Syntax.InlineTag.Strong)
         {
-            if (delimiterCount == 1)
-                return InlineTag.Emphasis;
-            if (delimiterCount == 2)
-                return InlineTag.Strong;
-            return 0;
         }
     }
 

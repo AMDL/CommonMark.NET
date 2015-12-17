@@ -1,16 +1,40 @@
-﻿namespace CommonMark.Parser
+﻿using CommonMark.Syntax;
+
+namespace CommonMark.Parser
 {
     /// <summary>
     /// Base inline delimiter handler class.
     /// </summary>
-    public abstract class InlineDelimiterHandler : IInlineDelimiterHandler
+    public class InlineDelimiterHandler : IInlineDelimiterHandler
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="InlineDelimiterHandler"/> class.
+        /// </summary>
+        /// <param name="singleCharacterTag">The tag to use for inline elements created when a single-character delimiter is matched.</param>
+        /// <param name="doubleCharacterTag">The tag to use for inline elements created when a double-character delimiter is matched.</param>
+        public InlineDelimiterHandler(InlineTag singleCharacterTag = 0, InlineTag doubleCharacterTag = 0)
+        {
+            SingleCharacterTag = singleCharacterTag;
+            DoubleCharacterTag = doubleCharacterTag;
+        }
+
         /// <summary>
         /// Returns the inline element tag that corresponds to the specified delimiter count.
         /// </summary>
         /// <param name="delimiterCount">Delimiter character count.</param>
         /// <returns>Tag or 0.</returns>
-        public abstract Syntax.InlineTag GetTag(int delimiterCount);
+        public virtual InlineTag GetTag(int delimiterCount)
+        {
+            switch (delimiterCount)
+            {
+                case 1:
+                    return SingleCharacterTag;
+                case 2:
+                    return DoubleCharacterTag;
+                default:
+                    return 0;
+            }
+        }
 
         /// <summary>
         /// Handles a matched opener.
@@ -41,5 +65,17 @@
         {
             return true;
         }
+
+        /// <summary>
+        /// Gets the single-character element tag.
+        /// </summary>
+        /// <value>The tag used for inline elements created when a single-character delimiter is matched.</value>
+        protected InlineTag SingleCharacterTag { get; }
+
+        /// <summary>
+        /// Gets the double-character element tag.
+        /// </summary>
+        /// <value>The tag used for inline elements created when a double-character delimiter is matched.</value>
+        protected InlineTag DoubleCharacterTag { get; }
     }
 }

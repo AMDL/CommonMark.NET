@@ -1,7 +1,6 @@
 ﻿using CommonMark.Formatters;
 using CommonMark.Formatters.Inlines;
 using CommonMark.Parser;
-using CommonMark.Parser.Inlines.Delimiters;
 using CommonMark.Syntax;
 using System.Collections.Generic;
 
@@ -26,13 +25,13 @@ namespace CommonMark.Extension
         /// </summary>
         protected override IDictionary<char, IInlineDelimiterHandler> InitializeInlineDelimiterHandlers()
         {
-            return Register('^', new SuperscriptCaretHandler());
+            return Register('^', new InlineDelimiterHandler(InlineTag.Superscript));
         }
 
         /// <summary>
         /// Creates the mapping from inline tag to inline element formatter.
         /// </summary>
-        protected override IDictionary<InlineTag, Formatters.IInlineFormatter> InitializeInlineFormatters(FormatterParameters parameters)
+        protected override IDictionary<InlineTag, IInlineFormatter> InitializeInlineFormatters(FormatterParameters parameters)
         {
             return Register(InlineTag.Superscript, new SuperscriptFormatter(parameters));
         }
