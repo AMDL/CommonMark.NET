@@ -75,6 +75,12 @@ namespace CommonMark.Syntax
         Strikethrough,
 
         /// <summary>
+        /// Represents a subscript element.
+        /// Only present if <see cref="Extension.Subscript"/> is registered.
+        /// </summary>
+        Subscript,
+
+        /// <summary>
         /// Represents a custom inline element.
         /// Any additional properties are set through <see cref="Inline.CustomData"/>.
         /// </summary>

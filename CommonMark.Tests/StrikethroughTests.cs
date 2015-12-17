@@ -39,6 +39,27 @@ namespace CommonMark.Tests
 
         [TestMethod]
         [TestCategory("Inlines - Strikethrough")]
+        public void StrikeoutWithSubscript()
+        {
+            var s = CommonMarkSettings.Default.Clone();
+            s.Extensions.Register(new Extension.Strikeout(s));
+            s.Extensions.Register(new Extension.Subscript(s));
+            Helpers.ExecuteTest("foo ~~~bar~~~", "<p>foo <del><sub>bar</sub></del></p>", s);
+        }
+
+        [TestMethod]
+        [TestCategory("Inlines - Strikethrough")]
+        public void StrikeoutWithSubscriptInPost()
+        {
+            // '[' char in the middle will delay the ~~ match to the post-process phase.
+            var s = CommonMarkSettings.Default.Clone();
+            s.Extensions.Register(new Extension.Strikeout(s));
+            s.Extensions.Register(new Extension.Subscript(s));
+            Helpers.ExecuteTest("foo ~~~ba[r~~~", "<p>foo <del><sub>ba[r</sub></del></p>", s);
+        }
+
+        [TestMethod]
+        [TestCategory("Inlines - Strikethrough")]
         public void StrikethroughExample1()
         {
             Helpers.ExecuteTest("foo ~~bar~~", "<p>foo <del>bar</del></p>", Settings);

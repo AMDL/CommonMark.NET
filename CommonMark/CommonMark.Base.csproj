@@ -53,6 +53,9 @@
     <Compile Include="CommonMarkSettings.cs" />
     <Compile Include="CommonMarkExtension.cs" />
     <Compile Include="Extension\ReferenceCase.cs" />
+    <Compile Include="Extension\Subscript.cs" />
+    <Compile Include="Formatters\Inlines\SubscriptFormatter.cs" />
+    <Compile Include="Parser\Inlines\Delimiters\SubscriptTildeHandler.cs" />
     <Compile Include="Formatters\Blocks\CodeBlockFormatter.cs" />
     <Compile Include="Formatters\Blocks\FencedCodeFormatter.cs" />
     <Compile Include="Formatters\Blocks\IndentedCodeFormatter.cs" />
