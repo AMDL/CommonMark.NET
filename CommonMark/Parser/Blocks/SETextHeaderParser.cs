@@ -25,17 +25,8 @@ namespace CommonMark.Parser.Blocks
         protected SETextHeaderParser(CommonMarkSettings settings, char[] headerLevels)
             : base(settings, headerLevels)
         {
-        }
-
-        /// <summary>
-        /// Determines whether a blank line at the end of the handled element should be discarded.
-        /// </summary>
-        /// <param name="info">Parser state.</param>
-        /// <returns><c>true</c> if successful.</returns>
-        public override bool IsDiscardLastBlank(BlockParserInfo info)
-        {
             // we don't count setext headers for purposes of tight/loose lists or breaking out of lists.
-            return true;
+            IsAlwaysDiscardBlanks = true;
         }
 
         /// <summary>

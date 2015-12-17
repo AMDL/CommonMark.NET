@@ -20,7 +20,7 @@ namespace CommonMark.Parser.Blocks
         /// Determines whether the last blank line of the handled element should be discarded.
         /// </summary>
         /// <param name="info">Parser state.</param>
-        /// <returns><c>true</c> if blank lines at the end of the handled element should be discarded.</returns>
+        /// <returns><c>true</c> if a blank line at the end of the handled element should be discarded.</returns>
         public override bool IsDiscardLastBlank(BlockParserInfo info)
         {
             // we don't set IsLastLineBlank on an empty list item.

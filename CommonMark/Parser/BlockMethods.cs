@@ -57,10 +57,8 @@ namespace CommonMark.Parser
             b.EndLine = (line.LineNumber > b.StartLine) ? line.LineNumber - 1 : line.LineNumber;
 #pragma warning restore 0618
 
-            var parameters = settings.BlockParserParameters;
-            var finalizers = parameters.Finalizers;
             BlockFinalizerDelegate finalizer;
-            if ((finalizer = finalizers[(int)b.Tag]) != null)
+            if ((finalizer = settings.BlockParserParameters.Finalizers[(int)b.Tag]) != null)
             {
                 finalizer(b);
             }
@@ -179,19 +177,13 @@ namespace CommonMark.Parser
         private static void Open(ref BlockParserInfo info, CommonMarkSettings settings)
         {
             var parameters = settings.BlockParserParameters;
-
-            var parsers = parameters.Parsers;
-            var indentedCode = parsers[(int)BlockTag.IndentedCode];
-
             var openers = parameters.Openers;
             BlockOpenerDelegate opener;
 
             info.IsMaybeLazy = info.CurrentContainer.Tag == BlockTag.Paragraph;
 
-            var parser = parsers[(int)info.Container.Tag];
-
             // unless last matched container is code block, try new container starts:
-            while (parser == null || !parser.IsCodeBlock)
+            while (!parameters.IsCodeBlock(info.Container.Tag))
             {
                 info.FindFirstNonspace();
 
@@ -199,12 +191,12 @@ namespace CommonMark.Parser
                 {
                     // The opener will do the job
                 }
-                else if (!indentedCode.Open(ref info))
+                else if (!parameters.OpenIndentedCode(ref info))
                 {
                     break;
                 }
 
-                if ((parser = parsers[(int)info.Container.Tag]) != null && parser.IsAcceptsLines)
+                if (parameters.IsAcceptsLines(info.Container.Tag))
                 {
                     // if it's a line container, it can't contain other containers
                     break;
@@ -221,9 +213,6 @@ namespace CommonMark.Parser
         private static void Close(BlockParserInfo info, CommonMarkSettings settings)
         {
             var parameters = settings.BlockParserParameters;
-            var parsers = parameters.Parsers;
-            var paragraph = parsers[(int)BlockTag.Paragraph];
-
             var closers = parameters.Closers;
             BlockCloserDelegate closer;
 
@@ -234,8 +223,7 @@ namespace CommonMark.Parser
                 info.Container.LastChild.IsLastLineBlank = true;
             }
 
-            var parser = parsers[(int)info.Container.Tag];
-            info.Container.IsLastLineBlank = info.IsBlank && (parser == null || !parser.IsDiscardLastBlank(info));
+            info.Container.IsLastLineBlank = info.IsBlank && !parameters.IsDiscardLastBlank(info);
 
             Block cont = info.Container;
             while (cont.Parent != null)
@@ -244,7 +232,7 @@ namespace CommonMark.Parser
                 cont = cont.Parent;
             }
 
-            if (!paragraph.Open(ref info))
+            if (!parameters.OpenParagraph(ref info))
             {
                 // not a lazy continuation
 
@@ -264,7 +252,7 @@ namespace CommonMark.Parser
                 }
                 else
                 {
-                    paragraph.Close(info);
+                    parameters.CloseParagraph(info);
                 }
 
                 info.ParentContainer = info.Container;

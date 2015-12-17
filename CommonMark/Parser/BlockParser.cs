@@ -65,13 +65,23 @@ namespace CommonMark.Parser
         }
 
         /// <summary>
+        /// Gets or sets the value indicating whether the last blank line of a handled element should be discarded.
+        /// </summary>
+        /// <value><c>true</c> if a blank line at the end of a handled element should always be discarded.</value>
+        public bool IsAlwaysDiscardBlanks
+        {
+            get;
+            protected set;
+        }
+
+        /// <summary>
         /// Determines whether the last blank line of the handled element should be discarded.
         /// </summary>
         /// <param name="info">Parser state.</param>
-        /// <returns><c>true</c> if blank lines at the end of the handled element should be discarded.</returns>
+        /// <returns><c>true</c> if a blank line at the end of the handled element should be discarded.</returns>
         public virtual bool IsDiscardLastBlank(BlockParserInfo info)
         {
-            return false;
+            return IsAlwaysDiscardBlanks;
         }
 
         /// <summary>

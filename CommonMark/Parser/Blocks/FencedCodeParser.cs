@@ -28,19 +28,12 @@ namespace CommonMark.Parser.Blocks
             : base(settings, GetCharacters(openers, closers))
         {
             IsAcceptsLines = true;
+
+            // we don't count blanks in fenced code for purposes of tight/loose lists or breaking out of lists.
+            IsAlwaysDiscardBlanks = true;
+
             Openers = openers;
             Closers = closers != null ? closers : openers;
-        }
-
-        /// <summary>
-        /// Determines whether the last blank line of the handled element should be discarded.
-        /// </summary>
-        /// <param name="info">Parser state.</param>
-        /// <returns><c>true</c> if blank lines at the end of the handled element should be discarded.</returns>
-        public override bool IsDiscardLastBlank(BlockParserInfo info)
-        {
-            // we don't count blanks in fenced code for purposes of tight/loose lists or breaking out of lists.
-            return true;
         }
 
         /// <summary>

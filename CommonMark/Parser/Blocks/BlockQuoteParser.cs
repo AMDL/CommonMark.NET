@@ -14,17 +14,8 @@ namespace CommonMark.Parser.Blocks
         public BlockQuoteParser(CommonMarkSettings settings)
             : base(settings, '>')
         {
-        }
-
-        /// <summary>
-        /// Determines whether the last blank line of the handled element should be discarded.
-        /// </summary>
-        /// <param name="info">Parser state.</param>
-        /// <returns><c>true</c> if blank lines at the end of the handled element should be discarded.</returns>
-        public override bool IsDiscardLastBlank(BlockParserInfo info)
-        {
             // block quote lines are never blank as they start with >
-            return true;
+            IsAlwaysDiscardBlanks = true;
         }
 
         /// <summary>

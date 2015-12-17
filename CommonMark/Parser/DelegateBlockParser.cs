@@ -42,6 +42,15 @@ namespace CommonMark.Parser
             }
         }
 
+        public bool IsAlwaysDiscardBlanks
+        {
+            get
+            {
+                return inner.IsAlwaysDiscardBlanks
+                    || outer.IsAlwaysDiscardBlanks;
+            }
+        }
+
         public bool IsDiscardLastBlank(BlockParserInfo info)
         {
             return inner.IsDiscardLastBlank(info)

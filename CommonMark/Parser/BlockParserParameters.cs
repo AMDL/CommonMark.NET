@@ -33,6 +33,13 @@ namespace CommonMark.Parser
     internal delegate bool BlockFinalizerDelegate(Block container);
 
     /// <summary>
+    /// Stage 1 block blank line check delegate.
+    /// </summary>
+    /// <param name="info">Parser state.</param>
+    /// <returns><c>true</c> to discard the last blank line.</returns>
+    internal delegate bool IsDiscardLastBlankDelegate(BlockParserInfo info);
+
+    /// <summary>
     /// Stage 2 block processor delegate.
     /// </summary>
     /// <param name="container">Container element.</param>
@@ -61,7 +68,14 @@ namespace CommonMark.Parser
             this._closers = GetClosers();
             this._finalizers = GetFinalizers();
             this._processors = GetProcessors();
+            this._isDiscardLastBlanks = GetIsDiscardLastBlanks();
+            this._isCodeBlock = GetIsCodeBlock();
+            this._isAcceptsLines = GetIsAcceptsLines();
+            this._isAlwaysDiscardBlanks = GetIsAlwaysDiscardBlanks();
             this._canContain = GetCanContain();
+            this._openParagraph = GetOpenParagraph();
+            this._closeParagraph = GetCloseParagraph();
+            this._openIndentedCode = GetOpenIndentedCode();
         }
 
         #endregion Constructor
@@ -214,10 +228,110 @@ namespace CommonMark.Parser
 
         #endregion Processors
 
+        #region IsCodeBlock
+
+        private long _isCodeBlock; // assuming we won't get past 63 tags
+
+#if OptimizeFor45
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+#endif
+        internal bool IsCodeBlock(BlockTag tag)
+        {
+            return 0 != (_isCodeBlock & 1 << (int)tag);
+        }
+
+        private long GetIsCodeBlock()
+        {
+            return GetValue(GetIsCodeBlock);
+        }
+
+        private bool GetIsCodeBlock(BlockTag tag)
+        {
+            IBlockParser parser;
+            return (parser = Parsers[(int)tag]) != null && parser.IsCodeBlock;
+        }
+
+        #endregion IsCodeBlock
+
+        #region IsAcceptsLines
+
+        private long _isAcceptsLines;
+
+#if OptimizeFor45
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+#endif
+        internal bool IsAcceptsLines(BlockTag tag)
+        {
+            return 0 != (_isAcceptsLines & 1 << (int)tag);
+        }
+
+        private long GetIsAcceptsLines()
+        {
+            return GetValue(GetIsAcceptsLines);
+        }
+
+        private bool GetIsAcceptsLines(BlockTag tag)
+        {
+            IBlockParser parser;
+            return (parser = Parsers[(int)tag]) != null && parser.IsAcceptsLines;
+        }
+
+        #endregion IsAcceptsLines
+
+        #region IsDiscardLastBlank
+
+        private IsDiscardLastBlankDelegate[] _isDiscardLastBlanks;
+
+        internal IsDiscardLastBlankDelegate[] IsDiscardLastBlanks
+        {
+            get { return _isDiscardLastBlanks; }
+        }
+
+        private IsDiscardLastBlankDelegate[] GetIsDiscardLastBlanks()
+        {
+            return GetItems<IsDiscardLastBlankDelegate>(p => p.IsDiscardLastBlank);
+        }
+
+#if OptimizeFor45
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+#endif
+        internal bool IsDiscardLastBlank(BlockParserInfo info)
+        {
+            var tag = info.Container.Tag;
+            IsDiscardLastBlankDelegate isDiscard;
+            return IsAlwaysDiscardBlanks(tag) || ((isDiscard = IsDiscardLastBlanks[(int)tag]) != null && isDiscard(info));
+        }
+
+        private long _isAlwaysDiscardBlanks;
+
+#if OptimizeFor45
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+#endif
+        private bool IsAlwaysDiscardBlanks(BlockTag tag)
+        {
+            return 0 != (_isAlwaysDiscardBlanks & 1 << (int)tag);
+        }
+
+        private long GetIsAlwaysDiscardBlanks()
+        {
+            return GetValue(GetIsAlwaysDiscardBlanks);
+        }
+
+        private bool GetIsAlwaysDiscardBlanks(BlockTag tag)
+        {
+            IBlockParser parser;
+            return (parser = Parsers[(int)tag]) != null && parser.IsAlwaysDiscardBlanks;
+        }
+
+        #endregion IsDiscardLastBlank
+
         #region CanContain
 
         private long[] _canContain; // assuming we won't get past 63 tags
 
+#if OptimizeFor45
+            [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+#endif
         internal bool CanContain(BlockTag parentTag, BlockTag childTag)
         {
             return 0 != (_canContain[(int)parentTag] & (1 << (int)childTag));
@@ -227,27 +341,74 @@ namespace CommonMark.Parser
         {
             var canContain = new long[(int)BlockTag.Count];
             IBlockParser parser;
-            BlockTag parentTag, childTag;
-            long c, m;
-            for (parentTag = 0; parentTag < BlockTag.Count; parentTag++)
+            for (var i = 0; i < (int)BlockTag.Count; i++)
             {
-                if ((parser = Parsers[(int)parentTag]) != null)
+                if ((parser = Parsers[i]) != null)
                 {
-                    c = 0;
-                    m = 1;
-                    for (childTag = 0; childTag < BlockTag.Count; childTag++)
-                    {
-                        if (parser.CanContain(childTag))
-                            c |= m;
-                        m <<= 1;
-                    }
-                    canContain[(int)parentTag] = c;
+                    canContain[i] = GetValue(parser.CanContain);
                 }
             }
             return canContain;
         }
 
         #endregion CanContain
+
+        #region OpenParagraph
+
+        private BlockOpenerDelegate _openParagraph;
+
+        internal BlockOpenerDelegate OpenParagraph
+        {
+#if OptimizeFor45
+            [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+#endif
+            get { return _openParagraph; }
+        }
+
+        private BlockOpenerDelegate GetOpenParagraph()
+        {
+            return Parsers[(int)BlockTag.Paragraph].Open;
+        }
+
+        #endregion OpenParagraph
+
+        #region CloseParagraph
+
+        private BlockCloserDelegate _closeParagraph;
+
+        internal BlockCloserDelegate CloseParagraph
+        {
+#if OptimizeFor45
+            [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+#endif
+            get { return _closeParagraph; }
+        }
+
+        private BlockCloserDelegate GetCloseParagraph()
+        {
+            return Parsers[(int)BlockTag.Paragraph].Close;
+        }
+
+        #endregion OpenParagraph
+
+        #region OpenIndentedCode
+
+        private BlockOpenerDelegate _openIndentedCode;
+
+        internal BlockOpenerDelegate OpenIndentedCode
+        {
+#if OptimizeFor45
+            [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+#endif
+            get { return _openIndentedCode; }
+        }
+
+        private BlockOpenerDelegate GetOpenIndentedCode()
+        {
+            return Parsers[(int)BlockTag.IndentedCode].Open;
+        }
+
+        #endregion OpenIndentedCode
 
         /// <summary>
         /// Returns the parser delegates of the specified type.
@@ -267,6 +428,25 @@ namespace CommonMark.Parser
                 }
             }
             return items;
+        }
+
+        /// <summary>
+        /// Compresseses values obtained from the specified value factory into a bit mask.
+        /// </summary>
+        /// <param name="valueFactory">Value factory.</param>
+        /// <returns>Int64.</returns>
+        protected long GetValue(Func<BlockTag, bool> valueFactory)
+        {
+            long c = 0, m = 1;
+            for (var i = 0; i < (int)BlockTag.Count; i++)
+            {
+                if (valueFactory((BlockTag)i))
+                {
+                    c |= m;
+                }
+                m <<= 1;
+            }
+            return c;
         }
 
         private CommonMarkSettings Settings { get; }
