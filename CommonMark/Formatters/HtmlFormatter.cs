@@ -118,7 +118,7 @@ namespace CommonMark.Formatters
             var formatter = parameters.BlockFormatters[(int)block.Tag];
             if (formatter != null)
             {
-                var stackTight = formatter.IsStackTight(block, false);
+                var stackTight = formatter.IsStackTight(block, RenderTightParagraphs.Peek());
                 if (isOpening)
                 {
                     ignoreChildNodes = !formatter.WriteOpening(_target, block);
@@ -172,47 +172,6 @@ namespace CommonMark.Formatters
                     {
                         RenderTightParagraphs.Pop();
                         WriteLine("</blockquote>");
-                    }
-
-                    break;
-
-                case BlockTag.ListItem:
-                    if (isOpening)
-                    {
-                        EnsureNewLine();
-                        Write("<li");
-                        if (Settings.TrackSourcePosition) WritePositionAttribute(block);
-                        Write('>');
-                    }
-
-                    if (isClosing)
-                        WriteLine("</li>");
-
-                    break;
-
-                case BlockTag.List:
-                    var data = block.ListData;
-
-                    if (isOpening)
-                    {
-                        EnsureNewLine();
-                        Write(data.ListType == ListType.Bullet ? "<ul" : "<ol");
-                        if (data.Start != 1)
-                        {
-                            Write(" start=\"");
-                            Write(data.Start.ToString(CultureInfo.InvariantCulture));
-                            Write('\"');
-                        }
-                        if (Settings.TrackSourcePosition) WritePositionAttribute(block);
-                        WriteLine(">");
-
-                        RenderTightParagraphs.Push(data.IsTight);
-                    }
-
-                    if (isClosing)
-                    {
-                        WriteLine(data.ListType == ListType.Bullet ? "</ul>" : "</ol>");
-                        RenderTightParagraphs.Pop();
                     }
 
                     break;

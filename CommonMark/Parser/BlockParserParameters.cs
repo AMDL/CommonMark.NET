@@ -69,6 +69,7 @@ namespace CommonMark.Parser
             this._finalizers = GetFinalizers();
             this._processors = GetProcessors();
             this._isDiscardLastBlanks = GetIsDiscardLastBlanks();
+            this._isList = GetIsList();
             this._isCodeBlock = GetIsCodeBlock();
             this._isAcceptsLines = GetIsAcceptsLines();
             this._isAlwaysDiscardBlanks = GetIsAlwaysDiscardBlanks();
@@ -235,9 +236,34 @@ namespace CommonMark.Parser
 
         #endregion Processors
 
+        #region IsList
+
+        private long _isList; // assuming we won't get past 63 tags
+
+#if OptimizeFor45
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+#endif
+        internal bool IsList(BlockTag tag)
+        {
+            return 0 != (_isList & 1 << (int)tag);
+        }
+
+        private long GetIsList()
+        {
+            return GetValue(GetIsList);
+        }
+
+        private bool GetIsList(BlockTag tag)
+        {
+            IBlockParser parser;
+            return (parser = Parsers[(int)tag]) != null && parser.IsList;
+        }
+
+        #endregion IsList
+
         #region IsCodeBlock
 
-        private long _isCodeBlock; // assuming we won't get past 63 tags
+        private long _isCodeBlock;
 
 #if OptimizeFor45
         [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]

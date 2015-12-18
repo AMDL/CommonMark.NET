@@ -13,9 +13,8 @@ namespace CommonMark.Formatters.Blocks
         /// </summary>
         /// <param name="parameters"></param>
         public FencedCodeFormatter(FormatterParameters parameters)
-            : base(parameters, BlockTag.FencedCode)
+            : base(parameters, BlockTag.FencedCode, printerTag: "fenced_code")
         {
-            PrinterTag = "fenced_code";
         }
 
         /// <summary>

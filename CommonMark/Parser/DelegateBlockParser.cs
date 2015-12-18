@@ -30,6 +30,15 @@ namespace CommonMark.Parser
             }
         }
 
+        public bool IsList
+        {
+            get
+            {
+                return inner.IsList
+                    || outer.IsList;
+            }
+        }
+
         public bool IsCodeBlock
         {
             get

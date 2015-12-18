@@ -22,6 +22,7 @@ namespace CommonMark.Syntax
         /// <summary>
         /// A list element. Will contain nested blocks with type of <see cref="BlockTag.ListItem"/>.
         /// </summary>
+        [Obsolete("This API has been superceded by " + nameof(BulletList) + " and " + nameof(OrderedList) + ".")]
         List,
 
         /// <summary>
@@ -68,6 +69,16 @@ namespace CommonMark.Syntax
         /// A text block that contains only link reference definitions.
         /// </summary>
         ReferenceDefinition,
+
+        /// <summary>
+        /// A bulleted list element. Will contain nested blocks with type of <see cref="BlockTag.ListItem"/>.
+        /// </summary>
+        BulletList,
+
+        /// <summary>
+        /// An ordered list element. Will contain nested blocks with type of <see cref="BlockTag.ListItem"/>.
+        /// </summary>
+        OrderedList,
 
         /// <summary>
         /// A definition list element. Will contain <see cref="Term"/> and <see cref="Definition"/> blocks.

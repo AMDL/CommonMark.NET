@@ -16,7 +16,7 @@ namespace CommonMark.Parser
             Block b = container.Top;
 
             // find first containing list:
-            while (b != null && b.Tag != BlockTag.List)
+            while (b != null && !settings.BlockParserParameters.IsList(b.Tag))
                 b = b.LastChild;
 
             if (b != null)

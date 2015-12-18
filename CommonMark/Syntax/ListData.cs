@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace CommonMark.Syntax
 {
@@ -23,23 +21,27 @@ namespace CommonMark.Syntax
         /// Gets or sets the number for the first list item if <see cref="ListData.ListType"/> is set to
         /// <see cref="F:ListType.Ordered"/>.
         /// </summary>
+        [Obsolete("This API has been superceded by " + nameof(OrderedListData) + ".")]
         public int Start { get; set; }
 
         /// <summary>
         /// Gets or sets the character used for unordered lists. Used if <see cref="ListData.ListType"/> is set to
         /// <see cref="F:ListType.Bullet"/>.
         /// </summary>
+        [Obsolete("This API has been superceded by " + nameof(BulletListData) + ".")]
         public char BulletChar { get; set; }
 
         /// <summary>
         /// Gets or sets the type (ordered or unordered) of this list.
         /// </summary>
+        [Obsolete("This API has been superceded by " + nameof(BlockTag.BulletList) + " and " + nameof(BlockTag.OrderedList) + ".")]
         public ListType ListType { get; set; }
 
         /// <summary>
         /// Gets or sets the character that follows the number if <see cref="ListData.ListType"/> is set to
         /// <see cref="F:ListType.Ordered"/>.
         /// </summary>
+        [Obsolete("This API has been superceded by " + nameof(OrderedListData) + ".")]
         public ListDelimiter Delimiter { get; set; }
 
         /// <summary>

@@ -17,11 +17,13 @@ namespace CommonMark.Formatters
         /// <param name="parameters">Formatter parameters.</param>
         /// <param name="tag">Element tag.</param>
         /// <param name="htmlTag">HTML tag.</param>
-        protected ElementFormatter(FormatterParameters parameters, TTag tag, string htmlTag)
+        /// <param name="printerTag">Printer tag. If unspecified, <paramref name="htmlTag"/> will be used.</param>
+        protected ElementFormatter(FormatterParameters parameters, TTag tag, string htmlTag, string printerTag = null)
         {
             this.Parameters = parameters;
             this.Tag = tag;
-            this.HtmlTag = this.PrinterTag = htmlTag;
+            this.HtmlTag = htmlTag;
+            this.PrinterTag = printerTag ?? htmlTag;
         }
 
         #endregion
@@ -38,13 +40,21 @@ namespace CommonMark.Formatters
         }
 
         /// <summary>
+        /// Gets the HTML tag.
+        /// </summary>
+        /// <value>HTML tag.</value>
+        protected string HtmlTag
+        {
+            get;
+        }
+
+        /// <summary>
         /// Gets the syntax tree node tag.
         /// </summary>
         /// <value>Tag.</value>
         public string PrinterTag
         {
             get;
-            protected set;
         }
 
         #endregion
@@ -57,21 +67,6 @@ namespace CommonMark.Formatters
         /// <param name="element">Element.</param>
         /// <returns><c>true</c> if the formatter can handle <paramref name="element"/>.</returns>
         public abstract bool CanHandle(TElement element);
-
-        /// <summary>
-        /// Writes the opening of an element.
-        /// </summary>
-        /// <param name="writer">HTML writer.</param>
-        /// <param name="element">Element.</param>
-        /// <returns><c>true</c> if the parent formatter should visit the child elements.</returns>
-        protected bool DoWriteOpening(IHtmlTextWriter writer, TElement element)
-        {
-            var value = "<" + HtmlTag;
-            writer.WriteConstant(value);
-            WritePosition(writer, element);
-            writer.Write('>');
-            return true;
-        }
 
         /// <summary>
         /// Returns the closing of an element.
@@ -164,11 +159,6 @@ namespace CommonMark.Formatters
         #endregion
 
         private FormatterParameters Parameters
-        {
-            get;
-        }
-
-        private string HtmlTag
         {
             get;
         }

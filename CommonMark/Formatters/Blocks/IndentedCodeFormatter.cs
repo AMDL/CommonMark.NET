@@ -12,9 +12,8 @@ namespace CommonMark.Formatters.Blocks
         /// </summary>
         /// <param name="parameters">Formatter parameters.</param>
         public IndentedCodeFormatter(FormatterParameters parameters)
-            : base(parameters, BlockTag.IndentedCode)
+            : base(parameters, BlockTag.IndentedCode, printerTag: "indented_code")
         {
-            PrinterTag = "indented_code";
         }
     }
 }

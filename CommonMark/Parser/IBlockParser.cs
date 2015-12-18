@@ -21,6 +21,11 @@ namespace CommonMark.Parser
         char[] Characters { get; }
 
         /// <summary>
+        /// Gets the value indicating whether a handled element is a list.
+        /// </summary>
+        bool IsList { get; }
+
+        /// <summary>
         /// Gets the value indicating whether a handled element is a code block.
         /// </summary>
         /// <value><c>true</c> if a handled element is a code block.</value>

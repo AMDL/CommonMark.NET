@@ -15,8 +15,9 @@ namespace CommonMark.Formatters
         /// <param name="parameters">Formatter parameters.</param>
         /// <param name="tag">Inline element tag.</param>
         /// <param name="htmlTag">HTML tag.</param>
-        public InlineFormatter(FormatterParameters parameters, InlineTag tag, string htmlTag = null)
-            : base(parameters, tag, htmlTag)
+        /// <param name="printerTag">Printer tag. If unspecified, <paramref name="htmlTag"/> will be used.</param>
+        public InlineFormatter(FormatterParameters parameters, InlineTag tag, string htmlTag = null, string printerTag = null)
+            : base(parameters, tag, htmlTag, printerTag)
         {
         }
 
@@ -39,7 +40,11 @@ namespace CommonMark.Formatters
         /// <returns><c>true</c> if the parent formatter should visit the child elements.</returns>
         public virtual bool WriteOpening(IHtmlTextWriter writer, Inline element, bool withinLink)
         {
-            return base.DoWriteOpening(writer, element);
+            var value = "<" + HtmlTag;
+            writer.WriteConstant(value);
+            WritePosition(writer, element);
+            writer.Write('>');
+            return true;
         }
 
         /// <summary>

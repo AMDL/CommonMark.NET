@@ -10,10 +10,22 @@ namespace CommonMark.Parser.Blocks
         /// <summary>
         /// Initializes a new instance of the <see cref="ListParser"/> class.
         /// </summary>
+        /// <param name="tag">List element tag.</param>
+        /// <param name="childTags">List item element tags.</param>
         /// <param name="settings">Common settings.</param>
-        public ListParser(CommonMarkSettings settings)
-            : base(settings, BlockTag.List)
+        public ListParser(CommonMarkSettings settings, BlockTag tag, params BlockTag[] childTags)
+            : base(settings, tag)
         {
+            IsList = true;
+            ChildTags = childTags;
+        }
+
+        /// <summary>
+        /// Gets the element tags of the list items.
+        /// </summary>
+        public BlockTag[] ChildTags
+        {
+            get;
         }
 
         /// <summary>
@@ -23,7 +35,7 @@ namespace CommonMark.Parser.Blocks
         /// <returns><c>true</c> if handled elements can contain elements having <paramref name="childTag"/>.</returns>
         public override bool CanContain(BlockTag childTag)
         {
-            return childTag == BlockTag.ListItem;
+            return System.Array.IndexOf(ChildTags, childTag) >= 0;
         }
 
         /// <summary>
@@ -82,14 +94,14 @@ namespace CommonMark.Parser.Blocks
         /// <summary>
         /// Check to see if a block ends with a blank line, descending if needed into lists and sublists.
         /// </summary>
-        private static bool EndsWithBlankLine(Block block)
+        private bool EndsWithBlankLine(Block block)
         {
             while (true)
             {
                 if (block.IsLastLineBlank)
                     return true;
 
-                if (block.Tag != BlockTag.List && block.Tag != BlockTag.ListItem)
+                if (block.Tag != Tag && !CanContain(block.Tag))
                     return false;
 
                 block = block.LastChild;

@@ -277,36 +277,6 @@ namespace CommonMark.Formatters
                         visitChildren = true;
                         break;
 
-                    case BlockTag.ListItem:
-                        writer.EnsureLine();
-                        writer.WriteConstant("<li");
-                        if (trackPositions) PrintPosition(writer, block);
-                        writer.Write('>');
-
-                        stackLiteral = "</li>";
-                        stackTight = tight;
-                        visitChildren = true;
-                        break;
-
-                    case BlockTag.List:
-                        // make sure a list starts at the beginning of the line:
-                        writer.EnsureLine();
-                        var data = block.ListData;
-                        writer.WriteConstant(data.ListType == ListType.Bullet ? "<ul" : "<ol");
-                        if (data.Start != 1)
-                        {
-                            writer.WriteConstant(" start=\"");
-                            writer.WriteConstant(data.Start.ToString(CultureInfo.InvariantCulture));
-                            writer.Write('\"');
-                        }
-                        if (trackPositions) PrintPosition(writer, block);
-                        writer.WriteLine('>');
-
-                        stackLiteral = data.ListType == ListType.Bullet ? "</ul>" : "</ol>";
-                        stackTight = data.IsTight;
-                        visitChildren = true;
-                        break;
-
                     case BlockTag.AtxHeader:
                     case BlockTag.SETextHeader:
                         writer.EnsureLine();

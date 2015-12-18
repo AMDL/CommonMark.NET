@@ -172,6 +172,16 @@ namespace CommonMark.Syntax
         public ListData ListData { get; set; }
 
         /// <summary>
+        /// Gets or sets the additional properties that apply to bullet list elements.
+        /// </summary>
+        public BulletListData BulletListData { get; set; }
+
+        /// <summary>
+        /// Gets or sets the additional properties that apply to ordered list elements.
+        /// </summary>
+        public OrderedListData OrderedListData { get; set; }
+
+        /// <summary>
         /// Gets or sets the additional properties that apply to fenced code blocks.
         /// </summary>
         public FencedCodeData FencedCodeData { get; set; }

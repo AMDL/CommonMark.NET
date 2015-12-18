@@ -47,6 +47,15 @@ namespace CommonMark.Parser
         }
 
         /// <summary>
+        /// Gets or sets the value indicating whether a handled element is a list.
+        /// </summary>
+        public bool IsList
+        {
+            get;
+            protected set;
+        }
+
+        /// <summary>
         /// Gets or sets the value indicating whether a handled element is a code block.
         /// </summary>
         /// <value><c>true</c> if a handled element is a code block.</value>
@@ -346,11 +355,12 @@ namespace CommonMark.Parser
 
             parsers[(int)BlockTag.Document] = new Blocks.DocumentParser(settings);
             parsers[(int)BlockTag.BlockQuote] = new Blocks.BlockQuoteParser(settings);
-            parsers[(int)BlockTag.List] = new Blocks.ListParser(settings);
+            parsers[(int)BlockTag.BulletList] = new Blocks.ListParser(settings, BlockTag.BulletList, BlockTag.ListItem);
+            parsers[(int)BlockTag.OrderedList] = new Blocks.ListParser(settings, BlockTag.OrderedList, BlockTag.ListItem);
             parsers[(int)BlockTag.ListItem] = DelegateBlockParser.Merge(BlockTag.ListItem,
-                new Blocks.BulletListItemParser(settings, false, '+', '•'),
-                new Blocks.BulletListItemParser(settings, true, '*', '-'),
-                new Blocks.OrderedListItemParser(settings, '0', '9'));
+                new Blocks.NonRuleBulletListItemParser(settings),
+                new Blocks.RuleBulletListItemParser(settings),
+                new Blocks.EuropeanNumeralListItemParser(settings));
             parsers[(int)BlockTag.IndentedCode] = new Blocks.IndentedCodeParser(settings);
             parsers[(int)BlockTag.AtxHeader] = new Blocks.AtxHeaderParser(settings);
             parsers[(int)BlockTag.SETextHeader] = DelegateBlockParser.Merge(BlockTag.SETextHeader,

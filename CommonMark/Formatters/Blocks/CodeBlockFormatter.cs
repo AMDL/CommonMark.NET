@@ -13,8 +13,9 @@ namespace CommonMark.Formatters.Blocks
         /// </summary>
         /// <param name="parameters">Formatter parameters.</param>
         /// <param name="tag">Block element tag.</param>
-        protected CodeBlockFormatter(FormatterParameters parameters, BlockTag tag)
-            : base(parameters, tag)
+        /// <param name="printerTag">Printer tag.</param>
+        protected CodeBlockFormatter(FormatterParameters parameters, BlockTag tag, string printerTag)
+            : base(parameters, tag, printerTag: printerTag)
         {
         }
 

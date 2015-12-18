@@ -5,9 +5,8 @@ namespace CommonMark.Formatters.Inlines
     internal sealed class MathFormatter : InlineFormatter
     {
         public MathFormatter(FormatterParameters parameters)
-            : base(parameters, InlineTag.Math)
+            : base(parameters, InlineTag.Math, printerTag: "math")
         {
-            PrinterTag = "math";
         }
 
         public override bool WriteOpening(IHtmlTextWriter writer, Inline element, bool withinLink)

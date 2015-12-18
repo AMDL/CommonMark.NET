@@ -113,31 +113,6 @@ namespace CommonMark.Formatters
                             PrintPosition(trackPositions, writer, block);
                             break;
 
-                        case BlockTag.ListItem:
-                            writer.Write("list_item");
-                            PrintPosition(trackPositions, writer, block);
-                            break;
-
-                        case BlockTag.List:
-                            writer.Write("list");
-                            PrintPosition(trackPositions, writer, block);
-
-                            var listData = block.ListData;
-                            if (listData.ListType == ListType.Ordered)
-                            {
-                                writer.Write(" (type=ordered tight={0} start={1} delim={2})",
-                                     listData.IsTight,
-                                     listData.Start,
-                                     listData.Delimiter);
-                            }
-                            else
-                            {
-                                writer.Write("(type=bullet tight={0} bullet_char={1})",
-                                     listData.IsTight,
-                                     listData.BulletChar);
-                            }
-                            break;
-
                         case BlockTag.AtxHeader:
                             writer.Write("atx_header");
                             PrintPosition(trackPositions, writer, block);

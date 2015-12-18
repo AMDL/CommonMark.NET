@@ -15,8 +15,9 @@ namespace CommonMark.Formatters
         /// <param name="parameters">Formatter parameters.</param>
         /// <param name="tag">Block element tag.</param>
         /// <param name="htmlTag">HTML tag.</param>
-        public BlockFormatter(FormatterParameters parameters, BlockTag tag, string htmlTag = null)
-            : base(parameters, tag, htmlTag)
+        /// <param name="printerTag">Printer tag. If unspecified, <paramref name="htmlTag"/> will be used.</param>
+        public BlockFormatter(FormatterParameters parameters, BlockTag tag, string htmlTag = null, string printerTag = null)
+            : base(parameters, tag, htmlTag, printerTag)
         {
         }
 
@@ -33,14 +34,14 @@ namespace CommonMark.Formatters
         /// <summary>
         /// Returns the paragraph stacking option for a block element.
         /// </summary>
-        /// <param name="block">Block element.</param>
+        /// <param name="element">Block element.</param>
         /// <param name="tight">The parent's stacking option.</param>
         /// <returns>
         /// <c>true</c> to stack paragraphs tightly,
         /// <c>false</c> to stack paragraphs loosely,
         /// or <c>null</c> to skip paragraph stacking.
         /// </returns>
-        public virtual bool? IsStackTight(Block block, bool tight)
+        public virtual bool? IsStackTight(Block element, bool tight)
         {
             return null;
         }
@@ -54,7 +55,11 @@ namespace CommonMark.Formatters
         public virtual bool WriteOpening(IHtmlTextWriter writer, Block element)
         {
             writer.EnsureLine();
-            return DoWriteOpening(writer, element);
+            var value = "<" + HtmlTag;
+            writer.WriteConstant(value);
+            WritePosition(writer, element);
+            writer.WriteLine('>');
+            return true;
         }
 
         /// <summary>
@@ -80,6 +85,9 @@ namespace CommonMark.Formatters
 
         internal static IEnumerable<IBlockFormatter> InitializeFormatters(FormatterParameters parameters)
         {
+            yield return new BulletListFormatter(parameters);
+            yield return new OrderedListFormatter(parameters);
+            yield return new ListItemFormatter(parameters);
             yield return new FencedCodeFormatter(parameters);
             yield return new IndentedCodeFormatter(parameters);
         }
