@@ -347,7 +347,10 @@ namespace CommonMark.Parser
             parsers[(int)BlockTag.Document] = new Blocks.DocumentParser(settings);
             parsers[(int)BlockTag.BlockQuote] = new Blocks.BlockQuoteParser(settings);
             parsers[(int)BlockTag.List] = new Blocks.ListParser(settings);
-            parsers[(int)BlockTag.ListItem] = new Blocks.ListItemParser(settings);
+            parsers[(int)BlockTag.ListItem] = DelegateBlockParser.Merge(BlockTag.ListItem,
+                new Blocks.BulletListItemParser(settings, false, '+', '•'),
+                new Blocks.BulletListItemParser(settings, true, '*', '-'),
+                new Blocks.OrderedListItemParser(settings, '0', '9'));
             parsers[(int)BlockTag.IndentedCode] = new Blocks.IndentedCodeParser(settings);
             parsers[(int)BlockTag.AtxHeader] = new Blocks.AtxHeaderParser(settings);
             parsers[(int)BlockTag.SETextHeader] = DelegateBlockParser.Merge(BlockTag.SETextHeader,

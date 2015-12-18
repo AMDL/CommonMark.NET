@@ -57,6 +57,8 @@
     <Compile Include="Extension\Subscript.cs" />
     <Compile Include="Extension\Superscript.cs" />
     <Compile Include="Formatters\Inlines\MathFormatter.cs" />
+    <Compile Include="Parser\Blocks\BulletListItemParser.cs" />
+    <Compile Include="Parser\Blocks\OrderedListItemParser.cs" />
     <Compile Include="Parser\Inlines\Delimiters\MathDollarHandler.cs" />
     <Compile Include="Formatters\Blocks\CodeBlockFormatter.cs" />
     <Compile Include="Formatters\Blocks\FencedCodeFormatter.cs" />
