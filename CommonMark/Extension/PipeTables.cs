@@ -28,12 +28,9 @@ namespace CommonMark.Extension
         /// Creates the mapping from block tag to block parser.
         /// </summary>
         /// <param name="settings">Common settings.</param>
-        protected override IDictionary<BlockTag, IBlockParser> InitializeBlockParsers(CommonMarkSettings settings)
+        protected override IEnumerable<IBlockParser> InitializeBlockParsers(CommonMarkSettings settings)
         {
-            return new Dictionary<BlockTag, IBlockParser>
-            {
-                { BlockTag.TableRow, new TableRowParser(settings, this.settings) },
-            };
+            yield return new TableRowParser(settings, this.settings);
         }
 
         /// <summary>
@@ -61,7 +58,7 @@ namespace CommonMark.Extension
         private readonly PipeTablesSettings settings;
 
         public TableRowParser(CommonMarkSettings settings, PipeTablesSettings pipeTablesSettings)
-            : base(settings, GetCharacters(pipeTablesSettings))
+            : base(settings, BlockTag.TableRow, GetCharacters(pipeTablesSettings))
         {
             this.settings = pipeTablesSettings;
         }
