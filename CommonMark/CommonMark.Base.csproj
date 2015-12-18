@@ -129,6 +129,7 @@
     <Compile Include="Parser\Inlines\EscapeParser.cs" />
     <Compile Include="Parser\Inlines\HtmlTagParser.cs" />
     <Compile Include="Parser\Inlines\ImageLinkParser.cs" />
+    <Compile Include="Parser\Inlines\LessThanParser.cs" />
     <Compile Include="Parser\Inlines\LineBreakParser.cs" />
     <Compile Include="Parser\Inlines\LinkCloserParser.cs" />
     <Compile Include="Parser\Inlines\LinkOpenerParser.cs" />

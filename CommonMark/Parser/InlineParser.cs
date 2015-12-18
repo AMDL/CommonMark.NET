@@ -7,7 +7,7 @@ namespace CommonMark.Parser
     /// <summary>
     /// Base inline element parser class.
     /// </summary>
-    public class InlineParser : ElementParser, IInlineParser
+    public abstract class InlineParser : ElementParser, IInlineParser
     {
         #region Constructor
 
@@ -20,7 +20,6 @@ namespace CommonMark.Parser
         {
             this.Settings = settings;
             this.Character = c;
-            this._singleCharContent = GetSingleCharContent();
         }
 
         #endregion Constructor
@@ -40,35 +39,12 @@ namespace CommonMark.Parser
         /// <param name="container">Parent container.</param>
         /// <param name="subj">Subject.</param>
         /// <returns>Inline element or <c>null</c>.</returns>
-        public virtual Inline Handle(Block container, Subject subj)
-        {
-            // advance past the opening char
-            subj.Position++;
-
-            // just return the opening char
-            return new Inline(SingleCharContent, subj.Position - 1, subj.Position);
-        }
+        public abstract Inline Handle(Block container, Subject subj);
 
         /// <summary>
         /// Gets the common settings object.
         /// </summary>
         protected CommonMarkSettings Settings { get; }
-
-        private readonly string _singleCharContent;
-
-        /// <summary>
-        /// Gets the content string.
-        /// </summary>
-        /// <value>Single-character string.</value>
-        private string SingleCharContent
-        {
-            get { return _singleCharContent; }
-        }
-
-        private string GetSingleCharContent()
-        {
-            return new string(new[] { Character });
-        }
 
         /// <summary>
         /// Creates a new <see cref="Inline"/> element that represents string content but the given content
@@ -303,7 +279,7 @@ namespace CommonMark.Parser
             yield return new Inlines.AutoUriParser(settings);
             yield return new Inlines.AutoEmailParser(settings);
             yield return new Inlines.HtmlTagParser(settings);
-            yield return new InlineParser(settings, '<');
+            yield return new Inlines.LessThanParser(settings);
         }
 
         private static IEnumerable<IInlineParser> InitializeDelimiterParsers(InlineParserParameters parameters)
