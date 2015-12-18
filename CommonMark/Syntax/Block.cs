@@ -219,6 +219,28 @@ namespace CommonMark.Syntax
         public DocumentData DocumentData { get; set; }
 
         /// <summary>
+        /// Gets or sets the dictionary containing resolved link references. Only set on the document node, <c>null</c>
+        /// and not used for all other elements.
+        /// </summary>
+        [Obsolete("Use " + nameof(DocumentData) + " instead.")]
+        public Dictionary<string, Reference> ReferenceMap
+        {
+            get { return DocumentData?.ReferenceMap; }
+            set
+            {
+                if (DocumentData == null)
+                {
+                    if (value == null)
+                    {
+                        return;
+                    }
+                    DocumentData = new DocumentData();
+                }
+                DocumentData.ReferenceMap = value;
+            }
+        }
+
+        /// <summary>
         /// Gets or sets the next sibling of this block element. <c>null</c> if this is the last element.
         /// </summary>
         public Block NextSibling { get; set; }
