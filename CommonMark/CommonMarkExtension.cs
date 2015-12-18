@@ -34,31 +34,20 @@ namespace CommonMark
 
         #region Block Parsers
 
-        private readonly Lazy<IDictionary<BlockTag, IBlockParser>> _blockParsers;
+        private readonly Lazy<IEnumerable<IBlockParser>> _blockParsers;
 
-        IDictionary<BlockTag, IBlockParser> ICommonMarkExtension.BlockParsers
+        IEnumerable<IBlockParser> ICommonMarkExtension.BlockParsers
         {
             get { return _blockParsers.Value; }
         }
 
         /// <summary>
-        /// Initializes the mapping from block tag to block element parser.
+        /// Initializes the block parsers.
         /// </summary>
         /// <param name="settings">Common settings.</param>
-        protected virtual IDictionary<BlockTag, IBlockParser> InitializeBlockParsers(CommonMarkSettings settings)
+        protected virtual IEnumerable<IBlockParser> InitializeBlockParsers(CommonMarkSettings settings)
         {
             return null;
-        }
-
-        /// <summary>
-        /// Registers a block parser.
-        /// </summary>
-        /// <param name="tag">Block element tag.</param>
-        /// <param name="parser">Block element parser.</param>
-        /// <returns>Mapping from block tag to block element parser.</returns>
-        protected IDictionary<BlockTag, IBlockParser> Register(BlockTag tag, IBlockParser parser)
-        {
-            return Register(_blockParsers, tag, parser);
         }
 
         #endregion

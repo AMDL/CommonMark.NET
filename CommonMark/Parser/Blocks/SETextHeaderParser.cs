@@ -12,21 +12,16 @@ namespace CommonMark.Parser.Blocks
         /// Initializes a new instance of the <see cref="SETextHeaderParser"/> class.
         /// </summary>
         /// <param name="settings">Common settings.</param>
-        public SETextHeaderParser(CommonMarkSettings settings)
-            : this(settings, new[] { '=', '-' })
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="SETextHeaderParser"/> class.
-        /// </summary>
-        /// <param name="settings">Common settings.</param>
-        /// <param name="headerLevels">Mapping from (level-1) to character.</param>
-        protected SETextHeaderParser(CommonMarkSettings settings, char[] headerLevels)
-            : base(settings, headerLevels)
+        /// <param name="opener">Opening character.</param>
+        /// <param name="headerLevel">Header level.</param>
+        public SETextHeaderParser(CommonMarkSettings settings, char opener, int headerLevel)
+            : base(settings, BlockTag.SETextHeader, opener)
         {
             // we don't count setext headers for purposes of tight/loose lists or breaking out of lists.
             IsAlwaysDiscardBlanks = true;
+
+            Opener = opener;
+            HeaderLevel = headerLevel;
         }
 
         /// <summary>
@@ -51,12 +46,11 @@ namespace CommonMark.Parser.Blocks
         /// <returns><c>true</c> if successful.</returns>
         public override bool Open(ref BlockParserInfo info)
         {
-            int headerLevel;
-            if (!info.IsIndented && info.Container.Tag == BlockTag.Paragraph && 0 != (headerLevel = ScanLine(info))
+            if (!info.IsIndented && info.Container.Tag == BlockTag.Paragraph && ScanLine(info)
                 && ContainsSingleLine(info.Container.StringContent))
             {
-                info.Container.Tag = BlockTag.SETextHeader;
-                info.Container.HeaderLevel = headerLevel;
+                info.Container.Tag = Tag;
+                info.Container.HeaderLevel = HeaderLevel;
                 info.AdvanceOffset(info.Line.Length - 1 - info.Offset, false);
                 return true;
             }
@@ -91,7 +85,7 @@ namespace CommonMark.Parser.Blocks
         /// <param name="info">Parser state.</param>
         /// <returns>Header level, or 0 for no match.</returns>
         /// <remarks>Original: int scan_setext_header_line(string s, int pos, int sourceLength)</remarks>
-        private int ScanLine(BlockParserInfo info)
+        private bool ScanLine(BlockParserInfo info)
         {
             var s = info.Line;
             var pos = info.FirstNonspace;
@@ -104,20 +98,13 @@ namespace CommonMark.Parser.Blocks
             */
 
             if (pos >= sourceLength)
-                return 0;
-
-            var c1 = s[pos];
-
-            var chars = Characters;
-            var matched = System.Array.IndexOf(chars, c1) + 1;
-            if (matched == 0)
-                return 0;
+                return false;
 
             var fin = false;
             for (var i = pos + 1; i < sourceLength; i++)
             {
                 var c = s[i];
-                if (c == c1 && !fin)
+                if (c == Opener && !fin)
                     continue;
 
                 fin = true;
@@ -127,10 +114,20 @@ namespace CommonMark.Parser.Blocks
                 if (c == '\n')
                     break;
 
-                return 0;
+                return false;
             }
 
-            return matched;
+            return true;
+        }
+
+        private char Opener
+        {
+            get;
+        }
+
+        private int HeaderLevel
+        {
+            get;
         }
     }
 }

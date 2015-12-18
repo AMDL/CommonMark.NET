@@ -95,8 +95,18 @@ namespace CommonMark.Parser
 
         private IBlockParser[] GetParsers()
         {
-            return Settings.Extensions.GetItems(BlockParser.InitializeParsers(Settings),
-                ext => ext.BlockParsers, key => (int)key, DelegateBlockParser.Merge);
+            var parsers = BlockParser.InitializeParsers(Settings);
+            foreach (var extension in Settings.Extensions)
+	        {
+                if (extension.BlockParsers != null)
+                {
+                    foreach (var parser in extension.BlockParsers)
+                    {
+                        parsers[(int)parser.Tag] = DelegateBlockParser.Merge(parser.Tag, parsers[(int)parser.Tag], parser);
+                    }
+                }
+	        }
+            return parsers;
         }
 
         #endregion Parsers
@@ -146,13 +156,10 @@ namespace CommonMark.Parser
                 {
                     foreach (var c in chars)
                     {
-                        if (c != (char)0)
-                        {
-                            i.TryGetValue(c, out opener);
-                            i[c] = DelegateBlockOpener.Merge(opener, parser.Open);
-                            if (c > max)
-                                max = c;
-                        }
+                        i.TryGetValue(c, out opener);
+                        i[c] = DelegateBlockOpener.Merge(opener, parser.Open);
+                        if (c > max)
+                            max = c;
                     }
                 }
             }

@@ -8,10 +8,16 @@ namespace CommonMark.Parser
         private readonly IBlockParser inner;
         private readonly IBlockParser outer;
 
-        public DelegateBlockParser(IBlockParser inner, IBlockParser outer)
+        public DelegateBlockParser(BlockTag tag, IBlockParser inner, IBlockParser outer)
         {
+            this.Tag = tag;
             this.inner = inner;
             this.outer = outer;
+        }
+
+        public BlockTag Tag
+        {
+            get;
         }
 
         public char[] Characters
@@ -92,11 +98,25 @@ namespace CommonMark.Parser
                 || outer.Process(block, subject, ref inlineStack);
         }
 
-        public static IBlockParser Merge(IBlockParser inner, IBlockParser outer)
+        public static IBlockParser Merge(BlockTag tag, IBlockParser inner, IBlockParser outer)
         {
             return inner != null && !inner.Equals(outer)
-                ? new DelegateBlockParser(inner, outer)
+                ? new DelegateBlockParser(tag, inner, outer)
                 : outer;
+        }
+
+        public static IBlockParser Merge(BlockTag tag, params IBlockParser[] parsers)
+        {
+            if (parsers == null || parsers.Length == 0)
+                return null;
+
+            if (parsers.Length == 1)
+                return parsers[0];
+
+            var skip1 = new IBlockParser[parsers.Length - 1];
+            System.Array.Copy(parsers, 1, skip1, 0, parsers.Length - 1);
+
+            return Merge(tag, parsers[0], Merge(tag, skip1));
         }
     }
 }

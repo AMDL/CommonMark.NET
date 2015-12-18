@@ -13,7 +13,7 @@ namespace CommonMark.Parser.Blocks
         /// </summary>
         /// <param name="settings">Common settings.</param>
         public ParagraphParser(CommonMarkSettings settings)
-            : base(settings)
+            : base(settings, BlockTag.Paragraph)
         {
             IsAcceptsLines = true;
         }
@@ -68,7 +68,7 @@ namespace CommonMark.Parser.Blocks
             if (info.Container.Tag != BlockTag.Paragraph)
             {
                 // create paragraph container for line
-                info.Container = CreateChildBlock(info, BlockTag.Paragraph, info.FirstNonspace);
+                info.Container = CreateChildBlock(info, Tag, info.FirstNonspace);
             }
             
             AddLine(info.Container, info.LineInfo, info.Line, info.FirstNonspace);

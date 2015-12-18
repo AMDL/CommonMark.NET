@@ -11,9 +11,11 @@ namespace CommonMark.Parser.Blocks
         /// Initializes a new instance of the <see cref="HorizontalRulerParser"/> class.
         /// </summary>
         /// <param name="settings">Common settings.</param>
-        public HorizontalRulerParser(CommonMarkSettings settings)
-            : base(settings, '*', '-', '_')
+        /// <param name="opener">Opening character.</param>
+        public HorizontalRulerParser(CommonMarkSettings settings, char opener)
+            : base(settings, BlockTag.HorizontalRuler, opener)
         {
+            Opener = opener;
         }
 
         /// <summary>
@@ -23,10 +25,10 @@ namespace CommonMark.Parser.Blocks
         /// <returns><c>true</c> if successful.</returns>
         public override bool Open(ref BlockParserInfo info)
         {
-            if (!info.IsIndented && (info.Container.Tag != BlockTag.Paragraph || info.IsAllMatched) && 0 != ScanHorizontalRule(info, Characters))
+            if (!info.IsIndented && (info.Container.Tag != BlockTag.Paragraph || info.IsAllMatched) && ScanHorizontalRule(info, Opener))
             {
                 // it's only now that we know the line is not part of a setext header:
-                info.Container = CreateChildBlock(info, BlockTag.HorizontalRuler, info.FirstNonspace);
+                info.Container = CreateChildBlock(info, Tag, info.FirstNonspace);
                 BlockMethods.Finalize(info.Container, info.LineInfo, Settings);
                 info.Container = info.Container.Parent;
                 info.AdvanceOffset(info.Line.Length - 1 - info.Offset, false);
@@ -43,6 +45,11 @@ namespace CommonMark.Parser.Blocks
         public override bool Close(BlockParserInfo info)
         {
             return true;
+        }
+
+        private char Opener
+        {
+            get;
         }
     }
 }

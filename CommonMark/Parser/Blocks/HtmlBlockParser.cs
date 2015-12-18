@@ -15,7 +15,7 @@ namespace CommonMark.Parser.Blocks
         /// </summary>
         /// <param name="settings">Common settings.</param>
         public HtmlBlockParser(CommonMarkSettings settings)
-            : base(settings, '<')
+            : base(settings, BlockTag.HtmlBlock, '<')
         {
             IsCodeBlock = true;
         }
@@ -47,7 +47,7 @@ namespace CommonMark.Parser.Blocks
             if (!info.IsIndented && (0 != (htmlBlockType = ScanStart(info))
                 || (info.Container.Tag != BlockTag.Paragraph && 0 != (htmlBlockType = ScanStart2(info)))))
             {
-                info.Container = CreateChildBlock(info, BlockTag.HtmlBlock, info.FirstNonspace);
+                info.Container = CreateChildBlock(info, Tag, info.FirstNonspace);
                 info.Container.HtmlBlockType = htmlBlockType;
                 // note, we don't adjust offset because the tag is part of the text
                 return true;

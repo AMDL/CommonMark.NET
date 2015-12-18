@@ -12,7 +12,7 @@ namespace CommonMark.Parser.Blocks
         /// </summary>
         /// <param name="settings">Common settings.</param>
         public IndentedCodeParser(CommonMarkSettings settings)
-            : base(settings)
+            : base(settings, BlockTag.IndentedCode)
         {
             IsCodeBlock = true;
             IsAcceptsLines = true;
@@ -48,7 +48,7 @@ namespace CommonMark.Parser.Blocks
             if (info.IsIndented && !info.IsMaybeLazy && !info.IsBlank)
             {
                 info.AdvanceIndentedOffset();
-                info.Container = CreateChildBlock(info, BlockTag.IndentedCode, info.Offset);
+                info.Container = CreateChildBlock(info, Tag, info.Offset);
             }
             return false;
         }

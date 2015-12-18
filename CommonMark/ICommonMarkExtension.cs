@@ -10,9 +10,9 @@ namespace CommonMark
     public interface ICommonMarkExtension
     {
         /// <summary>
-        /// Gets the mapping from block tag to block parser.
+        /// Gets the block parsers.
         /// </summary>
-        IDictionary<Syntax.BlockTag, IBlockParser> BlockParsers { get; }
+        IEnumerable<IBlockParser> BlockParsers { get; }
 
         /// <summary>
         /// Gets the inline parsers.

@@ -15,25 +15,27 @@ namespace CommonMark.Parser
         /// Initializes a new instance of the <see cref="BlockParser"/> class.
         /// </summary>
         /// <param name="settings">Common settings.</param>
-        /// <param name="characters">Handled characters. May contain 0s.</param>
-        protected BlockParser(CommonMarkSettings settings, params char[] characters)
-            : this(settings)
-        {
-            this.Characters = characters;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="settings"></param>
-        protected BlockParser(CommonMarkSettings settings)
+        /// <param name="tag">Handled element tag.</param>
+        /// <param name="characters">Handled characters.</param>
+        protected BlockParser(CommonMarkSettings settings, BlockTag tag, params char[] characters)
         {
             this.Settings = settings;
+            this.Tag = tag;
+            this.Characters = characters;
         }
 
         #endregion Constructors
 
         #region IBlockParser Members
+
+        /// <summary>
+        /// Gets the element tag.
+        /// </summary>
+        /// <value>The element tag handled by this parser.</value>
+        public BlockTag Tag
+        {
+            get;
+        }
 
         /// <summary>
         /// Gets the opening characters that are handled by this parser.
@@ -305,10 +307,10 @@ namespace CommonMark.Parser
         /// spaces between the hyphens or asterisks."
         /// </summary>
         /// <param name="info">Parser state.</param>
-        /// <param name="chars">Horizontal rule characters.</param>
-        /// <returns>Offset, or 0 for no match.</returns>
+        /// <param name="x">Horizontal rule character.</param>
+        /// <returns><c>true</c> if successfully matched.</returns>
         /// <remarks>Original: int scan_hrule(string s, int pos, int sourceLength)</remarks>
-        protected int ScanHorizontalRule(BlockParserInfo info, params char[] chars)
+        protected bool ScanHorizontalRule(BlockParserInfo info, char x)
         {
             var s = info.Line;
             var pos = info.FirstNonspace;
@@ -319,7 +321,6 @@ namespace CommonMark.Parser
             // @"^([-][ ]*){3,}[\s]*$",
 
             var count = 0;
-            var x = '\0';
             var ipos = pos;
             while (ipos < sourceLength)
             {
@@ -327,25 +328,14 @@ namespace CommonMark.Parser
 
                 if (c == ' ' || c == '\n')
                     continue;
-                if (count == 0)
-                {
-                    if (System.Array.IndexOf(chars, c) >= 0)
-                        x = c;
-                    else
-                        return 0;
 
-                    count = 1;
-                }
-                else if (c == x)
+                if (c == x)
                     count++;
                 else
-                    return 0;
+                    return false;
             }
 
-            if (count < 3)
-                return 0;
-
-            return sourceLength - pos;
+            return count >= 3;
         }
 
         #region InitializeParsers
@@ -360,11 +350,18 @@ namespace CommonMark.Parser
             parsers[(int)BlockTag.ListItem] = new Blocks.ListItemParser(settings);
             parsers[(int)BlockTag.IndentedCode] = new Blocks.IndentedCodeParser(settings);
             parsers[(int)BlockTag.AtxHeader] = new Blocks.AtxHeaderParser(settings);
-            parsers[(int)BlockTag.SETextHeader] = new Blocks.SETextHeaderParser(settings);
-            parsers[(int)BlockTag.FencedCode] = new Blocks.FencedCodeParser(settings);
+            parsers[(int)BlockTag.SETextHeader] = DelegateBlockParser.Merge(BlockTag.SETextHeader,
+                new Blocks.SETextHeaderParser(settings, '=', 1),
+                new Blocks.SETextHeaderParser(settings, '-', 2));
+            parsers[(int)BlockTag.FencedCode] = DelegateBlockParser.Merge(BlockTag.FencedCode,
+                new Blocks.FencedCodeParser(settings, BlockTag.FencedCode, '`'),
+                new Blocks.FencedCodeParser(settings, BlockTag.FencedCode, '~'));
             parsers[(int)BlockTag.HtmlBlock] = new Blocks.HtmlBlockParser(settings);
             parsers[(int)BlockTag.Paragraph] = new Blocks.ParagraphParser(settings);
-            parsers[(int)BlockTag.HorizontalRuler] = new Blocks.HorizontalRulerParser(settings);
+            parsers[(int)BlockTag.HorizontalRuler] = DelegateBlockParser.Merge(BlockTag.HorizontalRuler,
+                new Blocks.HorizontalRulerParser(settings, '*'),
+                new Blocks.HorizontalRulerParser(settings, '-'),
+                new Blocks.HorizontalRulerParser(settings, '_'));
 
             return parsers;
         }

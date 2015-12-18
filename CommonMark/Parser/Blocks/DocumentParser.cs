@@ -12,7 +12,7 @@ namespace CommonMark.Parser.Blocks
         /// </summary>
         /// <param name="settings">Common settings.</param>
         public DocumentParser(CommonMarkSettings settings)
-            : base(settings)
+            : base(settings, BlockTag.Document)
         {
         }
 

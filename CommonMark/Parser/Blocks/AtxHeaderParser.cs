@@ -13,7 +13,7 @@ namespace CommonMark.Parser.Blocks
         /// </summary>
         /// <param name="settings">Common settings.</param>
         public AtxHeaderParser(CommonMarkSettings settings)
-            : this(settings, '#')
+            : this(settings, BlockTag.AtxHeader, '#')
         {
         }
 
@@ -21,14 +21,15 @@ namespace CommonMark.Parser.Blocks
         /// Initializes a new instance of the <see cref="AtxHeaderParser"/> class.
         /// </summary>
         /// <param name="settings">Common settings.</param>
+        /// <param name="tag">Handled element tag.</param>
         /// <param name="opener">Opening character.</param>
         /// <param name="closer">Closing character. If unspecified, <paramref name="opener"/> will be used.</param>
-        protected AtxHeaderParser(CommonMarkSettings settings, char opener, char closer = (char)0)
-            : base(settings, GetCharacters(opener, closer))
+        public AtxHeaderParser(CommonMarkSettings settings, BlockTag tag, char opener, char closer = (char)0)
+            : base(settings, tag, GetCharacters(opener, closer))
         {
             IsAcceptsLines = true;
             Opener = opener;
-            Closer = closer != (char)0 ? closer : opener;
+            Closer = closer != 0 ? closer : opener;
         }
 
         /// <summary>
@@ -58,7 +59,7 @@ namespace CommonMark.Parser.Blocks
             if (!info.IsIndented && 0 != (offset = ScanStart(info, out headerLevel)))
             {
                 info.AdvanceOffset(info.FirstNonspace + offset - info.Offset, false);
-                info.Container = CreateChildBlock(info, BlockTag.AtxHeader, info.FirstNonspace);
+                info.Container = CreateChildBlock(info, Tag, info.FirstNonspace);
                 info.Container.HeaderLevel = headerLevel;
                 return true;
             }
@@ -136,13 +137,12 @@ namespace CommonMark.Parser.Blocks
             if (pos + 1 >= sourceLength)
                 return 0;
 
-            var o = Opener;
             var spaceExists = false;
             for (var i = pos + 1; i < sourceLength; i++)
             {
                 var c = s[i];
 
-                if (c == o)
+                if (c == Opener)
                 {
                     if (headerLevel == 6)
                         return 0;
@@ -199,7 +199,7 @@ namespace CommonMark.Parser.Blocks
 
         private static char[] GetCharacters(char opener, char closer)
         {
-            return opener != closer && closer != (char)0
+            return opener != closer && closer != 0
                 ? new[] { opener, closer }
                 : new[] { opener };
         }

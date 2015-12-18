@@ -9,6 +9,12 @@ namespace CommonMark.Parser
     public interface IBlockParser
     {
         /// <summary>
+        /// Gets the element tag.
+        /// </summary>
+        /// <value>The element tag handled by this parser.</value>
+        BlockTag Tag { get; }
+
+        /// <summary>
         /// Gets the opening characters that are handled by this parser.
         /// </summary>
         /// <value>Array containing the characters that can open a handled element.</value>

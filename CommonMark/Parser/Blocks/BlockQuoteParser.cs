@@ -12,7 +12,7 @@ namespace CommonMark.Parser.Blocks
         /// </summary>
         /// <param name="settings">Common settings.</param>
         public BlockQuoteParser(CommonMarkSettings settings)
-            : base(settings, '>')
+            : base(settings, BlockTag.BlockQuote, '>')
         {
             // block quote lines are never blank as they start with >
             IsAlwaysDiscardBlanks = true;
@@ -63,7 +63,7 @@ namespace CommonMark.Parser.Blocks
                 info.Offset++;
                 info.Column++;
             }
-            info.Container = CreateChildBlock(info, BlockTag.BlockQuote, info.FirstNonspace);
+            info.Container = CreateChildBlock(info, Tag, info.FirstNonspace);
             return true;
         }
     }

@@ -12,28 +12,20 @@ namespace CommonMark.Parser.Blocks
         /// Initializes a new instance of the <see cref="FencedCodeParser"/> class.
         /// </summary>
         /// <param name="settings">Common settings.</param>
-        public FencedCodeParser(CommonMarkSettings settings)
-            : this(settings, new[] { '`', '~' })
+        /// <param name="tag">Handled element tag.</param>
+        /// <param name="opener">Opening character.</param>
+        /// <param name="closer">Closing character. If unspecified, <paramref name="opener"/> will be used.</param>
+        public FencedCodeParser(CommonMarkSettings settings, BlockTag tag, char opener, char closer = (char)0)
+            : base(settings, tag, GetCharacters(opener, closer))
         {
             IsCodeBlock = true;
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="FencedCodeParser"/> class.
-        /// </summary>
-        /// <param name="settings">Common settings.</param>
-        /// <param name="openers">Opening characters.</param>
-        /// <param name="closers">Closing characters. If unspecified, <paramref name="openers"/> will be used.</param>
-        protected FencedCodeParser(CommonMarkSettings settings, char[] openers, char[] closers = null)
-            : base(settings, GetCharacters(openers, closers))
-        {
             IsAcceptsLines = true;
 
             // we don't count blanks in fenced code for purposes of tight/loose lists or breaking out of lists.
             IsAlwaysDiscardBlanks = true;
 
-            Openers = openers;
-            Closers = closers != null ? closers : openers;
+            Opener = opener;
+            Closer = closer != 0 ? closer : opener;
         }
 
         /// <summary>
@@ -73,7 +65,7 @@ namespace CommonMark.Parser.Blocks
             int fenceLength;
             if (!info.IsIndented && 0 != (fenceLength = ScanOpening(info)))
             {
-                info.Container = CreateChildBlock(info, BlockTag.FencedCode, info.FirstNonspace);
+                info.Container = CreateChildBlock(info, Tag, info.FirstNonspace);
                 info.Container.FencedCodeData = new FencedCodeData
                 {
                     FenceChar = info.CurrentCharacter,
@@ -125,7 +117,7 @@ namespace CommonMark.Parser.Blocks
         /// <returns><c>true</c> if the line can be a closing fence.</returns>
         private bool IsClosing(BlockParserInfo info)
         {
-            return Openers[0] != Closers[0] || info.CurrentCharacter == info.Container.FencedCodeData.FenceChar;
+            return Opener != Closer || info.CurrentCharacter == info.Container.FencedCodeData.FenceChar;
         }
 
         /// <summary>
@@ -149,15 +141,13 @@ namespace CommonMark.Parser.Blocks
             if (pos + 3 >= sourceLength)
                 return 0;
 
-            var c1 = info.CurrentCharacter;
-
             var cnt = 1;
             var fenceDone = false;
             for (var i = pos + 1; i < sourceLength; i++)
             {
                 var c = s[i];
 
-                if (c == c1)
+                if (c == Opener)
                 {
                     if (fenceDone)
                         return 0;
@@ -227,10 +217,10 @@ namespace CommonMark.Parser.Blocks
         }
 
         /// <summary>
-        /// Gets the fence opener characters.
+        /// Gets the fence opener character.
         /// </summary>
-        /// <value>Opener characters.</value>
-        private char[] Closers
+        /// <value>Opener character.</value>
+        private char Opener
         {
             get;
         }
@@ -239,20 +229,16 @@ namespace CommonMark.Parser.Blocks
         /// Gets the fence closer character.
         /// </summary>
         /// <value>Closer character.</value>
-        private char[] Openers
+        private char Closer
         {
             get;
         }
 
-        private static char[] GetCharacters(char[] openers, char[] closers)
+        private static char[] GetCharacters(char opener, char closer)
         {
-            if (closers == null)
-                return openers;
-            var chars = new List<char>(openers);
-            foreach (var c in closers)
-                if (!chars.Contains(c))
-                    chars.Add(c);
-            return chars.ToArray();
+            return opener != closer && closer != 0
+                ? new[] { opener, closer }
+                : new[] { opener };
         }
     }
 }

@@ -12,7 +12,7 @@ namespace CommonMark.Parser.Blocks
         /// </summary>
         /// <param name="settings">Common settings.</param>
         public ListItemParser(CommonMarkSettings settings)
-            : base(settings, '+', '•', '*', '-', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9')
+            : base(settings, BlockTag.ListItem, '+', '•', '*', '-', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9')
         {
         }
 
@@ -140,7 +140,7 @@ namespace CommonMark.Parser.Blocks
             int startpos = pos;
             char c = ln[pos];
 
-            if (c == '+' || c == '•' || ((c == '*' || c == '-') && 0 == ScanHorizontalRule(info, '*', '-')))
+            if (c == '+' || c == '•' || (c == '*' && !ScanHorizontalRule(info, '*')) || (c == '-' && !ScanHorizontalRule(info, '-')))
             {
                 pos++;
                 if (pos == len || (ln[pos] != ' ' && ln[pos] != '\n'))
