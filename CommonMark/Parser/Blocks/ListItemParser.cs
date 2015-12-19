@@ -4,71 +4,53 @@ using System;
 namespace CommonMark.Parser.Blocks
 {
     /// <summary>
-    /// List parameters.
+    /// List item delimiter parameters.
     /// </summary>
-    public abstract class ListParameters
+    public class ListItemDelimiterParameters
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="ListParameters"/> class.
+        /// Initializes a new instance of the <see cref="ListItemDelimiterParameters"/> class.
         /// </summary>
-        /// <param name="delimiters">Delimiter parameters.</param>
-        protected ListParameters(ListItemDelimiterParameters[] delimiters)
+        /// <param name="character">Delimiter character.</param>
+        /// <param name="minSpaces">Minimum space count.</param>
+        public ListItemDelimiterParameters(char character, int minSpaces = 1)
         {
-            this.Delimiters = delimiters;
+            Character = character;
+            MinSpaces = minSpaces;
         }
 
         /// <summary>
-        /// Gets or sets the delimiter parameters.
+        /// Gets or sets the delimiter character.
         /// </summary>
-        public ListItemDelimiterParameters[] Delimiters { get; set; }
+        public char Character { get; set; }
+
+        /// <summary>
+        /// Gets or sets the minimum number of space characters between the delimiter and the item content.
+        /// </summary>
+        public int MinSpaces { get; set; }
     }
 
     /// <summary>
-    /// <see cref="BlockTag.ListItem"/> element parser.
+    /// Base <see cref="BlockTag.ListItem"/> element parser class.
     /// </summary>
-    /// <typeparam name="TData">Type of list data.</typeparam>
     /// <typeparam name="TParameters">Type of parameters.</typeparam>
-    public abstract class ListItemParser<TData, TParameters> : BlockParser
-        where TData : class
-        where TParameters : ListParameters
+    public abstract class ListItemParser<TParameters> : BlockParser
     {
         /// <summary>
-        /// List marker parser delegate.
-        /// </summary>
-        /// <param name="info">Parser state.</param>
-        /// <param name="data">Common list data.</param>
-        /// <param name="listData">Specific list data.</param>
-        /// <returns>Length of the marker, or 0 for no match.</returns>
-        protected delegate int ParseMarkerDelegate(BlockParserInfo info, out ListData data, out TData listData);
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ListItemParser{TData,TParameters}"/> class.
+        /// Initializes a new instance of the <see cref="ListItemParser{TParameters}"/> class.
         /// </summary>
         /// <param name="settings">Common settings.</param>
         /// <param name="tag">Handled element tag.</param>
         /// <param name="parentTag">Parent element tag.</param>
         /// <param name="listType">List type.</param>
-        /// <param name="markers">List marker characters.</param>
-        /// <param name="parameters">Specific list parameters.</param>
+        /// <param name="parameters">List parameters.</param>
 #pragma warning disable 0618
-        public ListItemParser(CommonMarkSettings settings, BlockTag tag, BlockTag parentTag, ListType listType, char[] markers, TParameters parameters)
+        public ListItemParser(CommonMarkSettings settings, BlockTag tag, BlockTag parentTag, ListType listType, TParameters parameters)
 #pragma warning restore 0618
-            : base(settings, tag, markers)
+            : base(settings, tag)
         {
             ParentTag = parentTag;
-            ListType = listType;
             Parameters = parameters;
-            SetDelimiters(parameters.Delimiters);
-        }
-
-        /// <summary>
-        /// Gets the type of the parent list.
-        /// </summary>
-#pragma warning disable 0618
-        public ListType ListType
-#pragma warning restore 0618
-        {
-            get;
         }
 
         /// <summary>
@@ -132,6 +114,60 @@ namespace CommonMark.Parser.Blocks
             }
             return false;
         }
+    }
+
+    /// <summary>
+    /// Base list item handler class.
+    /// </summary>
+    /// <typeparam name="TData">Type of specific list data.</typeparam>
+    public abstract class ListItemHandler<TData> : BlockDelimiterHandler
+        where TData : class
+    {
+        /// <summary>
+        /// List marker parser delegate.
+        /// </summary>
+        /// <param name="info">Parser state.</param>
+        /// <param name="data">Common list data.</param>
+        /// <param name="listData">Specific list data.</param>
+        /// <returns>Length of the marker, or 0 for no match.</returns>
+        protected delegate int ParseMarkerDelegate(BlockParserInfo info, out ListData data, out TData listData);
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ListItemHandler{TData}"/> class.
+        /// </summary>
+        /// <param name="settings">Common settings.</param>
+        /// <param name="blockTag">List item element tag.</param>
+        /// <param name="parentTag">List element tag.</param>
+        /// <param name="listType">List type (obsolete).</param>
+        /// <param name="character">Handled character.</param>
+        /// <param name="delimiters">List item delimiters.</param>
+#pragma warning disable 0618
+        protected ListItemHandler(CommonMarkSettings settings, BlockTag blockTag, BlockTag parentTag, ListType listType, char character, ListItemDelimiterParameters[] delimiters)
+#pragma warning restore 0618
+            : base(settings, character)
+        {
+            ParentTag = parentTag;
+            ListType = listType;
+            SetDelimiters(delimiters);
+        }
+
+        /// <summary>
+        /// Gets the element tag of the parent list.
+        /// </summary>
+        public BlockTag ParentTag
+        {
+            get;
+        }
+
+        /// <summary>
+        /// Gets the type of the parent list.
+        /// </summary>
+#pragma warning disable 0618
+        public ListType ListType
+#pragma warning restore 0618
+        {
+            get;
+        }
 
         /// <summary>
         /// Determines whether a list item can be opened.
@@ -144,7 +180,7 @@ namespace CommonMark.Parser.Blocks
         }
 
         /// <summary>
-        /// Opens a list item.
+        /// Handles a list item opener.
         /// </summary>
         /// <param name="info">Parser state.</param>
         /// <param name="canOpen">Opener checker delegate.</param>
@@ -152,7 +188,7 @@ namespace CommonMark.Parser.Blocks
         /// <param name="isListsMatch">List data matcher delegate.</param>
         /// <param name="setListData">List data mutator delegate.</param>
         /// <returns><c>true</c> if successful.</returns>
-        protected bool DoOpen(BlockParserInfo info, Func<BlockParserInfo, bool> canOpen, ParseMarkerDelegate parseMarker,
+        protected bool DoHandle(BlockParserInfo info, Func<BlockParserInfo, bool> canOpen, ParseMarkerDelegate parseMarker,
             Func<BlockParserInfo, TData, bool> isListsMatch, Action<BlockParserInfo, TData> setListData)
         {
             int markerLength;
@@ -190,13 +226,13 @@ namespace CommonMark.Parser.Blocks
             // can continue the list; otherwise, create a list container.
             if (info.Container.Tag != ParentTag || !isListsMatch(info, listData))
             {
-                info.Container = CreateChildBlock(info, ParentTag, info.FirstNonspace);
+                info.Container = BlockParser.CreateChildBlock(info, ParentTag, info.FirstNonspace, Settings);
                 info.Container.ListData = data;
                 setListData(info, listData);
             }
 
             // add the list item
-            info.Container = CreateChildBlock(info, Tag, info.FirstNonspace);
+            info.Container = BlockParser.CreateChildBlock(info, BlockTag.ListItem, info.FirstNonspace, Settings);
             info.Container.ListData = data;
             setListData(info, listData);
 

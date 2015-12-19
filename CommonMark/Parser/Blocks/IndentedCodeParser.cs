@@ -1,11 +1,12 @@
 ﻿using CommonMark.Syntax;
+using System.Collections.Generic;
 
 namespace CommonMark.Parser.Blocks
 {
     /// <summary>
     /// <see cref="BlockTag.IndentedCode"/> element parser.
     /// </summary>
-    public class IndentedCodeParser : BlockParser
+    public sealed class IndentedCodeParser : BlockParser, IBlockDelimiterHandler
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="IndentedCodeParser"/> class.
@@ -16,6 +17,19 @@ namespace CommonMark.Parser.Blocks
         {
             IsCodeBlock = true;
             IsAcceptsLines = true;
+        }
+
+        /// <summary>
+        /// Gets the block element delimiter handlers.
+        /// </summary>
+        public override IEnumerable<IBlockDelimiterHandler> Handlers
+        {
+            get { yield return this; }
+        }
+
+        char IBlockDelimiterHandler.Character
+        {
+            get;
         }
 
         /// <summary>
@@ -39,16 +53,16 @@ namespace CommonMark.Parser.Blocks
         }
 
         /// <summary>
-        /// Opens a handled element.
+        /// Handles a block delimiter.
         /// </summary>
         /// <param name="info">Parser state.</param>
         /// <returns><c>true</c> if successful.</returns>
-        public override bool Open(ref BlockParserInfo info)
+        public bool Handle(ref BlockParserInfo info)
         {
             if (info.IsIndented && !info.IsMaybeLazy && !info.IsBlank)
             {
                 info.AdvanceIndentedOffset();
-                info.Container = CreateChildBlock(info, Tag, info.Offset);
+                info.Container = CreateChildBlock(info, Tag, info.Offset, Settings);
             }
             return false;
         }

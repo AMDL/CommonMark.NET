@@ -4,32 +4,69 @@ using System.Collections.Generic;
 namespace CommonMark.Parser.Blocks
 {
     /// <summary>
-    /// <see cref="BlockTag.AtxHeader"/> element parser.
+    /// ATX header parameters.
     /// </summary>
-    public class AtxHeaderParser : BlockParser
+    public sealed class AtxHeaderParameters
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="AtxHeaderParser"/> class.
+        /// Initializes a new instance of the <see cref="AtxHeaderParameters"/> class.
         /// </summary>
-        /// <param name="settings">Common settings.</param>
-        public AtxHeaderParser(CommonMarkSettings settings)
-            : this(settings, BlockTag.AtxHeader, '#')
+        /// <param name="opener">Opening character.</param>
+        /// <param name="closer">Closing character. If unspecified, <paramref name="opener"/> will be used.</param>
+        public AtxHeaderParameters(char opener, char closer = (char)0)
         {
+            Opener = opener;
+            Closer = closer != 0 ? closer : opener;
         }
+
+        /// <summary>
+        /// Gets or sets the header opener character.
+        /// </summary>
+        /// <value>Opener character.</value>
+        public char Opener { get; set; }
+
+        /// <summary>
+        /// Gets or sets the header closer character.
+        /// </summary>
+        /// <value>Closer character.</value>
+        public char Closer { get; set; }
+    }
+
+    /// <summary>
+    /// <see cref="BlockTag.AtxHeader"/> element parser.
+    /// </summary>
+    public sealed class AtxHeaderParser : BlockParser, IBlockDelimiterHandler
+    {
+        /// <summary>
+        /// The default parameters instance.
+        /// </summary>
+        public static readonly AtxHeaderParameters DefaultParameters = new AtxHeaderParameters('#');
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AtxHeaderParser"/> class.
         /// </summary>
         /// <param name="settings">Common settings.</param>
         /// <param name="tag">Handled element tag.</param>
-        /// <param name="opener">Opening character.</param>
-        /// <param name="closer">Closing character. If unspecified, <paramref name="opener"/> will be used.</param>
-        public AtxHeaderParser(CommonMarkSettings settings, BlockTag tag, char opener, char closer = (char)0)
-            : base(settings, tag, GetCharacters(opener, closer))
+        /// <param name="parameters">ATX header parameters.</param>
+        public AtxHeaderParser(CommonMarkSettings settings, BlockTag tag = BlockTag.AtxHeader, AtxHeaderParameters parameters = null)
+            : base(settings, tag)
         {
             IsAcceptsLines = true;
-            Opener = opener;
-            Closer = closer != 0 ? closer : opener;
+
+            Parameters = parameters ?? DefaultParameters;
+        }
+
+        /// <summary>
+        /// Gets the block element delimiter handlers.
+        /// </summary>
+        public override IEnumerable<IBlockDelimiterHandler> Handlers
+        {
+            get { yield return this; }
+        }
+
+        char IBlockDelimiterHandler.Character
+        {
+            get { return Opener; }
         }
 
         /// <summary>
@@ -48,18 +85,18 @@ namespace CommonMark.Parser.Blocks
         }
 
         /// <summary>
-        /// Opens a handled element.
+        /// Handles a block delimiter.
         /// </summary>
         /// <param name="info">Parser state.</param>
         /// <returns><c>true</c> if successful.</returns>
-        public override bool Open(ref BlockParserInfo info)
+        public bool Handle(ref BlockParserInfo info)
         {
             int offset;
             int headerLevel;
             if (!info.IsIndented && 0 != (offset = ScanStart(info, out headerLevel)))
             {
                 info.AdvanceOffset(info.FirstNonspace + offset - info.Offset, false);
-                info.Container = CreateChildBlock(info, Tag, info.FirstNonspace);
+                info.Container = CreateChildBlock(info, Tag, info.FirstNonspace, Settings);
                 info.Container.HeaderLevel = headerLevel;
                 return true;
             }
@@ -95,24 +132,6 @@ namespace CommonMark.Parser.Blocks
         public override bool Process(Block container, Subject subject, ref Stack<Inline> inlineStack)
         {
             return ProcessInlines(container, subject, ref inlineStack, Settings.InlineParserParameters);
-        }
-
-        /// <summary>
-        /// Gets the header opener character.
-        /// </summary>
-        /// <value>Opener character.</value>
-        private char Opener
-        {
-            get;
-        }
-
-        /// <summary>
-        /// Gets the header closer character.
-        /// </summary>
-        /// <value>Closer character.</value>
-        private char Closer
-        {
-            get;
         }
 
         /// <summary>
@@ -186,8 +205,7 @@ namespace CommonMark.Parser.Blocks
                 p--;
 
             // if string ends in #s, remove these:
-            char c = Closer;
-            while (p >= 0 && info.Line[p] == c)
+            while (p >= 0 && info.Line[p] == Closer)
                 p--;
 
             // there must be a space before the last hashtag
@@ -197,11 +215,19 @@ namespace CommonMark.Parser.Blocks
             return p - info.FirstNonspace + 1;
         }
 
-        private static char[] GetCharacters(char opener, char closer)
+        private char Opener
         {
-            return opener != closer && closer != 0
-                ? new[] { opener, closer }
-                : new[] { opener };
+            get { return Parameters.Opener; }
+        }
+
+        private char Closer
+        {
+            get { return Parameters.Closer; }
+        }
+
+        private AtxHeaderParameters Parameters
+        {
+            get;
         }
     }
 }

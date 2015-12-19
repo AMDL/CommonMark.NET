@@ -16,12 +16,10 @@ namespace CommonMark.Parser
         /// </summary>
         /// <param name="settings">Common settings.</param>
         /// <param name="tag">Handled element tag.</param>
-        /// <param name="characters">Handled characters.</param>
-        protected BlockParser(CommonMarkSettings settings, BlockTag tag, params char[] characters)
+        protected BlockParser(CommonMarkSettings settings, BlockTag tag)
         {
             this.Settings = settings;
             this.Tag = tag;
-            this.Characters = characters;
         }
 
         #endregion Constructors
@@ -38,12 +36,14 @@ namespace CommonMark.Parser
         }
 
         /// <summary>
-        /// Gets the opening characters that are handled by this parser.
+        /// Gets the block element delimiter handlers.
         /// </summary>
-        /// <value>Array containing the characters that can open a handled element.</value>
-        public char[] Characters
+        public virtual IEnumerable<IBlockDelimiterHandler> Handlers
         {
-            get;
+            get
+            {
+                return null;
+            }
         }
 
         /// <summary>
@@ -116,16 +116,6 @@ namespace CommonMark.Parser
         }
 
         /// <summary>
-        /// Opens a handled element.
-        /// </summary>
-        /// <param name="info">Parser state.</param>
-        /// <returns><c>true</c> if successful.</returns>
-        public virtual bool Open(ref BlockParserInfo info)
-        {
-            return false;
-        }
-
-        /// <summary>
         /// Closes a handled element.
         /// </summary>
         /// <param name="info">Parser state.</param>
@@ -162,14 +152,17 @@ namespace CommonMark.Parser
         /// <summary>
         /// Gets the common settings object.
         /// </summary>
-        protected CommonMarkSettings Settings { get; }
+        protected CommonMarkSettings Settings
+        {
+            get;
+        }
 
         /// <summary>
         /// Determines whether the content consists of a single line.
         /// </summary>
         /// <param name="content">String content.</param>
         /// <returns><c>true</c> if the content consists of a single line.</returns>
-        protected static bool ContainsSingleLine(StringContent content)
+        public static bool ContainsSingleLine(StringContent content)
         {
             if (content == null)
                 return true;
@@ -180,7 +173,7 @@ namespace CommonMark.Parser
         /// <summary>
         /// Adds a new line to the block element.
         /// </summary>
-        protected static void AddLine(Block block, LineInfo lineInfo, string ln, int offset, int length = -1)
+        public static void AddLine(Block block, LineInfo lineInfo, string ln, int offset, int length = -1)
         {
             if (!block.IsOpen)
                 throw new CommonMarkException(string.Format(CultureInfo.InvariantCulture, "Attempted to add line '{0}' to closed container ({1}).", ln, block.Tag));
@@ -207,16 +200,16 @@ namespace CommonMark.Parser
         /// Adds a new block as child of another. Return the child.
         /// </summary>
         /// <remarks>Original: add_child</remarks>
-        protected Block CreateChildBlock(BlockParserInfo info, BlockTag blockType, int startColumn)
+        public static Block CreateChildBlock(BlockParserInfo info, BlockTag blockType, int startColumn, CommonMarkSettings settings)
         {
             var parent = info.Container;
             var line = info.LineInfo;
 
             // if 'parent' isn't the kind of block that can accept this child,
             // then back up til we hit a block that can.
-            while (!CanContain(parent.Tag, blockType))
+            while (!settings.BlockParserParameters.CanContain(parent.Tag, blockType))
             {
-                BlockMethods.Finalize(parent, line, Settings);
+                BlockMethods.Finalize(parent, line, settings);
                 parent = parent.Parent;
             }
 
@@ -273,11 +266,6 @@ namespace CommonMark.Parser
             return true;
         }
 
-        private bool CanContain(BlockTag parentTag, BlockTag childTag)
-        {
-            return Settings.BlockParserParameters.CanContain(parentTag, childTag);
-        }
-
         private static void AdjustInlineSourcePosition(Inline inline, PositionTracker tracker, ref Stack<Inline> stack)
         {
             if (stack == null)
@@ -310,73 +298,23 @@ namespace CommonMark.Parser
             }
         }
 
-        /// <summary>
-        /// Scans a horizontal rule line: "...three or more hyphens, asterisks,
-        /// or underscores on a line by themselves. If you wish, you may use
-        /// spaces between the hyphens or asterisks."
-        /// </summary>
-        /// <param name="info">Parser state.</param>
-        /// <param name="x">Horizontal rule character.</param>
-        /// <returns><c>true</c> if successfully matched.</returns>
-        /// <remarks>Original: int scan_hrule(string s, int pos, int sourceLength)</remarks>
-        protected bool ScanHorizontalRule(BlockParserInfo info, char x)
-        {
-            var s = info.Line;
-            var pos = info.FirstNonspace;
-            var sourceLength = s.Length;
-
-            // @"^([\*][ ]*){3,}[\s]*$",
-            // @"^([_][ ]*){3,}[\s]*$",
-            // @"^([-][ ]*){3,}[\s]*$",
-
-            var count = 0;
-            var ipos = pos;
-            while (ipos < sourceLength)
-            {
-                var c = s[ipos++];
-
-                if (c == ' ' || c == '\n')
-                    continue;
-
-                if (c == x)
-                    count++;
-                else
-                    return false;
-            }
-
-            return count >= 3;
-        }
-
         #region InitializeParsers
 
-        internal static IBlockParser[] InitializeParsers(CommonMarkSettings settings)
+        internal static IEnumerable<IBlockParser> InitializeParsers(CommonMarkSettings settings)
         {
-            var parsers = new IBlockParser[(int)BlockTag.Count];
-
-            parsers[(int)BlockTag.Document] = new Blocks.DocumentParser(settings);
-            parsers[(int)BlockTag.BlockQuote] = new Blocks.BlockQuoteParser(settings);
-            parsers[(int)BlockTag.BulletList] = new Blocks.ListParser(settings, BlockTag.BulletList, BlockTag.ListItem);
-            parsers[(int)BlockTag.OrderedList] = new Blocks.ListParser(settings, BlockTag.OrderedList, BlockTag.ListItem);
-            parsers[(int)BlockTag.ListItem] = DelegateBlockParser.Merge(BlockTag.ListItem,
-                new Blocks.NonRuleBulletListItemParser(settings),
-                new Blocks.RuleBulletListItemParser(settings),
-                new Blocks.EuropeanNumeralListItemParser(settings));
-            parsers[(int)BlockTag.IndentedCode] = new Blocks.IndentedCodeParser(settings);
-            parsers[(int)BlockTag.AtxHeader] = new Blocks.AtxHeaderParser(settings);
-            parsers[(int)BlockTag.SETextHeader] = DelegateBlockParser.Merge(BlockTag.SETextHeader,
-                new Blocks.SETextHeaderParser(settings, '=', 1),
-                new Blocks.SETextHeaderParser(settings, '-', 2));
-            parsers[(int)BlockTag.FencedCode] = DelegateBlockParser.Merge(BlockTag.FencedCode,
-                new Blocks.FencedCodeParser(settings, BlockTag.FencedCode, '`'),
-                new Blocks.FencedCodeParser(settings, BlockTag.FencedCode, '~'));
-            parsers[(int)BlockTag.HtmlBlock] = new Blocks.HtmlBlockParser(settings);
-            parsers[(int)BlockTag.Paragraph] = new Blocks.ParagraphParser(settings);
-            parsers[(int)BlockTag.HorizontalRuler] = DelegateBlockParser.Merge(BlockTag.HorizontalRuler,
-                new Blocks.HorizontalRulerParser(settings, '*'),
-                new Blocks.HorizontalRulerParser(settings, '-'),
-                new Blocks.HorizontalRulerParser(settings, '_'));
-
-            return parsers;
+            yield return new Blocks.DocumentParser(settings);
+            yield return new Blocks.BlockQuoteParser(settings);
+            yield return new Blocks.BulletListParser(settings);
+            yield return new Blocks.OrderedListParser(settings);
+            yield return new Blocks.BulletListItemParser(settings);
+            yield return new Blocks.OrderedListItemParser(settings);
+            yield return new Blocks.IndentedCodeParser(settings);
+            yield return new Blocks.AtxHeaderParser(settings);
+            yield return new Blocks.SETextHeaderParser(settings);
+            yield return new Blocks.FencedCodeParser(settings);
+            yield return new Blocks.HtmlBlockParser(settings);
+            yield return new Blocks.ParagraphParser(settings);
+            yield return new Blocks.HorizontalRulerParser(settings);
         }
 
         #endregion InitializeParsers

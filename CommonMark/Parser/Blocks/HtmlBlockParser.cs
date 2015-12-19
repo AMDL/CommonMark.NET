@@ -1,12 +1,13 @@
 ﻿using CommonMark.Syntax;
 using System;
+using System.Collections.Generic;
 
 namespace CommonMark.Parser.Blocks
 {
     /// <summary>
     /// <see cref="BlockTag.HtmlBlock"/> element parser.
     /// </summary>
-    public class HtmlBlockParser : BlockParser
+    public sealed class HtmlBlockParser : BlockParser, IBlockDelimiterHandler
     {
         private static readonly string[] blockTagNames = new[] { "ADDRESS", "ARTICLE", "ASIDE", "BASE", "BASEFONT", "BLOCKQUOTE", "BODY", "CAPTION", "CENTER", "COL", "COLGROUP", "DD", "DETAILS", "DIALOG", "DIR", "DIV", "DL", "DT", "FIELDSET", "FIGCAPTION", "FIGURE", "FOOTER", "FORM", "FRAME", "FRAMESET", "H1", "HEAD", "HEADER", "HR", "HTML", "IFRAME", "LEGEND", "LI", "MAIN", "MENU", "MENUITEM", "META", "NAV", "NOFRAMES", "OL", "OPTGROUP", "OPTION", "P", "PARAM", "PRE", "SCRIPT", "SECTION", "SOURCE", "STYLE", "SUMMARY", "TABLE", "TBODY", "TD", "TFOOT", "TH", "THEAD", "TITLE", "TR", "TRACK", "UL" };
 
@@ -15,9 +16,22 @@ namespace CommonMark.Parser.Blocks
         /// </summary>
         /// <param name="settings">Common settings.</param>
         public HtmlBlockParser(CommonMarkSettings settings)
-            : base(settings, BlockTag.HtmlBlock, '<')
+            : base(settings, BlockTag.HtmlBlock)
         {
             IsCodeBlock = true;
+        }
+
+        /// <summary>
+        /// Gets the block element delimiter handlers.
+        /// </summary>
+        public override IEnumerable<IBlockDelimiterHandler> Handlers
+        {
+            get { yield return this; }
+        }
+
+        char IBlockDelimiterHandler.Character
+        {
+            get { return '<'; }
         }
 
         /// <summary>
@@ -37,17 +51,17 @@ namespace CommonMark.Parser.Blocks
         }
 
         /// <summary>
-        /// Opens a handled element.
+        /// Handles a block delimiter.
         /// </summary>
         /// <param name="info">Parser state.</param>
         /// <returns><c>true</c> if successful.</returns>
-        public override bool Open(ref BlockParserInfo info)
+        public bool Handle(ref BlockParserInfo info)
         {
             HtmlBlockType htmlBlockType;
             if (!info.IsIndented && (0 != (htmlBlockType = ScanStart(info))
                 || (info.Container.Tag != BlockTag.Paragraph && 0 != (htmlBlockType = ScanStart2(info)))))
             {
-                info.Container = CreateChildBlock(info, Tag, info.FirstNonspace);
+                info.Container = CreateChildBlock(info, Tag, info.FirstNonspace, Settings);
                 info.Container.HtmlBlockType = htmlBlockType;
                 // note, we don't adjust offset because the tag is part of the text
                 return true;

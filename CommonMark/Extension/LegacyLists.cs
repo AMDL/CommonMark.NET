@@ -29,9 +29,8 @@ namespace CommonMark.Extension
         {
 #pragma warning disable 0618
             yield return new ListParser(settings, BlockTag.List, BlockTag.ListItem);
-            yield return new NonRuleBulletListItemParser(settings, BlockTag.List, NonRuleBulletListItemParser.DefaultParameters);
-            yield return new RuleBulletListItemParser(settings, BlockTag.List, RuleBulletListItemParser.DefaultParameters);
-            yield return new EuropeanNumeralListItemParser(settings, BlockTag.List, EuropeanNumeralListItemParser.DefaultParameters);
+            yield return new BulletListItemParser(settings, BlockTag.List, BulletListItemParser.DefaultParameters);
+            yield return new OrderedListItemParser(settings, BlockTag.List, OrderedListItemParser.DefaultParameters);
 #pragma warning restore 0618
         }
 

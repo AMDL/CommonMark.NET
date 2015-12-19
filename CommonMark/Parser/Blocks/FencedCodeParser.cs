@@ -4,19 +4,70 @@ using System.Collections.Generic;
 namespace CommonMark.Parser.Blocks
 {
     /// <summary>
+    /// Fenced code delimiter parameters.
+    /// </summary>
+    public sealed class FencedCodeDelimiterParameters
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FencedCodeDelimiterParameters"/> class.
+        /// </summary>
+        /// <param name="opener">Opening character.</param>
+        /// <param name="closer">Closing character. If unspecified, <paramref name="opener"/> will be used.</param>
+        public FencedCodeDelimiterParameters(char opener, char closer = (char)0)
+        {
+            Opener = opener;
+            Closer = closer != 0 ? closer : opener;
+        }
+
+        /// <summary>
+        /// Gets or sets the fence opener character.
+        /// </summary>
+        /// <value>Opener character.</value>
+        public char Opener { get; set; }
+
+        /// <summary>
+        /// Gets or sets the fence closer character.
+        /// </summary>
+        /// <value>Closer character.</value>
+        public char Closer { get; set; }
+    }
+
+    /// <summary>
+    /// Fenced code parameters.
+    /// </summary>
+    public sealed class FencedCodeParameters
+    {
+        /// <summary>
+        /// Gets or sets the fenced code delimiter parameters.
+        /// </summary>
+        public FencedCodeDelimiterParameters[] Delimiters { get; set; }
+    }
+
+    /// <summary>
     /// <see cref="BlockTag.FencedCode"/> element parser.
     /// </summary>
-    public class FencedCodeParser : BlockParser
+    public sealed class FencedCodeParser : BlockParser
     {
+        /// <summary>
+        /// The default parameters instance.
+        /// </summary>
+        public static readonly FencedCodeParameters DefaultParameters = new FencedCodeParameters
+        {
+            Delimiters = new[]
+            {
+                new FencedCodeDelimiterParameters('`'),
+                new FencedCodeDelimiterParameters('~'),
+            },
+        };
+
         /// <summary>
         /// Initializes a new instance of the <see cref="FencedCodeParser"/> class.
         /// </summary>
         /// <param name="settings">Common settings.</param>
         /// <param name="tag">Handled element tag.</param>
-        /// <param name="opener">Opening character.</param>
-        /// <param name="closer">Closing character. If unspecified, <paramref name="opener"/> will be used.</param>
-        public FencedCodeParser(CommonMarkSettings settings, BlockTag tag, char opener, char closer = (char)0)
-            : base(settings, tag, GetCharacters(opener, closer))
+        /// <param name="parameters">Fenced code parameters.</param>
+        public FencedCodeParser(CommonMarkSettings settings, BlockTag tag = BlockTag.FencedCode, FencedCodeParameters parameters = null)
+            : base(settings, tag)
         {
             IsCodeBlock = true;
             IsAcceptsLines = true;
@@ -24,8 +75,21 @@ namespace CommonMark.Parser.Blocks
             // we don't count blanks in fenced code for purposes of tight/loose lists or breaking out of lists.
             IsAlwaysDiscardBlanks = true;
 
-            Opener = opener;
-            Closer = closer != 0 ? closer : opener;
+            Parameters = parameters ?? DefaultParameters;
+        }
+
+        /// <summary>
+        /// Gets the block element delimiter handlers.
+        /// </summary>
+        public override IEnumerable<IBlockDelimiterHandler> Handlers
+        {
+            get
+            {
+                foreach (var delimiter in Parameters.Delimiters)
+                {
+                    yield return new FencedCodeHandler(Settings, delimiter);
+                }
+            }
         }
 
         /// <summary>
@@ -56,36 +120,13 @@ namespace CommonMark.Parser.Blocks
         }
 
         /// <summary>
-        /// Opens a handled element.
-        /// </summary>
-        /// <param name="info">Parser state.</param>
-        /// <returns><c>true</c> if successful.</returns>
-        public override bool Open(ref BlockParserInfo info)
-        {
-            int fenceLength;
-            if (!info.IsIndented && 0 != (fenceLength = ScanOpening(info)))
-            {
-                info.Container = CreateChildBlock(info, Tag, info.FirstNonspace);
-                info.Container.FencedCodeData = new FencedCodeData
-                {
-                    FenceChar = info.CurrentCharacter,
-                    FenceLength = fenceLength,
-                    FenceOffset = info.FirstNonspace - info.Offset,
-                };
-                info.AdvanceOffset(info.FirstNonspace + fenceLength - info.Offset, false);
-                return true;
-            }
-            return false;
-        }
-
-        /// <summary>
         /// Closes a handled element.
         /// </summary>
         /// <param name="info">Parser state.</param>
         /// <returns><c>true</c> if successful.</returns>
         public override bool Close(BlockParserInfo info)
         {
-            if (!info.IsIndented && IsClosing(info) && 0 != ScanClosing(info))
+            if (!info.IsIndented && CanClose(info) && 0 != ScanClosing(info))
             {
                 // if closing fence, set fence length to -1. it will be closed when the next line is processed. 
                 info.Container.FencedCodeData.FenceLength = -1;
@@ -115,59 +156,11 @@ namespace CommonMark.Parser.Blocks
         /// </summary>
         /// <param name="info">Parser state.</param>
         /// <returns><c>true</c> if the line can be a closing fence.</returns>
-        private bool IsClosing(BlockParserInfo info)
+        private bool CanClose(BlockParserInfo info)
         {
-            return Opener != Closer || info.CurrentCharacter == info.Container.FencedCodeData.FenceChar;
-        }
-
-        /// <summary>
-        /// Scans an opening code fence.
-        /// </summary>
-        /// <param name="info">Parser state.</param>
-        /// <returns>The number of characters forming the fence, or 0 for no match.</returns>
-        /// <remarks>Original: int scan_open_code_fence(string s, int pos, int sourceLength, BlockParserParameters parameters)</remarks>
-        private int ScanOpening(BlockParserInfo info)
-        {
-            var s = info.Line;
-            var pos = info.FirstNonspace;
-            var sourceLength = s.Length;
-
-            /*!re2c
-              [`]{3,} / [^`\n\x00]*[\n] { return (p - start); }
-              [~]{3,} / [^~\n\x00]*[\n] { return (p - start); }
-              .?                        { return 0; }
-            */
-
-            if (pos + 3 >= sourceLength)
-                return 0;
-
-            var cnt = 1;
-            var fenceDone = false;
-            for (var i = pos + 1; i < sourceLength; i++)
-            {
-                var c = s[i];
-
-                if (c == Opener)
-                {
-                    if (fenceDone)
-                        return 0;
-
-                    cnt++;
-                    continue;
-                }
-
-                fenceDone = true;
-                if (cnt < 3)
-                    return 0;
-
-                if (c == '\n')
-                    return cnt;
-            }
-
-            if (cnt < 3)
-                return 0;
-
-            return cnt;
+            return Parameters.Delimiters.Length == 1
+                ? info.CurrentCharacter == Parameters.Delimiters[0].Opener
+                : info.CurrentCharacter == info.Container.FencedCodeData.FenceChar;
         }
 
         /// <summary>
@@ -216,29 +209,98 @@ namespace CommonMark.Parser.Blocks
             return 0;
         }
 
-        /// <summary>
-        /// Gets the fence opener character.
-        /// </summary>
-        /// <value>Opener character.</value>
-        private char Opener
+        private FencedCodeParameters Parameters
         {
             get;
         }
+    }
 
+    /// <summary>
+    /// Fenced code delimiter handler.
+    /// </summary>
+    public sealed class FencedCodeHandler : BlockDelimiterHandler
+    {
         /// <summary>
-        /// Gets the fence closer character.
+        /// Initializes a new instance of the <see cref="BlockDelimiterHandler"/> class.
         /// </summary>
-        /// <value>Closer character.</value>
-        private char Closer
+        /// <param name="settings">Common settings.</param>
+        /// <param name="delimiter">Fenced code delimiter parameters.</param>
+        public FencedCodeHandler(CommonMarkSettings settings, FencedCodeDelimiterParameters delimiter)
+            : base(settings, delimiter.Opener)
         {
-            get;
         }
 
-        private static char[] GetCharacters(char opener, char closer)
+        /// <summary>
+        /// Handles a fenced code block opener.
+        /// </summary>
+        /// <param name="info">Parser state.</param>
+        /// <returns><c>true</c> if successful.</returns>
+        public override bool Handle(ref BlockParserInfo info)
         {
-            return opener != closer && closer != 0
-                ? new[] { opener, closer }
-                : new[] { opener };
+            int fenceLength;
+            if (!info.IsIndented && 0 != (fenceLength = ScanOpening(info)))
+            {
+                info.Container = BlockParser.CreateChildBlock(info, BlockTag.FencedCode, info.FirstNonspace, Settings);
+                info.Container.FencedCodeData = new FencedCodeData
+                {
+                    FenceChar = info.CurrentCharacter,
+                    FenceLength = fenceLength,
+                    FenceOffset = info.FirstNonspace - info.Offset,
+                };
+                info.AdvanceOffset(info.FirstNonspace + fenceLength - info.Offset, false);
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Scans an opening code fence.
+        /// </summary>
+        /// <param name="info">Parser state.</param>
+        /// <returns>The number of characters forming the fence, or 0 for no match.</returns>
+        /// <remarks>Original: int scan_open_code_fence(string s, int pos, int sourceLength, BlockParserParameters parameters)</remarks>
+        private int ScanOpening(BlockParserInfo info)
+        {
+            var s = info.Line;
+            var pos = info.FirstNonspace;
+            var sourceLength = s.Length;
+
+            /*!re2c
+              [`]{3,} / [^`\n\x00]*[\n] { return (p - start); }
+              [~]{3,} / [^~\n\x00]*[\n] { return (p - start); }
+              .?                        { return 0; }
+            */
+
+            if (pos + 3 >= sourceLength)
+                return 0;
+
+            var cnt = 1;
+            var fenceDone = false;
+            for (var i = pos + 1; i < sourceLength; i++)
+            {
+                var c = s[i];
+
+                if (c == Character)
+                {
+                    if (fenceDone)
+                        return 0;
+
+                    cnt++;
+                    continue;
+                }
+
+                fenceDone = true;
+                if (cnt < 3)
+                    return 0;
+
+                if (c == '\n')
+                    return cnt;
+            }
+
+            if (cnt < 3)
+                return 0;
+
+            return cnt;
         }
     }
 }

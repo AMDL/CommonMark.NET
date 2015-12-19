@@ -20,13 +20,13 @@ namespace CommonMark.Parser
             get;
         }
 
-        public char[] Characters
+        public IEnumerable<IBlockDelimiterHandler> Handlers
         {
             get
             {
-                var c = new List<char>(inner.Characters);
-                c.AddRange(outer.Characters);
-                return c.ToArray();
+                var handlers = new List<IBlockDelimiterHandler>(inner.Handlers);
+                handlers.AddRange(outer.Handlers);
+                return handlers.ToArray();
             }
         }
 
@@ -82,11 +82,6 @@ namespace CommonMark.Parser
         {
             return inner.Initialize(ref info)
                 || outer.Initialize(ref info);
-        }
-
-        public bool Open(ref BlockParserInfo info)
-        {
-            return inner.Open(ref info) || outer.Open(ref info);
         }
 
         public bool Close(BlockParserInfo info)

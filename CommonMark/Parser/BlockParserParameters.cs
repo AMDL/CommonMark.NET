@@ -63,6 +63,7 @@ namespace CommonMark.Parser
         {
             this.Settings = settings;
             this._parsers = GetParsers();
+            this._handlers = GetHandlers();
             this._initializers = GetInitializers();
             this._openers = GetOpeners();
             this._closers = GetClosers();
@@ -96,7 +97,13 @@ namespace CommonMark.Parser
 
         private IBlockParser[] GetParsers()
         {
-            var parsers = BlockParser.InitializeParsers(Settings);
+            var p = BlockParser.InitializeParsers(Settings);
+            var parsers = new IBlockParser[(int)BlockTag.Count];
+            foreach (var parser in p)
+            {
+                var tag = parser.Tag;
+                parsers[(int)tag] = DelegateBlockParser.Merge(tag, parsers[(int)tag], parser);
+            }
             foreach (var extension in Settings.Extensions)
 	        {
                 if (extension.BlockParsers != null)
@@ -111,6 +118,48 @@ namespace CommonMark.Parser
         }
 
         #endregion Parsers
+
+        #region Handlers
+
+        private readonly IBlockDelimiterHandler[] _handlers;
+
+        internal IBlockDelimiterHandler[] Handlers
+        {
+            get { return _handlers; }
+        } 
+
+        private IBlockDelimiterHandler[] GetHandlers()
+        {
+            var i = new Dictionary<char, IBlockDelimiterHandler>();
+            IEnumerable<IBlockDelimiterHandler> parserHandlers;
+            IBlockDelimiterHandler inner;
+            var max = (char)0;
+            foreach (var parser in Parsers)
+            {
+                if ((parserHandlers = parser?.Handlers) != null)
+                {
+                    foreach (var outer in parserHandlers)
+                    {
+                        char c = outer.Character;
+                        if (c > 0)
+                        {
+                            i.TryGetValue(c, out inner);
+                            i[c] = DelegateBlockDelimiterHandler.Merge(c, inner, outer);
+                            if (c > max)
+                                max = c;
+                        }
+                    }
+                }
+            }
+            var handlers = new IBlockDelimiterHandler[max + 1];
+            foreach (var kvp in i)
+            {
+                handlers[kvp.Key] = kvp.Value;
+            }
+            return handlers;
+        }
+
+        #endregion Handlers
 
         #region Initializers
 
@@ -147,30 +196,13 @@ namespace CommonMark.Parser
 
         private BlockOpenerDelegate[] GetOpeners()
         {
-            var i = new Dictionary<char, BlockOpenerDelegate>();
-            var max = (char)0;
-            BlockOpenerDelegate opener;
-            char[] chars;
-            foreach (var parser in Parsers)
+            var openers = new BlockOpenerDelegate[Handlers.Length];
+            for (int i = 0; i < Handlers.Length; i++)
             {
-                if (parser != null && (chars = parser.Characters) != null)
-                {
-                    foreach (var c in chars)
-                    {
-                        i.TryGetValue(c, out opener);
-                        i[c] = DelegateBlockOpener.Merge(opener, parser.Open);
-                        if (c > max)
-                            max = c;
-                    }
-                }
+                var handler = Handlers[i];
+                if (handler != null)
+                    openers[i] = handler.Handle;
             }
-
-            var openers = new BlockOpenerDelegate[max + 1];
-            foreach (var kvp in i)
-            {
-                openers[kvp.Key] = kvp.Value;
-            }
-
             return openers;
         }
 
@@ -400,7 +432,8 @@ namespace CommonMark.Parser
 
         private BlockOpenerDelegate GetOpenParagraph()
         {
-            return Parsers[(int)BlockTag.Paragraph].Open;
+            var handlers = new List<IBlockDelimiterHandler>(Parsers[(int)BlockTag.Paragraph].Handlers);
+            return handlers[0].Handle;
         }
 
         #endregion OpenParagraph
@@ -438,7 +471,8 @@ namespace CommonMark.Parser
 
         private BlockOpenerDelegate GetOpenIndentedCode()
         {
-            return Parsers[(int)BlockTag.IndentedCode].Open;
+            var handlers = new List<IBlockDelimiterHandler>(Parsers[(int)BlockTag.IndentedCode].Handlers);
+            return handlers[0].Handle;
         }
 
         #endregion OpenIndentedCode

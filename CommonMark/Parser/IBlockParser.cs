@@ -15,10 +15,9 @@ namespace CommonMark.Parser
         BlockTag Tag { get; }
 
         /// <summary>
-        /// Gets the opening characters that are handled by this parser.
+        /// Gets the block element delimiter handlers.
         /// </summary>
-        /// <value>Array containing the characters that can open a handled element.</value>
-        char[] Characters { get; }
+        IEnumerable<IBlockDelimiterHandler> Handlers { get; }
 
         /// <summary>
         /// Gets the value indicating whether a handled element is a list.
@@ -63,13 +62,6 @@ namespace CommonMark.Parser
         /// <param name="info">Parser state.</param>
         /// <returns><c>true</c> if successful.</returns>
         bool Initialize(ref BlockParserInfo info);
-
-        /// <summary>
-        /// Opens a handled element.
-        /// </summary>
-        /// <param name="info">Parser state.</param>
-        /// <returns><c>true</c> if successful.</returns>
-        bool Open(ref BlockParserInfo info);
 
         /// <summary>
         /// Closes a handled element.

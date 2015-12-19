@@ -6,7 +6,7 @@ namespace CommonMark.Parser.Blocks
     /// <summary>
     /// <see cref="BlockTag.Paragraph"/> element parser.
     /// </summary>
-    public class ParagraphParser : BlockParser
+    public sealed class ParagraphParser : BlockParser, IBlockDelimiterHandler
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="ParagraphParser"/> class.
@@ -16,6 +16,19 @@ namespace CommonMark.Parser.Blocks
             : base(settings, BlockTag.Paragraph)
         {
             IsAcceptsLines = true;
+        }
+
+        /// <summary>
+        /// Gets the block element delimiter handlers.
+        /// </summary>
+        public override IEnumerable<IBlockDelimiterHandler> Handlers
+        {
+            get { yield return this; }
+        }
+
+        char IBlockDelimiterHandler.Character
+        {
+            get;
         }
 
         /// <summary>
@@ -34,11 +47,11 @@ namespace CommonMark.Parser.Blocks
         }
 
         /// <summary>
-        /// Opens a handled element.
+        /// Handles a block delimiter.
         /// </summary>
         /// <param name="info">Parser state.</param>
         /// <returns><c>true</c> if successful.</returns>
-        public override bool Open(ref BlockParserInfo info)
+        public bool Handle(ref BlockParserInfo info)
         {
             Block cur = info.CurrentContainer;
             if (cur != info.LastMatchedContainer &&
@@ -68,7 +81,7 @@ namespace CommonMark.Parser.Blocks
             if (info.Container.Tag != BlockTag.Paragraph)
             {
                 // create paragraph container for line
-                info.Container = CreateChildBlock(info, Tag, info.FirstNonspace);
+                info.Container = CreateChildBlock(info, Tag, info.FirstNonspace, Settings);
             }
             
             AddLine(info.Container, info.LineInfo, info.Line, info.FirstNonspace);

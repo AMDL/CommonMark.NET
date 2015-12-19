@@ -5,7 +5,7 @@ namespace CommonMark.Parser.Blocks
     /// <summary>
     /// <see cref="BlockTag.Document"/> element parser.
     /// </summary>
-    public class DocumentParser : BlockParser
+    public sealed class DocumentParser : BlockParser
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="DocumentParser"/> class.

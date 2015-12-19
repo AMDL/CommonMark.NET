@@ -62,12 +62,11 @@
     <Compile Include="Formatters\Blocks\ListItemFormatter.cs" />
     <Compile Include="Formatters\Blocks\OrderedListFormatter.cs" />
     <Compile Include="Formatters\Inlines\MathFormatter.cs" />
+    <Compile Include="Parser\BlockDelimiterHandler.cs" />
     <Compile Include="Parser\Blocks\BulletListItemParser.cs" />
-    <Compile Include="Parser\Blocks\EuropeanNumeralListItemParser.cs" />
-    <Compile Include="Parser\Blocks\ListItemDelimiterParameters.cs" />
-    <Compile Include="Parser\Blocks\NonRuleBulletListItemParser.cs" />
     <Compile Include="Parser\Blocks\OrderedListItemParser.cs" />
-    <Compile Include="Parser\Blocks\RuleBulletListItemParser.cs" />
+    <Compile Include="Parser\DelegateBlockDelimiterHandler.cs" />
+    <Compile Include="Parser\IBlockDelimiterHandler.cs" />
     <Compile Include="Parser\Inlines\Delimiters\MathDollarHandler.cs" />
     <Compile Include="Formatters\Blocks\CodeBlockFormatter.cs" />
     <Compile Include="Formatters\Blocks\FencedCodeFormatter.cs" />

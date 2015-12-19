@@ -3,7 +3,7 @@
 namespace CommonMark.Parser.Blocks
 {
     /// <summary>
-    /// <see cref="BlockTag.List"/> element parser.
+    /// List element parser.
     /// </summary>
     public class ListParser : BlockParser
     {
@@ -109,6 +109,36 @@ namespace CommonMark.Parser.Blocks
                 if (block == null)
                     return false;
             }
+        }
+    }
+
+    /// <summary>
+    /// <see cref="BlockTag.BulletList"/> element parser.
+    /// </summary>
+    public sealed class BulletListParser : ListParser
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BulletListParser"/> class.
+        /// </summary>
+        /// <param name="settings">Common settings.</param>
+        public BulletListParser(CommonMarkSettings settings)
+            : base(settings, BlockTag.BulletList, BlockTag.ListItem)
+        {
+        }
+    }
+
+    /// <summary>
+    /// <see cref="BlockTag.OrderedList"/> element parser.
+    /// </summary>
+    public sealed class OrderedListParser : ListParser
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="OrderedListParser"/> class.
+        /// </summary>
+        /// <param name="settings">Common settings.</param>
+        public OrderedListParser(CommonMarkSettings settings)
+            : base(settings, BlockTag.OrderedList, BlockTag.ListItem)
+        {
         }
     }
 }

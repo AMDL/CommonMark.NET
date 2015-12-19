@@ -1,38 +1,132 @@
 ﻿using CommonMark.Syntax;
+using System.Collections.Generic;
 
 namespace CommonMark.Parser.Blocks
 {
     /// <summary>
-    /// Bullet list parameters.
+    /// Bullet list item delimiter parameters.
     /// </summary>
-    public sealed class BulletListParameters : ListParameters
+    public sealed class BulletListItemDelimiterParameters : ListItemDelimiterParameters
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="BulletListParameters"/> class.
+        /// Initializes a new instance of the <see cref="BulletListItemDelimiterParameters"/> class.
+        /// </summary>
+        /// <param name="character">Delimiter character.</param>
+        /// <param name="isHorizontalRuleCharacter"><c>true</c> if the delimiter character doubles as a horizontal rule character.</param>
+        /// <param name="minSpaces">Minimum space count.</param>
+        public BulletListItemDelimiterParameters(char character, bool isHorizontalRuleCharacter, int minSpaces = 1)
+            : base(character, minSpaces)
+        {
+            this.IsHorizontalRuleCharacter = isHorizontalRuleCharacter;
+        }
+
+        /// <summary>
+        /// Gets or sets the value indicating whether the delimiter character doubles as a horizontal rule character.
+        /// </summary>
+        public bool IsHorizontalRuleCharacter { get; set; }
+    }
+
+    /// <summary>
+    /// Bullet list item parameters.
+    /// </summary>
+    public sealed class BulletListItemParameters
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BulletListItemParameters"/> class.
         /// </summary>
         /// <param name="delimiters">Delimiter parameters.</param>
-        public BulletListParameters(ListItemDelimiterParameters[] delimiters)
-            : base(delimiters)
+        public BulletListItemParameters(BulletListItemDelimiterParameters[] delimiters)
         {
+            this.Delimiters = delimiters;
+        }
+
+        /// <summary>
+        /// Gets or sets the delimiter parameters.
+        /// </summary>
+        public BulletListItemDelimiterParameters[] Delimiters { get; set; }
+    }
+
+    /// <summary>
+    /// Bullet list item element parser.
+    /// </summary>
+    public sealed class BulletListItemParser : ListItemParser<BulletListItemParameters>
+    {
+        /// <summary>
+        /// The default parameters instance.
+        /// </summary>
+        public static readonly BulletListItemParameters DefaultParameters = new BulletListItemParameters(new[]
+            {
+                new BulletListItemDelimiterParameters('*', isHorizontalRuleCharacter: true),
+                new BulletListItemDelimiterParameters('-', isHorizontalRuleCharacter: true),
+                new BulletListItemDelimiterParameters('+', isHorizontalRuleCharacter: false),
+                new BulletListItemDelimiterParameters('•', isHorizontalRuleCharacter: false),
+            });
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BulletListItemParser"/> class.
+        /// </summary>
+        /// <param name="settings">Common settings.</param>
+        /// <param name="parentTag">List element tag.</param>
+        /// <param name="parameters">Bullet list parameters.</param>
+        public BulletListItemParser(CommonMarkSettings settings, BlockTag parentTag = BlockTag.BulletList, BulletListItemParameters parameters = null)
+#pragma warning disable 0618
+            : base(settings, BlockTag.ListItem, parentTag, ListType.Bullet, parameters ?? DefaultParameters)
+#pragma warning restore 0618
+        {
+        }
+
+        /// <summary>
+        /// Gets the block element delimiter handlers.
+        /// </summary>
+        public override IEnumerable<IBlockDelimiterHandler> Handlers
+        {
+            get
+            {
+                foreach (var delimiter in Parameters.Delimiters)
+                {
+                    yield return new BulletListItemHandler(Settings, ParentTag, delimiter);
+                }
+            }
         }
     }
 
     /// <summary>
     /// Bullet list item element parser.
     /// </summary>
-    public abstract class BulletListItemParser : ListItemParser<BulletListData, BulletListParameters>
+    public sealed class BulletListItemHandler : ListItemHandler<BulletListData>
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="BulletListItemParser"/> class.
+        /// Initializes a new instance of the <see cref="BulletListItemHandler"/> class.
         /// </summary>
         /// <param name="settings">Common settings.</param>
         /// <param name="parentTag">Parent element tag.</param>
-        /// <param name="parameters">Bullet list parameters.</param>
-        public BulletListItemParser(CommonMarkSettings settings, BlockTag parentTag, BulletListParameters parameters)
+        /// <param name="delimiter">Delimiter parameters.</param>
+        public BulletListItemHandler(CommonMarkSettings settings, BlockTag parentTag, BulletListItemDelimiterParameters delimiter)
 #pragma warning disable 0618
-            : base(settings, BlockTag.ListItem, parentTag, ListType.Bullet, GetCharacters(parameters), parameters)
+            : base(settings, BlockTag.ListItem, parentTag, ListType.Bullet, delimiter.Character, new[] { delimiter })
 #pragma warning restore 0618
         {
+            Delimiter = delimiter;
+        }
+
+        /// <summary>
+        /// Handles a list item opener.
+        /// </summary>
+        /// <param name="info">Parser state.</param>
+        /// <returns><c>true</c> if successful.</returns>
+        public override bool Handle(ref BlockParserInfo info)
+        {
+            return DoHandle(info, CanOpen, ParseMarker, IsListsMatch, SetListData);
+        }
+
+        /// <summary>
+        /// Determines whether a list item can be opened.
+        /// </summary>
+        /// <param name="info">Parser state.</param>
+        /// <returns><c>true</c> if the current line may contain a handled list item element.</returns>
+        protected override bool CanOpen(BlockParserInfo info)
+        {
+            return base.CanOpen(info) && !(Delimiter.IsHorizontalRuleCharacter && ScanHorizontalRule(info, info.CurrentCharacter));
         }
 
         /// <summary>
@@ -94,13 +188,9 @@ namespace CommonMark.Parser.Blocks
             };
         }
 
-        private static char[] GetCharacters(BulletListParameters parameters)
+        private BulletListItemDelimiterParameters Delimiter
         {
-            var length = parameters.Delimiters.Length;
-            var chars = new char[length];
-            for (var i = 0; i < length; i++)
-                chars[i] = parameters.Delimiters[i].Character;
-            return chars;
+            get;
         }
     }
 }
