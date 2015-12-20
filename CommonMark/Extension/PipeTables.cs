@@ -58,16 +58,43 @@ namespace CommonMark.Extension
         private readonly PipeTablesSettings settings;
 
         public TableRowParser(CommonMarkSettings settings, PipeTablesSettings pipeTablesSettings)
-            : base(settings, BlockTag.TableRow, GetCharacters(pipeTablesSettings))
+            : base(settings, BlockTag.TableRow)
         {
             this.settings = pipeTablesSettings;
         }
 
-        public override bool Open(ref BlockParserInfo info)
+        public override IEnumerable<IBlockDelimiterHandler> Handlers
+        {
+            get
+            {
+                var c = new List<char> { '-', '|' };
+                if (0 != (settings.Features & PipeTablesFeatures.HeaderEquals))
+                    c.Add('=');
+                if (0 != (settings.Features & PipeTablesFeatures.HeaderColon))
+                    c.Add(':');
+                var handlers = new IBlockDelimiterHandler[c.Count];
+                for (int i = 0; i < c.Count; i++)
+                    handlers[i] = new TableRowHandler(Settings, settings, c[i]);
+                return handlers;
+            }
+        }
+    }
+
+    internal sealed class TableRowHandler : BlockDelimiterHandler
+    {
+        private readonly PipeTablesSettings settings;
+
+        public TableRowHandler(CommonMarkSettings settings, PipeTablesSettings pipeTablesSettings, char character)
+            : base(settings, character)
+        {
+            this.settings = pipeTablesSettings;
+        }
+
+        public override bool Handle(ref BlockParserInfo info)
         {
             TableData data;
             if (!info.IsIndented && info.Container.Tag == BlockTag.Paragraph && null != (data = ScanHeaderLine(info.Line, info.FirstNonspace, info.Line.Length))
-                && ContainsSingleLine(info.Container.StringContent))
+                && BlockParser.ContainsSingleLine(info.Container.StringContent))
             {
                 info.Container.Tag = BlockTag.Table;
                 info.Container.TableData = data;
@@ -406,16 +433,6 @@ namespace CommonMark.Extension
         private bool IsHeaderAlignmentMarker(char c)
         {
             return (c == ':' && IsEnabled(PipeTablesFeatures.HeaderColon));
-        }
-
-        private static char[] GetCharacters(PipeTablesSettings pipeTableSettings)
-        {
-            var c = new List<char> { '-', '|' };
-            if (0 != (pipeTableSettings.Features & PipeTablesFeatures.HeaderEquals))
-                c.Add('=');
-            if (0 != (pipeTableSettings.Features & PipeTablesFeatures.HeaderColon))
-                c.Add(':');
-            return c.ToArray();
         }
 
         private bool IsEnabled(PipeTablesFeatures feature)
