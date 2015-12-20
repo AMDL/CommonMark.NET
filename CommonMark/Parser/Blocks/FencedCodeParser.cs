@@ -87,7 +87,7 @@ namespace CommonMark.Parser.Blocks
             {
                 foreach (var delimiter in Parameters.Delimiters)
                 {
-                    yield return new FencedCodeHandler(Settings, delimiter);
+                    yield return new FencedCodeHandler(Settings, Tag, delimiter);
                 }
             }
         }
@@ -224,9 +224,10 @@ namespace CommonMark.Parser.Blocks
         /// Initializes a new instance of the <see cref="BlockDelimiterHandler"/> class.
         /// </summary>
         /// <param name="settings">Common settings.</param>
-        /// <param name="delimiter">Fenced code delimiter parameters.</param>
-        public FencedCodeHandler(CommonMarkSettings settings, FencedCodeDelimiterParameters delimiter)
-            : base(settings, delimiter.Opener)
+        /// <param name="tag">Block element tag.</param>
+        /// <param name="parameters">Fenced code delimiter parameters.</param>
+        public FencedCodeHandler(CommonMarkSettings settings, BlockTag tag, FencedCodeDelimiterParameters parameters)
+            : base(settings, tag, parameters.Opener)
         {
         }
 

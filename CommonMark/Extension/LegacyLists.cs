@@ -29,8 +29,15 @@ namespace CommonMark.Extension
         {
 #pragma warning disable 0618
             yield return new ListParser(settings, BlockTag.List, BlockTag.ListItem);
-            yield return new BulletListItemParser(settings, BlockTag.List, BulletListItemParser.DefaultParameters);
-            yield return new OrderedListItemParser(settings, BlockTag.List, OrderedListItemParser.DefaultParameters);
+
+            // These will ruin the default parameters, but that's alright since we're replacing the parser anyway.
+            var bulletListItemParameters = ListItemParser.DefaultBulletListItemParameters;
+            bulletListItemParameters.ParentTag = BlockTag.List;
+            var orderedListItemParameters = ListItemParser.DefaultOrderedListItemParameters;
+            orderedListItemParameters.ParentTag = BlockTag.List;
+            var listParameters = new ListParameters(bulletListItemParameters, orderedListItemParameters);
+
+            yield return new ListItemParser(settings, BlockTag.ListItem, listParameters);
 #pragma warning restore 0618
         }
 

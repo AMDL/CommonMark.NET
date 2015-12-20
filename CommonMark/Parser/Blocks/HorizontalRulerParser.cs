@@ -4,23 +4,41 @@ using System.Collections.Generic;
 namespace CommonMark.Parser.Blocks
 {
     /// <summary>
+    /// Horizontal rule character parameters.
+    /// </summary>
+    public sealed class HorizontalRulerDelimiterParameters
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="HorizontalRulerDelimiterParameters"/> class.
+        /// </summary>
+        /// <param name="character">Horizontal rule character.</param>
+        /// <param name="minCount">Minimum character count.</param>
+        public HorizontalRulerDelimiterParameters(char character, int minCount = 3)
+        {
+            this.Character = character;
+            this.MinCount = minCount;
+        }
+
+        /// <summary>
+        /// Gets or sets the horizontal rule character.
+        /// </summary>
+        public char Character { get; set; }
+
+        /// <summary>
+        /// Gets or sets the minimum character count.
+        /// </summary>
+        public int MinCount { get; set; }
+    }
+
+    /// <summary>
     /// Horizontal rule parameters.
     /// </summary>
     public sealed class HorizontalRulerParameters
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="HorizontalRulerParameters"/> class.
+        /// Gets or sets the horizontal rule character parameters.
         /// </summary>
-        /// <param name="characters">Horizontal rule characters.</param>
-        public HorizontalRulerParameters(params char[] characters)
-        {
-            this.Characters = characters;
-        }
-
-        /// <summary>
-        /// Gets or sets the horizontal rule characters.
-        /// </summary>
-        public char[] Characters { get; set; }
+        public HorizontalRulerDelimiterParameters[] Delimiters { get; set; }
     }
 
     /// <summary>
@@ -31,7 +49,15 @@ namespace CommonMark.Parser.Blocks
         /// <summary>
         /// The default parameters instance.
         /// </summary>
-        public static readonly HorizontalRulerParameters DefaultParameters = new HorizontalRulerParameters('*', '-', '_');
+        public static readonly HorizontalRulerParameters DefaultParameters = new HorizontalRulerParameters
+        {
+            Delimiters = new[]
+            { 
+                new HorizontalRulerDelimiterParameters('*'),
+                new HorizontalRulerDelimiterParameters('-'),
+                new HorizontalRulerDelimiterParameters('_'),
+            },
+        };
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HorizontalRulerParser"/> class.
@@ -51,9 +77,9 @@ namespace CommonMark.Parser.Blocks
         {
             get
             {
-                foreach (var character in Parameters.Characters)
+                foreach (var delimiter in Parameters.Delimiters)
                 {
-                    yield return new HorizontalRulerHandler(Settings, character);
+                    yield return new HorizontalRulerHandler(Settings, Tag, delimiter);
                 }
             }
         }
@@ -83,10 +109,12 @@ namespace CommonMark.Parser.Blocks
         /// Initializes a new instance of the <see cref="HorizontalRulerHandler"/> class.
         /// </summary>
         /// <param name="settings">Common settings.</param>
-        /// <param name="character">Handled character.</param>
-        public HorizontalRulerHandler(CommonMarkSettings settings, char character)
-            : base(settings, character)
+        /// <param name="tag">Block element tag.</param>
+        /// <param name="parameters">Horizontal rule character parameters.</param>
+        public HorizontalRulerHandler(CommonMarkSettings settings, BlockTag tag, HorizontalRulerDelimiterParameters parameters)
+            : base(settings, tag, parameters.Character)
         {
+            MinCount = parameters.MinCount;
         }
 
         /// <summary>
@@ -96,16 +124,21 @@ namespace CommonMark.Parser.Blocks
         /// <returns><c>true</c> if successful.</returns>
         public override bool Handle(ref BlockParserInfo info)
         {
-            if (!info.IsIndented && (info.Container.Tag != BlockTag.Paragraph || info.IsAllMatched) && ScanHorizontalRule(info, Character))
+            if (!info.IsIndented && (info.Container.Tag != BlockTag.Paragraph || info.IsAllMatched) && ScanHorizontalRule(info, Character, MinCount))
             {
                 // it's only now that we know the line is not part of a setext header:
-                info.Container = BlockParser.CreateChildBlock(info, BlockTag.HorizontalRuler, info.FirstNonspace, Settings);
+                info.Container = BlockParser.CreateChildBlock(info, Tag, info.FirstNonspace, Settings);
                 BlockMethods.Finalize(info.Container, info.LineInfo, Settings);
                 info.Container = info.Container.Parent;
                 info.AdvanceOffset(info.Line.Length - 1 - info.Offset, false);
                 return true;
             }
             return false;
+        }
+
+        private int MinCount
+        {
+            get;
         }
     }
 }

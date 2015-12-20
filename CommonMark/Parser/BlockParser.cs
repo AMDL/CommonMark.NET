@@ -306,8 +306,7 @@ namespace CommonMark.Parser
             yield return new Blocks.BlockQuoteParser(settings);
             yield return new Blocks.BulletListParser(settings);
             yield return new Blocks.OrderedListParser(settings);
-            yield return new Blocks.BulletListItemParser(settings);
-            yield return new Blocks.OrderedListItemParser(settings);
+            yield return new Blocks.ListItemParser(settings);
             yield return new Blocks.IndentedCodeParser(settings);
             yield return new Blocks.AtxHeaderParser(settings);
             yield return new Blocks.SETextHeaderParser(settings);

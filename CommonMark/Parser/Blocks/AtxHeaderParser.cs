@@ -53,7 +53,9 @@ namespace CommonMark.Parser.Blocks
         {
             IsAcceptsLines = true;
 
-            Parameters = parameters ?? DefaultParameters;
+            parameters = parameters ?? DefaultParameters;
+            Opener = parameters.Opener;
+            Closer = parameters.Closer;
         }
 
         /// <summary>
@@ -217,15 +219,10 @@ namespace CommonMark.Parser.Blocks
 
         private char Opener
         {
-            get { return Parameters.Opener; }
+            get;
         }
 
         private char Closer
-        {
-            get { return Parameters.Closer; }
-        }
-
-        private AtxHeaderParameters Parameters
         {
             get;
         }

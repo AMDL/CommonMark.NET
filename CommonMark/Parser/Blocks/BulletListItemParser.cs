@@ -1,5 +1,4 @@
 ﻿using CommonMark.Syntax;
-using System.Collections.Generic;
 
 namespace CommonMark.Parser.Blocks
 {
@@ -29,64 +28,19 @@ namespace CommonMark.Parser.Blocks
     /// <summary>
     /// Bullet list item parameters.
     /// </summary>
-    public sealed class BulletListItemParameters
+    public sealed class BulletListItemParameters : ListItemParameters<BulletListItemDelimiterParameters>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="BulletListItemParameters"/> class.
         /// </summary>
-        /// <param name="delimiters">Delimiter parameters.</param>
-        public BulletListItemParameters(BulletListItemDelimiterParameters[] delimiters)
-        {
-            this.Delimiters = delimiters;
-        }
-
-        /// <summary>
-        /// Gets or sets the delimiter parameters.
-        /// </summary>
-        public BulletListItemDelimiterParameters[] Delimiters { get; set; }
-    }
-
-    /// <summary>
-    /// Bullet list item element parser.
-    /// </summary>
-    public sealed class BulletListItemParser : ListItemParser<BulletListItemParameters>
-    {
-        /// <summary>
-        /// The default parameters instance.
-        /// </summary>
-        public static readonly BulletListItemParameters DefaultParameters = new BulletListItemParameters(new[]
-            {
-                new BulletListItemDelimiterParameters('*', isHorizontalRuleCharacter: true),
-                new BulletListItemDelimiterParameters('-', isHorizontalRuleCharacter: true),
-                new BulletListItemDelimiterParameters('+', isHorizontalRuleCharacter: false),
-                new BulletListItemDelimiterParameters('•', isHorizontalRuleCharacter: false),
-            });
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="BulletListItemParser"/> class.
-        /// </summary>
-        /// <param name="settings">Common settings.</param>
         /// <param name="parentTag">List element tag.</param>
-        /// <param name="parameters">Bullet list parameters.</param>
-        public BulletListItemParser(CommonMarkSettings settings, BlockTag parentTag = BlockTag.BulletList, BulletListItemParameters parameters = null)
+        /// <param name="listType">List type (obsolete).</param>
+        /// <param name="delimiters">Delimiter parameters.</param>
 #pragma warning disable 0618
-            : base(settings, BlockTag.ListItem, parentTag, ListType.Bullet, parameters ?? DefaultParameters)
+        public BulletListItemParameters(BlockTag parentTag, ListType listType, params BulletListItemDelimiterParameters[] delimiters)
 #pragma warning restore 0618
+            : base(parentTag, listType, delimiters)
         {
-        }
-
-        /// <summary>
-        /// Gets the block element delimiter handlers.
-        /// </summary>
-        public override IEnumerable<IBlockDelimiterHandler> Handlers
-        {
-            get
-            {
-                foreach (var delimiter in Parameters.Delimiters)
-                {
-                    yield return new BulletListItemHandler(Settings, ParentTag, delimiter);
-                }
-            }
         }
     }
 
@@ -99,14 +53,15 @@ namespace CommonMark.Parser.Blocks
         /// Initializes a new instance of the <see cref="BulletListItemHandler"/> class.
         /// </summary>
         /// <param name="settings">Common settings.</param>
-        /// <param name="parentTag">Parent element tag.</param>
+        /// <param name="tag">List item element tag.</param>
+        /// <param name="parameters">List item parameters.</param>
         /// <param name="delimiter">Delimiter parameters.</param>
-        public BulletListItemHandler(CommonMarkSettings settings, BlockTag parentTag, BulletListItemDelimiterParameters delimiter)
+        public BulletListItemHandler(CommonMarkSettings settings, BlockTag tag, BulletListItemParameters parameters, BulletListItemDelimiterParameters delimiter)
 #pragma warning disable 0618
-            : base(settings, BlockTag.ListItem, parentTag, ListType.Bullet, delimiter.Character, new[] { delimiter })
+            : base(settings, tag, delimiter.Character, parameters, delimiter)
 #pragma warning restore 0618
         {
-            Delimiter = delimiter;
+            IsHorizontalRuleCharacter = delimiter.IsHorizontalRuleCharacter;
         }
 
         /// <summary>
@@ -126,28 +81,28 @@ namespace CommonMark.Parser.Blocks
         /// <returns><c>true</c> if the current line may contain a handled list item element.</returns>
         protected override bool CanOpen(BlockParserInfo info)
         {
-            return base.CanOpen(info) && !(Delimiter.IsHorizontalRuleCharacter && ScanHorizontalRule(info, info.CurrentCharacter));
+            return base.CanOpen(info) && !(IsHorizontalRuleCharacter && ScanHorizontalRule(info, info.CurrentCharacter));
         }
 
         /// <summary>
-        /// Determines whether a list item belongs to a bullet list.
+        /// Determines whether a list item belongs to a matching bullet list.
         /// </summary>
         /// <param name="info">Parser state.</param>
-        /// <param name="bulletListData">Bullet list data.</param>
-        /// <returns><c>true</c> if the container may continue a list having <paramref name="bulletListData"/>.</returns>
-        protected override bool IsListsMatch(BlockParserInfo info, BulletListData bulletListData)
+        /// <param name="listData">Bullet list data.</param>
+        /// <returns><c>true</c> if the container may continue a list having <paramref name="listData"/>.</returns>
+        protected override bool IsListsMatch(BlockParserInfo info, BulletListData listData)
         {
-            return bulletListData.Equals(info.Container.BulletListData);
+            return listData.Equals(info.Container.BulletListData);
         }
 
         /// <summary>
         /// Updates a container with bullet list data.
         /// </summary>
         /// <param name="info">Parser state.</param>
-        /// <param name="bulletListData">Bullet list data.</param>
-        protected override void SetListData(BlockParserInfo info, BulletListData bulletListData)
+        /// <param name="listData">Bullet list data.</param>
+        protected override void SetListData(BlockParserInfo info, BulletListData listData)
         {
-            info.Container.BulletListData = bulletListData;
+            info.Container.BulletListData = listData;
         }
 
         /// <summary>
@@ -155,13 +110,13 @@ namespace CommonMark.Parser.Blocks
         /// </summary>
         /// <param name="info">Parser state.</param>
         /// <param name="data">Common list data.</param>
-        /// <param name="bulletListData">Bullet list data.</param>
+        /// <param name="listData">Bullet list data.</param>
         /// <returns>Length of the marker, or 0 for no match.</returns>
         /// <remarks>Original: int parse_list_marker(string ln, int pos, ref ListData dataptr)</remarks>
-        protected override int ParseMarker(BlockParserInfo info, out ListData data, out BulletListData bulletListData)
+        protected override int ParseMarker(BlockParserInfo info, out ListData data, out BulletListData listData)
         {
             data = null;
-            bulletListData = null;
+            listData = null;
 
             var curChar = info.CurrentCharacter;
             var line = info.Line;
@@ -172,15 +127,26 @@ namespace CommonMark.Parser.Blocks
                 return 0;
 
             return CompleteScan(info, offset, null, curChar, curChar, '\0',
-                GetIntStart, GetBulletListData, out data, out bulletListData);
+                GetStart, GetListData, out data, out listData);
         }
 
-        private static int GetIntStart(string start)
+        /// <summary>
+        /// Calculates an integer start value.
+        /// </summary>
+        /// <param name="startStr">Start string.</param>
+        /// <returns>Integer start value, or 1 if unsuccessful.</returns>
+        protected override int GetStart(string startStr)
         {
             return 1;
         }
 
-        private static BulletListData GetBulletListData(char curChar, string start, int intStart)
+        /// <summary>
+        /// Creates and initializes bullet list data.
+        /// </summary>
+        /// <param name="curChar">Current character.</param>
+        /// <param name="start">Start value.</param>
+        /// <returns></returns>
+        protected override BulletListData GetListData(char curChar, int start)
         {
             return new BulletListData
             {
@@ -188,7 +154,7 @@ namespace CommonMark.Parser.Blocks
             };
         }
 
-        private BulletListItemDelimiterParameters Delimiter
+        private bool IsHorizontalRuleCharacter
         {
             get;
         }

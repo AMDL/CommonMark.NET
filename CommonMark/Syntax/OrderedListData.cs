@@ -6,9 +6,9 @@
     public sealed class OrderedListData
     {
         /// <summary>
-        /// Gets or sets the string for the first list item.
+        /// Gets or sets the ordinal value of the first list item.
         /// </summary>
-        public string Start { get; set; }
+        public int Start { get; set; }
 
         /// <summary>
         /// Gets or sets the character that follows the number.

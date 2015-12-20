@@ -1,5 +1,6 @@
 ﻿using CommonMark.Syntax;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace CommonMark.Formatters.Blocks
 {
@@ -31,10 +32,10 @@ namespace CommonMark.Formatters.Blocks
             var data = element.ListData;
             var orderedListData = element.OrderedListData;
             writer.WriteConstant("<ol");
-            if (orderedListData.Start != "1")
+            if (orderedListData.Start != 1)
             {
                 writer.WriteConstant(" start=\"");
-                writer.WriteConstant(orderedListData.Start);
+                writer.WriteConstant(orderedListData.Start.ToString(CultureInfo.InvariantCulture));
                 writer.Write('\"');
             }
             WritePosition(writer, element);

@@ -1,5 +1,4 @@
 ﻿using CommonMark.Syntax;
-using System.Collections.Generic;
 using System.Globalization;
 
 namespace CommonMark.Parser.Blocks
@@ -7,27 +6,26 @@ namespace CommonMark.Parser.Blocks
     /// <summary>
     /// Ordered list item parameters.
     /// </summary>
-    public sealed class OrderedListItemParameters
+    public sealed class OrderedListItemParameters : ListItemParameters<ListItemDelimiterParameters>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="OrderedListItemParameters"/> class.
         /// </summary>
-        /// <param name="delimiters">Delimiter parameters.</param>
+        /// <param name="parentTag">List element tag.</param>
+        /// <param name="listType">List type (obsolete).</param>
         /// <param name="markerFirst">First marker character.</param>
         /// <param name="markerLast">Last marker character.</param>
         /// <param name="maxMarkerLength">Maximum marker length.</param>
-        public OrderedListItemParameters(ListItemDelimiterParameters[] delimiters, char markerFirst, char markerLast, int maxMarkerLength)
+        /// <param name="delimiters">Delimiter parameters.</param>
+#pragma warning disable 0618
+        public OrderedListItemParameters(BlockTag parentTag, ListType listType, char markerFirst, char markerLast, int maxMarkerLength, params ListItemDelimiterParameters[] delimiters)
+#pragma warning restore 0618
+            : base(parentTag, listType, delimiters)
         {
-            this.Delimiters = delimiters;
             this.MarkerFirst = markerFirst;
             this.MarkerLast = markerLast;
             this.MaxMarkerLength = maxMarkerLength;
         }
-
-        /// <summary>
-        /// Gets or sets the delimiter parameters.
-        /// </summary>
-        public ListItemDelimiterParameters[] Delimiters { get; set; }
 
         /// <summary>
         /// Gets or sets the first character in the list marker character range.
@@ -46,51 +44,6 @@ namespace CommonMark.Parser.Blocks
     }
 
     /// <summary>
-    /// Ordered list item element parser.
-    /// </summary>
-    public sealed class OrderedListItemParser : ListItemParser<OrderedListItemParameters>
-    {
-        /// <summary>
-        /// The default parameters instance.
-        /// </summary>
-        public static readonly OrderedListItemParameters DefaultParameters = new OrderedListItemParameters(new[]
-            {
-                new ListItemDelimiterParameters('.'),
-                new ListItemDelimiterParameters(')'),
-            },
-            markerFirst: '0',
-            markerLast: '9',
-            maxMarkerLength: 9); // We limit to 9 digits to avoid overflow, This also seems to be the limit for 'start' in some browsers. 
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="OrderedListItemParser"/> class.
-        /// </summary>
-        /// <param name="settings">Common settings.</param>
-        /// <param name="parentTag">Parent element tag.</param>
-        /// <param name="parameters">List parameters.</param>
-        public OrderedListItemParser(CommonMarkSettings settings, BlockTag parentTag = BlockTag.OrderedList, OrderedListItemParameters parameters = null)
-#pragma warning disable 0618
-            : base(settings, BlockTag.ListItem, parentTag, ListType.Ordered, parameters ?? DefaultParameters)
-#pragma warning restore 0618
-        {
-        }
-
-        /// <summary>
-        /// Gets the block element delimiter handlers.
-        /// </summary>
-        public override IEnumerable<IBlockDelimiterHandler> Handlers
-        {
-            get
-            {
-                for (int i = 0; i <= Parameters.MarkerLast - Parameters.MarkerFirst; i++)
-                {
-                    yield return new OrderedListItemHandler(Settings, ParentTag, (char)(i + Parameters.MarkerFirst), Parameters);
-                }
-            }
-        }
-    }
-
-    /// <summary>
     /// Ordered list item element handler.
     /// </summary>
     public sealed class OrderedListItemHandler : ListItemHandler<OrderedListData>
@@ -99,15 +52,17 @@ namespace CommonMark.Parser.Blocks
         /// Initializes a new instance of the <see cref="OrderedListItemHandler"/> class.
         /// </summary>
         /// <param name="settings">Common settings.</param>
-        /// <param name="parentTag">Parent element tag.</param>
+        /// <param name="tag">List item element tag.</param>
         /// <param name="character">Handled character.</param>
         /// <param name="parameters">Ordered list parameters.</param>
-        public OrderedListItemHandler(CommonMarkSettings settings, BlockTag parentTag, char character, OrderedListItemParameters parameters)
+        public OrderedListItemHandler(CommonMarkSettings settings, BlockTag tag, char character, OrderedListItemParameters parameters)
 #pragma warning disable 0618
-            : base(settings, BlockTag.ListItem, parentTag, ListType.Ordered, character, parameters.Delimiters)
+            : base(settings, tag, character, parameters, parameters.Delimiters)
 #pragma warning restore 0618
         {
-            Parameters = parameters;
+            MarkerFirst = parameters.MarkerFirst;
+            MarkerLast = parameters.MarkerLast;
+            MaxMarkerLength = parameters.MaxMarkerLength;
         }
 
         /// <summary>
@@ -121,24 +76,24 @@ namespace CommonMark.Parser.Blocks
         }
 
         /// <summary>
-        /// Determines whether a list item belongs to an ordered list.
+        /// Determines whether a list item belongs to a matching ordered list.
         /// </summary>
         /// <param name="info">Parser state.</param>
-        /// <param name="orderedListData">Ordered list data.</param>
-        /// <returns><c>true</c> if the container may continue a list having <paramref name="orderedListData"/>.</returns>
-        protected override bool IsListsMatch(BlockParserInfo info, OrderedListData orderedListData)
+        /// <param name="listData">Ordered list data.</param>
+        /// <returns><c>true</c> if the container may continue a list having <paramref name="listData"/>.</returns>
+        protected override bool IsListsMatch(BlockParserInfo info, OrderedListData listData)
         {
-            return orderedListData.Equals(info.Container.OrderedListData);
+            return listData.Equals(info.Container.OrderedListData);
         }
 
         /// <summary>
         /// Updates a container with ordered list data.
         /// </summary>
         /// <param name="info">Parser state.</param>
-        /// <param name="orderedListData">Ordered list data.</param>
-        protected override void SetListData(BlockParserInfo info, OrderedListData orderedListData)
+        /// <param name="listData">Ordered list data.</param>
+        protected override void SetListData(BlockParserInfo info, OrderedListData listData)
         {
-            info.Container.OrderedListData = orderedListData;
+            info.Container.OrderedListData = listData;
         }
 
         /// <summary>
@@ -146,13 +101,13 @@ namespace CommonMark.Parser.Blocks
         /// </summary>
         /// <param name="info">Parser state.</param>
         /// <param name="data">Common list data.</param>
-        /// <param name="orderedListData">Ordered list data.</param>
+        /// <param name="listData">Ordered list data.</param>
         /// <returns>Length of the marker, or 0 for no match.</returns>
         /// <remarks>Original: int parse_list_marker(string ln, int pos, ref ListData dataptr)</remarks>
-        protected override int ParseMarker(BlockParserInfo info, out ListData data, out OrderedListData orderedListData)
+        protected override int ParseMarker(BlockParserInfo info, out ListData data, out OrderedListData listData)
         {
             data = null;
-            orderedListData = null;
+            listData = null;
 
             var curChar = info.CurrentCharacter;
             var line = info.Line;
@@ -170,21 +125,32 @@ namespace CommonMark.Parser.Blocks
             if (startLength > MaxMarkerLength)
                 return 0;
 
-            var start = line.Substring(info.FirstNonspace, startLength);
+            var startStr = line.Substring(info.FirstNonspace, startLength);
 
-            return CompleteScan(info, offset, start, curChar, '\0', curChar,
-                GetIntStart, GetOrderedListData, out data, out orderedListData);
+            return CompleteScan(info, offset, startStr, curChar, '\0', curChar,
+                GetStart, GetListData, out data, out listData);
         }
 
-        private static int GetIntStart(string start)
+        /// <summary>
+        /// Calculates an integer start value.
+        /// </summary>
+        /// <param name="startStr">Start string.</param>
+        /// <returns>Integer start value, or 1 if unsuccessful.</returns>
+        protected override int GetStart(string startStr)
         {
-            int intStart;
-            if (!int.TryParse(start, NumberStyles.None, CultureInfo.InvariantCulture, out intStart))
-                intStart = 1;
-            return intStart;
+            int start;
+            if (!int.TryParse(startStr, out start))
+                start = 1;
+            return start;
         }
 
-        private static OrderedListData GetOrderedListData(char curChar, string start, int intStart)
+        /// <summary>
+        /// Creates and initializes ordered list data.
+        /// </summary>
+        /// <param name="curChar">Current character.</param>
+        /// <param name="start">Start value.</param>
+        /// <returns></returns>
+        protected override OrderedListData GetListData(char curChar, int start)
         {
             var orderedListData = new OrderedListData
             {
@@ -192,30 +158,22 @@ namespace CommonMark.Parser.Blocks
                 DelimiterCharacter = curChar,
             };
 
-            if (intStart != 1)
-                orderedListData.Start = intStart.ToString(CultureInfo.InvariantCulture);
-
             return orderedListData;
-        }
-
-        private OrderedListItemParameters Parameters
-        {
-            get;
         }
 
         private char MarkerFirst
         {
-            get { return Parameters.MarkerFirst; }
+            get;
         }
 
         private char MarkerLast
         {
-            get { return Parameters.MarkerLast; }
+            get;
         }
 
         private int MaxMarkerLength
         {
-            get { return Parameters.MaxMarkerLength; }
+            get;
         }
     }
 }
