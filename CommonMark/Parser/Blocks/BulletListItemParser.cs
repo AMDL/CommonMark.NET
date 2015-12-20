@@ -12,17 +12,24 @@ namespace CommonMark.Parser.Blocks
         /// </summary>
         /// <param name="character">Delimiter character.</param>
         /// <param name="isHorizontalRuleCharacter"><c>true</c> if the delimiter character doubles as a horizontal rule character.</param>
-        /// <param name="minSpaces">Minimum space count.</param>
-        public BulletListItemDelimiterParameters(char character, bool isHorizontalRuleCharacter, int minSpaces = 1)
-            : base(character, minSpaces)
+        /// <param name="listStyle">List style.</param>
+        /// <param name="minSpaceCount">Minimum space count.</param>
+        public BulletListItemDelimiterParameters(char character, bool isHorizontalRuleCharacter = false, string listStyle = null, int minSpaceCount = 1)
+            : base(character, minSpaceCount)
         {
             this.IsHorizontalRuleCharacter = isHorizontalRuleCharacter;
+            this.ListStyle = listStyle;
         }
 
         /// <summary>
         /// Gets or sets the value indicating whether the delimiter character doubles as a horizontal rule character.
         /// </summary>
         public bool IsHorizontalRuleCharacter { get; set; }
+
+        /// <summary>
+        /// Gets or sets the list style.
+        /// </summary>
+        public string ListStyle { get; set; }
     }
 
     /// <summary>
@@ -62,6 +69,7 @@ namespace CommonMark.Parser.Blocks
 #pragma warning restore 0618
         {
             IsHorizontalRuleCharacter = delimiter.IsHorizontalRuleCharacter;
+            ListStyle = delimiter.ListStyle;
         }
 
         /// <summary>
@@ -151,10 +159,16 @@ namespace CommonMark.Parser.Blocks
             return new BulletListData
             {
                 BulletCharacter = curChar,
+                ListStyle = ListStyle,
             };
         }
 
         private bool IsHorizontalRuleCharacter
+        {
+            get;
+        }
+
+        private string ListStyle
         {
             get;
         }

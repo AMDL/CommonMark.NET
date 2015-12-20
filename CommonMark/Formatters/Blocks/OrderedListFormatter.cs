@@ -7,7 +7,7 @@ namespace CommonMark.Formatters.Blocks
     /// <summary>
     /// <see cref="BlockTag.OrderedList"/> element formatter.
     /// </summary>
-    public class OrderedListFormatter : ListFormatter
+    public class OrderedListFormatter : ListFormatter<OrderedListData>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="OrderedListFormatter"/> class.
@@ -28,19 +28,21 @@ namespace CommonMark.Formatters.Blocks
         /// <returns><c>true</c> if the parent formatter should visit the child elements.</returns>
         public override bool WriteOpening(IHtmlTextWriter writer, Block element)
         {
-            writer.EnsureLine();
-            var data = element.ListData;
-            var orderedListData = element.OrderedListData;
-            writer.WriteConstant("<ol");
-            if (orderedListData.Start != 1)
+            var listData = element.OrderedListData;
+            StartWriteOpening(writer, element);
+            if (listData.Start != 1)
             {
                 writer.WriteConstant(" start=\"");
-                writer.WriteConstant(orderedListData.Start.ToString(CultureInfo.InvariantCulture));
+                writer.WriteConstant(listData.Start.ToString(CultureInfo.InvariantCulture));
                 writer.Write('\"');
             }
-            WritePosition(writer, element);
-            writer.WriteLine('>');
-            return true;
+            if (listData.MarkerType != 0)
+            {
+                writer.WriteConstant(" type=\"");
+                writer.Write((char)listData.MarkerType);
+                writer.Write('\"');
+            }
+            return CompleteWriteOpening(writer, element, listData);
         }
 
         /// <summary>

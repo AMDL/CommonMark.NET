@@ -171,6 +171,7 @@
     <Compile Include="Syntax\ListDelimeter.cs" />
     <Compile Include="Syntax\ListType.cs" />
     <Compile Include="Syntax\OrderedListData.cs" />
+    <Compile Include="Syntax\OrderedListMarkerType.cs" />
     <Compile Include="Syntax\Reference.cs" />
     <Compile Include="Parser\Scanner.cs" />
     <Compile Include="Parser\Subject.cs" />

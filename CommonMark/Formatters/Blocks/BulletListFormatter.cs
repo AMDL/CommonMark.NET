@@ -6,7 +6,7 @@ namespace CommonMark.Formatters.Blocks
     /// <summary>
     /// <see cref="BlockTag.BulletList"/> element formatter.
     /// </summary>
-    public class BulletListFormatter : ListFormatter
+    public class BulletListFormatter : ListFormatter<BulletListData>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="BulletListFormatter"/> class.
@@ -17,6 +17,18 @@ namespace CommonMark.Formatters.Blocks
         public BulletListFormatter(FormatterParameters parameters, BlockTag tag = BlockTag.BulletList, string printerTag = "bullet_list")
             : base(parameters, tag, "ul", printerTag)
         {
+        }
+
+        /// <summary>
+        /// Writes the opening of a block element.
+        /// </summary>
+        /// <param name="writer">HTML writer.</param>
+        /// <param name="element">Block element.</param>
+        /// <returns><c>true</c> if the parent formatter should visit the child elements.</returns>
+        public override bool WriteOpening(IHtmlTextWriter writer, Block element)
+        {
+            StartWriteOpening(writer, element);
+            return CompleteWriteOpening(writer, element, element.BulletListData);
         }
 
         /// <summary>

@@ -13,11 +13,11 @@ namespace CommonMark.Parser.Blocks
         /// Initializes a new instance of the <see cref="ListItemDelimiterParameters"/> class.
         /// </summary>
         /// <param name="character">Delimiter character.</param>
-        /// <param name="minSpaces">Minimum space count.</param>
-        public ListItemDelimiterParameters(char character, int minSpaces = 1)
+        /// <param name="minSpaceCount">Minimum space count.</param>
+        public ListItemDelimiterParameters(char character, int minSpaceCount = 1)
         {
             Character = character;
-            MinSpaces = minSpaces;
+            MinSpaceCount = minSpaceCount;
         }
 
         /// <summary>
@@ -28,7 +28,7 @@ namespace CommonMark.Parser.Blocks
         /// <summary>
         /// Gets or sets the minimum number of space characters between the delimiter and the item content.
         /// </summary>
-        public int MinSpaces { get; set; }
+        public int MinSpaceCount { get; set; }
     }
 
     /// <summary>
@@ -121,8 +121,8 @@ namespace CommonMark.Parser.Blocks
 #pragma warning restore 0618
             new BulletListItemDelimiterParameters('*', isHorizontalRuleCharacter: true),
             new BulletListItemDelimiterParameters('-', isHorizontalRuleCharacter: true),
-            new BulletListItemDelimiterParameters('+', isHorizontalRuleCharacter: false),
-            new BulletListItemDelimiterParameters('•', isHorizontalRuleCharacter: false));
+            new BulletListItemDelimiterParameters('+'),
+            new BulletListItemDelimiterParameters('•'));
 
         /// <summary>
         /// The default parameters instance.
@@ -133,6 +133,8 @@ namespace CommonMark.Parser.Blocks
             ListType.Ordered,
 #pragma warning restore 0618
             '0', '9', 9,
+            OrderedListMarkerType.None,
+            null,
             new ListItemDelimiterParameters('.'),
             new ListItemDelimiterParameters(')'));
 
@@ -177,9 +179,9 @@ namespace CommonMark.Parser.Blocks
                     var orderedListItemParameters = item as OrderedListItemParameters;
                     if (orderedListItemParameters != null)
                     {
-                        for (var i = 0; i <= orderedListItemParameters.MarkerLast - orderedListItemParameters.MarkerFirst; i++)
+                        for (var i = 0; i <= orderedListItemParameters.MarkerMaxChar - orderedListItemParameters.MarkerMinChar; i++)
                         {
-                            yield return new OrderedListItemHandler(Settings, Tag, (char)(i + orderedListItemParameters.MarkerFirst), orderedListItemParameters);
+                            yield return new OrderedListItemHandler(Settings, Tag, (char)(i + orderedListItemParameters.MarkerMinChar), orderedListItemParameters);
                         }
                     }
                 }
@@ -417,7 +419,7 @@ namespace CommonMark.Parser.Blocks
             while (offset < length && line[offset] == ' ')
                 offset++;
 
-            if (offset - delimOffset < MinDelimiterSpaces[delimIndex] && offset < length && line[offset] != '\n')
+            if (offset - delimOffset < MinSpaceCounts[delimIndex] && offset < length && line[offset] != '\n')
                 return 0;
 
             var markerLength = delimOffset - info.FirstNonspace;
@@ -464,11 +466,11 @@ namespace CommonMark.Parser.Blocks
         {
             var length = delimiters.Length;
             DelimiterCharacters = new char[length];
-            MinDelimiterSpaces = new int[length];
+            MinSpaceCounts = new int[length];
             for (var i = 0; i < length; i++)
             {
                 DelimiterCharacters[i] = delimiters[i].Character;
-                MinDelimiterSpaces[i] = delimiters[i].MinSpaces;
+                MinSpaceCounts[i] = delimiters[i].MinSpaceCount;
             }
         }
 
@@ -478,7 +480,7 @@ namespace CommonMark.Parser.Blocks
             set;
         }
 
-        private int[] MinDelimiterSpaces
+        private int[] MinSpaceCounts
         {
             get;
             set;

@@ -3,7 +3,7 @@
     /// <summary>
     /// Contains additional data for ordered list block elements. Used in <see cref="Block.OrderedListData"/> property.
     /// </summary>
-    public sealed class OrderedListData
+    public sealed class OrderedListData : ListData<OrderedListData>
     {
         /// <summary>
         /// Gets or sets the ordinal value of the first list item.
@@ -16,6 +16,11 @@
         public char DelimiterCharacter { get; set; }
 
         /// <summary>
+        /// Gets or sets the list marker type.
+        /// </summary>
+        public OrderedListMarkerType MarkerType { get; set; }
+
+        /// <summary>
         /// Determines whether the specified object contains matching ordered list data.
         /// </summary>
         /// <param name="obj">Candidate object.</param>
@@ -23,7 +28,10 @@
         public override bool Equals(object obj)
         {
             var other = obj as OrderedListData;
-            return other != null && this.DelimiterCharacter == other.DelimiterCharacter;
+            return other != null
+                && this.DelimiterCharacter == other.DelimiterCharacter
+                && this.MarkerType == other.MarkerType
+                && base.Equals(obj);
         }
 
         /// <summary>
@@ -32,7 +40,9 @@
         /// <returns>A 32-bit signed integer hash code.</returns>
         public override int GetHashCode()
         {
-            return DelimiterCharacter.GetHashCode();
+            return base.GetHashCode()
+                ^ DelimiterCharacter.GetHashCode()
+                ^ MarkerType.GetHashCode();
         }
     }
 }

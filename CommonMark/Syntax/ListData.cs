@@ -50,4 +50,39 @@ namespace CommonMark.Syntax
         /// </summary>
         public bool IsTight { get; set; }
     }
+
+    /// <summary>
+    /// Base specific list data class.
+    /// </summary>
+    /// <typeparam name="T">Type of list data.</typeparam>
+    public abstract class ListData<T>
+        where T : ListData<T>
+    {
+        /// <summary>
+        /// Gets or sets the list style.
+        /// </summary>
+        public string ListStyle { get; set; }
+
+        /// <summary>
+        /// Determines whether the specified object contains matching list data.
+        /// </summary>
+        /// <param name="obj">Candidate object.</param>
+        /// <returns><c>true</c> if <paramref name="obj"/> is a bullet list data object containing matching data.</returns>
+        public override bool Equals(object obj)
+        {
+            var other = obj as T;
+            return other != null
+                && ((this.ListStyle == null && other.ListStyle == null) || (this.ListStyle != null && this.ListStyle.Equals(other.ListStyle)));
+        }
+
+        /// <summary>
+        /// Returns the hash code for this instance.
+        /// </summary>
+        /// <returns>A 32-bit signed integer hash code.</returns>
+        public override int GetHashCode()
+        {
+            return GetType().GetHashCode()
+                ^ (ListStyle != null ? ListStyle.GetHashCode() : 0);
+        }
+    }
 }

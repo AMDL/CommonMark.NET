@@ -13,34 +13,49 @@ namespace CommonMark.Parser.Blocks
         /// </summary>
         /// <param name="parentTag">List element tag.</param>
         /// <param name="listType">List type (obsolete).</param>
-        /// <param name="markerFirst">First marker character.</param>
-        /// <param name="markerLast">Last marker character.</param>
+        /// <param name="markerMinChar">First marker character.</param>
+        /// <param name="markerMaxChar">Last marker character.</param>
         /// <param name="maxMarkerLength">Maximum marker length.</param>
+        /// <param name="markerType">Marker type.</param>
+        /// <param name="listStyle">List style.</param>
         /// <param name="delimiters">Delimiter parameters.</param>
 #pragma warning disable 0618
-        public OrderedListItemParameters(BlockTag parentTag, ListType listType, char markerFirst, char markerLast, int maxMarkerLength, params ListItemDelimiterParameters[] delimiters)
+        public OrderedListItemParameters(BlockTag parentTag, ListType listType, char markerMinChar, char markerMaxChar, int maxMarkerLength,
+            OrderedListMarkerType markerType = OrderedListMarkerType.None, string listStyle = null, params ListItemDelimiterParameters[] delimiters)
 #pragma warning restore 0618
             : base(parentTag, listType, delimiters)
         {
-            this.MarkerFirst = markerFirst;
-            this.MarkerLast = markerLast;
+            this.MarkerMinChar = markerMinChar;
+            this.MarkerMaxChar = markerMaxChar;
             this.MaxMarkerLength = maxMarkerLength;
+            this.MarkerType = markerType;
+            this.ListStyle = listStyle;
         }
 
         /// <summary>
         /// Gets or sets the first character in the list marker character range.
         /// </summary>
-        public char MarkerFirst { get; set; }
+        public char MarkerMinChar { get; set; }
 
         /// <summary>
         /// Gets or sets the last character in the list marker character range.
         /// </summary>
-        public char MarkerLast { get; set; }
+        public char MarkerMaxChar { get; set; }
 
         /// <summary>
         /// Gets or sets the maximum marker length.
         /// </summary>
         public int MaxMarkerLength { get; set; }
+
+        /// <summary>
+        /// Gets or sets the list marker type.
+        /// </summary>
+        public OrderedListMarkerType MarkerType { get; set; }
+
+        /// <summary>
+        /// Gets or sets the list style.
+        /// </summary>
+        public string ListStyle { get; set; }
     }
 
     /// <summary>
@@ -60,9 +75,11 @@ namespace CommonMark.Parser.Blocks
             : base(settings, tag, character, parameters, parameters.Delimiters)
 #pragma warning restore 0618
         {
-            MarkerFirst = parameters.MarkerFirst;
-            MarkerLast = parameters.MarkerLast;
+            MarkerMinChar = parameters.MarkerMinChar;
+            MarkerMaxChar = parameters.MarkerMaxChar;
             MaxMarkerLength = parameters.MaxMarkerLength;
+            MarkerType = parameters.MarkerType;
+            ListStyle = parameters.ListStyle;
         }
 
         /// <summary>
@@ -116,7 +133,7 @@ namespace CommonMark.Parser.Blocks
 
             do
                 curChar = line[++offset];
-            while (offset < length - 1 && curChar >= MarkerFirst && curChar <= MarkerLast);
+            while (offset < length - 1 && curChar >= MarkerMinChar && curChar <= MarkerMaxChar);
 
             if (offset == length - 1)
                 return 0;
@@ -156,22 +173,34 @@ namespace CommonMark.Parser.Blocks
             {
                 Start = start,
                 DelimiterCharacter = curChar,
+                MarkerType = MarkerType,
+                ListStyle = ListStyle,
             };
 
             return orderedListData;
         }
 
-        private char MarkerFirst
+        private char MarkerMinChar
         {
             get;
         }
 
-        private char MarkerLast
+        private char MarkerMaxChar
         {
             get;
         }
 
         private int MaxMarkerLength
+        {
+            get;
+        }
+
+        private OrderedListMarkerType MarkerType
+        {
+            get;
+        }
+
+        private string ListStyle
         {
             get;
         }

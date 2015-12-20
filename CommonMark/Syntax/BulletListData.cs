@@ -3,7 +3,7 @@
     /// <summary>
     /// Contains additional data for bullet list block elements. Used in <see cref="Block.BulletListData"/> property.
     /// </summary>
-    public sealed class BulletListData
+    public sealed class BulletListData : ListData<BulletListData>
     {
         /// <summary>
         /// Gets or sets the bullet character.
@@ -18,7 +18,9 @@
         public override bool Equals(object obj)
         {
             var other = obj as BulletListData;
-            return other != null && this.BulletCharacter == other.BulletCharacter;
+            return other != null
+                && this.BulletCharacter == other.BulletCharacter
+                && base.Equals(obj);
         }
 
         /// <summary>
@@ -27,7 +29,8 @@
         /// <returns>A 32-bit signed integer hash code.</returns>
         public override int GetHashCode()
         {
-            return BulletCharacter.GetHashCode();
+            return base.GetHashCode()
+                ^ BulletCharacter.GetHashCode();
         }
     }
 }
