@@ -15,6 +15,11 @@ namespace CommonMark
         IEnumerable<IBlockParser> BlockParsers { get; }
 
         /// <summary>
+        /// Gets the block delimiter handlers.
+        /// </summary>
+        IEnumerable<IBlockDelimiterHandler> BlockDelimiterHandlers { get; }
+
+        /// <summary>
         /// Gets the inline parsers.
         /// </summary>
         IEnumerable<IInlineParser> InlineParsers { get; }

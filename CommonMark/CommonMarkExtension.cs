@@ -1,6 +1,5 @@
 ﻿using CommonMark.Formatters;
 using CommonMark.Parser;
-using CommonMark.Syntax;
 using System;
 using System.Collections.Generic;
 
@@ -20,9 +19,10 @@ namespace CommonMark
         protected CommonMarkExtension(CommonMarkSettings settings)
         {
             this._blockParsers = settings.GetLazy(() => InitializeBlockParsers(settings));
+            this._blockDelimiterHandlers = settings.GetLazy(() => InitializeBlockDelimiterHandlers(settings));
             this._inlineParsers = settings.GetLazy(() => InitializeInlineParsers(settings));
-
             this._inlineDelimiterHandlers = settings.GetLazy(InitializeInlineDelimiterHandlers);
+
             this._referenceNormalizer = settings.GetLazy(InitializeReferenceNormalizer);
 
             var parameters = settings.FormatterParameters;
@@ -52,6 +52,28 @@ namespace CommonMark
 
         #endregion
 
+        #region Block Delimiter Handlers
+
+        private Lazy<IEnumerable<IBlockDelimiterHandler>> _blockDelimiterHandlers;
+
+        IEnumerable<IBlockDelimiterHandler> ICommonMarkExtension.BlockDelimiterHandlers
+        {
+            get
+            {
+                return _blockDelimiterHandlers.Value;
+            }
+        }
+
+        /// <summary>
+        /// Initializes the block delimiter handlers.
+        /// </summary>
+        protected virtual IEnumerable<IBlockDelimiterHandler> InitializeBlockDelimiterHandlers(CommonMarkSettings settings)
+        {
+            return null;
+        }
+
+        #endregion
+
         #region Inline Parsers
 
         private readonly Lazy<IEnumerable<IInlineParser>> _inlineParsers;
@@ -72,7 +94,7 @@ namespace CommonMark
 
         #endregion
 
-        #region InlineDelimiterHandlers
+        #region Inline Delimiter Handlers
 
         private readonly Lazy<IDictionary<char, IInlineDelimiterHandler>> _inlineDelimiterHandlers;
 

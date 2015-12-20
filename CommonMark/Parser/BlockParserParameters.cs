@@ -130,27 +130,39 @@ namespace CommonMark.Parser
 
         private IBlockDelimiterHandler[] GetHandlers()
         {
-            var i = new Dictionary<char, IBlockDelimiterHandler>();
-            IEnumerable<IBlockDelimiterHandler> parserHandlers;
-            IBlockDelimiterHandler inner;
-            var max = (char)0;
+            IEnumerable<IBlockDelimiterHandler> itemHandlers;
+            var allHandlers = new List<IBlockDelimiterHandler>();
             foreach (var parser in Parsers)
             {
-                if ((parserHandlers = parser?.Handlers) != null)
+                if ((itemHandlers = parser?.Handlers) != null)
                 {
-                    foreach (var outer in parserHandlers)
-                    {
-                        char c = outer.Character;
-                        if (c > 0)
-                        {
-                            i.TryGetValue(c, out inner);
-                            i[c] = DelegateBlockDelimiterHandler.Merge(c, inner, outer);
-                            if (c > max)
-                                max = c;
-                        }
-                    }
+                    allHandlers.AddRange(itemHandlers);
                 }
             }
+
+            foreach (var ext in Settings.Extensions)
+	        {
+                if ((itemHandlers = ext.BlockDelimiterHandlers) != null)
+                {
+                    allHandlers.AddRange(itemHandlers);
+                }
+	        }
+
+            var i = new Dictionary<char, IBlockDelimiterHandler>();
+            var max = (char)0;
+            IBlockDelimiterHandler inner;
+            foreach (var handler in allHandlers)
+            {
+                char c = handler.Character;
+                if (c > 0)
+                {
+                    i.TryGetValue(c, out inner);
+                    i[c] = DelegateBlockDelimiterHandler.Merge(c, inner, handler);
+                    if (c > max)
+                        max = c;
+                }
+            }
+
             var handlers = new IBlockDelimiterHandler[max + 1];
             foreach (var kvp in i)
             {
