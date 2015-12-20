@@ -37,6 +37,11 @@ namespace CommonMark.Parser.Blocks
     public interface IListItemParameters
     {
         /// <summary>
+        /// Gets the list item element tag.
+        /// </summary>
+        BlockTag Tag { get; }
+
+        /// <summary>
         /// Gets the list element tag.
         /// </summary>
         BlockTag ParentTag { get; }
@@ -57,17 +62,24 @@ namespace CommonMark.Parser.Blocks
         /// <summary>
         /// Initializes a new instance of the <see cref="ListItemParameters{TDelimiterParameters}"/> class.
         /// </summary>
+        /// <param name="tag">List item element tag.</param>
         /// <param name="parentTag">List element tag.</param>
         /// <param name="listType">List type (obsolete).</param>
         /// <param name="delimiters">Delimiter parameters.</param>
 #pragma warning disable 0618
-        protected ListItemParameters(BlockTag parentTag, ListType listType, TDelimiterParameters[] delimiters)
+        protected ListItemParameters(BlockTag tag, BlockTag parentTag, ListType listType, TDelimiterParameters[] delimiters)
         {
+            this.Tag = tag;
             this.ParentTag = parentTag;
             this.ListType = listType;
             this.Delimiters = delimiters;
         }
 #pragma warning restore 0618
+
+        /// <summary>
+        /// Gets or sets the list item element tag.
+        /// </summary>
+        public BlockTag Tag { get; set; }
 
         /// <summary>
         /// Gets or sets the list element tag.
@@ -115,6 +127,7 @@ namespace CommonMark.Parser.Blocks
         /// The default parameters instance.
         /// </summary>
         public static readonly BulletListItemParameters DefaultBulletListItemParameters = new BulletListItemParameters(
+            BlockTag.ListItem,
             BlockTag.BulletList,
 #pragma warning disable 0618
             ListType.Bullet,
@@ -128,11 +141,12 @@ namespace CommonMark.Parser.Blocks
         /// The default parameters instance.
         /// </summary>
         public static readonly OrderedListItemParameters DefaultOrderedListItemParameters = new OrderedListItemParameters(
+            '0', '9', 9,
+            BlockTag.ListItem,
             BlockTag.OrderedList,
 #pragma warning disable 0618
             ListType.Ordered,
 #pragma warning restore 0618
-            '0', '9', 9,
             OrderedListMarkerType.None,
             null,
             new ListItemDelimiterParameters('.'),
@@ -166,25 +180,13 @@ namespace CommonMark.Parser.Blocks
         {
             get
             {
+                var list = new List<IBlockDelimiterHandler>();
                 foreach (var item in Parameters.Items)
                 {
-                    var bulletListItemParameters = item as BulletListItemParameters;
-                    if (bulletListItemParameters != null)
-                    {
-                        foreach (var delimiter in bulletListItemParameters.Delimiters)
-                        {
-                            yield return new BulletListItemHandler(Settings, Tag, bulletListItemParameters, delimiter);
-                        }
-                    }
-                    var orderedListItemParameters = item as OrderedListItemParameters;
-                    if (orderedListItemParameters != null)
-                    {
-                        for (var i = 0; i <= orderedListItemParameters.MarkerMaxChar - orderedListItemParameters.MarkerMinChar; i++)
-                        {
-                            yield return new OrderedListItemHandler(Settings, Tag, (char)(i + orderedListItemParameters.MarkerMinChar), orderedListItemParameters);
-                        }
-                    }
+                    list.AddRange(BulletListItemHandler.Create(Settings, item as BulletListItemParameters));
+                    list.AddRange(OrderedListItemHandler.Create(Settings, item as OrderedListItemParameters));
                 }
+                return list;
             }
         }
 
@@ -244,7 +246,7 @@ namespace CommonMark.Parser.Blocks
     }
 
     /// <summary>
-    /// Base list item handler class.
+    /// Base list item delimiter handler class.
     /// </summary>
     /// <typeparam name="TData">Type of specific list data.</typeparam>
     public abstract class ListItemHandler<TData> : BlockDelimiterHandler
@@ -263,13 +265,12 @@ namespace CommonMark.Parser.Blocks
         /// Initializes a new instance of the <see cref="ListItemHandler{TData}"/> class.
         /// </summary>
         /// <param name="settings">Common settings.</param>
-        /// <param name="tag">List item element tag.</param>
         /// <param name="character">Handled character.</param>
         /// <param name="parameters">List item parameters.</param>
         /// <param name="delimiters">Delimiter parameters.</param>
 #pragma warning disable 0618
-        protected ListItemHandler(CommonMarkSettings settings, BlockTag tag, char character, IListItemParameters parameters, params ListItemDelimiterParameters[] delimiters)
-            : base(settings, tag, character)
+        protected ListItemHandler(CommonMarkSettings settings, char character, IListItemParameters parameters, params ListItemDelimiterParameters[] delimiters)
+            : base(settings, parameters.Tag, character)
         {
             ParentTag = parameters.ParentTag;
             ListType = parameters.ListType;

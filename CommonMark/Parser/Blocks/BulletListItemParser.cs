@@ -1,4 +1,5 @@
 ﻿using CommonMark.Syntax;
+using System.Collections.Generic;
 
 namespace CommonMark.Parser.Blocks
 {
@@ -40,33 +41,49 @@ namespace CommonMark.Parser.Blocks
         /// <summary>
         /// Initializes a new instance of the <see cref="BulletListItemParameters"/> class.
         /// </summary>
+        /// <param name="tag">List item element tag.</param>
         /// <param name="parentTag">List element tag.</param>
         /// <param name="listType">List type (obsolete).</param>
         /// <param name="delimiters">Delimiter parameters.</param>
 #pragma warning disable 0618
-        public BulletListItemParameters(BlockTag parentTag, ListType listType, params BulletListItemDelimiterParameters[] delimiters)
+        public BulletListItemParameters(BlockTag tag = BlockTag.ListItem, BlockTag parentTag = BlockTag.BulletList, ListType listType = ListType.Bullet,
+            params BulletListItemDelimiterParameters[] delimiters)
 #pragma warning restore 0618
-            : base(parentTag, listType, delimiters)
+            : base(tag, parentTag, listType, delimiters)
         {
         }
     }
 
     /// <summary>
-    /// Bullet list item element parser.
+    /// Bullet list item delimiter handler.
     /// </summary>
     public sealed class BulletListItemHandler : ListItemHandler<BulletListData>
     {
         /// <summary>
+        /// Creates bullet list item handlers using the specified parameters.
+        /// </summary>
+        /// <param name="settings">Common settings.</param>
+        /// <param name="parameters">List item parameters.</param>
+        /// <returns>A collection of bullet list item delimiter handlers.</returns>
+        public static IEnumerable<IBlockDelimiterHandler> Create(CommonMarkSettings settings, BulletListItemParameters parameters)
+        {
+            if (parameters != null)
+            {
+                foreach (var delimiter in parameters.Delimiters)
+                {
+                    yield return new BulletListItemHandler(settings, parameters, delimiter);
+                }
+            }
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="BulletListItemHandler"/> class.
         /// </summary>
         /// <param name="settings">Common settings.</param>
-        /// <param name="tag">List item element tag.</param>
         /// <param name="parameters">List item parameters.</param>
         /// <param name="delimiter">Delimiter parameters.</param>
-        public BulletListItemHandler(CommonMarkSettings settings, BlockTag tag, BulletListItemParameters parameters, BulletListItemDelimiterParameters delimiter)
-#pragma warning disable 0618
-            : base(settings, tag, delimiter.Character, parameters, delimiter)
-#pragma warning restore 0618
+        public BulletListItemHandler(CommonMarkSettings settings, BulletListItemParameters parameters, BulletListItemDelimiterParameters delimiter)
+            : base(settings, delimiter.Character, parameters, delimiter)
         {
             IsHorizontalRuleCharacter = delimiter.IsHorizontalRuleCharacter;
             ListStyle = delimiter.ListStyle;

@@ -1,4 +1,5 @@
 ﻿using CommonMark.Syntax;
+using System.Collections.Generic;
 using System.Globalization;
 
 namespace CommonMark.Parser.Blocks
@@ -11,19 +12,21 @@ namespace CommonMark.Parser.Blocks
         /// <summary>
         /// Initializes a new instance of the <see cref="OrderedListItemParameters"/> class.
         /// </summary>
-        /// <param name="parentTag">List element tag.</param>
-        /// <param name="listType">List type (obsolete).</param>
         /// <param name="markerMinChar">First marker character.</param>
         /// <param name="markerMaxChar">Last marker character.</param>
         /// <param name="maxMarkerLength">Maximum marker length.</param>
+        /// <param name="tag">List item element tag.</param>
+        /// <param name="parentTag">List element tag.</param>
+        /// <param name="listType">List type (obsolete).</param>
         /// <param name="markerType">Marker type.</param>
         /// <param name="listStyle">List style.</param>
         /// <param name="delimiters">Delimiter parameters.</param>
 #pragma warning disable 0618
-        public OrderedListItemParameters(BlockTag parentTag, ListType listType, char markerMinChar, char markerMaxChar, int maxMarkerLength,
+        public OrderedListItemParameters(char markerMinChar, char markerMaxChar, int maxMarkerLength = 9,
+            BlockTag tag = BlockTag.ListItem, BlockTag parentTag = BlockTag.OrderedList, ListType listType = ListType.Ordered,
             OrderedListMarkerType markerType = OrderedListMarkerType.None, string listStyle = null, params ListItemDelimiterParameters[] delimiters)
 #pragma warning restore 0618
-            : base(parentTag, listType, delimiters)
+            : base(tag, parentTag, listType, delimiters)
         {
             this.MarkerMinChar = markerMinChar;
             this.MarkerMaxChar = markerMaxChar;
@@ -59,21 +62,35 @@ namespace CommonMark.Parser.Blocks
     }
 
     /// <summary>
-    /// Ordered list item element handler.
+    /// Ordered list item delimiter handler.
     /// </summary>
     public sealed class OrderedListItemHandler : ListItemHandler<OrderedListData>
     {
         /// <summary>
+        /// Creates ordered list item handlers using the specified parameters.
+        /// </summary>
+        /// <param name="settings">Common settings.</param>
+        /// <param name="parameters">List item parameters.</param>
+        /// <returns>A collection of ordered list item delimiter handlers.</returns>
+        public static IEnumerable<IBlockDelimiterHandler> Create(CommonMarkSettings settings, OrderedListItemParameters parameters)
+        {
+            if (parameters != null)
+            {
+                for (var i = 0; i <= parameters.MarkerMaxChar - parameters.MarkerMinChar; i++)
+                {
+                    yield return new OrderedListItemHandler(settings, (char)(i + parameters.MarkerMinChar), parameters);
+                }
+            }
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="OrderedListItemHandler"/> class.
         /// </summary>
         /// <param name="settings">Common settings.</param>
-        /// <param name="tag">List item element tag.</param>
         /// <param name="character">Handled character.</param>
         /// <param name="parameters">Ordered list parameters.</param>
-        public OrderedListItemHandler(CommonMarkSettings settings, BlockTag tag, char character, OrderedListItemParameters parameters)
-#pragma warning disable 0618
-            : base(settings, tag, character, parameters, parameters.Delimiters)
-#pragma warning restore 0618
+        public OrderedListItemHandler(CommonMarkSettings settings, char character, OrderedListItemParameters parameters)
+            : base(settings, character, parameters, parameters.Delimiters)
         {
             MarkerMinChar = parameters.MarkerMinChar;
             MarkerMaxChar = parameters.MarkerMaxChar;
