@@ -52,8 +52,13 @@
     <Compile Include="CommonMarkExtensionCollection.cs" />
     <Compile Include="CommonMarkSettings.cs" />
     <Compile Include="CommonMarkExtension.cs" />
+    <Compile Include="Extension\StandardListStyles.cs" />
+    <Compile Include="Extension\BulletListStyles.cs" />
+    <Compile Include="Extension\AdditiveListStyles.cs" />
+    <Compile Include="Extension\FancyLists.cs" />
     <Compile Include="Extension\LegacyLists.cs" />
     <Compile Include="Extension\MathDollars.cs" />
+    <Compile Include="Extension\NumericListStyles.cs" />
     <Compile Include="Extension\ReferenceCase.cs" />
     <Compile Include="Extension\Subscript.cs" />
     <Compile Include="Extension\Superscript.cs" />

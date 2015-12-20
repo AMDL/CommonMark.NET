@@ -94,6 +94,13 @@ namespace CommonMark
             Register(new Extension.MathDollars(Settings));
             Register(new Extension.LegacyLists(Settings));
             Register(new Extension.ReferenceCase(Settings, new Extension.ReferenceCaseSettings(Extension.ReferenceCaseType.UpperInvariant)));
+            Register(new Extension.FancyLists(Settings, new Extension.FancyListsSettings
+            {
+                StandardListStyles = Extension.StandardListStyles.All,
+                BulletListStyles = Extension.BulletListStyles.All,
+                NumericListStyles = Extension.NumericListStyles.All,
+                AdditiveListStyles = Extension.AdditiveListStyles.All,
+            }));
             Register(new Extension.DefinitionLists(Settings, new Extension.DefinitionListsSettings(Extension.DefinitionListsFeatures.All)));
             Register(new Extension.PipeTables(Settings, new Extension.PipeTablesSettings(Extension.PipeTablesFeatures.All)));
             Register(new Extension.TableCaptions(Settings, new Extension.TableCaptionsSettings
