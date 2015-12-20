@@ -85,7 +85,7 @@ namespace CommonMark.Extension
         private readonly PipeTablesSettings settings;
 
         public TableRowHandler(CommonMarkSettings settings, PipeTablesSettings pipeTablesSettings, char character)
-            : base(settings, character)
+            : base(settings, BlockTag.TableRow, character)
         {
             this.settings = pipeTablesSettings;
         }
