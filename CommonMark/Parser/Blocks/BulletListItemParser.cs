@@ -1,4 +1,5 @@
 ﻿using CommonMark.Syntax;
+using System;
 using System.Collections.Generic;
 
 namespace CommonMark.Parser.Blocks
@@ -96,7 +97,7 @@ namespace CommonMark.Parser.Blocks
         /// <returns><c>true</c> if successful.</returns>
         public override bool Handle(ref BlockParserInfo info)
         {
-            return DoHandle(info, CanOpen, ParseMarker, IsListsMatch, SetListData);
+            return DoHandle(info, CanOpen, ParseMarker, null, IsListsMatch, SetListData);
         }
 
         /// <summary>
@@ -134,11 +135,12 @@ namespace CommonMark.Parser.Blocks
         /// Attempts to parse a bullet list item marker.
         /// </summary>
         /// <param name="info">Parser state.</param>
+        /// <param name="adjustStart">Start value adjuster delegate.</param>
         /// <param name="data">Common list data.</param>
         /// <param name="listData">Bullet list data.</param>
         /// <returns>Length of the marker, or 0 for no match.</returns>
         /// <remarks>Original: int parse_list_marker(string ln, int pos, ref ListData dataptr)</remarks>
-        protected override int ParseMarker(BlockParserInfo info, out ListData data, out BulletListData listData)
+        protected override int ParseMarker(BlockParserInfo info, AdjustStartDelegate adjustStart, out ListData data, out BulletListData listData)
         {
             data = null;
             listData = null;
@@ -151,18 +153,7 @@ namespace CommonMark.Parser.Blocks
             if (offset == length - 1)
                 return 0;
 
-            return CompleteScan(info, offset, null, curChar, curChar, '\0',
-                GetStart, GetListData, out data, out listData);
-        }
-
-        /// <summary>
-        /// Calculates an integer start value.
-        /// </summary>
-        /// <param name="startStr">Start string.</param>
-        /// <returns>Integer start value, or 1 if unsuccessful.</returns>
-        protected override int GetStart(string startStr)
-        {
-            return 1;
+            return CompleteScan(info, offset, 1, curChar, curChar, '\0', GetListData, out data, out listData);
         }
 
         /// <summary>

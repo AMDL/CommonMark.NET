@@ -131,7 +131,7 @@ namespace CommonMark.Extension
         /// <summary>
         /// Full-width decimal numerals.
         /// </summary>
-        FullwidthDecimal = 8388608,
+        FullWidthDecimal = 8388608,
 
         /// <summary>
         /// All extended numeric list styles are enabled.

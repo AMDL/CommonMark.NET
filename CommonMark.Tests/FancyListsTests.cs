@@ -76,16 +76,9 @@ namespace CommonMark.Tests
 
         [TestMethod]
         [TestCategory("Container blocks - List items")]
-        public void LowerLatinListSingleSpace()
+        public void LowerLatinListStart26()
         {
-            Helpers.ExecuteTest("z. foo\n", "<ol type=\"a\" style=\"list-style-type: lower-latin\">\n<li>foo</li>\n</ol>", FullSettings);
-        }
-
-        [TestMethod]
-        [TestCategory("Container blocks - List items")]
-        public void LowerLatinListDoubleSpace()
-        {
-            Helpers.ExecuteTest("f.  bar\n", "<ol type=\"a\" style=\"list-style-type: lower-latin\">\n<li>bar</li>\n</ol>", FullSettings);
+            Helpers.ExecuteTest("z. foo\n", "<ol start=\"26\" type=\"a\" style=\"list-style-type: lower-latin\">\n<li>foo</li>\n</ol>", FullSettings);
         }
 
         [TestMethod]
@@ -129,7 +122,7 @@ namespace CommonMark.Tests
         [TestCategory("Container blocks - List items")]
         public void UpperLatinListDoubleSpace()
         {
-            Helpers.ExecuteTest("F.  bar\n", "<ol type=\"A\" style=\"list-style-type: upper-latin\">\n<li>bar</li>\n</ol>", FullSettings);
+            Helpers.ExecuteTest("F.  bar\n", "<ol start=\"6\" type=\"A\" style=\"list-style-type: upper-latin\">\n<li>bar</li>\n</ol>", FullSettings);
         }
 
         [TestMethod]
@@ -145,7 +138,7 @@ namespace CommonMark.Tests
         {
             var s = CommonMarkSettings.Default.Clone();
             s.Extensions.Register(new FancyLists(s, new FancyListsSettings(StandardListStyles.All & ~StandardListStyles.LowerRoman)));
-            Helpers.ExecuteTest("i.\n", "<ol type=\"a\" style=\"list-style-type: lower-latin\">\n<li></li>\n</ol>", s);
+            Helpers.ExecuteTest("i.\n", "<ol start=\"9\" type=\"a\" style=\"list-style-type: lower-latin\">\n<li></li>\n</ol>", s);
         }
 
         [TestMethod]
@@ -157,16 +150,37 @@ namespace CommonMark.Tests
 
         [TestMethod]
         [TestCategory("Container blocks - List items")]
-        public void LowerRomanListSingleSpace()
+        public void LowerRomanListStart1()
         {
             Helpers.ExecuteTest("i. fee\n", "<ol type=\"i\" style=\"list-style-type: lower-roman\">\n<li>fee</li>\n</ol>", FullSettings);
         }
 
         [TestMethod]
         [TestCategory("Container blocks - List items")]
-        public void LowerRomanListDoubleSpace()
+        public void LowerRomanListStart2()
         {
-            Helpers.ExecuteTest("v.  fi\n", "<ol type=\"i\" style=\"list-style-type: lower-roman\">\n<li>fi</li>\n</ol>", FullSettings);
+            Helpers.ExecuteTest("ii. fi\n", "<ol start=\"2\" type=\"i\" style=\"list-style-type: lower-roman\">\n<li>fi</li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - List items")]
+        public void LowerRomanListStart4()
+        {
+            Helpers.ExecuteTest("iv. fo\n", "<ol start=\"4\" type=\"i\" style=\"list-style-type: lower-roman\">\n<li>fo</li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - List items")]
+        public void LowerRomanListStart5()
+        {
+            Helpers.ExecuteTest("v. foo\n", "<ol start=\"5\" type=\"i\" style=\"list-style-type: lower-roman\">\n<li>foo</li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - List items")]
+        public void LowerRomanListStart1984()
+        {
+            Helpers.ExecuteTest("MCMLXXXIV.", "<ol start=\"1984\" type=\"I\" style=\"list-style-type: upper-roman\">\n<li></li>\n</ol>", FullSettings);
         }
 
         [TestMethod]
@@ -182,7 +196,7 @@ namespace CommonMark.Tests
         {
             var s = CommonMarkSettings.Default.Clone();
             s.Extensions.Register(new FancyLists(s, new FancyListsSettings(StandardListStyles.All & ~StandardListStyles.UpperRoman)));
-            Helpers.ExecuteTest("I.\n", "<ol type=\"A\" style=\"list-style-type: upper-latin\">\n<li></li>\n</ol>", s);
+            Helpers.ExecuteTest("I.\n", "<ol start=\"9\" type=\"A\" style=\"list-style-type: upper-latin\">\n<li></li>\n</ol>", s);
         }
 
         [TestMethod]
@@ -309,25 +323,25 @@ namespace CommonMark.Tests
 
         [TestMethod]
         [TestCategory("Container blocks - List items")]
-        public void FullwidthDecimalDisabledByDefault()
+        public void FullWidthDecimalDisabledByDefault()
         {
             Helpers.ExecuteTest("０.\n", "<p>０.</p>", EmptySettings);
         }
 
         [TestMethod]
         [TestCategory("Container blocks - List items")]
-        public void FullwidthDecimalDisabledAlone()
+        public void FullWidthDecimalDisabledAlone()
         {
             var s = CommonMarkSettings.Default.Clone();
-            s.Extensions.Register(new FancyLists(s, new FancyListsSettings(NumericListStyles.All & ~NumericListStyles.FullwidthDecimal)));
+            s.Extensions.Register(new FancyLists(s, new FancyListsSettings(NumericListStyles.All & ~NumericListStyles.FullWidthDecimal)));
             Helpers.ExecuteTest("０.\n", "<p>０.</p>", s);
         }
 
         [TestMethod]
         [TestCategory("Container blocks - List items")]
-        public void FullwidthDecimalStart1()
+        public void FullWidthDecimalStart9()
         {
-            Helpers.ExecuteTest("９.\n", "<ol style=\"list-style-type: fullwidth-decimal\">\n<li></li>\n</ol>", FullSettings);
+            Helpers.ExecuteTest("９.\n", "<ol start=\"9\" style=\"list-style-type: fullwidth-decimal\">\n<li></li>\n</ol>", FullSettings);
         }
 
         [TestMethod]
@@ -348,16 +362,30 @@ namespace CommonMark.Tests
 
         [TestMethod]
         [TestCategory("Container blocks - List items")]
-        public void HebrewList1()
+        public void HebrewListStart11()
         {
-            Helpers.ExecuteTest("יא.  אללה הוא עכבר", "<ol style=\"list-style-type: hebrew\">\n<li>אללה הוא עכבר</li>\n</ol>", FullSettings);
+            Helpers.ExecuteTest("יא.  אללה הוא עכבר", "<ol start=\"11\" style=\"list-style-type: hebrew\">\n<li>אללה הוא עכבר</li>\n</ol>", FullSettings);
         }
 
         [TestMethod]
         [TestCategory("Container blocks - List items")]
         public void HebrewListStart15()
         {
-            Helpers.ExecuteTest("טו.  ויאמר אלהים יהי אור ויהי אור", "<ol style=\"list-style-type: hebrew\">\n<li>ויאמר אלהים יהי אור ויהי אור</li>\n</ol>", FullSettings);
+            Helpers.ExecuteTest("טו.  ויאמר אלהים יהי אור ויהי אור", "<ol start=\"15\" style=\"list-style-type: hebrew\">\n<li>ויאמר אלהים יהי אור ויהי אור</li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - List items")]
+        public void HebrewListStart30()
+        {
+            Helpers.ExecuteTest("ל.  יש לו חום גבוה", "<ol start=\"30\" style=\"list-style-type: hebrew\">\n<li>יש לו חום גבוה</li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - List items")]
+        public void HebrewListStart400Start80()
+        {
+            Helpers.ExecuteTest("ת.  פ.", "<ol start=\"400\" style=\"list-style-type: hebrew\">\n<li>\n<ol start=\"80\" style=\"list-style-type: hebrew\">\n<li></li>\n</ol>\n</li>\n</ol>", FullSettings);
         }
     }
 }

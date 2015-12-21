@@ -20,6 +20,7 @@ namespace CommonMark.Extension
 
         /// <summary>
         /// Uppercase ASCII letters.
+        /// If dots are used as delimiters, at least two spaces after the dot are required.
         /// </summary>
         UpperLatin = 2,
 
@@ -30,6 +31,7 @@ namespace CommonMark.Extension
 
         /// <summary>
         /// Uppercase Roman numerals.
+        /// If dots are used as delimiters, at least two spaces after the dot are required.
         /// </summary>
         UpperRoman = 8,
 

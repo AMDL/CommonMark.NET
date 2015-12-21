@@ -141,7 +141,7 @@ namespace CommonMark.Parser.Blocks
         /// The default parameters instance.
         /// </summary>
         public static readonly OrderedListItemParameters DefaultOrderedListItemParameters = new OrderedListItemParameters(
-            '0', '9', 9,
+            '0', '9', 0, 10, 9,
             BlockTag.ListItem,
             BlockTag.OrderedList,
 #pragma warning disable 0618
@@ -253,13 +253,23 @@ namespace CommonMark.Parser.Blocks
         where TData : class
     {
         /// <summary>
+        /// Start value adjuster delegate.
+        /// </summary>
+        /// <param name="start">Current start value.</param>
+        /// <param name="value">Current character value.</param>
+        /// <param name="curChar">Current character.</param>
+        /// <returns><c>true</c> if successful.</returns>
+        protected delegate bool AdjustStartDelegate(ref int start, ref int value, char curChar);
+
+        /// <summary>
         /// List marker parser delegate.
         /// </summary>
         /// <param name="info">Parser state.</param>
         /// <param name="data">Common list data.</param>
+        /// <param name="adjustStart">Start value adjuster delegate.</param>
         /// <param name="listData">Specific list data.</param>
         /// <returns>Length of the marker, or 0 for no match.</returns>
-        protected delegate int ParseMarkerDelegate(BlockParserInfo info, out ListData data, out TData listData);
+        protected delegate int ParseMarkerDelegate(BlockParserInfo info, AdjustStartDelegate adjustStart, out ListData data, out TData listData);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ListItemHandler{TData}"/> class.
@@ -311,16 +321,17 @@ namespace CommonMark.Parser.Blocks
         /// <param name="info">Parser state.</param>
         /// <param name="canOpen">Opener checker delegate.</param>
         /// <param name="parseMarker">Marker parser delegate.</param>
+        /// <param name="adjustStart">Start value adjuster delegate.</param>
         /// <param name="isListsMatch">List data matcher delegate.</param>
         /// <param name="setListData">List data mutator delegate.</param>
         /// <returns><c>true</c> if successful.</returns>
         protected bool DoHandle(BlockParserInfo info, Func<BlockParserInfo, bool> canOpen, ParseMarkerDelegate parseMarker,
-            Func<BlockParserInfo, TData, bool> isListsMatch, Action<BlockParserInfo, TData> setListData)
+            AdjustStartDelegate adjustStart, Func<BlockParserInfo, TData, bool> isListsMatch, Action<BlockParserInfo, TData> setListData)
         {
             int markerLength;
             ListData data;
             TData listData;
-            if (!canOpen(info) || 0 == (markerLength = parseMarker(info, out data, out listData)))
+            if (!canOpen(info) || 0 == (markerLength = parseMarker(info, adjustStart, out data, out listData)))
                 return false;
 
             // save the offset before advancing it
@@ -369,10 +380,11 @@ namespace CommonMark.Parser.Blocks
         /// Attempts to parse a list item marker.
         /// </summary>
         /// <param name="info">Parser state.</param>
+        /// <param name="adjustStart">Start value adjuster delegate.</param>
         /// <param name="data">Common list data.</param>
         /// <param name="listData">Specific list data.</param>
         /// <returns>Length of the marker, or 0 for no match.</returns>
-        protected abstract int ParseMarker(BlockParserInfo info, out ListData data, out TData listData);
+        protected abstract int ParseMarker(BlockParserInfo info, AdjustStartDelegate adjustStart, out ListData data, out TData listData);
 
         /// <summary>
         /// Determines whether a list item belongs to a list.
@@ -395,16 +407,15 @@ namespace CommonMark.Parser.Blocks
         /// <param name="info">Parser state.</param>
         /// <param name="offset">Current offset.</param>
         /// <param name="curChar">Current character.</param>
-        /// <param name="startStr">First item string.</param>
+        /// <param name="start">Start value.</param>
         /// <param name="bulletChar">Bullet character.</param>
         /// <param name="delimiter">Delimiter character.</param>
-        /// <param name="startFactory">Calculates an integer start value.</param>
         /// <param name="listDataFactory">Creates and initializes a list data object.</param>
         /// <param name="data">Common list data object.</param>
         /// <param name="listData">Specific list data object.</param>
         /// <returns>Length of the marker, or 0 for no match.</returns>
-        protected int CompleteScan(BlockParserInfo info, int offset, string startStr, char curChar, char bulletChar, char delimiter,
-            Func<string, int> startFactory, Func<char, int, TData> listDataFactory, out ListData data, out TData listData)
+        protected int CompleteScan(BlockParserInfo info, int offset, int start, char curChar, char bulletChar, char delimiter,
+            Func<char, int, TData> listDataFactory, out ListData data, out TData listData)
         {
             data = null;
             listData = null;
@@ -427,8 +438,6 @@ namespace CommonMark.Parser.Blocks
             if (markerLength == 0)
                 return 0;
 
-            var start = startFactory(startStr);
-
             data = new ListData
             {
 #pragma warning disable 0618
@@ -447,13 +456,6 @@ namespace CommonMark.Parser.Blocks
 
             return markerLength;
         }
-
-        /// <summary>
-        /// Calculates an integer start value.
-        /// </summary>
-        /// <param name="startStr">Start string.</param>
-        /// <returns>Integer start value, or 1 if unsuccessful.</returns>
-        protected abstract int GetStart(string startStr);
 
         /// <summary>
         /// Creates and initializes specific list data.

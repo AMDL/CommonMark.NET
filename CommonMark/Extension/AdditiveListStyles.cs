@@ -3,23 +3,23 @@
 namespace CommonMark.Extension
 {
     /// <summary>
-    /// Extended alphabetical list styles. Used in the <see cref="FancyListsSettings.AdditiveListStyles"/> property.
+    /// Extended additive list styles. Used in the <see cref="FancyListsSettings.AdditiveListStyles"/> property.
     /// </summary>
     [Flags]
     public enum AdditiveListStyles
     {
         /// <summary>
-        /// No standard alphabetical list styles are enabled. This is the default.
+        /// No extended additive list styles are enabled. This is the default.
         /// </summary>
         None = 0,
 
         /// <summary>
-        /// Hebrew letters.
+        /// Hebrew letters. At least two spaces after the dot are required.
         /// </summary>
         Hebrew,
 
         /// <summary>
-        /// All standard alphabetical list styles are enabled.
+        /// All extended additive list styles are enabled.
         /// </summary>
         All = 0x7FFFFFFF
     }
