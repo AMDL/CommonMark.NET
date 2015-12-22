@@ -13,7 +13,7 @@ namespace CommonMark.Parser.Blocks.Delimiters
         /// <param name="settings">Common settings.</param>
         /// <param name="tag">Block element tag.</param>
         public ParagraphHandler(CommonMarkSettings settings, BlockTag tag)
-            : base(settings, tag, '\0')
+            : base(settings, tag)
         {
         }
 

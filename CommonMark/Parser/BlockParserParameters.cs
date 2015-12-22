@@ -153,11 +153,10 @@ namespace CommonMark.Parser
             IBlockDelimiterHandler inner;
             foreach (var handler in allHandlers)
             {
-                char c = handler.Character;
-                if (c > 0)
+                foreach (var c in handler.Characters)
                 {
                     i.TryGetValue(c, out inner);
-                    i[c] = DelegateBlockDelimiterHandler.Merge(c, inner, handler);
+                    i[c] = DelegateBlockDelimiterHandler.Merge(inner, handler, c);
                     if (c > max)
                         max = c;
                 }

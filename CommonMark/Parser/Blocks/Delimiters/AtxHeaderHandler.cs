@@ -12,10 +12,11 @@ namespace CommonMark.Parser.Blocks.Delimiters
         /// </summary>
         /// <param name="settings">Common settings.</param>
         /// <param name="tag">Handled element tag.</param>
-        /// <param name="character">Opener character.</param>
-        public AtxHeaderHandler(CommonMarkSettings settings, BlockTag tag, char character)
-            : base(settings, tag, character)
+        /// <param name="opener">Opener character.</param>
+        public AtxHeaderHandler(CommonMarkSettings settings, BlockTag tag, char opener)
+            : base(settings, tag, opener)
         {
+            Opener = opener;
         }
 
         /// <summary>
@@ -64,7 +65,7 @@ namespace CommonMark.Parser.Blocks.Delimiters
             {
                 var c = s[i];
 
-                if (c == Character)
+                if (c == Opener)
                 {
                     if (headerLevel == 6)
                         return 0;
@@ -92,6 +93,11 @@ namespace CommonMark.Parser.Blocks.Delimiters
                 return sourceLength - pos;
 
             return 0;
+        }
+
+        private char Opener
+        {
+            get;
         }
     }
 }

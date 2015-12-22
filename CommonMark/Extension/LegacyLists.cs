@@ -34,9 +34,9 @@ namespace CommonMark.Extension
             // These will ruin the default parameters, but that's alright since we're replacing the parser anyway.
             var bulletListItemParameters = BulletListItemHandler.DefaultParameters;
             bulletListItemParameters.ParentTag = BlockTag.List;
-            var orderedListItemParameters = OrderedListItemHandler.DefaultParameters;
-            orderedListItemParameters.ParentTag = BlockTag.List;
-            var listParameters = new ListParameters(bulletListItemParameters, orderedListItemParameters);
+            var numericListItemParameters = NumericListItemHandler.DefaultParameters;
+            numericListItemParameters.ParentTag = BlockTag.List;
+            var listParameters = new ListParameters(bulletListItemParameters, numericListItemParameters);
 
             yield return new ListItemParser(settings, BlockTag.ListItem, listParameters);
 #pragma warning restore 0618

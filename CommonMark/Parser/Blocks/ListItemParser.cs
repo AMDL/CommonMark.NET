@@ -102,7 +102,7 @@ namespace CommonMark.Parser.Blocks
         /// </summary>
         public static readonly ListParameters DefaultParameters = new ListParameters(
             BulletListItemHandler.DefaultParameters,
-            OrderedListItemHandler.DefaultParameters);
+            NumericListItemHandler.DefaultParameters);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ListItemParser"/> class.
@@ -125,13 +125,17 @@ namespace CommonMark.Parser.Blocks
         {
             get
             {
-                var list = new List<IBlockDelimiterHandler>();
                 foreach (var item in Parameters.Items)
                 {
-                    list.AddRange(BulletListItemHandler.Create(Settings, item as BulletListItemParameters));
-                    list.AddRange(NumericListItemHandler.Create(Settings, item as OrderedListItemParameters));
+                    var bulletParameters = item as BulletListItemParameters;
+                    if (bulletParameters != null)
+                        foreach (var delimiter in bulletParameters.Delimiters)
+                            yield return new BulletListItemHandler(Settings, bulletParameters, delimiter);
+
+                    var numericParameters = item as OrderedListItemParameters;
+                    if (numericParameters != null && numericParameters.Markers.Length == 1)
+                        yield return new NumericListItemHandler(Settings, numericParameters);
                 }
-                return list;
             }
         }
 

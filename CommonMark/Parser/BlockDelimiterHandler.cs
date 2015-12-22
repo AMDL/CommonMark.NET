@@ -12,19 +12,19 @@ namespace CommonMark.Parser
         /// </summary>
         /// <param name="settings">Common settings.</param>
         /// <param name="tag">Block element tag.</param>
-        /// <param name="character">Handled character.</param>
-        protected BlockDelimiterHandler(CommonMarkSettings settings, BlockTag tag, char character)
+        /// <param name="characters">Handled characters.</param>
+        protected BlockDelimiterHandler(CommonMarkSettings settings, BlockTag tag, params char[] characters)
         {
             this.Settings = settings;
-            this.Character = character;
+            this.Characters = characters;
             this.Tag = tag;
         }
 
         /// <summary>
-        /// Gets the character that is handled by this parser.
+        /// Gets the characters that are handled by this parser.
         /// </summary>
-        /// <value>The character that can open a handled element.</value>
-        public char Character
+        /// <value>The characters that can open a handled element.</value>
+        public char[] Characters
         {
             get;
         }

@@ -82,7 +82,7 @@
     <Compile Include="Parser\Blocks\Delimiters\NumericListItemHandler.cs" />
     <Compile Include="Parser\Blocks\Delimiters\OrderedListItemHandler.cs" />
     <Compile Include="Parser\Blocks\Delimiters\ParagraphHandler.cs" />
-    <Compile Include="Parser\Blocks\Delimiters\RomanNumeralListItemHandler.cs" />
+    <Compile Include="Parser\Blocks\Delimiters\RomanListItemHandler.cs" />
     <Compile Include="Parser\Blocks\Delimiters\SETextHeaderHandler.cs" />
     <Compile Include="Parser\Blocks\OrderedListItemParser.cs" />
     <Compile Include="Parser\DelegateBlockDelimiterHandler.cs" />

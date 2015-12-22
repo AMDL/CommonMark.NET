@@ -7,9 +7,9 @@ namespace CommonMark.Parser
         private readonly IBlockDelimiterHandler inner;
         private readonly IBlockDelimiterHandler outer;
 
-        private DelegateBlockDelimiterHandler(char character, IBlockDelimiterHandler inner, IBlockDelimiterHandler outer)
+        private DelegateBlockDelimiterHandler(char[] characters, IBlockDelimiterHandler inner, IBlockDelimiterHandler outer)
         {
-            this.Character = character;
+            this.Characters = characters;
             this.inner = inner;
             this.outer = outer;
         }
@@ -19,7 +19,7 @@ namespace CommonMark.Parser
             get;
         }
 
-        public char Character
+        public char[] Characters
         {
             get;
         }
@@ -30,10 +30,10 @@ namespace CommonMark.Parser
                 || outer.Handle(ref info);
         }
 
-        internal static IBlockDelimiterHandler Merge(char character, IBlockDelimiterHandler inner, IBlockDelimiterHandler outer)
+        internal static IBlockDelimiterHandler Merge(IBlockDelimiterHandler inner, IBlockDelimiterHandler outer, params char[] characters)
         {
             return inner != null && !inner.Equals(outer)
-                ? new DelegateBlockDelimiterHandler(character, inner, outer)
+                ? new DelegateBlockDelimiterHandler(characters, inner, outer)
                 : outer;
         }
     }

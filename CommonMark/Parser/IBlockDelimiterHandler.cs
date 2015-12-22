@@ -6,10 +6,10 @@
     public interface IBlockDelimiterHandler
     {
         /// <summary>
-        /// Gets the handled character.
+        /// Gets the handled characters.
         /// </summary>
-        /// <value>A character that can open a handled element.</value>
-        char Character { get; }
+        /// <value>The characters that can open a handled element.</value>
+        char[] Characters { get; }
 
         /// <summary>
         /// Handles a block delimiter.

@@ -5,41 +5,48 @@ namespace CommonMark.Parser.Blocks.Delimiters
     /// <summary>
     /// Base ordered list item delimiter handler class.
     /// </summary>
-    public abstract class OrderedListItemHandler : ListItemHandler<OrderedListData>
+    public abstract class OrderedListItemHandler<TParameters> : ListItemHandler<OrderedListData, OrderedListItemParameters, TParameters>
+        where TParameters : OrderedListItemHandler<TParameters>.Parameters
     {
         /// <summary>
-        /// The default parameters instance.
+        /// Handler parameters.
         /// </summary>
-        public static readonly OrderedListItemParameters DefaultParameters = new OrderedListItemParameters(
-            '0', '9', 0, 10, 9,
-            BlockTag.ListItem,
-            BlockTag.OrderedList,
-#pragma warning disable 0618
- ListType.Ordered,
-#pragma warning restore 0618
- OrderedListMarkerType.None,
-            null,
-            new ListItemDelimiterParameters('.'),
-            new ListItemDelimiterParameters(')'));
+        public abstract class Parameters : ListItemHandlerParameters<OrderedListItemParameters>
+        {
+            /// <summary>
+            /// Initializes a new instance of the <see cref="Parameters"/> class.
+            /// </summary>
+            /// <param name="parameters">List item parameters.</param>
+            protected Parameters(OrderedListItemParameters parameters)
+                : base(parameters)
+            {
+            }
+
+            /// <summary>
+            /// Gets or sets the first marker character.
+            /// </summary>
+            public char MarkerMinChar { get; set; }
+
+            /// <summary>
+            /// Gets or sets the last marker character.
+            /// </summary>
+            public char MarkerMaxChar { get; set; }
+        }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="OrderedListItemHandler"/> class.
+        /// Initializes a new instance of the <see cref="OrderedListItemHandler{TParameters}"/> class.
         /// </summary>
         /// <param name="settings">Common settings.</param>
-        /// <param name="character">Handled character.</param>
-        /// <param name="markerMinChar">First marker character.</param>
-        /// <param name="markerMaxChar">Last marker character.</param>
-        /// <param name="isRequireContent"><c>true</c> if items on this list require content.</param>
-        /// <param name="parameters">Ordered list parameters.</param>
-        public OrderedListItemHandler(CommonMarkSettings settings, char character, char markerMinChar, char markerMaxChar, bool isRequireContent, OrderedListItemParameters parameters)
-            : base(settings, character, isRequireContent, parameters, parameters.Delimiters)
+        /// <param name="handlerParameters">Handler parameters.</param>
+        public OrderedListItemHandler(CommonMarkSettings settings, TParameters handlerParameters)
+            : base(settings, handlerParameters)
         {
-            MarkerMinCharacter = markerMinChar;
-            MarkerMaxCharacter = markerMaxChar;
-            MaxMarkerLength = parameters.MaxMarkerLength;
-            MarkerType = parameters.MarkerType;
-            ListStyle = parameters.ListStyle;
-            ValueBase = parameters.ValueBase;
+            MarkerMinCharacter = handlerParameters.MarkerMinChar;
+            MarkerMaxCharacter = handlerParameters.MarkerMaxChar;
+            MaxMarkerLength = handlerParameters.Parameters.MaxMarkerLength;
+            MarkerType = handlerParameters.Parameters.MarkerType;
+            ListStyle = handlerParameters.Parameters.ListStyle;
+            ValueBase = handlerParameters.Parameters.ValueBase;
         }
 
         /// <summary>

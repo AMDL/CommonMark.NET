@@ -5,21 +5,68 @@ namespace CommonMark.Parser.Blocks.Delimiters
     /// <summary>
     /// Base char-to-value mapping ordered list item delimiter handler class.
     /// </summary>
-    public abstract class MappingListItemHandler : OrderedListItemHandler
+    public abstract class MappingListItemHandler : OrderedListItemHandler<MappingListItemHandler.Parameters>
     {
         /// <summary>
-        /// Creates a mapping from character to value.
+        /// Handler parameters.
         /// </summary>
-        /// <param name="markers">Marker parameters.</param>
-        /// <param name="valueMapDict">Value map dictionary.</param>
-        /// <param name="markerMinChar">First marker character.</param>
-        /// <param name="markerMaxChar">Last marker character.</param>
-        /// <returns></returns>
-        protected static int[] CreateValueMap(OrderedListMarkerParameters[] markers, Dictionary<char, int> valueMapDict, out char markerMinChar, out char markerMaxChar)
+        public new sealed class Parameters : OrderedListItemHandler<Parameters>.Parameters
         {
-            markerMinChar = char.MaxValue;
-            markerMaxChar = char.MinValue;
-            foreach (var marker in markers)
+            /// <summary>
+            /// Initializes a new instance of the <see cref="Parameters"/> class.
+            /// </summary>
+            /// <param name="parameters">List item parameters.</param>
+            public Parameters(OrderedListItemParameters parameters)
+                : base(parameters)
+            {
+            }
+
+            /// <summary>
+            /// Gets or sets the value map.
+            /// </summary>
+            public int[] ValueMap { get; set; }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MappingListItemHandler"/> class.
+        /// </summary>
+        /// <param name="settings">Common settings.</param>
+        /// <param name="parameters">Ordered list item parameters.</param>
+        protected MappingListItemHandler(CommonMarkSettings settings, OrderedListItemParameters parameters)
+            : base(settings, GetHandlerParameters(parameters))
+        {
+            this.ValueMap = HandlerParameters.ValueMap;
+        }
+
+        /// <summary>
+        /// Adjust the start value.
+        /// </summary>
+        /// <param name="start">Current start value.</param>
+        /// <param name="value">Current character value.</param>
+        /// <param name="curChar">Current character.</param>
+        /// <returns><c>true</c> if successful.</returns>
+        protected override bool AdjustStart(ref int start, ref int value, char curChar)
+        {
+            if ((value = ValueMap[curChar - MarkerMinCharacter]) == 0)
+                return false;
+            start = start * ValueBase + value;
+            return true;
+        }
+
+        /// <summary>
+        /// Gets the value map.
+        /// </summary>
+        protected int[] ValueMap
+        {
+            get;
+        }
+
+        private static Parameters GetHandlerParameters(OrderedListItemParameters parameters)
+        {
+            var valueMapDict = new Dictionary<char, int>();
+            var markerMinChar = char.MaxValue;
+            var markerMaxChar = char.MinValue;
+            foreach (var marker in parameters.Markers)
             {
                 if (!AddSingle(marker as OrderedListSingleMarkerParameters, valueMapDict, ref markerMinChar, ref markerMaxChar)
                     && !AddRange(marker as OrderedListMarkerRangeParameters, valueMapDict, ref markerMinChar, ref markerMaxChar))
@@ -34,7 +81,18 @@ namespace CommonMark.Parser.Blocks.Delimiters
                 valueMap[kvp.Key - markerMinChar] = kvp.Value;
             }
 
-            return valueMap;
+            var characters = new char[valueMapDict.Count];
+            valueMapDict.Keys.CopyTo(characters, 0);
+
+            return new Parameters(parameters)
+            {
+                Characters = characters,
+                Delimiters = parameters.Delimiters,
+                IsRequireContent = true,
+                MarkerMinChar = markerMinChar,
+                MarkerMaxChar = markerMaxChar,
+                ValueMap = valueMap,
+            };
         }
 
         private static bool AddSingle(OrderedListSingleMarkerParameters single, Dictionary<char, int> valueMap, ref char min, ref char max)
@@ -69,44 +127,6 @@ namespace CommonMark.Parser.Blocks.Delimiters
                 max = rangeMax;
 
             return true;
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MappingListItemHandler"/> class.
-        /// </summary>
-        /// <param name="settings">Common settings.</param>
-        /// <param name="character">Handled character.</param>
-        /// <param name="valueMap">Character to value mapping (<paramref name="markerMinChar"/>-based).</param>
-        /// <param name="markerMinChar">First marker character.</param>
-        /// <param name="markerMaxChar">Last marker character.</param>
-        /// <param name="parameters">Ordered list item parameters.</param>
-        protected MappingListItemHandler(CommonMarkSettings settings, char character, int[] valueMap, char markerMinChar, char markerMaxChar, OrderedListItemParameters parameters)
-            : base(settings, character, markerMinChar, markerMaxChar, true, parameters)
-        {
-            this.ValueMap = valueMap;
-        }
-
-        /// <summary>
-        /// Adjust the start value.
-        /// </summary>
-        /// <param name="start">Current start value.</param>
-        /// <param name="value">Current character value.</param>
-        /// <param name="curChar">Current character.</param>
-        /// <returns><c>true</c> if successful.</returns>
-        protected override bool AdjustStart(ref int start, ref int value, char curChar)
-        {
-            if ((value = ValueMap[curChar - MarkerMinCharacter]) == 0)
-                return false;
-            start = start * ValueBase + value;
-            return true;
-        }
-
-        /// <summary>
-        /// Gets the value map.
-        /// </summary>
-        protected int[] ValueMap
-        {
-            get;
         }
     }
 }

@@ -43,6 +43,7 @@ namespace CommonMark.Parser.Blocks.Delimiters
         public HorizontalRulerHandler(CommonMarkSettings settings, BlockTag tag, HorizontalRulerDelimiterParameters parameters)
             : base(settings, tag, parameters.Character)
         {
+            Character = parameters.Character;
             MinCount = parameters.MinCount;
         }
 
@@ -66,6 +67,11 @@ namespace CommonMark.Parser.Blocks.Delimiters
         }
 
         private int MinCount
+        {
+            get;
+        }
+
+        private char Character
         {
             get;
         }

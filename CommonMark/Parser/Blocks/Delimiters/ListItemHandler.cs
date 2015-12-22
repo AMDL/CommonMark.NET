@@ -31,11 +31,52 @@ namespace CommonMark.Parser.Blocks.Delimiters
     }
 
     /// <summary>
+    /// Base list item delimiter handler parameters class.
+    /// </summary>
+    /// <typeparam name="TParameters">Type of list item parameters.</typeparam>
+    public abstract class ListItemHandlerParameters<TParameters>
+        where TParameters : IListItemParameters
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ListItemHandlerParameters{TParameters}"/> class.
+        /// </summary>
+        /// <param name="parameters">List item parameters.</param>
+        protected ListItemHandlerParameters(TParameters parameters)
+        {
+            Parameters = parameters;
+        }
+
+        /// <summary>
+        /// Gets or sets the list item parameters.
+        /// </summary>
+        public TParameters Parameters { get; set; }
+
+        /// <summary>
+        /// Gets or sets the handled characters.
+        /// </summary>
+        public char[] Characters { get; set; }
+
+        /// <summary>
+        /// Gets or sets the delimiter parameters.
+        /// </summary>
+        public ListItemDelimiterParameters[] Delimiters { get; set; }
+
+        /// <summary>
+        /// Gets or sets the value indicating whether items on this list require content.
+        /// </summary>
+        public bool IsRequireContent { get; set; }
+    }
+
+    /// <summary>
     /// Base list item delimiter handler class.
     /// </summary>
     /// <typeparam name="TData">Type of specific list data.</typeparam>
-    public abstract class ListItemHandler<TData> : BlockDelimiterHandler
+    /// <typeparam name="TParameters">Type of list item parameters.</typeparam>
+    /// <typeparam name="THandlerParameters">Type of handler parameters.</typeparam>
+    public abstract class ListItemHandler<TData, TParameters, THandlerParameters> : BlockDelimiterHandler
         where TData : class
+        where TParameters : IListItemParameters
+        where THandlerParameters : ListItemHandlerParameters<TParameters>
     {
         /// <summary>
         /// Start value adjuster delegate.
@@ -57,21 +98,19 @@ namespace CommonMark.Parser.Blocks.Delimiters
         protected delegate int ParseMarkerDelegate(BlockParserInfo info, AdjustStartDelegate adjustStart, out ListData data, out TData listData);
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ListItemHandler{TData}"/> class.
+        /// Initializes a new instance of the <see cref="ListItemHandler{TData,TParameters,THandlerParameters}"/> class.
         /// </summary>
         /// <param name="settings">Common settings.</param>
-        /// <param name="character">Handled character.</param>
-        /// <param name="isRequireContent"><c>true</c> if items on this list require content.</param>
-        /// <param name="parameters">List item parameters.</param>
-        /// <param name="delimiters">Delimiter parameters.</param>
+        /// <param name="handlerParameters">Handler parameters.</param>
 #pragma warning disable 0618
-        protected ListItemHandler(CommonMarkSettings settings, char character, bool isRequireContent, IListItemParameters parameters, params ListItemDelimiterParameters[] delimiters)
-            : base(settings, parameters.Tag, character)
+        protected ListItemHandler(CommonMarkSettings settings, THandlerParameters handlerParameters)
+            : base(settings, handlerParameters.Parameters.Tag, handlerParameters.Characters)
         {
-            ParentTag = parameters.ParentTag;
-            ListType = parameters.ListType;
-            IsRequireContent = isRequireContent;
-            SetDelimiters(delimiters);
+            HandlerParameters = handlerParameters;
+            ParentTag = handlerParameters.Parameters.ParentTag;
+            ListType = handlerParameters.Parameters.ListType;
+            IsRequireContent = handlerParameters.IsRequireContent;
+            SetDelimiters(handlerParameters.Delimiters);
         }
 #pragma warning restore 0618
 
@@ -88,6 +127,14 @@ namespace CommonMark.Parser.Blocks.Delimiters
         /// </summary>
         [Obsolete("This API has been superceded by " + nameof(BlockTag.BulletList) + " and " + nameof(BlockTag.OrderedList) + ".")]
         public ListType ListType
+        {
+            get;
+        }
+
+        /// <summary>
+        /// Gets the handler parameters.
+        /// </summary>
+        protected THandlerParameters HandlerParameters
         {
             get;
         }

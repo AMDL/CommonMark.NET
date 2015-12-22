@@ -50,6 +50,7 @@ namespace CommonMark.Parser.Blocks.Delimiters
         public SETextHeaderHandler(CommonMarkSettings settings, BlockTag tag, SETextHeaderDelimiterParameters parameters)
             : base(settings, tag, parameters.Character)
         {
+            Character = parameters.Character;
             HeaderLevel = parameters.HeaderLevel;
             MinCount = parameters.MinCount;
         }
@@ -74,7 +75,7 @@ namespace CommonMark.Parser.Blocks.Delimiters
 
         /// <summary>
         /// Scans a setext header line.
-        /// Assumes that there is a <see cref="BlockDelimiterHandler.Character"/> at the current position.
+        /// Assumes that there is a <see cref="Character"/> at the current position.
         /// </summary>
         /// <param name="info">Parser state.</param>
         /// <returns>Header level, or 0 for no match.</returns>
@@ -115,6 +116,11 @@ namespace CommonMark.Parser.Blocks.Delimiters
             }
 
             return true;
+        }
+
+        private char Character
+        {
+            get;
         }
 
         private int HeaderLevel

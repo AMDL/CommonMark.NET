@@ -36,8 +36,23 @@ namespace CommonMark.Parser.Blocks.Delimiters
     /// <summary>
     /// Bullet list item delimiter handler.
     /// </summary>
-    public sealed class BulletListItemHandler : ListItemHandler<BulletListData>
+    public sealed class BulletListItemHandler : ListItemHandler<BulletListData, BulletListItemParameters, BulletListItemHandler.Parameters>
     {
+        /// <summary>
+        /// Handler parameters.
+        /// </summary>
+        public sealed class Parameters : ListItemHandlerParameters<BulletListItemParameters>
+        {
+            /// <summary>
+            /// Initializes a new instance of the <see cref="Parameters"/> class.
+            /// </summary>
+            /// <param name="parameters">List item parameters.</param>
+            public Parameters(BulletListItemParameters parameters)
+                : base(parameters)
+            {
+            }
+        }
+
         /// <summary>
         /// The default parameters instance.
         /// </summary>
@@ -45,29 +60,12 @@ namespace CommonMark.Parser.Blocks.Delimiters
             BlockTag.ListItem,
             BlockTag.BulletList,
 #pragma warning disable 0618
- ListType.Bullet,
+            ListType.Bullet,
 #pragma warning restore 0618
- new BulletListItemDelimiterParameters('*', isHorizontalRuleCharacter: true),
+            new BulletListItemDelimiterParameters('*', isHorizontalRuleCharacter: true),
             new BulletListItemDelimiterParameters('-', isHorizontalRuleCharacter: true),
             new BulletListItemDelimiterParameters('+'),
             new BulletListItemDelimiterParameters('•'));
-
-        /// <summary>
-        /// Creates bullet list item delimiter handlers using the specified parameters.
-        /// </summary>
-        /// <param name="settings">Common settings.</param>
-        /// <param name="parameters">List item parameters.</param>
-        /// <returns>A collection of bullet list item delimiter handlers.</returns>
-        public static IEnumerable<IBlockDelimiterHandler> Create(CommonMarkSettings settings, BulletListItemParameters parameters)
-        {
-            if (parameters != null)
-            {
-                foreach (var delimiter in parameters.Delimiters)
-                {
-                    yield return new BulletListItemHandler(settings, parameters, delimiter);
-                }
-            }
-        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BulletListItemHandler"/> class.
@@ -76,7 +74,7 @@ namespace CommonMark.Parser.Blocks.Delimiters
         /// <param name="parameters">List item parameters.</param>
         /// <param name="delimiter">Delimiter parameters.</param>
         public BulletListItemHandler(CommonMarkSettings settings, BulletListItemParameters parameters, BulletListItemDelimiterParameters delimiter)
-            : base(settings, delimiter.Character, false, parameters, delimiter)
+            : base(settings, GetHandlerParameters(parameters, delimiter))
         {
             IsHorizontalRuleCharacter = delimiter.IsHorizontalRuleCharacter;
             ListStyle = delimiter.ListStyle;
@@ -171,6 +169,16 @@ namespace CommonMark.Parser.Blocks.Delimiters
         private string ListStyle
         {
             get;
+        }
+
+        private static Parameters GetHandlerParameters(BulletListItemParameters parameters, BulletListItemDelimiterParameters delimiter)
+        {
+            return new Parameters(parameters)
+            {
+                Characters = new[] { delimiter.Character },
+                Delimiters = new[] { delimiter },
+                IsRequireContent = false,
+            };
         }
     }
 }

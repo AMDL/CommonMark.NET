@@ -1,41 +1,57 @@
-﻿using System.Collections.Generic;
+﻿using CommonMark.Syntax;
+using System.Collections.Generic;
 
 namespace CommonMark.Parser.Blocks.Delimiters
 {
     /// <summary>
     /// Numeric ordered list item delimiter handler.
     /// </summary>
-    public sealed class NumericListItemHandler : OrderedListItemHandler
+    public sealed class NumericListItemHandler : OrderedListItemHandler<NumericListItemHandler.Parameters>
     {
         /// <summary>
-        /// Creates numeric list item delimiter handlers using the specified parameters.
+        /// Handler parameters.
         /// </summary>
-        /// <param name="settings">Common settings.</param>
-        /// <param name="parameters">List item parameters.</param>
-        /// <returns>A collection of numeric list item delimiter handlers.</returns>
-        public static IEnumerable<IBlockDelimiterHandler> Create(CommonMarkSettings settings, OrderedListItemParameters parameters)
+        public new sealed class Parameters : OrderedListItemHandler<Parameters>.Parameters
         {
-            if (parameters != null && parameters.Markers.Length == 1)
+            /// <summary>
+            /// Initializes a new instance of the <see cref="Parameters"/> class.
+            /// </summary>
+            /// <param name="parameters">List item parameters.</param>
+            public Parameters(OrderedListItemParameters parameters)
+                : base(parameters)
             {
-                var range = parameters.Markers[0] as OrderedListMarkerRangeParameters;
-                for (var i = 0; i <= range.MaxCharacter - range.MinCharacter; i++)
-                {
-                    yield return new NumericListItemHandler(settings, (char)(i + range.MinCharacter), range, parameters);
-                }
             }
+
+            /// <summary>
+            /// Gets or sets the start value.
+            /// </summary>
+            public int StartValue { get; set; }
         }
+
+        /// <summary>
+        /// The default parameters instance.
+        /// </summary>
+        public static readonly OrderedListItemParameters DefaultParameters = new OrderedListItemParameters(
+            '0', '9', 0, 10, 9,
+            BlockTag.ListItem,
+            BlockTag.OrderedList,
+#pragma warning disable 0618
+            ListType.Ordered,
+#pragma warning restore 0618
+            OrderedListMarkerType.None,
+            null,
+            new ListItemDelimiterParameters('.'),
+            new ListItemDelimiterParameters(')'));
 
         /// <summary>
         /// Initializes a new instance of the <see cref="NumericListItemHandler"/> class.
         /// </summary>
         /// <param name="settings">Common settings.</param>
-        /// <param name="character">Handled character.</param>
-        /// <param name="range">Marker range parameters.</param>
         /// <param name="parameters">Ordered list parameters.</param>
-        public NumericListItemHandler(CommonMarkSettings settings, char character, OrderedListMarkerRangeParameters range, OrderedListItemParameters parameters)
-            : base(settings, character, range.MinCharacter, range.MaxCharacter, false, parameters)
+        public NumericListItemHandler(CommonMarkSettings settings, OrderedListItemParameters parameters)
+            : base(settings, GetHandlerParameters(parameters))
         {
-            StartValue = range.StartValue;
+            StartValue = HandlerParameters.StartValue;
         }
 
         /// <summary>
@@ -65,6 +81,27 @@ namespace CommonMark.Parser.Blocks.Delimiters
         private int StartValue
         {
             get;
+        }
+
+        private static Parameters GetHandlerParameters(OrderedListItemParameters parameters)
+        {
+            var range = parameters.Markers[0] as OrderedListMarkerRangeParameters;
+            var length = range.MaxCharacter - range.MinCharacter + 1;
+            var characters = new char[length];
+            for (var i = 0; i < length; i++)
+            {
+                characters[i] = (char)(i + range.MinCharacter);
+            }
+
+            return new Parameters(parameters)
+            {
+                Characters = characters,
+                Delimiters = parameters.Delimiters,
+                IsRequireContent = false,
+                MarkerMinChar = range.MinCharacter,
+                MarkerMaxChar = range.MaxCharacter,
+                StartValue = range.StartValue,
+            };
         }
     }
 }

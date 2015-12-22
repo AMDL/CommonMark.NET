@@ -45,6 +45,7 @@ namespace CommonMark.Parser.Blocks.Delimiters
         public FencedCodeHandler(CommonMarkSettings settings, BlockTag tag, FencedCodeDelimiterParameters parameters)
             : base(settings, tag, parameters.Opener)
         {
+            Opener = parameters.Opener;
         }
 
         /// <summary>
@@ -97,7 +98,7 @@ namespace CommonMark.Parser.Blocks.Delimiters
             {
                 var c = s[i];
 
-                if (c == Character)
+                if (c == Opener)
                 {
                     if (fenceDone)
                         return 0;
@@ -118,6 +119,11 @@ namespace CommonMark.Parser.Blocks.Delimiters
                 return 0;
 
             return cnt;
+        }
+
+        private char Opener
+        {
+            get;
         }
     }
 }
