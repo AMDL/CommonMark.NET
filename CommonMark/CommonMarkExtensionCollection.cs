@@ -96,8 +96,7 @@ namespace CommonMark
             Register(new Extension.ReferenceCase(Settings, new Extension.ReferenceCaseSettings(Extension.ReferenceCaseType.UpperInvariant)));
             Register(new Extension.FancyLists(Settings, new Extension.FancyListsSettings
             {
-                StandardListStyles = Extension.StandardListStyles.All,
-                BulletListStyles = Extension.BulletListStyles.All,
+                Features = Extension.FancyListsFeatures.All,
                 NumericListStyles = Extension.NumericListStyles.All,
                 AdditiveListStyles = Extension.AdditiveListStyles.All,
             }));

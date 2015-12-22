@@ -52,8 +52,7 @@
     <Compile Include="CommonMarkExtensionCollection.cs" />
     <Compile Include="CommonMarkSettings.cs" />
     <Compile Include="CommonMarkExtension.cs" />
-    <Compile Include="Extension\StandardListStyles.cs" />
-    <Compile Include="Extension\BulletListStyles.cs" />
+    <Compile Include="Extension\FancyListsFeatures.cs" />
     <Compile Include="Extension\AdditiveListStyles.cs" />
     <Compile Include="Extension\FancyLists.cs" />
     <Compile Include="Extension\LegacyLists.cs" />

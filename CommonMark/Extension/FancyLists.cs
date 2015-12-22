@@ -13,14 +13,12 @@ namespace CommonMark.Extension
         /// <summary>
         /// Initializes a new instance of the <see cref="FancyListsSettings"/> structure.
         /// </summary>
-        /// <param name="standardListStyles">Standard list styles.</param>
-        /// <param name="bulletListStyles">Unordered list styles.</param>
+        /// <param name="features">Fancy lists features.</param>
         /// <param name="numericListStyles">Numeral list styles.</param>
         /// <param name="additiveListStyles">Additive list styles.</param>
-        public FancyListsSettings(StandardListStyles standardListStyles, BulletListStyles bulletListStyles, NumericListStyles numericListStyles, AdditiveListStyles additiveListStyles)
+        public FancyListsSettings(FancyListsFeatures features, NumericListStyles numericListStyles, AdditiveListStyles additiveListStyles)
         {
-            this.StandardListStyles = standardListStyles;
-            this.BulletListStyles = bulletListStyles;
+            this.Features = features;
             this.NumericListStyles = numericListStyles;
             this.AdditiveListStyles = additiveListStyles;
         }
@@ -28,18 +26,9 @@ namespace CommonMark.Extension
         /// <summary>
         /// Initializes a new instance of the <see cref="FancyListsSettings"/> structure.
         /// </summary>
-        /// <param name="standardListStyles">Standard list styles.</param>
-        public FancyListsSettings(StandardListStyles standardListStyles)
-            : this(standardListStyles, BulletListStyles.None, NumericListStyles.None, AdditiveListStyles.None)
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="FancyListsSettings"/> structure.
-        /// </summary>
-        /// <param name="bulletListStyles">Unordered list styles.</param>
-        public FancyListsSettings(BulletListStyles bulletListStyles)
-            : this(StandardListStyles.None, bulletListStyles, NumericListStyles.None, AdditiveListStyles.None)
+        /// <param name="features">Fancy lists features.</param>
+        public FancyListsSettings(FancyListsFeatures features)
+            : this(features, NumericListStyles.None, AdditiveListStyles.None)
         {
         }
 
@@ -48,7 +37,7 @@ namespace CommonMark.Extension
         /// </summary>
         /// <param name="numericListStyles">Numeric list styles.</param>
         public FancyListsSettings(NumericListStyles numericListStyles)
-            : this(StandardListStyles.None, BulletListStyles.None, numericListStyles, AdditiveListStyles.None)
+            : this(FancyListsFeatures.None, numericListStyles, AdditiveListStyles.None)
         {
         }
 
@@ -57,19 +46,14 @@ namespace CommonMark.Extension
         /// </summary>
         /// <param name="additiveListStyles">Additive list styles.</param>
         public FancyListsSettings(AdditiveListStyles additiveListStyles)
-            : this(StandardListStyles.None, BulletListStyles.None, NumericListStyles.None, additiveListStyles)
+            : this(FancyListsFeatures.None, NumericListStyles.None, additiveListStyles)
         {
         }
 
         /// <summary>
-        /// Gets or sets the standard list styles.
+        /// Gets or sets the fancy lists features.
         /// </summary>
-        public StandardListStyles StandardListStyles { get; set; }
-
-        /// <summary>
-        /// Gets or sets the unordered list styles.
-        /// </summary>
-        public BulletListStyles BulletListStyles { get; set; }
+        public FancyListsFeatures Features { get; set; }
 
         /// <summary>
         /// Gets or sets the numeric list styles.
@@ -111,22 +95,22 @@ namespace CommonMark.Extension
             var bulletParameters = new BulletListItemParameters(delimiters: bulletDelimiters.ToArray());
             var handlers = new List<IBlockDelimiterHandler>(BulletListItemHandler.Create(settings, bulletParameters));
 
-            if (IsEnabled(StandardListStyles.LowerRoman))
+            if (IsEnabled(FancyListsFeatures.LowerRoman))
             {
                 handlers.AddRange(GetLowerRomanListItemHandlers(settings));
             }
 
-            if (IsEnabled(StandardListStyles.LowerLatin))
+            if (IsEnabled(FancyListsFeatures.LowerLatin))
             {
                 handlers.AddRange(GetLowerLatinListItemHandlers(settings));
             }
 
-            if (IsEnabled(StandardListStyles.UpperRoman))
+            if (IsEnabled(FancyListsFeatures.UpperRoman))
             {
                 handlers.AddRange(GetUpperRomanListItemHandlers(settings));
             }
 
-            if (IsEnabled(StandardListStyles.UpperLatin))
+            if (IsEnabled(FancyListsFeatures.UpperLatin))
             {
                 handlers.AddRange(GetUpperLatinListItemHandlers(settings));
             }
@@ -144,13 +128,13 @@ namespace CommonMark.Extension
 
         private IEnumerable<BulletListItemDelimiterParameters> GetBulletDelimiters()
         {
-            if (IsEnabled(BulletListStyles.Disc))
+            if (IsEnabled(FancyListsFeatures.Disc))
                 yield return new BulletListItemDelimiterParameters('●', listStyle: "disc");
-            if (IsEnabled(BulletListStyles.Circle))
+            if (IsEnabled(FancyListsFeatures.Circle))
                 yield return new BulletListItemDelimiterParameters('○', listStyle: "circle");
-            if (IsEnabled(BulletListStyles.Square))
+            if (IsEnabled(FancyListsFeatures.Square))
                 yield return new BulletListItemDelimiterParameters('■', listStyle: "square");
-            if (IsEnabled(BulletListStyles.Unbulleted))
+            if (IsEnabled(FancyListsFeatures.Unbulleted))
                 yield return new BulletListItemDelimiterParameters('∙', listStyle: "none");
         }
 
@@ -316,14 +300,9 @@ namespace CommonMark.Extension
             delimiters: new ListItemDelimiterParameters('.', 2));
         }
 
-        private bool IsEnabled(StandardListStyles flag)
+        private bool IsEnabled(FancyListsFeatures flag)
         {
-            return 0 != (fancyListsSettings.StandardListStyles & flag);
-        }
-
-        private bool IsEnabled(BulletListStyles flag)
-        {
-            return 0 != (fancyListsSettings.BulletListStyles & flag);
+            return 0 != (fancyListsSettings.Features & flag);
         }
 
         private bool IsEnabled(NumericListStyles flag)
