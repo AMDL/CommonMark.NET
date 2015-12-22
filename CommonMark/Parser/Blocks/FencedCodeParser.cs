@@ -241,7 +241,7 @@ namespace CommonMark.Parser.Blocks
             int fenceLength;
             if (!info.IsIndented && 0 != (fenceLength = ScanOpening(info)))
             {
-                info.Container = BlockParser.CreateChildBlock(info, BlockTag.FencedCode, info.FirstNonspace, Settings);
+                info.Container = AppendChildBlock(info, Tag, info.FirstNonspace);
                 info.Container.FencedCodeData = new FencedCodeData
                 {
                     FenceChar = info.CurrentCharacter,

@@ -365,13 +365,13 @@ namespace CommonMark.Parser.Blocks
             // can continue the list; otherwise, create a list container.
             if (info.Container.Tag != ParentTag || !isListsMatch(info, listData))
             {
-                info.Container = BlockParser.CreateChildBlock(info, ParentTag, info.FirstNonspace, Settings);
+                info.Container = AppendChildBlock(info, ParentTag, info.FirstNonspace);
                 info.Container.ListData = data;
                 setListData(info, listData);
             }
 
             // add the list item
-            info.Container = BlockParser.CreateChildBlock(info, Tag, info.FirstNonspace, Settings);
+            info.Container = AppendChildBlock(info, Tag, info.FirstNonspace);
             info.Container.ListData = data;
             setListData(info, listData);
 

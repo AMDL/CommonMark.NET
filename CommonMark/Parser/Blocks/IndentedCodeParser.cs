@@ -6,7 +6,7 @@ namespace CommonMark.Parser.Blocks
     /// <summary>
     /// <see cref="BlockTag.IndentedCode"/> element parser.
     /// </summary>
-    public sealed class IndentedCodeParser : BlockParser, IBlockDelimiterHandler
+    public sealed class IndentedCodeParser : BlockParser
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="IndentedCodeParser"/> class.
@@ -24,12 +24,10 @@ namespace CommonMark.Parser.Blocks
         /// </summary>
         public override IEnumerable<IBlockDelimiterHandler> Handlers
         {
-            get { yield return this; }
-        }
-
-        char IBlockDelimiterHandler.Character
-        {
-            get;
+            get
+            {
+                yield return new IndentedCodeHandler(Settings, Tag);
+            }
         }
 
         /// <summary>
@@ -48,21 +46,6 @@ namespace CommonMark.Parser.Blocks
             {
                 info.AdvanceOffset(info.FirstNonspace - info.Offset, false);
                 return true;
-            }
-            return false;
-        }
-
-        /// <summary>
-        /// Handles a block delimiter.
-        /// </summary>
-        /// <param name="info">Parser state.</param>
-        /// <returns><c>true</c> if successful.</returns>
-        public bool Handle(ref BlockParserInfo info)
-        {
-            if (info.IsIndented && !info.IsMaybeLazy && !info.IsBlank)
-            {
-                info.AdvanceIndentedOffset();
-                info.Container = CreateChildBlock(info, Tag, info.Offset, Settings);
             }
             return false;
         }
@@ -87,6 +70,37 @@ namespace CommonMark.Parser.Blocks
         {
             container.StringContent.RemoveTrailingBlankLines();
             return true;
+        }
+    }
+
+    /// <summary>
+    /// Indented code delimiter handler.
+    /// </summary>
+    public sealed class IndentedCodeHandler : BlockDelimiterHandler
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="IndentedCodeHandler"/> class.
+        /// </summary>
+        /// <param name="settings">Common settings.</param>
+        /// <param name="tag">Block element tag.</param>
+        public IndentedCodeHandler(CommonMarkSettings settings, BlockTag tag)
+            : base(settings, tag, '\0')
+        {
+        }
+
+        /// <summary>
+        /// Handles a block delimiter.
+        /// </summary>
+        /// <param name="info">Parser state.</param>
+        /// <returns><c>true</c> if successful.</returns>
+        public override bool Handle(ref BlockParserInfo info)
+        {
+            if (info.IsIndented && !info.IsMaybeLazy && !info.IsBlank)
+            {
+                info.AdvanceIndentedOffset();
+                info.Container = AppendChildBlock(info, Tag, info.Offset);
+            }
+            return false;
         }
     }
 }

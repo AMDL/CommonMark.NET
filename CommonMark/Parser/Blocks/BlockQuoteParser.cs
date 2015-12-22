@@ -6,7 +6,7 @@ namespace CommonMark.Parser.Blocks
     /// <summary>
     /// <see cref="BlockTag.BlockQuote"/> element parser.
     /// </summary>
-    public sealed class BlockQuoteParser : BlockParser, IBlockDelimiterHandler
+    public sealed class BlockQuoteParser : BlockParser
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="BlockQuoteParser"/> class.
@@ -24,12 +24,10 @@ namespace CommonMark.Parser.Blocks
         /// </summary>
         public override IEnumerable<IBlockDelimiterHandler> Handlers
         {
-            get { yield return this; }
-        }
-
-        char IBlockDelimiterHandler.Character
-        {
-            get { return '>'; }
+            get
+            {
+                yield return new BlockQuoteHandler(Settings, Tag);
+            }
         }
 
         /// <summary>
@@ -58,13 +56,29 @@ namespace CommonMark.Parser.Blocks
             }
             return false;
         }
+    }
+
+    /// <summary>
+    /// Blockquote delimiter handler.
+    /// </summary>
+    public sealed class BlockQuoteHandler : BlockDelimiterHandler
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BlockQuoteHandler"/> class.
+        /// </summary>
+        /// <param name="settings">Common settings.</param>
+        /// <param name="tag">Handled element tag.</param>
+        public BlockQuoteHandler(CommonMarkSettings settings, BlockTag tag)
+            : base(settings, tag, '>')
+        {
+        }
 
         /// <summary>
         /// Handles a block delimiter.
         /// </summary>
         /// <param name="info">Parser state.</param>
         /// <returns><c>true</c> if successful.</returns>
-        public bool Handle(ref BlockParserInfo info)
+        public override bool Handle(ref BlockParserInfo info)
         {
             if (info.IsIndented)
                 return false;
@@ -77,7 +91,7 @@ namespace CommonMark.Parser.Blocks
                 info.Offset++;
                 info.Column++;
             }
-            info.Container = CreateChildBlock(info, Tag, info.FirstNonspace, Settings);
+            info.Container = AppendChildBlock(info, Tag, info.FirstNonspace);
             return true;
         }
     }

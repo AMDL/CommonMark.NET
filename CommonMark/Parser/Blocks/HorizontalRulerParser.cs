@@ -101,7 +101,7 @@ namespace CommonMark.Parser.Blocks
     }
 
     /// <summary>
-    /// Horizontal rule element handler.
+    /// Horizontal rule delimiter handler.
     /// </summary>
     public sealed class HorizontalRulerHandler : BlockDelimiterHandler
     {
@@ -127,7 +127,7 @@ namespace CommonMark.Parser.Blocks
             if (!info.IsIndented && (info.Container.Tag != BlockTag.Paragraph || info.IsAllMatched) && ScanHorizontalRule(info, Character, MinCount))
             {
                 // it's only now that we know the line is not part of a setext header:
-                info.Container = BlockParser.CreateChildBlock(info, Tag, info.FirstNonspace, Settings);
+                info.Container = AppendChildBlock(info, Tag, info.FirstNonspace);
                 BlockMethods.Finalize(info.Container, info.LineInfo, Settings);
                 info.Container = info.Container.Parent;
                 info.AdvanceOffset(info.Line.Length - 1 - info.Offset, false);

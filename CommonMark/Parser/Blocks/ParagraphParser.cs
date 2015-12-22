@@ -6,7 +6,7 @@ namespace CommonMark.Parser.Blocks
     /// <summary>
     /// <see cref="BlockTag.Paragraph"/> element parser.
     /// </summary>
-    public sealed class ParagraphParser : BlockParser, IBlockDelimiterHandler
+    public sealed class ParagraphParser : BlockParser
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="ParagraphParser"/> class.
@@ -16,6 +16,7 @@ namespace CommonMark.Parser.Blocks
             : base(settings, BlockTag.Paragraph)
         {
             IsAcceptsLines = true;
+            Handler = new ParagraphHandler(Settings, Tag);
         }
 
         /// <summary>
@@ -23,12 +24,10 @@ namespace CommonMark.Parser.Blocks
         /// </summary>
         public override IEnumerable<IBlockDelimiterHandler> Handlers
         {
-            get { yield return this; }
-        }
-
-        char IBlockDelimiterHandler.Character
-        {
-            get;
+            get
+            {
+                yield return Handler;
+            }
         }
 
         /// <summary>
@@ -47,28 +46,6 @@ namespace CommonMark.Parser.Blocks
         }
 
         /// <summary>
-        /// Handles a block delimiter.
-        /// </summary>
-        /// <param name="info">Parser state.</param>
-        /// <returns><c>true</c> if successful.</returns>
-        public bool Handle(ref BlockParserInfo info)
-        {
-            Block cur = info.CurrentContainer;
-            if (cur != info.LastMatchedContainer &&
-                info.Container == info.LastMatchedContainer &&
-                !info.IsBlank &&
-                cur.Tag == BlockTag.Paragraph &&
-                cur.StringContent.Length > 0)
-            {
-                // create lazy continuation paragraph
-                AddLine(cur, info.LineInfo, info.Line, info.Offset);
-                return true;
-            }
-
-            return false;
-        }
-
-        /// <summary>
         /// Closes a handled element.
         /// </summary>
         /// <param name="info">Parser state.</param>
@@ -81,7 +58,7 @@ namespace CommonMark.Parser.Blocks
             if (info.Container.Tag != BlockTag.Paragraph)
             {
                 // create paragraph container for line
-                info.Container = CreateChildBlock(info, Tag, info.FirstNonspace, Settings);
+                info.Container = Handler.AppendChildBlock(info, Tag, info.FirstNonspace);
             }
             
             AddLine(info.Container, info.LineInfo, info.Line, info.FirstNonspace);
@@ -132,6 +109,49 @@ namespace CommonMark.Parser.Blocks
         public override bool Process(Block container, Subject subject, ref Stack<Inline> inlineStack)
         {
             return ProcessInlines(container, subject, ref inlineStack, Settings.InlineParserParameters);
+        }
+
+        private ParagraphHandler Handler
+        {
+            get;
+        }
+    }
+
+    /// <summary>
+    /// Paragraph delimiter handler.
+    /// </summary>
+    public sealed class ParagraphHandler : BlockDelimiterHandler
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ParagraphHandler"/> class.
+        /// </summary>
+        /// <param name="settings">Common settings.</param>
+        /// <param name="tag">Block element tag.</param>
+        public ParagraphHandler(CommonMarkSettings settings, BlockTag tag)
+            : base(settings, tag, '\0')
+        {
+        }
+
+        /// <summary>
+        /// Handles a block delimiter.
+        /// </summary>
+        /// <param name="info">Parser state.</param>
+        /// <returns><c>true</c> if successful.</returns>
+        public override bool Handle(ref BlockParserInfo info)
+        {
+            Block cur = info.CurrentContainer;
+            if (cur != info.LastMatchedContainer &&
+                info.Container == info.LastMatchedContainer &&
+                !info.IsBlank &&
+                cur.Tag == BlockTag.Paragraph &&
+                cur.StringContent.Length > 0)
+            {
+                // create lazy continuation paragraph
+                BlockParser.AddLine(cur, info.LineInfo, info.Line, info.Offset);
+                return true;
+            }
+
+            return false;
         }
     }
 }

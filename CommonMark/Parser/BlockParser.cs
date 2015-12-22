@@ -197,47 +197,6 @@ namespace CommonMark.Parser
         }
 
         /// <summary>
-        /// Adds a new block as child of another. Return the child.
-        /// </summary>
-        /// <remarks>Original: add_child</remarks>
-        public static Block CreateChildBlock(BlockParserInfo info, BlockTag blockType, int startColumn, CommonMarkSettings settings)
-        {
-            var parent = info.Container;
-            var line = info.LineInfo;
-
-            // if 'parent' isn't the kind of block that can accept this child,
-            // then back up til we hit a block that can.
-            while (!settings.BlockParserParameters.CanContain(parent.Tag, blockType))
-            {
-                BlockMethods.Finalize(parent, line, settings);
-                parent = parent.Parent;
-            }
-
-            var startPosition = line.IsTrackingPositions ? line.CalculateOrigin(startColumn, true) : line.LineOffset;
-#pragma warning disable 0618
-            Block child = new Block(blockType, line.LineNumber, startColumn + 1, startPosition);
-#pragma warning restore 0618
-            child.Parent = parent;
-            child.Top = parent.Top;
-
-            var lastChild = parent.LastChild;
-            if (lastChild != null)
-            {
-                lastChild.NextSibling = child;
-#pragma warning disable 0618
-                child.Previous = lastChild;
-#pragma warning restore 0618
-            }
-            else
-            {
-                parent.FirstChild = child;
-            }
-
-            parent.LastChild = child;
-            return child;
-        }
-
-        /// <summary>
         /// Processes the inline contents of a block element.
         /// </summary>
         /// <param name="block">Block element.</param>

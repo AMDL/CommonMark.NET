@@ -57,6 +57,48 @@ namespace CommonMark.Parser
         }
 
         /// <summary>
+        /// Adds a new block as the last child of another.
+        /// </summary>
+        /// <returns>The child block.</returns>
+        /// <remarks>Original: add_child</remarks>
+        public Block AppendChildBlock(BlockParserInfo info, BlockTag blockType, int startColumn)
+        {
+            var parent = info.Container;
+            var line = info.LineInfo;
+
+            // if 'parent' isn't the kind of block that can accept this child,
+            // then back up til we hit a block that can.
+            while (!Settings.BlockParserParameters.CanContain(parent.Tag, blockType))
+            {
+                BlockMethods.Finalize(parent, line, Settings);
+                parent = parent.Parent;
+            }
+
+            var startPosition = line.IsTrackingPositions ? line.CalculateOrigin(startColumn, true) : line.LineOffset;
+#pragma warning disable 0618
+            Block child = new Block(blockType, line.LineNumber, startColumn + 1, startPosition);
+#pragma warning restore 0618
+            child.Parent = parent;
+            child.Top = parent.Top;
+
+            var lastChild = parent.LastChild;
+            if (lastChild != null)
+            {
+                lastChild.NextSibling = child;
+#pragma warning disable 0618
+                child.Previous = lastChild;
+#pragma warning restore 0618
+            }
+            else
+            {
+                parent.FirstChild = child;
+            }
+
+            parent.LastChild = child;
+            return child;
+        }
+
+        /// <summary>
         /// Scans a horizontal rule line: "...three or more hyphens, asterisks,
         /// or underscores on a line by themselves. If you wish, you may use
         /// spaces between the hyphens or asterisks."
