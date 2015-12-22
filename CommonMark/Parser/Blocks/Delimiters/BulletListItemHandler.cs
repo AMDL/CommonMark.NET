@@ -47,8 +47,9 @@ namespace CommonMark.Parser.Blocks.Delimiters
             /// Initializes a new instance of the <see cref="Parameters"/> class.
             /// </summary>
             /// <param name="parameters">List item parameters.</param>
-            public Parameters(BulletListItemParameters parameters)
-                : base(parameters)
+            /// <param name="delimiter">Delimiter parameters.</param>
+            public Parameters(BulletListItemParameters parameters, BulletListItemDelimiterParameters delimiter)
+                : base(parameters, new[] { delimiter.Character }, new[] { delimiter }, false)
             {
             }
         }
@@ -173,12 +174,7 @@ namespace CommonMark.Parser.Blocks.Delimiters
 
         private static Parameters GetHandlerParameters(BulletListItemParameters parameters, BulletListItemDelimiterParameters delimiter)
         {
-            return new Parameters(parameters)
-            {
-                Characters = new[] { delimiter.Character },
-                Delimiters = new[] { delimiter },
-                IsRequireContent = false,
-            };
+            return new Parameters(parameters, delimiter);
         }
     }
 }

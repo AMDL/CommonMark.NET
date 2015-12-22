@@ -41,30 +41,36 @@ namespace CommonMark.Parser.Blocks.Delimiters
         /// Initializes a new instance of the <see cref="ListItemHandlerParameters{TParameters}"/> class.
         /// </summary>
         /// <param name="parameters">List item parameters.</param>
-        protected ListItemHandlerParameters(TParameters parameters)
+        /// <param name="characters">Handled characters.</param>
+        /// <param name="delimiters">Delimiter parameters.</param>
+        /// <param name="isRequireContent"><c>true</c> if items on this list require content.</param>
+        protected ListItemHandlerParameters(TParameters parameters, char[] characters, ListItemDelimiterParameters[] delimiters, bool isRequireContent)
         {
             Parameters = parameters;
+            Characters = characters;
+            Delimiters = delimiters;
+            IsRequireContent = isRequireContent;
         }
 
         /// <summary>
-        /// Gets or sets the list item parameters.
+        /// Gets the list item parameters.
         /// </summary>
-        public TParameters Parameters { get; set; }
+        public TParameters Parameters { get; }
 
         /// <summary>
-        /// Gets or sets the handled characters.
+        /// Gets the handled characters.
         /// </summary>
-        public char[] Characters { get; set; }
+        public char[] Characters { get; }
 
         /// <summary>
-        /// Gets or sets the delimiter parameters.
+        /// Gets the delimiter parameters.
         /// </summary>
-        public ListItemDelimiterParameters[] Delimiters { get; set; }
+        public ListItemDelimiterParameters[] Delimiters { get; }
 
         /// <summary>
         /// Gets or sets the value indicating whether items on this list require content.
         /// </summary>
-        public bool IsRequireContent { get; set; }
+        public bool IsRequireContent { get; }
     }
 
     /// <summary>

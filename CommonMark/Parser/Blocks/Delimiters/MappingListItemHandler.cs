@@ -16,8 +16,9 @@ namespace CommonMark.Parser.Blocks.Delimiters
             /// Initializes a new instance of the <see cref="Parameters"/> class.
             /// </summary>
             /// <param name="parameters">List item parameters.</param>
-            public Parameters(OrderedListItemParameters parameters)
-                : base(parameters)
+            /// <param name="characters">Handled characters.</param>
+            public Parameters(OrderedListItemParameters parameters, char[] characters)
+                : base(parameters, characters, true)
             {
             }
 
@@ -84,11 +85,8 @@ namespace CommonMark.Parser.Blocks.Delimiters
             var characters = new char[valueMapDict.Count];
             valueMapDict.Keys.CopyTo(characters, 0);
 
-            return new Parameters(parameters)
+            return new Parameters(parameters, characters)
             {
-                Characters = characters,
-                Delimiters = parameters.Delimiters,
-                IsRequireContent = true,
                 MarkerMinChar = markerMinChar,
                 MarkerMaxChar = markerMaxChar,
                 ValueMap = valueMap,

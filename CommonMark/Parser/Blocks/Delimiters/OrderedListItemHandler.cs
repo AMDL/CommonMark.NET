@@ -17,8 +17,10 @@ namespace CommonMark.Parser.Blocks.Delimiters
             /// Initializes a new instance of the <see cref="Parameters"/> class.
             /// </summary>
             /// <param name="parameters">List item parameters.</param>
-            protected Parameters(OrderedListItemParameters parameters)
-                : base(parameters)
+            /// <param name="characters">Handled characters.</param>
+            /// <param name="isRequireContent"><c>true</c> if items on this list require content.</param>
+            protected Parameters(OrderedListItemParameters parameters, char[] characters, bool isRequireContent)
+                : base(parameters, characters, parameters.Delimiters, isRequireContent)
             {
             }
 
