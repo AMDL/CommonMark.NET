@@ -14,7 +14,7 @@ namespace CommonMark.Extension
         /// Initializes a new instance of the <see cref="FancyListsSettings"/> structure.
         /// </summary>
         /// <param name="standardListStyles">Standard list styles.</param>
-        /// <param name="bulletListStyles">Bullet list styles.</param>
+        /// <param name="bulletListStyles">Unordered list styles.</param>
         /// <param name="numericListStyles">Numeral list styles.</param>
         /// <param name="additiveListStyles">Additive list styles.</param>
         public FancyListsSettings(StandardListStyles standardListStyles, BulletListStyles bulletListStyles, NumericListStyles numericListStyles, AdditiveListStyles additiveListStyles)
@@ -37,7 +37,7 @@ namespace CommonMark.Extension
         /// <summary>
         /// Initializes a new instance of the <see cref="FancyListsSettings"/> structure.
         /// </summary>
-        /// <param name="bulletListStyles">Bullet list styles.</param>
+        /// <param name="bulletListStyles">Unordered list styles.</param>
         public FancyListsSettings(BulletListStyles bulletListStyles)
             : this(StandardListStyles.None, bulletListStyles, NumericListStyles.None, AdditiveListStyles.None)
         {
@@ -67,7 +67,7 @@ namespace CommonMark.Extension
         public StandardListStyles StandardListStyles { get; set; }
 
         /// <summary>
-        /// Gets or sets the =bullet list styles.
+        /// Gets or sets the unordered list styles.
         /// </summary>
         public BulletListStyles BulletListStyles { get; set; }
 
@@ -150,6 +150,8 @@ namespace CommonMark.Extension
                 yield return new BulletListItemDelimiterParameters('○', listStyle: "circle");
             if (IsEnabled(BulletListStyles.Square))
                 yield return new BulletListItemDelimiterParameters('■', listStyle: "square");
+            if (IsEnabled(BulletListStyles.Unbulleted))
+                yield return new BulletListItemDelimiterParameters('∙', listStyle: "none");
         }
 
         private static IEnumerable<IBlockDelimiterHandler> GetLowerRomanListItemHandlers(CommonMarkSettings settings)

@@ -1,32 +1,37 @@
 ﻿namespace CommonMark.Extension
 {
     /// <summary>
-    /// Extended bullet list styles. Used in the <see cref="FancyListsSettings.BulletListStyles"/> property.
+    /// Extended unordered list styles. Used in the <see cref="FancyListsSettings.BulletListStyles"/> property.
     /// </summary>
     public enum BulletListStyles
     {
         /// <summary>
-        /// No extended bullet list styles are enabled. This is the default.
+        /// No extended unordered list styles are enabled. This is the default.
         /// </summary>
         None = 0,
 
         /// <summary>
-        /// Filled circle marker.
+        /// Unordered list with filled circle markers.
         /// </summary>
         Disc = 1,
 
         /// <summary>
-        /// Circle marker.
+        /// Unordered list with circle markers.
         /// </summary>
         Circle = 2,
 
         /// <summary>
-        /// Square marker.
+        /// Unordered list with square markers.
         /// </summary>
         Square = 4,
 
         /// <summary>
-        /// All extended bullet list styles are enabled.
+        /// Unordered list with no markers.
+        /// </summary>
+        Unbulleted = 8,
+
+        /// <summary>
+        /// All extended unordered list styles are enabled.
         /// </summary>
         All = 0x7FFFFFFF
     }

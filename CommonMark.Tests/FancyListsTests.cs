@@ -277,6 +277,29 @@ namespace CommonMark.Tests
 
         [TestMethod]
         [TestCategory("Container blocks - List items")]
+        public void UnbulletedListDisabledByDefault()
+        {
+            Helpers.ExecuteTest("∙ foo\n∙ bar", "<p>∙ foo\n∙ bar</p>", EmptySettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - List items")]
+        public void UnbulletedListDisabledAlone()
+        {
+            var s = CommonMarkSettings.Default.Clone();
+            s.Extensions.Register(new FancyLists(s, new FancyListsSettings(BulletListStyles.All & ~BulletListStyles.Unbulleted)));
+            Helpers.ExecuteTest("∙ foo\n∙ bar", "<p>∙ foo\n∙ bar</p>", s);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - List items")]
+        public void UnbulletedList1()
+        {
+            Helpers.ExecuteTest("∙ foo\n∙ bar", "<ul style=\"list-style-type: none\">\n<li>foo</li>\n<li>bar</li>\n</ul>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - List items")]
         public void ArabicIndicDisabledByDefault()
         {
             Helpers.ExecuteTest("٠.\n", "<p>٠.</p>", EmptySettings);
