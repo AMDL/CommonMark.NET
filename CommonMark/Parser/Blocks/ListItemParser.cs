@@ -184,7 +184,7 @@ namespace CommonMark.Parser.Blocks
                 foreach (var item in Parameters.Items)
                 {
                     list.AddRange(BulletListItemHandler.Create(Settings, item as BulletListItemParameters));
-                    list.AddRange(OrderedListItemHandler.Create(Settings, item as OrderedListItemParameters));
+                    list.AddRange(NumericListItemHandler.Create(Settings, item as OrderedListItemParameters));
                 }
                 return list;
             }

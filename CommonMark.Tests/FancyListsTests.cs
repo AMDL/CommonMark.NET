@@ -198,6 +198,20 @@ namespace CommonMark.Tests
 
         [TestMethod]
         [TestCategory("Container blocks - List items")]
+        public void LowerRomanInsideLowerLatinList()
+        {
+            Helpers.ExecuteTest("a. Apples\nb. Blackberries\nc. Cantaloops\nd. Durians", "<ol type=\"a\" style=\"list-style-type: lower-latin\">\n<li>Apples</li>\n<li>Blackberries</li>\n<li>Cantaloops</li>\n<li>Durians</li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - List items")]
+        public void TrailingLowerRomanInLowerLatinList()
+        {
+            Helpers.ExecuteTest("c. foo\nd. bar", "<ol start=\"3\" type=\"a\" style=\"list-style-type: lower-latin\">\n<li>foo</li>\n<li>bar</li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - List items")]
         public void UpperRomanListDisabledByDefault()
         {
             Helpers.ExecuteTest("I.  foo\n", "<p>I.  foo</p>", EmptySettings);
@@ -224,6 +238,20 @@ namespace CommonMark.Tests
         public void UpperRomanListStart1984()
         {
             Helpers.ExecuteTest("MCMLXXXIV.  O.", "<ol start=\"1984\" type=\"I\" style=\"list-style-type: upper-roman\">\n<li>O.</li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - List items")]
+        public void UpperRomanInsideUpperLatinList()
+        {
+            Helpers.ExecuteTest("A.  Apples\nB.  Blackberries\nC.  Androids\nD.  Sheep", "<ol type=\"A\" style=\"list-style-type: upper-latin\">\n<li>Apples</li>\n<li>Blackberries</li>\n<li>Androids</li>\n<li>Sheep</li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - List items")]
+        public void TrailingUpperRomanInUpperLatinList()
+        {
+            Helpers.ExecuteTest("I.  foo\nJ.  bar", "<ol start=\"9\" type=\"A\" style=\"list-style-type: upper-latin\">\n<li>foo</li>\n<li>bar</li>\n</ol>", FullSettings);
         }
 
         [TestMethod]

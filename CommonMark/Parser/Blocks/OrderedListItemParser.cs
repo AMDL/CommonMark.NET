@@ -1,7 +1,5 @@
 ﻿using CommonMark.Syntax;
-using System;
 using System.Collections.Generic;
-using System.Globalization;
 
 namespace CommonMark.Parser.Blocks
 {
@@ -162,27 +160,6 @@ namespace CommonMark.Parser.Blocks
     public abstract class OrderedListItemHandler : ListItemHandler<OrderedListData>
     {
         /// <summary>
-        /// Creates ordered list item handlers using the specified parameters.
-        /// </summary>
-        /// <param name="settings">Common settings.</param>
-        /// <param name="parameters">List item parameters.</param>
-        /// <returns>A collection of ordered list item delimiter handlers.</returns>
-        public static IEnumerable<IBlockDelimiterHandler> Create(CommonMarkSettings settings, OrderedListItemParameters parameters)
-        {
-            if (parameters != null)
-            {
-                if (parameters.Markers.Length == 1)
-                {
-                    var handlers = SinleRangeOrderedListItemHandler.Create(settings, parameters, parameters.Markers[0] as OrderedListMarkerRangeParameters);
-                    if (handlers != null && handlers.GetEnumerator().MoveNext())
-                        return handlers;
-                }
-                return AlphaListItemHandler.Create(settings, parameters, parameters.Markers);
-            }
-            return new IBlockDelimiterHandler[0];
-        }
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="OrderedListItemHandler"/> class.
         /// </summary>
         /// <param name="settings">Common settings.</param>
@@ -339,29 +316,36 @@ namespace CommonMark.Parser.Blocks
     }
 
     /// <summary>
-    /// Single-range multiplicative ordered list item delimiter handler.
+    /// Numeric ordered list item delimiter handler.
     /// </summary>
-    public sealed class SinleRangeOrderedListItemHandler : OrderedListItemHandler
+    public sealed class NumericListItemHandler : OrderedListItemHandler
     {
-        internal static IEnumerable<IBlockDelimiterHandler> Create(CommonMarkSettings settings, OrderedListItemParameters parameters, OrderedListMarkerRangeParameters range)
+        /// <summary>
+        /// Creates numeric list item delimiter handlers using the specified parameters.
+        /// </summary>
+        /// <param name="settings">Common settings.</param>
+        /// <param name="parameters">List item parameters.</param>
+        /// <returns>A collection of numeric list item delimiter handlers.</returns>
+        public static IEnumerable<IBlockDelimiterHandler> Create(CommonMarkSettings settings, OrderedListItemParameters parameters)
         {
-            if (range != null)
+            if (parameters != null && parameters.Markers.Length == 1)
             {
+                var range = parameters.Markers[0] as OrderedListMarkerRangeParameters;
                 for (var i = 0; i <= range.MaxCharacter - range.MinCharacter; i++)
                 {
-                    yield return new SinleRangeOrderedListItemHandler(settings, (char)(i + range.MinCharacter), range, parameters);
+                    yield return new NumericListItemHandler(settings, (char)(i + range.MinCharacter), range, parameters);
                 }
             }
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SinleRangeOrderedListItemHandler"/> class.
+        /// Initializes a new instance of the <see cref="NumericListItemHandler"/> class.
         /// </summary>
         /// <param name="settings">Common settings.</param>
         /// <param name="character">Handled character.</param>
         /// <param name="range">Marker range parameters.</param>
         /// <param name="parameters">Ordered list parameters.</param>
-        public SinleRangeOrderedListItemHandler(CommonMarkSettings settings, char character, OrderedListMarkerRangeParameters range, OrderedListItemParameters parameters)
+        public NumericListItemHandler(CommonMarkSettings settings, char character, OrderedListMarkerRangeParameters range, OrderedListItemParameters parameters)
             : base(settings, character, range.MinCharacter, range.MaxCharacter, false, parameters)
         {
             StartValue = range.StartValue;
@@ -475,10 +459,25 @@ namespace CommonMark.Parser.Blocks
         /// <param name="markerMinChar">First marker character.</param>
         /// <param name="markerMaxChar">Last marker character.</param>
         /// <param name="parameters">Ordered list item parameters.</param>
-        public MappingListItemHandler(CommonMarkSettings settings, char character, int[] valueMap, char markerMinChar, char markerMaxChar, OrderedListItemParameters parameters)
+        protected MappingListItemHandler(CommonMarkSettings settings, char character, int[] valueMap, char markerMinChar, char markerMaxChar, OrderedListItemParameters parameters)
             : base(settings, character, markerMinChar, markerMaxChar, true, parameters)
         {
             this.ValueMap = valueMap;
+        }
+
+        /// <summary>
+        /// Adjust the start value.
+        /// </summary>
+        /// <param name="start">Current start value.</param>
+        /// <param name="value">Current character value.</param>
+        /// <param name="curChar">Current character.</param>
+        /// <returns><c>true</c> if successful.</returns>
+        protected override bool AdjustStart(ref int start, ref int value, char curChar)
+        {
+            if ((value = ValueMap[curChar - MarkerMinCharacter]) == 0)
+                return false;
+            start = start * ValueBase + value;
+            return true;
         }
 
         /// <summary>
@@ -494,6 +493,55 @@ namespace CommonMark.Parser.Blocks
     /// Alphabetical ordered list item delimiter handler.
     /// </summary>
     public sealed class AlphaListItemHandler : MappingListItemHandler
+    {
+        /// <summary>
+        /// Creates alphabetical list item delimiter handlers using the specified parameters.
+        /// </summary>
+        /// <param name="settings">Common settings.</param>
+        /// <param name="parameters">List item parameters.</param>
+        /// <returns>A collection of alphabetical list item delimiter handlers.</returns>
+        public static IEnumerable<IBlockDelimiterHandler> Create(CommonMarkSettings settings, OrderedListItemParameters parameters)
+        {
+            char min;
+            char max;
+            var valueMapDict = new Dictionary<char, int>();
+            var valueMap = CreateValueMap(parameters.Markers, valueMapDict, out min, out max);
+
+            foreach (var kvp in valueMapDict)
+            {
+                yield return new AlphaListItemHandler(settings, kvp.Key, valueMap, min, max, parameters);
+            }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AlphaListItemHandler"/> class.
+        /// </summary>
+        /// <param name="settings">Common settings.</param>
+        /// <param name="character">Handled character.</param>
+        /// <param name="valueMap">Character to value mapping (<paramref name="markerMinChar"/>-based).</param>
+        /// <param name="markerMinChar">First marker character.</param>
+        /// <param name="markerMaxChar">Last marker character.</param>
+        /// <param name="parameters">Ordered list item parameters.</param>
+        public AlphaListItemHandler(CommonMarkSettings settings, char character, int[] valueMap, char markerMinChar, char markerMaxChar, OrderedListItemParameters parameters)
+            : base(settings, character, valueMap, markerMinChar, markerMaxChar, parameters)
+        {
+        }
+
+        /// <summary>
+        /// Handles a list item opener.
+        /// </summary>
+        /// <param name="info">Parser state.</param>
+        /// <returns><c>true</c> if successful.</returns>
+        public override bool Handle(ref BlockParserInfo info)
+        {
+            return DoHandle(info, CanOpen, ParseMarker, AdjustStart, IsListsMatch, SetListData);
+        }
+    }
+
+    /// <summary>
+    /// ASCII letter ordered list item delimiter handler.
+    /// </summary>
+    public sealed class LatinListItemHandler : MappingListItemHandler
     {
         /// <summary>
         /// The default parameters for lowercase ASCII letter lists.
@@ -529,21 +577,27 @@ namespace CommonMark.Parser.Blocks
                 new ListItemDelimiterParameters(')', 1),
             });
 
-        internal static IEnumerable<IBlockDelimiterHandler> Create(CommonMarkSettings settings, OrderedListItemParameters parameters, OrderedListMarkerParameters[] markers)
+        /// <summary>
+        /// Creates ASCII letter list item delimiter handlers using the specified parameters.
+        /// </summary>
+        /// <param name="settings">Common settings.</param>
+        /// <param name="parameters">List item parameters.</param>
+        /// <returns>A collection of ASCII letter list item delimiter handlers.</returns>
+        public static IEnumerable<IBlockDelimiterHandler> Create(CommonMarkSettings settings, OrderedListItemParameters parameters)
         {
             char min;
             char max;
             var valueMapDict = new Dictionary<char, int>();
-            var valueMap = CreateValueMap(markers, valueMapDict, out min, out max);
+            var valueMap = CreateValueMap(parameters.Markers, valueMapDict, out min, out max);
 
             foreach (var kvp in valueMapDict)
             {
-                yield return new AlphaListItemHandler(settings, kvp.Key, valueMap, min, max, parameters);
+                yield return new LatinListItemHandler(settings, kvp.Key, valueMap, min, max, parameters);
             }
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AlphaListItemHandler"/> class.
+        /// Initializes a new instance of the <see cref="LatinListItemHandler"/> class.
         /// </summary>
         /// <param name="settings">Common settings.</param>
         /// <param name="character">Handled character.</param>
@@ -551,7 +605,7 @@ namespace CommonMark.Parser.Blocks
         /// <param name="markerMinChar">First marker character.</param>
         /// <param name="markerMaxChar">Last marker character.</param>
         /// <param name="parameters">Ordered list item parameters.</param>
-        public AlphaListItemHandler(CommonMarkSettings settings, char character, int[] valueMap, char markerMinChar, char markerMaxChar, OrderedListItemParameters parameters)
+        public LatinListItemHandler(CommonMarkSettings settings, char character, int[] valueMap, char markerMinChar, char markerMaxChar, OrderedListItemParameters parameters)
             : base(settings, character, valueMap, markerMinChar, markerMaxChar, parameters)
         {
         }
@@ -567,18 +621,29 @@ namespace CommonMark.Parser.Blocks
         }
 
         /// <summary>
-        /// Adjust the start value.
+        /// Determines whether a list item belongs to a matching ordered list.
         /// </summary>
-        /// <param name="start">Current start value.</param>
-        /// <param name="value">Current character value.</param>
-        /// <param name="curChar">Current character.</param>
-        /// <returns><c>true</c> if successful.</returns>
-        protected override bool AdjustStart(ref int start, ref int value, char curChar)
+        /// <param name="info">Parser state.</param>
+        /// <param name="listData">Ordered list data.</param>
+        /// <returns><c>true</c> if the container may continue a list having <paramref name="listData"/>.</returns>
+        protected override bool IsListsMatch(BlockParserInfo info, OrderedListData listData)
         {
-            if ((value = ValueMap[curChar - MarkerMinCharacter]) == 0)
-                return false;
-            start = start * ValueBase + value;
-            return true;
+            if (base.IsListsMatch(info, listData))
+                return true;
+            var containerListData = info.Container.OrderedListData;
+            if (containerListData != null && containerListData.DelimiterCharacter == listData.DelimiterCharacter
+                && (containerListData.MarkerType == OrderedListMarkerType.LowerRoman && listData.MarkerType == OrderedListMarkerType.LowerLatin
+                || containerListData.MarkerType == OrderedListMarkerType.UpperRoman && listData.MarkerType == OrderedListMarkerType.UpperLatin))
+            {
+                var start = 0;
+                var value = 0;
+                AdjustStart(ref start, ref value, info.CurrentCharacter);
+                containerListData.Start = start - 1; //assuming consecutive markers
+                containerListData.MarkerType = listData.MarkerType;
+                containerListData.ListStyle = listData.ListStyle;
+                return true;
+            }
+            return false;
         }
     }
 
@@ -600,7 +665,7 @@ namespace CommonMark.Parser.Blocks
                 new OrderedListSingleMarkerParameters('v', 5),
                 new OrderedListSingleMarkerParameters('x', 10),
                 new OrderedListSingleMarkerParameters('l', 50),
-                //new OrderedListSingleMarkerParameters('c', 100),
+                new OrderedListSingleMarkerParameters('c', 100),
                 new OrderedListSingleMarkerParameters('m', 1000),
             },
             delimiters: new[]
@@ -631,12 +696,18 @@ namespace CommonMark.Parser.Blocks
                 new ListItemDelimiterParameters(')', 1),
             });
 
-        internal static IEnumerable<IBlockDelimiterHandler> Create(CommonMarkSettings settings, OrderedListItemParameters parameters, OrderedListMarkerParameters[] markers)
+        /// <summary>
+        /// Creates Roman numeral list item delimiter handlers using the specified parameters.
+        /// </summary>
+        /// <param name="settings">Common settings.</param>
+        /// <param name="parameters">List item parameters.</param>
+        /// <returns>A collection of Roman numeral list item delimiter handlers.</returns>
+        public static IEnumerable<IBlockDelimiterHandler> Create(CommonMarkSettings settings, OrderedListItemParameters parameters)
         {
             char min;
             char max;
             var valueMapDict = new Dictionary<char, int>();
-            var valueMap = CreateValueMap(markers, valueMapDict, out min, out max);
+            var valueMap = CreateValueMap(parameters.Markers, valueMapDict, out min, out max);
 
             foreach (var kvp in valueMapDict)
             {
@@ -696,6 +767,22 @@ namespace CommonMark.Parser.Blocks
 
             start += value;
             return true;
+        }
+
+        /// <summary>
+        /// Determines whether a list item belongs to a matching ordered list.
+        /// </summary>
+        /// <param name="info">Parser state.</param>
+        /// <param name="listData">Ordered list data.</param>
+        /// <returns><c>true</c> if the container may continue a list having <paramref name="listData"/>.</returns>
+        protected override bool IsListsMatch(BlockParserInfo info, OrderedListData listData)
+        {
+            if (base.IsListsMatch(info, listData))
+                return true;
+            var containerListData = info.Container.OrderedListData;
+            return containerListData != null && containerListData.DelimiterCharacter == listData.DelimiterCharacter
+                && (containerListData.MarkerType == OrderedListMarkerType.LowerLatin && listData.MarkerType == OrderedListMarkerType.LowerRoman
+                || containerListData.MarkerType == OrderedListMarkerType.UpperLatin && listData.MarkerType == OrderedListMarkerType.UpperRoman);
         }
     }
 }

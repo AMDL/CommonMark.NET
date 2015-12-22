@@ -114,23 +114,23 @@ namespace CommonMark.Extension
 
         private static IEnumerable<IBlockDelimiterHandler> CreateRomanHandlers(CommonMarkSettings settings, OrderedListItemParameters parameters)
         {
-            return RomanNumeralListItemHandler.Create(settings, parameters, parameters.Markers);
+            return RomanNumeralListItemHandler.Create(settings, parameters);
         }
 
         private void AddLatinHandlers(List<IBlockDelimiterHandler> handlers, CommonMarkSettings settings)
         {
-            AddHandlers(handlers, settings, GetLatinParameters, CreateAlphaHandlers, (int)fancyListsSettings.Features, (int)FancyListsFeatures.Latin);
+            AddHandlers(handlers, settings, GetLatinParameters, CreateLatinHandlers, (int)fancyListsSettings.Features, (int)FancyListsFeatures.Latin);
         }
 
         private static IEnumerable<OrderedListItemParameters> GetLatinParameters()
         {
-            yield return AlphaListItemHandler.LowerLatinParameters;
-            yield return AlphaListItemHandler.UpperLatinParameters;
+            yield return LatinListItemHandler.LowerLatinParameters;
+            yield return LatinListItemHandler.UpperLatinParameters;
         }
 
-        private static IEnumerable<IBlockDelimiterHandler> CreateAlphaHandlers(CommonMarkSettings settings, OrderedListItemParameters parameters)
+        private static IEnumerable<IBlockDelimiterHandler> CreateLatinHandlers(CommonMarkSettings settings, OrderedListItemParameters parameters)
         {
-            return AlphaListItemHandler.Create(settings, parameters, parameters.Markers);
+            return LatinListItemHandler.Create(settings, parameters);
         }
 
         private void AddBulletHandlers(List<IBlockDelimiterHandler> handlers, CommonMarkSettings settings)
@@ -160,7 +160,7 @@ namespace CommonMark.Extension
 
         private void AddNumericHandlers(List<IBlockDelimiterHandler> handlers, CommonMarkSettings settings)
         {
-            AddHandlers(handlers, settings, GetNumericParameters, CreateOrderedHandlers, (int)fancyListsSettings.NumericListStyles, (int)NumericListStyles.All);
+            AddHandlers(handlers, settings, GetNumericParameters, CreateNumericHandlers, (int)fancyListsSettings.NumericListStyles, (int)NumericListStyles.All);
         }
 
         private static IEnumerable<OrderedListItemParameters> GetNumericParameters()
@@ -192,14 +192,14 @@ namespace CommonMark.Extension
             yield return new OrderedListItemParameters(listStyle: "fullwidth-decimal", markerMinChar: '０', markerMaxChar: '９', delimiters: delimiters);
         }
 
-        private static IEnumerable<IBlockDelimiterHandler> CreateOrderedHandlers(CommonMarkSettings settings, OrderedListItemParameters parameters)
+        private static IEnumerable<IBlockDelimiterHandler> CreateNumericHandlers(CommonMarkSettings settings, OrderedListItemParameters parameters)
         {
-            return OrderedListItemHandler.Create(settings, parameters);
+            return NumericListItemHandler.Create(settings, parameters);
         }
 
         private void AddAdditiveHandlers(List<IBlockDelimiterHandler> handlers, CommonMarkSettings settings)
         {
-            AddHandlers(handlers, settings, GetAdditiveParameters, CreateOrderedHandlers, (int)fancyListsSettings.AdditiveListStyles, (int)AdditiveListStyles.All);
+            AddHandlers(handlers, settings, GetAdditiveParameters, CreateAlphaHandlers, (int)fancyListsSettings.AdditiveListStyles, (int)AdditiveListStyles.All);
         }
 
         private static IEnumerable<OrderedListItemParameters> GetAdditiveParameters()
@@ -227,6 +227,11 @@ namespace CommonMark.Extension
             },
             maxMarkerLength: 3,
             delimiters: new ListItemDelimiterParameters('.', 2));
+        }
+
+        private static IEnumerable<IBlockDelimiterHandler> CreateAlphaHandlers(CommonMarkSettings settings, OrderedListItemParameters parameters)
+        {
+            return AlphaListItemHandler.Create(settings, parameters);
         }
 
         private static List<IBlockDelimiterHandler> AddHandlers<TParameters>(List<IBlockDelimiterHandler> handlers, CommonMarkSettings settings, Func<IEnumerable<TParameters>> sourceFactory,

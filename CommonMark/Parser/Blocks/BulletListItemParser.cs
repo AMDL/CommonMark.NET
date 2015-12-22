@@ -61,7 +61,7 @@ namespace CommonMark.Parser.Blocks
     public sealed class BulletListItemHandler : ListItemHandler<BulletListData>
     {
         /// <summary>
-        /// Creates bullet list item handlers using the specified parameters.
+        /// Creates bullet list item delimiter handlers using the specified parameters.
         /// </summary>
         /// <param name="settings">Common settings.</param>
         /// <param name="parameters">List item parameters.</param>
