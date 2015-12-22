@@ -145,5 +145,24 @@
 
             return 0;
         }
+
+        /// <summary>
+        /// Determines whether the specified object has the same type.
+        /// </summary>
+        /// <param name="obj">The object to check.</param>
+        /// <returns><c>true</c> if the object is an instance of the same type.</returns>
+        public override bool Equals(object obj)
+        {
+            return obj != null && this.GetType().Equals(obj.GetType());
+        }
+
+        /// <summary>
+        /// Returns the hash code of the type object.
+        /// </summary>
+        /// <returns>Hash code.</returns>
+        public override int GetHashCode()
+        {
+            return GetType().GetHashCode();
+        }
     }
 }
