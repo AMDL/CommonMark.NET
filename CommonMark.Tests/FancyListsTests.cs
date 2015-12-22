@@ -82,6 +82,13 @@ namespace CommonMark.Tests
 
         [TestMethod]
         [TestCategory("Container blocks - List items")]
+        public void LowerLatinListStart27()
+        {
+            Helpers.ExecuteTest("aa. foo\n", "<ol start=\"27\" type=\"a\" style=\"list-style-type: lower-latin\">\n<li>foo</li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - List items")]
         public void UpperLatinListDisabledByDefault()
         {
             Helpers.ExecuteTest("A.  foo\n", "<p>A.  foo</p>", EmptySettings);
@@ -122,6 +129,20 @@ namespace CommonMark.Tests
         public void UpperLatinListDoubleSpace()
         {
             Helpers.ExecuteTest("F.  bar\n", "<ol start=\"6\" type=\"A\" style=\"list-style-type: upper-latin\">\n<li>bar</li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - List items")]
+        public void UpperLatinListStart27()
+        {
+            Helpers.ExecuteTest("AA.  foo\n", "<ol start=\"27\" type=\"A\" style=\"list-style-type: upper-latin\">\n<li>foo</li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - List items")]
+        public void UpperLatinLowerLatin()
+        {
+            Helpers.ExecuteTest("Aa.  bar\n", "<p>Aa.  bar</p>", FullSettings);
         }
 
         [TestMethod]

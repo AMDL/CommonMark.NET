@@ -211,7 +211,7 @@ namespace CommonMark.Extension
         {
             return new OrderedListItemParameters(listStyle: "hebrew", markers: new OrderedListMarkerParameters[]
             {
-                new OrderedListMarkerRangeParameters('א', 'י', 1, 1),
+                new OrderedListMarkerRangeParameters('א', 'י', 1),
                 new OrderedListSingleMarkerParameters('כ', 20),
                 new OrderedListSingleMarkerParameters('ל', 30),
                 new OrderedListSingleMarkerParameters('מ', 40),
