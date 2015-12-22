@@ -54,6 +54,7 @@
     <Compile Include="Extension\AdditiveListStyles.cs" />
     <Compile Include="Extension\FancyLists.cs" />
     <Compile Include="Extension\FancyListsSettings.cs" />
+    <Compile Include="Extension\HeaderDots.cs" />
     <Compile Include="Extension\LegacyLists.cs" />
     <Compile Include="Extension\MathDollars.cs" />
     <Compile Include="Extension\NumericListStyles.cs" />
