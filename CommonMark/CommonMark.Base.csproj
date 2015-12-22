@@ -62,6 +62,7 @@
     <Compile Include="Extension\Subscript.cs" />
     <Compile Include="Extension\Superscript.cs" />
     <Compile Include="Formatters\Blocks\BulletListFormatter.cs" />
+    <Compile Include="Formatters\Blocks\HeaderFormatter.cs" />
     <Compile Include="Formatters\Blocks\ListFormatter.cs" />
     <Compile Include="Formatters\Blocks\ListItemFormatter.cs" />
     <Compile Include="Formatters\Blocks\OrderedListFormatter.cs" />

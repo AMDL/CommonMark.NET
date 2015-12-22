@@ -17,9 +17,6 @@ namespace CommonMark.Formatters
         private static readonly char[] EscapeHtmlAmpersand = "&amp;".ToCharArray();
         private static readonly char[] EscapeHtmlQuote = "&quot;".ToCharArray();
 
-        private static readonly string[] HeaderOpenerTags = { "<h1>", "<h2>", "<h3>", "<h4>", "<h5>", "<h6>" };
-        private static readonly string[] HeaderCloserTags = { "</h1>", "</h2>", "</h3>", "</h4>", "</h5>", "</h6>" };
-
         private static readonly bool[] UrlSafeCharacters = {
             false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,
             false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,
@@ -222,7 +219,6 @@ namespace CommonMark.Formatters
             bool stackTight = false;
             bool tight = false;
             bool trackPositions = settings.TrackSourcePosition;
-            int x;
 
             var parameters = settings.FormatterParameters;
             IBlockFormatter[] formatters = parameters.BlockFormatters;
@@ -238,6 +234,12 @@ namespace CommonMark.Formatters
                 {
                     visitChildren = formatter.WriteOpening(writer, block);
                     stackLiteral = formatter.GetClosing(parameters.HtmlFormatter, block);
+                    if (formatter.IsRenderPlainTextInlines(block, false) == false)
+                    {
+                        InlinesToHtml(writer, block.InlineContent, settings, inlineStack);
+                        writer.WriteLineConstant(stackLiteral);
+                        stackLiteral = null;
+                    }
                     isStackTight = formatter.IsStackTight(block, tight);
                     if (isStackTight.HasValue)
                         stackTight = isStackTight.Value;
@@ -275,29 +277,6 @@ namespace CommonMark.Formatters
                         stackLiteral = "</blockquote>";
                         stackTight = false;
                         visitChildren = true;
-                        break;
-
-                    case BlockTag.AtxHeader:
-                    case BlockTag.SETextHeader:
-                        writer.EnsureLine();
-
-                        x = block.HeaderLevel;
-
-                        if (trackPositions)
-                        {
-                            writer.WriteConstant("<h" + x.ToString(CultureInfo.InvariantCulture));
-                            PrintPosition(writer, block);
-                            writer.Write('>');
-                            InlinesToHtml(writer, block.InlineContent, settings, inlineStack);
-                            writer.WriteLineConstant(x > 0 && x < 7 ? HeaderCloserTags[x - 1] : "</h" + x.ToString(CultureInfo.InvariantCulture) + ">");
-                        }
-                        else
-                        {
-                            writer.WriteConstant(x > 0 && x < 7 ? HeaderOpenerTags[x - 1] : "<h" + x.ToString(CultureInfo.InvariantCulture) + ">");
-                            InlinesToHtml(writer, block.InlineContent, settings, inlineStack);
-                            writer.WriteLineConstant(x > 0 && x < 7 ? HeaderCloserTags[x - 1] : "</h" + x.ToString(CultureInfo.InvariantCulture) + ">");
-                        }
-
                         break;
 
                     case BlockTag.HtmlBlock:

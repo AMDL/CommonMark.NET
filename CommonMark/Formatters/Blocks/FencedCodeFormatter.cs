@@ -11,7 +11,7 @@ namespace CommonMark.Formatters.Blocks
         /// <summary>
         /// Initializes a new instance of the <see cref="FencedCodeFormatter"/> class.
         /// </summary>
-        /// <param name="parameters"></param>
+        /// <param name="parameters">Formatter parameters.</param>
         public FencedCodeFormatter(FormatterParameters parameters)
             : base(parameters, BlockTag.FencedCode, printerTag: "fenced_code")
         {

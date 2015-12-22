@@ -60,21 +60,6 @@ namespace CommonMark.Formatters
         }
 
         /// <summary>
-        /// Returns the content rendering option for an inline element.
-        /// </summary>
-        /// <param name="element">Inline element.</param>
-        /// <param name="plaintext">The parent's rendering option.</param>
-        /// <returns>
-        /// <c>true</c> to render the child inlines as plain text,
-        /// <c>false</c> to render the literal content as HTML,
-        /// or <c>null</c> to skip content rendering.
-        /// </returns>
-        public virtual bool? IsRenderPlainTextInlines(Inline element, bool plaintext)
-        {
-            return null;
-        }
-
-        /// <summary>
         /// Returns the link stacking option for an inline element.
         /// </summary>
         /// <param name="element">Inline element.</param>

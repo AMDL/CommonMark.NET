@@ -31,6 +31,13 @@ namespace CommonMark.Formatters
             return inner.CanHandle(element) || outer.CanHandle(element);
         }
 
+        public bool? IsRenderPlainTextInlines(TElement element, bool plaintext)
+        {
+            return inner.CanHandle(element)
+                ? inner.IsRenderPlainTextInlines(element, plaintext)
+                : outer.IsRenderPlainTextInlines(element, plaintext);
+        }
+
         public IDictionary<string, object> GetPrinterData(IPrinter printer, TElement element)
         {
             return inner.CanHandle(element)
@@ -80,13 +87,6 @@ namespace CommonMark.Formatters
         public DelegateInlineFormatter(InlineTag tag, IInlineFormatter inner, IInlineFormatter outer)
             : base(tag, inner, outer)
         {
-        }
-
-        public bool? IsRenderPlainTextInlines(Inline inline, bool plaintext)
-        {
-            return inner.CanHandle(inline)
-                ? inner.IsRenderPlainTextInlines(inline, plaintext)
-                : outer.IsRenderPlainTextInlines(inline, plaintext);
         }
 
         public static IInlineFormatter Merge(IInlineFormatter inner, IInlineFormatter outer)

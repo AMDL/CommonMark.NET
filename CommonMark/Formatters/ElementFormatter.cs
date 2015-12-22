@@ -69,13 +69,18 @@ namespace CommonMark.Formatters
         public abstract bool CanHandle(TElement element);
 
         /// <summary>
-        /// Returns the closing of an element.
+        /// Returns the inline content rendering option.
         /// </summary>
         /// <param name="element">Element.</param>
-        /// <returns>The closing.</returns>
-        protected string DoGetClosing(TElement element)
+        /// <param name="plaintext">Current inline rendering option.</param>
+        /// <returns>
+        /// <c>true</c> to render the child inlines as plain text,
+        /// <c>false</c> to render the literal content as HTML,
+        /// or <c>null</c> to skip content rendering.
+        /// </returns>
+        public virtual bool? IsRenderPlainTextInlines(TElement element, bool plaintext)
         {
-            return "</" + HtmlTag + '>';
+            return null;
         }
 
         /// <summary>
@@ -105,6 +110,16 @@ namespace CommonMark.Formatters
         }
 
         /// <summary>
+        /// Returns the closing of an element.
+        /// </summary>
+        /// <param name="element">Element.</param>
+        /// <returns>The closing.</returns>
+        protected string DoGetClosing(TElement element)
+        {
+            return "</" + HtmlTag + '>';
+        }
+
+        /// <summary>
         /// Writes the position of an element.
         /// </summary>
         /// <param name="writer">HTML writer.</param>
@@ -121,6 +136,14 @@ namespace CommonMark.Formatters
             return Parameters.UriResolver != null
                 ? Parameters.UriResolver(targetUri)
                 : targetUri;
+        }
+
+        /// <summary>
+        /// Gets the formatter parameters.
+        /// </summary>
+        protected FormatterParameters Parameters
+        {
+            get;
         }
 
         #endregion
@@ -157,10 +180,5 @@ namespace CommonMark.Formatters
         }
 
         #endregion
-
-        private FormatterParameters Parameters
-        {
-            get;
-        }
     }
 }

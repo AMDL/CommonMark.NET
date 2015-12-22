@@ -112,7 +112,6 @@ namespace CommonMark.Formatters
         protected virtual void WriteBlock(Block block, bool isOpening, bool isClosing, out bool ignoreChildNodes)
         {
             ignoreChildNodes = false;
-            int x;
 
             var parameters = Settings.FormatterParameters;
             var formatter = parameters.BlockFormatters[(int)block.Tag];
@@ -121,7 +120,7 @@ namespace CommonMark.Formatters
                 var stackTight = formatter.IsStackTight(block, RenderTightParagraphs.Peek());
                 if (isOpening)
                 {
-                    ignoreChildNodes = !formatter.WriteOpening(_target, block);
+                    ignoreChildNodes = !formatter.WriteOpening(_target, block) && isClosing;
                     if (stackTight.HasValue)
                         RenderTightParagraphs.Push(stackTight.Value);
                 }
@@ -173,26 +172,6 @@ namespace CommonMark.Formatters
                         RenderTightParagraphs.Pop();
                         WriteLine("</blockquote>");
                     }
-
-                    break;
-
-                case BlockTag.AtxHeader:
-                case BlockTag.SETextHeader:
-
-                    x = block.HeaderLevel;
-                    if (isOpening)
-                    {
-                        EnsureNewLine();
-
-                        Write("<h" + x.ToString(CultureInfo.InvariantCulture));
-                        if (Settings.TrackSourcePosition)
-                            WritePositionAttribute(block);
-
-                        Write('>');
-                    }
-
-                    if (isClosing)
-                        WriteLine("</h" + x.ToString(CultureInfo.InvariantCulture) + ">");
 
                     break;
 

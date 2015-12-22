@@ -26,18 +26,6 @@ namespace CommonMark.Formatters
         string GetClosing(IHtmlFormatter formatter, Inline element, bool withinLink);
 
         /// <summary>
-        /// Returns the content rendering option for an inline element.
-        /// </summary>
-        /// <param name="element">Inline element.</param>
-        /// <param name="plaintext">The parent's rendering option.</param>
-        /// <returns>
-        /// <c>true</c> to render the child inlines as plain text,
-        /// <c>false</c> to render the literal content as HTML,
-        /// or <c>null</c> to skip content rendering.
-        /// </returns>
-        bool? IsRenderPlainTextInlines(Inline element, bool plaintext);
-
-        /// <summary>
         /// Returns the link stacking option for an inline element.
         /// </summary>
         /// <param name="element">Inline element.</param>
