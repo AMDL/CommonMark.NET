@@ -114,14 +114,14 @@ namespace CommonMark.Parser.Blocks
         /// <summary>
         /// Initializes a new instance of the <see cref="OrderedListItemParameters"/> class.
         /// </summary>
-        /// <param name="markers"></param>
-        /// <param name="maxMarkerLength"></param>
-        /// <param name="tag"></param>
-        /// <param name="parentTag"></param>
-        /// <param name="listType"></param>
-        /// <param name="markerType"></param>
-        /// <param name="listStyle"></param>
-        /// <param name="delimiters"></param>
+        /// <param name="markers">Marker parameters.</param>
+        /// <param name="maxMarkerLength">Maximum marker length.</param>
+        /// <param name="tag">List item element tag.</param>
+        /// <param name="parentTag">List element tag.</param>
+        /// <param name="listType">List type (obsolete).</param>
+        /// <param name="markerType">Marker type.</param>
+        /// <param name="listStyle">List style.</param>
+        /// <param name="delimiters">Delimiter parameters.</param>
 #pragma warning disable 0618
         public OrderedListItemParameters(OrderedListMarkerParameters[] markers, int maxMarkerLength = 9,
             BlockTag tag = BlockTag.ListItem, BlockTag parentTag = BlockTag.OrderedList, ListType listType = ListType.Ordered,
@@ -189,9 +189,10 @@ namespace CommonMark.Parser.Blocks
         /// <param name="character">Handled character.</param>
         /// <param name="markerMinChar">First marker character.</param>
         /// <param name="markerMaxChar">Last marker character.</param>
+        /// <param name="isRequireContent"><c>true</c> if items on this list require content.</param>
         /// <param name="parameters">Ordered list parameters.</param>
-        public OrderedListItemHandler(CommonMarkSettings settings, char character, char markerMinChar, char markerMaxChar, OrderedListItemParameters parameters)
-            : base(settings, character, parameters, parameters.Delimiters)
+        public OrderedListItemHandler(CommonMarkSettings settings, char character, char markerMinChar, char markerMaxChar, bool isRequireContent, OrderedListItemParameters parameters)
+            : base(settings, character, isRequireContent, parameters, parameters.Delimiters)
         {
             MarkerMinCharacter = markerMinChar;
             MarkerMaxCharacter = markerMaxChar;
@@ -352,7 +353,7 @@ namespace CommonMark.Parser.Blocks
         /// <param name="range">Marker range parameters.</param>
         /// <param name="parameters">Ordered list parameters.</param>
         public SinleRangeOrderedListItemHandler(CommonMarkSettings settings, char character, OrderedListMarkerRangeParameters range, OrderedListItemParameters parameters)
-            : base(settings, character, range.MinCharacter, range.MaxCharacter, parameters)
+            : base(settings, character, range.MinCharacter, range.MaxCharacter, false, parameters)
         {
             StartValue = range.StartValue;
             ValueBase = range.ValueBase;
@@ -472,7 +473,7 @@ namespace CommonMark.Parser.Blocks
         /// <param name="markerMaxChar">Last marker character.</param>
         /// <param name="parameters">Ordered list item parameters.</param>
         public AdditiveListItemHandler(CommonMarkSettings settings, char character, int[] valueMap, char markerMinChar, char markerMaxChar, OrderedListItemParameters parameters)
-            : base(settings, character, markerMinChar, markerMaxChar, parameters)
+            : base(settings, character, markerMinChar, markerMaxChar, true, parameters)
         {
             this.ValueMap = valueMap;
         }

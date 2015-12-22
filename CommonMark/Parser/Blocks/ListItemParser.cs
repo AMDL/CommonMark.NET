@@ -276,14 +276,16 @@ namespace CommonMark.Parser.Blocks
         /// </summary>
         /// <param name="settings">Common settings.</param>
         /// <param name="character">Handled character.</param>
+        /// <param name="isRequireContent"><c>true</c> if items on this list require content.</param>
         /// <param name="parameters">List item parameters.</param>
         /// <param name="delimiters">Delimiter parameters.</param>
 #pragma warning disable 0618
-        protected ListItemHandler(CommonMarkSettings settings, char character, IListItemParameters parameters, params ListItemDelimiterParameters[] delimiters)
+        protected ListItemHandler(CommonMarkSettings settings, char character, bool isRequireContent, IListItemParameters parameters, params ListItemDelimiterParameters[] delimiters)
             : base(settings, parameters.Tag, character)
         {
             ParentTag = parameters.ParentTag;
             ListType = parameters.ListType;
+            IsRequireContent = isRequireContent;
             SetDelimiters(delimiters);
         }
 #pragma warning restore 0618
@@ -428,8 +430,14 @@ namespace CommonMark.Parser.Blocks
             var length = line.Length;
             var delimOffset = ++offset;
 
+            if (offset == length - 1 && IsRequireContent)
+                return 0;
+
             while (offset < length && line[offset] == ' ')
                 offset++;
+
+            if (offset == length - 1 && IsRequireContent)
+                return 0;
 
             if (offset - delimOffset < MinSpaceCounts[delimIndex] && offset < length && line[offset] != '\n')
                 return 0;
@@ -487,6 +495,11 @@ namespace CommonMark.Parser.Blocks
         {
             get;
             set;
+        }
+
+        private bool IsRequireContent
+        {
+            get;
         }
     }
 }

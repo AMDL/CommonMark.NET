@@ -84,7 +84,7 @@ namespace CommonMark.Parser.Blocks
         /// <param name="parameters">List item parameters.</param>
         /// <param name="delimiter">Delimiter parameters.</param>
         public BulletListItemHandler(CommonMarkSettings settings, BulletListItemParameters parameters, BulletListItemDelimiterParameters delimiter)
-            : base(settings, delimiter.Character, parameters, delimiter)
+            : base(settings, delimiter.Character, false, parameters, delimiter)
         {
             IsHorizontalRuleCharacter = delimiter.IsHorizontalRuleCharacter;
             ListStyle = delimiter.ListStyle;
