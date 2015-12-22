@@ -492,6 +492,38 @@ namespace CommonMark.Parser.Blocks
     /// </summary>
     public sealed class AlphaListItemHandler : AdditiveListItemHandler
     {
+        /// <summary>
+        /// The default parameters for lowercase ASCII letter lists.
+        /// </summary>
+        public static readonly OrderedListItemParameters LowerLatinParameters = new OrderedListItemParameters(
+            markerType: OrderedListMarkerType.LowerLatin,
+            listStyle: "lower-latin",
+            markerMinChar: 'a',
+            markerMaxChar: 'z',
+            maxMarkerLength: 3,
+            startValue: 1,
+            delimiters: new[]
+            {
+                new ListItemDelimiterParameters('.', 1),
+                new ListItemDelimiterParameters(')', 1),
+            });
+
+        /// <summary>
+        /// The default parameters for uppercase ASCII letter lists.
+        /// </summary>
+        public static readonly OrderedListItemParameters UpperLatinParameters = new OrderedListItemParameters(
+            markerType: OrderedListMarkerType.UpperLatin,
+            listStyle: "upper-latin",
+            markerMinChar: 'A',
+            markerMaxChar: 'Z',
+            maxMarkerLength: 3,
+            startValue: 1,
+            delimiters: new[]
+            {
+                new ListItemDelimiterParameters('.', 2),
+                new ListItemDelimiterParameters(')', 1),
+            });
+
         internal static IEnumerable<IBlockDelimiterHandler> Create(CommonMarkSettings settings, OrderedListItemParameters parameters, OrderedListMarkerParameters[] markers)
         {
             char min;
@@ -550,6 +582,50 @@ namespace CommonMark.Parser.Blocks
     /// </summary>
     public sealed class RomanNumeralListItemHandler : AdditiveListItemHandler
     {
+        /// <summary>
+        /// The default parameters for lowercase Roman numeral lists.
+        /// </summary>
+        public static readonly OrderedListItemParameters LowerRomanParameters = new OrderedListItemParameters(
+            markerType: OrderedListMarkerType.LowerRoman,
+            listStyle: "lower-roman",
+            maxMarkerLength: 9,
+            markers: new[]
+            {
+                new OrderedListSingleMarkerParameters('i', 1),
+                new OrderedListSingleMarkerParameters('v', 5),
+                new OrderedListSingleMarkerParameters('x', 10),
+                new OrderedListSingleMarkerParameters('l', 50),
+                //new OrderedListSingleMarkerParameters('c', 100),
+                new OrderedListSingleMarkerParameters('m', 1000),
+            },
+            delimiters: new[]
+            {
+                new ListItemDelimiterParameters('.', 1),
+                new ListItemDelimiterParameters(')', 1),
+            });
+
+        /// <summary>
+        /// The default parameters for uppercase Roman numeral lists.
+        /// </summary>
+        public static readonly OrderedListItemParameters UpperRomanParameters = new OrderedListItemParameters(
+            markerType: OrderedListMarkerType.UpperRoman,
+            listStyle: "upper-roman",
+            maxMarkerLength: 9,
+            markers: new[]
+            {
+                new OrderedListSingleMarkerParameters('I', 1),
+                new OrderedListSingleMarkerParameters('V', 5),
+                new OrderedListSingleMarkerParameters('X', 10),
+                new OrderedListSingleMarkerParameters('L', 50),
+                new OrderedListSingleMarkerParameters('C', 100),
+                new OrderedListSingleMarkerParameters('M', 1000),
+            },
+            delimiters: new[]
+            {
+                new ListItemDelimiterParameters('.', 2),
+                new ListItemDelimiterParameters(')', 1),
+            });
+
         internal static IEnumerable<IBlockDelimiterHandler> Create(CommonMarkSettings settings, OrderedListItemParameters parameters, OrderedListMarkerParameters[] markers)
         {
             char min;

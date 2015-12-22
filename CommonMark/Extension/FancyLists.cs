@@ -1,6 +1,7 @@
 ﻿using CommonMark.Parser;
 using CommonMark.Parser.Blocks;
 using CommonMark.Syntax;
+using System;
 using System.Collections.Generic;
 
 namespace CommonMark.Extension
@@ -91,191 +92,119 @@ namespace CommonMark.Extension
         /// <returns>Block delimiter handlers.</returns>
         protected override IEnumerable<IBlockDelimiterHandler> InitializeBlockDelimiterHandlers(CommonMarkSettings settings)
         {
-            var bulletDelimiters = new List<BulletListItemDelimiterParameters>(GetBulletDelimiters());
-            var bulletParameters = new BulletListItemParameters(delimiters: bulletDelimiters.ToArray());
-            var handlers = new List<IBlockDelimiterHandler>(BulletListItemHandler.Create(settings, bulletParameters));
-
-            if (IsEnabled(FancyListsFeatures.LowerRoman))
-            {
-                handlers.AddRange(GetLowerRomanListItemHandlers(settings));
-            }
-
-            if (IsEnabled(FancyListsFeatures.LowerLatin))
-            {
-                handlers.AddRange(GetLowerLatinListItemHandlers(settings));
-            }
-
-            if (IsEnabled(FancyListsFeatures.UpperRoman))
-            {
-                handlers.AddRange(GetUpperRomanListItemHandlers(settings));
-            }
-
-            if (IsEnabled(FancyListsFeatures.UpperLatin))
-            {
-                handlers.AddRange(GetUpperLatinListItemHandlers(settings));
-            }
-
-            var orderedParameters = new List<OrderedListItemParameters>();
-            orderedParameters.AddRange(GetNumericParameters());
-            orderedParameters.AddRange(GetAdditiveParameters());
-            foreach (var item in orderedParameters)
-            {
-                handlers.AddRange(OrderedListItemHandler.Create(settings, item));
-            }
-
+            var handlers = new List<IBlockDelimiterHandler>();
+            AddRomanHandlers(handlers, settings);
+            AddLatinHandlers(handlers, settings);
+            AddBulletHandlers(handlers, settings);
+            AddNumericHandlers(handlers, settings);
+            AddAdditiveHandlers(handlers, settings);
             return handlers;
         }
 
-        private IEnumerable<BulletListItemDelimiterParameters> GetBulletDelimiters()
+        private void AddRomanHandlers(List<IBlockDelimiterHandler> handlers, CommonMarkSettings settings)
         {
-            if (IsEnabled(FancyListsFeatures.Disc))
-                yield return new BulletListItemDelimiterParameters('●', listStyle: "disc");
-            if (IsEnabled(FancyListsFeatures.Circle))
-                yield return new BulletListItemDelimiterParameters('○', listStyle: "circle");
-            if (IsEnabled(FancyListsFeatures.Square))
-                yield return new BulletListItemDelimiterParameters('■', listStyle: "square");
-            if (IsEnabled(FancyListsFeatures.Unbulleted))
-                yield return new BulletListItemDelimiterParameters('∙', listStyle: "none");
+            AddHandlers(handlers, settings, GetRomanParameters, CreateRomanHandlers, (int)fancyListsSettings.Features, (int)FancyListsFeatures.Roman);
         }
 
-        private static IEnumerable<IBlockDelimiterHandler> GetLowerRomanListItemHandlers(CommonMarkSettings settings)
+        private static IEnumerable<OrderedListItemParameters> GetRomanParameters()
         {
-            var parameters = new OrderedListItemParameters(
-                markerType: OrderedListMarkerType.LowerRoman,
-                listStyle: "lower-roman",
-                maxMarkerLength: 9,
-                markers: new[]
-                {
-                    new OrderedListSingleMarkerParameters('i', 1),
-                    new OrderedListSingleMarkerParameters('v', 5),
-                    new OrderedListSingleMarkerParameters('x', 10),
-                    new OrderedListSingleMarkerParameters('l', 50),
-                    //new OrderedListSingleMarkerParameters('c', 100),
-                    new OrderedListSingleMarkerParameters('m', 1000),
-                },
-                delimiters: new[]
-                {
-                    new ListItemDelimiterParameters('.', 1),
-                    new ListItemDelimiterParameters(')', 1),
-                });
+            yield return RomanNumeralListItemHandler.LowerRomanParameters;
+            yield return RomanNumeralListItemHandler.UpperRomanParameters;
+        }
+
+        private static IEnumerable<IBlockDelimiterHandler> CreateRomanHandlers(CommonMarkSettings settings, OrderedListItemParameters parameters)
+        {
             return RomanNumeralListItemHandler.Create(settings, parameters, parameters.Markers);
         }
 
-        private static IEnumerable<IBlockDelimiterHandler> GetLowerLatinListItemHandlers(CommonMarkSettings settings)
+        private void AddLatinHandlers(List<IBlockDelimiterHandler> handlers, CommonMarkSettings settings)
         {
-            var parameters = new OrderedListItemParameters(
-                markerType: OrderedListMarkerType.LowerLatin,
-                listStyle: "lower-latin",
-                markerMinChar: 'a',
-                markerMaxChar: 'z',
-                maxMarkerLength: 3,
-                startValue: 1,
-                delimiters: new[]
-                {
-                    new ListItemDelimiterParameters('.', 1),
-                    new ListItemDelimiterParameters(')', 1),
-                });
+            AddHandlers(handlers, settings, GetLatinParameters, CreateAlphaHandlers, (int)fancyListsSettings.Features, (int)FancyListsFeatures.Latin);
+        }
+
+        private static IEnumerable<OrderedListItemParameters> GetLatinParameters()
+        {
+            yield return AlphaListItemHandler.LowerLatinParameters;
+            yield return AlphaListItemHandler.UpperLatinParameters;
+        }
+
+        private static IEnumerable<IBlockDelimiterHandler> CreateAlphaHandlers(CommonMarkSettings settings, OrderedListItemParameters parameters)
+        {
             return AlphaListItemHandler.Create(settings, parameters, parameters.Markers);
         }
 
-        private static IEnumerable<IBlockDelimiterHandler> GetUpperRomanListItemHandlers(CommonMarkSettings settings)
+        private void AddBulletHandlers(List<IBlockDelimiterHandler> handlers, CommonMarkSettings settings)
         {
-            var parameters = new OrderedListItemParameters(
-                markerType: OrderedListMarkerType.UpperRoman,
-                listStyle: "upper-roman",
-                maxMarkerLength: 9,
-                markers: new[]
-                {
-                    new OrderedListSingleMarkerParameters('I', 1),
-                    new OrderedListSingleMarkerParameters('V', 5),
-                    new OrderedListSingleMarkerParameters('X', 10),
-                    new OrderedListSingleMarkerParameters('L', 50),
-                    new OrderedListSingleMarkerParameters('C', 100),
-                    new OrderedListSingleMarkerParameters('M', 1000),
-                },
-                delimiters: new[]
-                {
-                    new ListItemDelimiterParameters('.', 2),
-                    new ListItemDelimiterParameters(')', 1),
-                });
-
-            return RomanNumeralListItemHandler.Create(settings, parameters, parameters.Markers);
+            AddHandlers(handlers, settings, GetBulletParameters, CreateBulletHandlers, (int)fancyListsSettings.Features, (int)FancyListsFeatures.Unordered);
         }
 
-        private static IEnumerable<IBlockDelimiterHandler> GetUpperLatinListItemHandlers(CommonMarkSettings settings)
+        private static IEnumerable<BulletListItemParameters> GetBulletParameters()
         {
-            var parameters = new OrderedListItemParameters(markerType: OrderedListMarkerType.UpperLatin, listStyle: "upper-latin",
-                markerMinChar: 'A',
-                markerMaxChar: 'Z',
-                maxMarkerLength: 3,
-                startValue: 1,
-                delimiters: new[]
-                {
-                    new ListItemDelimiterParameters('.', 2),
-                    new ListItemDelimiterParameters(')', 1),
-                });
-            return AlphaListItemHandler.Create(settings, parameters, parameters.Markers);
+            var delimiters = GetBulletDelimiters();
+            foreach (var delimiter in delimiters)
+                yield return new BulletListItemParameters(delimiters: delimiter);
         }
 
-        private IEnumerable<OrderedListItemParameters> GetNumericParameters()
+        private static IEnumerable<BulletListItemDelimiterParameters> GetBulletDelimiters()
+        {
+            yield return (new BulletListItemDelimiterParameters('●', listStyle: "disc"));
+            yield return (new BulletListItemDelimiterParameters('○', listStyle: "circle"));
+            yield return (new BulletListItemDelimiterParameters('■', listStyle: "square"));
+            yield return (new BulletListItemDelimiterParameters('∙', listStyle: "none"));
+        }
+
+        private static IEnumerable<IBlockDelimiterHandler> CreateBulletHandlers(CommonMarkSettings settings, BulletListItemParameters parameters)
+        {
+            return BulletListItemHandler.Create(settings, parameters);
+        }
+
+        private void AddNumericHandlers(List<IBlockDelimiterHandler> handlers, CommonMarkSettings settings)
+        {
+            AddHandlers(handlers, settings, GetNumericParameters, CreateOrderedHandlers, (int)fancyListsSettings.NumericListStyles, (int)NumericListStyles.All);
+        }
+
+        private static IEnumerable<OrderedListItemParameters> GetNumericParameters()
         {
             var delimiters = new ListItemDelimiterParameters('.');
-            if (IsEnabled(NumericListStyles.ArabicIndic))
-                yield return new OrderedListItemParameters(listStyle: "arabic-indic", markerMinChar: '٠', markerMaxChar: '٩', delimiters: delimiters);
-            if (IsEnabled(NumericListStyles.Persian))
-                yield return new OrderedListItemParameters(listStyle: "persian", markerMinChar: '۰', markerMaxChar: '۹', delimiters: delimiters);
-            if (IsEnabled(NumericListStyles.Thai))
-                yield return new OrderedListItemParameters(listStyle: "thai", markerMinChar: '๐', markerMaxChar: '๙', delimiters: delimiters);
-            if (IsEnabled(NumericListStyles.Cambodian))
-                yield return new OrderedListItemParameters(listStyle: "cambodian", markerMinChar: '០', markerMaxChar: '៩', delimiters: delimiters);
-            if (IsEnabled(NumericListStyles.Khmer))
-                yield return new OrderedListItemParameters(listStyle: "khmer", markerMinChar: '០', markerMaxChar: '៩', delimiters: delimiters);
-            if (IsEnabled(NumericListStyles.Lao))
-                yield return new OrderedListItemParameters(listStyle: "lao", markerMinChar: '໐', markerMaxChar: '໙', delimiters: delimiters);
-            if (IsEnabled(NumericListStyles.Myanmar))
-                yield return new OrderedListItemParameters(listStyle: "myanmar", markerMinChar: '၀', markerMaxChar: '၉', delimiters: delimiters);
-            if (IsEnabled(NumericListStyles.Shan))
-                yield return new OrderedListItemParameters(listStyle: "shan", markerMinChar: '႐', markerMaxChar: '႙', delimiters: delimiters);
-            if (IsEnabled(NumericListStyles.Devanagari))
-                yield return new OrderedListItemParameters(listStyle: "devanagari", markerMinChar: '०', markerMaxChar: '९', delimiters: delimiters);
-            if (IsEnabled(NumericListStyles.Bengali))
-                yield return new OrderedListItemParameters(listStyle: "bengali", markerMinChar: '০', markerMaxChar: '৯', delimiters: delimiters);
-            if (IsEnabled(NumericListStyles.EasternNagari))
-                yield return new OrderedListItemParameters(listStyle: "eastern-nagari", markerMinChar: '০', markerMaxChar: '৯', delimiters: delimiters);
-            if (IsEnabled(NumericListStyles.Gujarati))
-                yield return new OrderedListItemParameters(listStyle: "gujarati", markerMinChar: '૦', markerMaxChar: '૯', delimiters: delimiters);
-            if (IsEnabled(NumericListStyles.Gurmukhi))
-                yield return new OrderedListItemParameters(listStyle: "gurmukhi", markerMinChar: '੦', markerMaxChar: '੯', delimiters: delimiters);
-            if (IsEnabled(NumericListStyles.Kannada))
-                yield return new OrderedListItemParameters(listStyle: "kannada", markerMinChar: '೦', markerMaxChar: '೯', delimiters: delimiters);
-            if (IsEnabled(NumericListStyles.Lepcha))
-                yield return new OrderedListItemParameters(listStyle: "lepcha", markerMinChar: '᱀', markerMaxChar: '᱉', delimiters: delimiters);
-            if (IsEnabled(NumericListStyles.Malayalam))
-                yield return new OrderedListItemParameters(listStyle: "malayalam", markerMinChar: '൦', markerMaxChar: '൧', delimiters: delimiters);
-            if (IsEnabled(NumericListStyles.Marathi))
-                yield return new OrderedListItemParameters(listStyle: "marathi", markerMinChar: '०', markerMaxChar: '९', delimiters: delimiters);
-            if (IsEnabled(NumericListStyles.Oriya))
-                yield return new OrderedListItemParameters(listStyle: "oriya", markerMinChar: '୦', markerMaxChar: '୯', delimiters: delimiters);
-            if (IsEnabled(NumericListStyles.Tamil))
-                yield return new OrderedListItemParameters(listStyle: "tamil", markerMinChar: '௦', markerMaxChar: '௯', delimiters: delimiters);
-            if (IsEnabled(NumericListStyles.Telugu))
-                yield return new OrderedListItemParameters(listStyle: "telugu", markerMinChar: '౦', markerMaxChar: '౯', delimiters: delimiters);
-            if (IsEnabled(NumericListStyles.Tibetan))
-                yield return new OrderedListItemParameters(listStyle: "tibetan", markerMinChar: '༠', markerMaxChar: '༩', delimiters: delimiters);
-            if (IsEnabled(NumericListStyles.Mongolian))
-                yield return new OrderedListItemParameters(listStyle: "mongolian", markerMinChar: '᠐', markerMaxChar: '᠙', delimiters: delimiters);
-            if (IsEnabled(NumericListStyles.CJKDecimal))
-                yield return new OrderedListItemParameters(listStyle: "cjk-decimal", markerMinChar: '〇', markerMaxChar: '九', delimiters: delimiters);
-            if (IsEnabled(NumericListStyles.FullWidthDecimal))
-                yield return new OrderedListItemParameters(listStyle: "fullwidth-decimal", markerMinChar: '０', markerMaxChar: '９', delimiters: delimiters);
+            yield return new OrderedListItemParameters(listStyle: "arabic-indic", markerMinChar: '٠', markerMaxChar: '٩', delimiters: delimiters);
+            yield return new OrderedListItemParameters(listStyle: "persian", markerMinChar: '۰', markerMaxChar: '۹', delimiters: delimiters);
+            yield return new OrderedListItemParameters(listStyle: "thai", markerMinChar: '๐', markerMaxChar: '๙', delimiters: delimiters);
+            yield return new OrderedListItemParameters(listStyle: "cambodian", markerMinChar: '០', markerMaxChar: '៩', delimiters: delimiters);
+            yield return new OrderedListItemParameters(listStyle: "khmer", markerMinChar: '០', markerMaxChar: '៩', delimiters: delimiters);
+            yield return new OrderedListItemParameters(listStyle: "lao", markerMinChar: '໐', markerMaxChar: '໙', delimiters: delimiters);
+            yield return new OrderedListItemParameters(listStyle: "myanmar", markerMinChar: '၀', markerMaxChar: '၉', delimiters: delimiters);
+            yield return new OrderedListItemParameters(listStyle: "shan", markerMinChar: '႐', markerMaxChar: '႙', delimiters: delimiters);
+            yield return new OrderedListItemParameters(listStyle: "devanagari", markerMinChar: '०', markerMaxChar: '९', delimiters: delimiters);
+            yield return new OrderedListItemParameters(listStyle: "bengali", markerMinChar: '০', markerMaxChar: '৯', delimiters: delimiters);
+            yield return new OrderedListItemParameters(listStyle: "eastern-nagari", markerMinChar: '০', markerMaxChar: '৯', delimiters: delimiters);
+            yield return new OrderedListItemParameters(listStyle: "gujarati", markerMinChar: '૦', markerMaxChar: '૯', delimiters: delimiters);
+            yield return new OrderedListItemParameters(listStyle: "gurmukhi", markerMinChar: '੦', markerMaxChar: '੯', delimiters: delimiters);
+            yield return new OrderedListItemParameters(listStyle: "kannada", markerMinChar: '೦', markerMaxChar: '೯', delimiters: delimiters);
+            yield return new OrderedListItemParameters(listStyle: "lepcha", markerMinChar: '᱀', markerMaxChar: '᱉', delimiters: delimiters);
+            yield return new OrderedListItemParameters(listStyle: "malayalam", markerMinChar: '൦', markerMaxChar: '൧', delimiters: delimiters);
+            yield return new OrderedListItemParameters(listStyle: "marathi", markerMinChar: '०', markerMaxChar: '९', delimiters: delimiters);
+            yield return new OrderedListItemParameters(listStyle: "oriya", markerMinChar: '୦', markerMaxChar: '୯', delimiters: delimiters);
+            yield return new OrderedListItemParameters(listStyle: "tamil", markerMinChar: '௦', markerMaxChar: '௯', delimiters: delimiters);
+            yield return new OrderedListItemParameters(listStyle: "telugu", markerMinChar: '౦', markerMaxChar: '౯', delimiters: delimiters);
+            yield return new OrderedListItemParameters(listStyle: "tibetan", markerMinChar: '༠', markerMaxChar: '༩', delimiters: delimiters);
+            yield return new OrderedListItemParameters(listStyle: "mongolian", markerMinChar: '᠐', markerMaxChar: '᠙', delimiters: delimiters);
+            yield return new OrderedListItemParameters(listStyle: "cjk-decimal", markerMinChar: '〇', markerMaxChar: '九', delimiters: delimiters);
+            yield return new OrderedListItemParameters(listStyle: "fullwidth-decimal", markerMinChar: '０', markerMaxChar: '９', delimiters: delimiters);
         }
 
-        private IEnumerable<OrderedListItemParameters> GetAdditiveParameters()
+        private static IEnumerable<IBlockDelimiterHandler> CreateOrderedHandlers(CommonMarkSettings settings, OrderedListItemParameters parameters)
         {
-            if (IsEnabled(AdditiveListStyles.Hebrew))
-            {
-                yield return GetHebrewParameters();
-            }
+            return OrderedListItemHandler.Create(settings, parameters);
+        }
+
+        private void AddAdditiveHandlers(List<IBlockDelimiterHandler> handlers, CommonMarkSettings settings)
+        {
+            AddHandlers(handlers, settings, GetAdditiveParameters, CreateOrderedHandlers, (int)fancyListsSettings.AdditiveListStyles, (int)AdditiveListStyles.All);
+        }
+
+        private static IEnumerable<OrderedListItemParameters> GetAdditiveParameters()
+        {
+            yield return GetHebrewParameters();
         }
 
         private static OrderedListItemParameters GetHebrewParameters()
@@ -300,19 +229,21 @@ namespace CommonMark.Extension
             delimiters: new ListItemDelimiterParameters('.', 2));
         }
 
-        private bool IsEnabled(FancyListsFeatures flag)
+        private static List<IBlockDelimiterHandler> AddHandlers<TParameters>(List<IBlockDelimiterHandler> handlers, CommonMarkSettings settings, Func<IEnumerable<TParameters>> sourceFactory,
+            Func<CommonMarkSettings, TParameters, IEnumerable<IBlockDelimiterHandler>> handlersFactory, int flags, int flagsMask)
         {
-            return 0 != (fancyListsSettings.Features & flag);
-        }
-
-        private bool IsEnabled(NumericListStyles flag)
-        {
-            return 0 != (fancyListsSettings.NumericListStyles & flag);
-        }
-
-        private bool IsEnabled(AdditiveListStyles flag)
-        {
-            return 0 != (fancyListsSettings.AdditiveListStyles & flag);
+            if ((flags & flagsMask) != 0)
+            {
+                var mask = flagsMask & ~(flagsMask << 1);
+                var source = sourceFactory();
+                foreach (var item in source)
+                {
+                    if (0 != (flags & mask))
+                        handlers.AddRange(handlersFactory(settings, item));
+                    mask <<= 1;
+                }
+            }
+            return handlers;
         }
     }
 }
