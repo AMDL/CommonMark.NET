@@ -26,7 +26,7 @@ namespace CommonMark.Parser.Blocks
         {
             get
             {
-                yield return new IndentedCodeHandler(Settings, Tag);
+                yield return new Delimiters.IndentedCodeHandler(Settings, Tag);
             }
         }
 
@@ -70,37 +70,6 @@ namespace CommonMark.Parser.Blocks
         {
             container.StringContent.RemoveTrailingBlankLines();
             return true;
-        }
-    }
-
-    /// <summary>
-    /// Indented code delimiter handler.
-    /// </summary>
-    public sealed class IndentedCodeHandler : BlockDelimiterHandler
-    {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="IndentedCodeHandler"/> class.
-        /// </summary>
-        /// <param name="settings">Common settings.</param>
-        /// <param name="tag">Block element tag.</param>
-        public IndentedCodeHandler(CommonMarkSettings settings, BlockTag tag)
-            : base(settings, tag, '\0')
-        {
-        }
-
-        /// <summary>
-        /// Handles a block delimiter.
-        /// </summary>
-        /// <param name="info">Parser state.</param>
-        /// <returns><c>true</c> if successful.</returns>
-        public override bool Handle(ref BlockParserInfo info)
-        {
-            if (info.IsIndented && !info.IsMaybeLazy && !info.IsBlank)
-            {
-                info.AdvanceIndentedOffset();
-                info.Container = AppendChildBlock(info, Tag, info.Offset);
-            }
-            return false;
         }
     }
 }

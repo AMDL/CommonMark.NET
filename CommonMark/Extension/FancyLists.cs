@@ -1,6 +1,6 @@
 ﻿using CommonMark.Parser;
 using CommonMark.Parser.Blocks;
-using CommonMark.Syntax;
+using CommonMark.Parser.Blocks.Delimiters;
 using System;
 using System.Collections.Generic;
 

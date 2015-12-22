@@ -26,7 +26,7 @@ namespace CommonMark.Parser.Blocks
         {
             get
             {
-                yield return new BlockQuoteHandler(Settings, Tag);
+                yield return new Delimiters.BlockQuoteHandler(Settings, Tag);
             }
         }
 
@@ -55,44 +55,6 @@ namespace CommonMark.Parser.Blocks
                 return true;
             }
             return false;
-        }
-    }
-
-    /// <summary>
-    /// Blockquote delimiter handler.
-    /// </summary>
-    public sealed class BlockQuoteHandler : BlockDelimiterHandler
-    {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="BlockQuoteHandler"/> class.
-        /// </summary>
-        /// <param name="settings">Common settings.</param>
-        /// <param name="tag">Handled element tag.</param>
-        public BlockQuoteHandler(CommonMarkSettings settings, BlockTag tag)
-            : base(settings, tag, '>')
-        {
-        }
-
-        /// <summary>
-        /// Handles a block delimiter.
-        /// </summary>
-        /// <param name="info">Parser state.</param>
-        /// <returns><c>true</c> if successful.</returns>
-        public override bool Handle(ref BlockParserInfo info)
-        {
-            if (info.IsIndented)
-                return false;
-
-            info.AdvanceOffset(info.FirstNonspace + 1 - info.Offset, false);
-
-            // optional following character
-            if (info.Line[info.Offset] == ' ')
-            {
-                info.Offset++;
-                info.Column++;
-            }
-            info.Container = AppendChildBlock(info, Tag, info.FirstNonspace);
-            return true;
         }
     }
 }

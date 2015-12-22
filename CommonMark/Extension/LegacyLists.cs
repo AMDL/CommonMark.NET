@@ -2,6 +2,7 @@
 using CommonMark.Formatters.Blocks;
 using CommonMark.Parser;
 using CommonMark.Parser.Blocks;
+using CommonMark.Parser.Blocks.Delimiters;
 using CommonMark.Syntax;
 using System.Collections.Generic;
 
@@ -31,9 +32,9 @@ namespace CommonMark.Extension
             yield return new ListParser(settings, BlockTag.List, BlockTag.ListItem);
 
             // These will ruin the default parameters, but that's alright since we're replacing the parser anyway.
-            var bulletListItemParameters = ListItemParser.DefaultBulletListItemParameters;
+            var bulletListItemParameters = BulletListItemHandler.DefaultParameters;
             bulletListItemParameters.ParentTag = BlockTag.List;
-            var orderedListItemParameters = ListItemParser.DefaultOrderedListItemParameters;
+            var orderedListItemParameters = OrderedListItemHandler.DefaultParameters;
             orderedListItemParameters.ParentTag = BlockTag.List;
             var listParameters = new ListParameters(bulletListItemParameters, orderedListItemParameters);
 
