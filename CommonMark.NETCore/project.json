@@ -15,7 +15,8 @@
         "System.Reflection": "4.0.10",
         "System.Collections": "4.0.10",
         "System.Diagnostics.Debug": "4.0.10",
-        "System.Globalization.Extensions": "4.0.0"
+        "System.Globalization.Extensions": "4.0.0",
+        "System.Linq.Parallel": "4.0.0"
       }
     }
   },
