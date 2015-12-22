@@ -46,6 +46,11 @@ namespace CommonMark.Extension
         Latin = 12,
 
         /// <summary>
+        /// A sharp followed by a dot will be recognized as a decimal list marker.
+        /// </summary>
+        DecimalSharps = 32,
+
+        /// <summary>
         /// Unordered lists with filled circle markers.
         /// <c>●</c> will be recognized as the marker.
         /// </summary>

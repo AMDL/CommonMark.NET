@@ -84,6 +84,7 @@
     <Compile Include="Parser\Blocks\Delimiters\ParagraphHandler.cs" />
     <Compile Include="Parser\Blocks\Delimiters\RomanListItemHandler.cs" />
     <Compile Include="Parser\Blocks\Delimiters\SETextHeaderHandler.cs" />
+    <Compile Include="Parser\Blocks\Delimiters\SharpListItemHandler.cs" />
     <Compile Include="Parser\Blocks\OrderedListItemParser.cs" />
     <Compile Include="Parser\DelegateBlockDelimiterHandler.cs" />
     <Compile Include="Parser\IBlockDelimiterHandler.cs" />

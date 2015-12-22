@@ -95,6 +95,7 @@ namespace CommonMark.Extension
             var handlers = new List<IBlockDelimiterHandler>();
             AddRomanHandlers(handlers, settings);
             AddLatinHandlers(handlers, settings);
+            AddSharpHandlers(handlers, settings);
             AddBulletHandlers(handlers, settings);
             AddNumericHandlers(handlers, settings);
             AddAdditiveHandlers(handlers, settings);
@@ -131,6 +132,21 @@ namespace CommonMark.Extension
         private static IBlockDelimiterHandler CreateLatinHandler(CommonMarkSettings settings, OrderedListItemParameters parameters)
         {
             return new LatinListItemHandler(settings, parameters);
+        }
+
+        private void AddSharpHandlers(List<IBlockDelimiterHandler> handlers, CommonMarkSettings settings)
+        {
+            AddHandlers(handlers, settings, GetSharpParameters, CreateSharpHandler, (int)fancyListsSettings.Features, (int)FancyListsFeatures.DecimalSharps);
+        }
+
+        private static IEnumerable<OrderedListItemParameters> GetSharpParameters()
+        {
+            yield return SharpListItemHandler.DefaultParameters;
+        }
+
+        private static SharpListItemHandler CreateSharpHandler(CommonMarkSettings settings, OrderedListItemParameters parameters)
+        {
+            return new SharpListItemHandler(settings, parameters);
         }
 
         private void AddBulletHandlers(List<IBlockDelimiterHandler> handlers, CommonMarkSettings settings)

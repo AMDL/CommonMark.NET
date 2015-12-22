@@ -256,6 +256,43 @@ namespace CommonMark.Tests
 
         [TestMethod]
         [TestCategory("Container blocks - List items")]
+        public void SharpListDisabledByDefault()
+        {
+            Helpers.ExecuteTest("#. foo", "<p>#. foo</p>", EmptySettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - List items")]
+        public void SharpListDisabledAlone()
+        {
+            var s = CommonMarkSettings.Default.Clone();
+            s.Extensions.Register(new FancyLists(s, new FancyListsSettings(FancyListsFeatures.All & ~FancyListsFeatures.DecimalSharps)));
+            Helpers.ExecuteTest("#. foo", "<p>#. foo</p>", s);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - List items")]
+        public void SharpListEnabled()
+        {
+            Helpers.ExecuteTest("#. foo", "<ol type=\"1\">\n<li>foo</li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - List items")]
+        public void SharpListBeforeDecimalList()
+        {
+            Helpers.ExecuteTest("#. foo\n1. bar", "<ol type=\"1\">\n<li>foo</li>\n</ol>\n<ol>\n<li>bar</li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - List items")]
+        public void SharpListAfterDecimalList()
+        {
+            Helpers.ExecuteTest("1. bar\n#. baz", "<ol>\n<li>bar</li>\n</ol>\n<ol type=\"1\">\n<li>baz</li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - List items")]
         public void DiscListDisabledByDefault()
         {
             Helpers.ExecuteTest("● foo\n● bar", "<p>● foo\n● bar</p>", EmptySettings);
@@ -267,7 +304,7 @@ namespace CommonMark.Tests
         {
             var s = CommonMarkSettings.Default.Clone();
             s.Extensions.Register(new FancyLists(s, new FancyListsSettings(FancyListsFeatures.All & ~FancyListsFeatures.Disc)));
-            Helpers.ExecuteTest("● foo\n● bar", "<p>● foo\n● bar</p>");
+            Helpers.ExecuteTest("● foo\n● bar", "<p>● foo\n● bar</p>", s);
         }
 
         [TestMethod]
