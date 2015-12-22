@@ -58,7 +58,7 @@ namespace CommonMark.Formatters
             var value = "<" + HtmlTag;
             writer.WriteConstant(value);
             WritePosition(writer, element);
-            writer.WriteLine('>');
+            writer.Write('>');
             return true;
         }
 
