@@ -1,10 +1,9 @@
 ﻿using CommonMark.Syntax;
-using System.Collections.Generic;
 
 namespace CommonMark.Parser.Blocks.Delimiters
 {
     /// <summary>
-    /// Bullet list item delimiter parameters.
+    /// Unordered list item delimiter parameters.
     /// </summary>
     public sealed class BulletListItemDelimiterParameters : ListItemDelimiterParameters
     {
@@ -34,7 +33,7 @@ namespace CommonMark.Parser.Blocks.Delimiters
     }
 
     /// <summary>
-    /// Bullet list item delimiter handler.
+    /// Unordered list item delimiter handler.
     /// </summary>
     public sealed class BulletListItemHandler : ListItemHandler<BulletListData, BulletListItemParameters, BulletListItemHandler.Parameters>
     {
@@ -88,7 +87,7 @@ namespace CommonMark.Parser.Blocks.Delimiters
         /// <returns><c>true</c> if successful.</returns>
         public override bool Handle(ref BlockParserInfo info)
         {
-            return DoHandle(info, CanOpen, ParseMarker, null, IsListsMatch, SetListData);
+            return DoHandle(info, CanOpen, ParseMarker, null, MatchList, SetListData);
         }
 
         /// <summary>
@@ -102,12 +101,12 @@ namespace CommonMark.Parser.Blocks.Delimiters
         }
 
         /// <summary>
-        /// Determines whether a list item belongs to a matching bullet list.
+        /// Matches a list item to an unordered list.
         /// </summary>
         /// <param name="info">Parser state.</param>
         /// <param name="listData">Bullet list data.</param>
         /// <returns><c>true</c> if the container may continue a list having <paramref name="listData"/>.</returns>
-        protected override bool IsListsMatch(BlockParserInfo info, BulletListData listData)
+        protected override bool MatchList(BlockParserInfo info, BulletListData listData)
         {
             return listData.Equals(info.Container.BulletListData);
         }

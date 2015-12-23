@@ -62,7 +62,7 @@ namespace CommonMark.Parser.Blocks.Delimiters
         /// <returns><c>true</c> if successful.</returns>
         public override bool Handle(ref BlockParserInfo info)
         {
-            return DoHandle(info, CanOpen, ParseMarker, AdjustStart, IsListsMatch, SetListData);
+            return DoHandle(info, CanOpen, ParseMarker, AdjustStart, MatchList, SetListData);
         }
 
         /// <summary>

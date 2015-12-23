@@ -58,18 +58,18 @@ namespace CommonMark.Parser.Blocks.Delimiters
         /// <returns><c>true</c> if successful.</returns>
         public override bool Handle(ref BlockParserInfo info)
         {
-            return DoHandle(info, CanOpen, ParseMarker, AdjustStart, IsListsMatch, SetListData);
+            return DoHandle(info, CanOpen, ParseMarker, AdjustStart, MatchList, SetListData);
         }
 
         /// <summary>
-        /// Determines whether a list item belongs to a matching ordered list.
+        /// Matches a list item to a ASCII letter ordered list.
         /// </summary>
         /// <param name="info">Parser state.</param>
         /// <param name="listData">Ordered list data.</param>
         /// <returns><c>true</c> if the container may continue a list having <paramref name="listData"/>.</returns>
-        protected override bool IsListsMatch(BlockParserInfo info, OrderedListData listData)
+        protected override bool MatchList(BlockParserInfo info, OrderedListData listData)
         {
-            if (base.IsListsMatch(info, listData))
+            if (base.MatchList(info, listData))
                 return true;
             var containerListData = info.Container.OrderedListData;
             if (containerListData != null && containerListData.DelimiterCharacter == listData.DelimiterCharacter

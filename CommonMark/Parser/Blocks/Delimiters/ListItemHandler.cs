@@ -162,11 +162,11 @@ namespace CommonMark.Parser.Blocks.Delimiters
         /// <param name="canOpen">Opener checker delegate.</param>
         /// <param name="parseMarker">Marker parser delegate.</param>
         /// <param name="adjustStart">Start value adjuster delegate.</param>
-        /// <param name="isListsMatch">List data matcher delegate.</param>
+        /// <param name="matchList">List data matcher delegate.</param>
         /// <param name="setListData">List data mutator delegate.</param>
         /// <returns><c>true</c> if successful.</returns>
         protected bool DoHandle(BlockParserInfo info, Func<BlockParserInfo, bool> canOpen, ParseMarkerDelegate parseMarker,
-            AdjustStartDelegate adjustStart, Func<BlockParserInfo, TData, bool> isListsMatch, Action<BlockParserInfo, TData> setListData)
+            AdjustStartDelegate adjustStart, Func<BlockParserInfo, TData, bool> matchList, Action<BlockParserInfo, TData> setListData)
         {
             int markerLength;
             ListData data;
@@ -201,7 +201,7 @@ namespace CommonMark.Parser.Blocks.Delimiters
 
             // check container; if it's a list, see if this list item
             // can continue the list; otherwise, create a list container.
-            if (info.Container.Tag != ParentTag || !isListsMatch(info, listData))
+            if (info.Container.Tag != ParentTag || !matchList(info, listData))
             {
                 info.Container = AppendChildBlock(info, ParentTag, info.FirstNonspace);
                 info.Container.ListData = data;
@@ -227,12 +227,12 @@ namespace CommonMark.Parser.Blocks.Delimiters
         protected abstract int ParseMarker(BlockParserInfo info, AdjustStartDelegate adjustStart, out ListData data, out TData listData);
 
         /// <summary>
-        /// Determines whether a list item belongs to a list.
+        /// Matches a list item to a list.
         /// </summary>
         /// <param name="info">Parser state.</param>
         /// <param name="listData">Specific list data.</param>
         /// <returns><c>true</c> if the container may continue a list having <paramref name="listData"/>.</returns>
-        protected abstract bool IsListsMatch(BlockParserInfo info, TData listData);
+        protected abstract bool MatchList(BlockParserInfo info, TData listData);
 
         /// <summary>
         /// Updates a container with specific list data.

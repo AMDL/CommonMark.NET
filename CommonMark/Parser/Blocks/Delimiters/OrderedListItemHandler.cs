@@ -96,12 +96,12 @@ namespace CommonMark.Parser.Blocks.Delimiters
         }
 
         /// <summary>
-        /// Determines whether a list item belongs to a matching ordered list.
+        /// Matches a list item to an ordered list.
         /// </summary>
         /// <param name="info">Parser state.</param>
         /// <param name="listData">Ordered list data.</param>
         /// <returns><c>true</c> if the container may continue a list having <paramref name="listData"/>.</returns>
-        protected override bool IsListsMatch(BlockParserInfo info, OrderedListData listData)
+        protected override bool MatchList(BlockParserInfo info, OrderedListData listData)
         {
             return listData.Equals(info.Container.OrderedListData);
         }
