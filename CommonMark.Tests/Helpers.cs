@@ -48,7 +48,9 @@ namespace CommonMark.Tests
 
             // Verify that the extendable HTML formatter returns the same result
             var settingsHtmlFormatter = settings.Clone();
+#pragma warning disable 0618
             settingsHtmlFormatter.OutputDelegate = (doc, target, stngs) => new Formatters.HtmlFormatter(target, stngs).WriteDocument(doc);
+#pragma warning restore 0618
             var actual2 = CommonMarkConverter.Convert(commonMark, settingsHtmlFormatter);
             Assert.AreEqual(actual, Helpers.Tidy(actual2), "HtmlFormatter returned a different result than HtmlFormatterSlim.");
 
