@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace CommonMark.Syntax
 {
     /// <summary>
     /// Defines the delimeter used in the source for ordered lists.
     /// </summary>
+    [Obsolete("This API has been superceded by " + nameof(OrderedListData) + ".")]
     public enum ListDelimiter
     {
         /// <summary>
