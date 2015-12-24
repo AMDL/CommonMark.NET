@@ -1,5 +1,6 @@
 ﻿using CommonMark.Syntax;
 using System.Globalization;
+using System.Collections.Generic;
 
 namespace CommonMark.Formatters.Blocks
 {
@@ -16,8 +17,9 @@ namespace CommonMark.Formatters.Blocks
         /// </summary>
         /// <param name="parameters">Formatter parameters.</param>
         /// <param name="tag">Block element tag.</param>
-        protected HeaderFormatter(FormatterParameters parameters, BlockTag tag)
-            : base(parameters, tag)
+        /// <param name="printerTag">Printer tag.</param>
+        protected HeaderFormatter(FormatterParameters parameters, BlockTag tag, string printerTag)
+            : base(parameters, tag, printerTag: printerTag)
         {
         }
 
@@ -72,6 +74,20 @@ namespace CommonMark.Formatters.Blocks
         {
             return false;
         }
+
+        /// <summary>
+        /// Returns the properties of an element.
+        /// </summary>
+        /// <param name="printer">Printer.</param>
+        /// <param name="element">Element.</param>
+        /// <returns>Properties or <c>null</c>.</returns>
+        public override IDictionary<string, object> GetPrinterData(IPrinter printer, Block element)
+        {
+            return new Dictionary<string, object>
+            {
+                { "level", element.HeaderLevel },
+            };
+        }
     }
 
     /// <summary>
@@ -84,7 +100,7 @@ namespace CommonMark.Formatters.Blocks
         /// </summary>
         /// <param name="parameters">Formatter parameters.</param>
         public AtxHeaderFormatter(FormatterParameters parameters)
-            : base(parameters, BlockTag.AtxHeader)
+            : base(parameters, BlockTag.AtxHeader, "atx_header")
         {
         }
     }
@@ -99,7 +115,7 @@ namespace CommonMark.Formatters.Blocks
         /// </summary>
         /// <param name="parameters">Formatter parameters.</param>
         public SETextHeaderFormatter(FormatterParameters parameters)
-            : base(parameters, BlockTag.SETextHeader)
+            : base(parameters, BlockTag.SETextHeader, "setext_header")
         {
         }
     }

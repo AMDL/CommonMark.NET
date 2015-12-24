@@ -113,18 +113,6 @@ namespace CommonMark.Formatters
                             PrintPosition(trackPositions, writer, block);
                             break;
 
-                        case BlockTag.AtxHeader:
-                            writer.Write("atx_header");
-                            PrintPosition(trackPositions, writer, block);
-                            writer.Write(" (level={0})", block.HeaderLevel);
-                            break;
-
-                        case BlockTag.SETextHeader:
-                            writer.Write("setext_header");
-                            PrintPosition(trackPositions, writer, block);
-                            writer.Write(" (level={0})", block.HeaderLevel);
-                            break;
-
                         case BlockTag.Paragraph:
                             writer.Write("paragraph");
                             PrintPosition(trackPositions, writer, block);
