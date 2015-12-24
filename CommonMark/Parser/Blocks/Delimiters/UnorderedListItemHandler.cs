@@ -5,16 +5,16 @@ namespace CommonMark.Parser.Blocks.Delimiters
     /// <summary>
     /// Unordered list item delimiter parameters.
     /// </summary>
-    public sealed class BulletListItemDelimiterParameters : ListItemDelimiterParameters
+    public sealed class UnorderedListItemDelimiterParameters : ListItemDelimiterParameters
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="BulletListItemDelimiterParameters"/> class.
+        /// Initializes a new instance of the <see cref="UnorderedListItemDelimiterParameters"/> class.
         /// </summary>
         /// <param name="character">Delimiter character.</param>
         /// <param name="isThematicBreakCharacter"><c>true</c> if the delimiter character doubles as a thematic break character.</param>
         /// <param name="listStyle">List style.</param>
         /// <param name="minSpaceCount">Minimum space count.</param>
-        public BulletListItemDelimiterParameters(char character, bool isThematicBreakCharacter = false, string listStyle = null, int minSpaceCount = 1)
+        public UnorderedListItemDelimiterParameters(char character, bool isThematicBreakCharacter = false, string listStyle = null, int minSpaceCount = 1)
             : base(character, minSpaceCount)
         {
             this.IsThematicBreakCharacter = isThematicBreakCharacter;
@@ -35,19 +35,19 @@ namespace CommonMark.Parser.Blocks.Delimiters
     /// <summary>
     /// Unordered list item delimiter handler.
     /// </summary>
-    public sealed class BulletListItemHandler : ListItemHandler<BulletListData, BulletListItemParameters, BulletListItemHandler.Parameters>
+    public sealed class UnorderedListItemHandler : ListItemHandler<UnorderedListData, UnorderedListItemParameters, UnorderedListItemHandler.Parameters>
     {
         /// <summary>
         /// Handler parameters.
         /// </summary>
-        public sealed class Parameters : ListItemHandlerParameters<BulletListItemParameters>
+        public sealed class Parameters : ListItemHandlerParameters<UnorderedListItemParameters>
         {
             /// <summary>
             /// Initializes a new instance of the <see cref="Parameters"/> class.
             /// </summary>
             /// <param name="parameters">List item parameters.</param>
             /// <param name="delimiter">Delimiter parameters.</param>
-            public Parameters(BulletListItemParameters parameters, BulletListItemDelimiterParameters delimiter)
+            public Parameters(UnorderedListItemParameters parameters, UnorderedListItemDelimiterParameters delimiter)
                 : base(parameters, new[] { delimiter.Character }, new[] { delimiter }, false)
             {
             }
@@ -56,24 +56,24 @@ namespace CommonMark.Parser.Blocks.Delimiters
         /// <summary>
         /// The default parameters instance.
         /// </summary>
-        public static readonly BulletListItemParameters DefaultParameters = new BulletListItemParameters(
+        public static readonly UnorderedListItemParameters DefaultParameters = new UnorderedListItemParameters(
             BlockTag.ListItem,
-            BlockTag.BulletList,
+            BlockTag.UnorderedList,
 #pragma warning disable 0618
             ListType.Bullet,
 #pragma warning restore 0618
-            new BulletListItemDelimiterParameters('*', isThematicBreakCharacter: true),
-            new BulletListItemDelimiterParameters('-', isThematicBreakCharacter: true),
-            new BulletListItemDelimiterParameters('+'),
-            new BulletListItemDelimiterParameters('•'));
+            new UnorderedListItemDelimiterParameters('*', isThematicBreakCharacter: true),
+            new UnorderedListItemDelimiterParameters('-', isThematicBreakCharacter: true),
+            new UnorderedListItemDelimiterParameters('+'),
+            new UnorderedListItemDelimiterParameters('•'));
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="BulletListItemHandler"/> class.
+        /// Initializes a new instance of the <see cref="UnorderedListItemHandler"/> class.
         /// </summary>
         /// <param name="settings">Common settings.</param>
         /// <param name="parameters">List item parameters.</param>
         /// <param name="delimiter">Delimiter parameters.</param>
-        public BulletListItemHandler(CommonMarkSettings settings, BulletListItemParameters parameters, BulletListItemDelimiterParameters delimiter)
+        public UnorderedListItemHandler(CommonMarkSettings settings, UnorderedListItemParameters parameters, UnorderedListItemDelimiterParameters delimiter)
             : base(settings, GetHandlerParameters(parameters, delimiter))
         {
             IsThematicBreakCharacter = delimiter.IsThematicBreakCharacter;
@@ -104,33 +104,33 @@ namespace CommonMark.Parser.Blocks.Delimiters
         /// Matches a list item to an unordered list.
         /// </summary>
         /// <param name="info">Parser state.</param>
-        /// <param name="listData">Bullet list data.</param>
+        /// <param name="listData">Unordered list data.</param>
         /// <returns><c>true</c> if the container may continue a list having <paramref name="listData"/>.</returns>
-        protected override bool MatchList(BlockParserInfo info, BulletListData listData)
+        protected override bool MatchList(BlockParserInfo info, UnorderedListData listData)
         {
-            return listData.Equals(info.Container.BulletListData);
+            return listData.Equals(info.Container.UnorderedListData);
         }
 
         /// <summary>
-        /// Updates a container with bullet list data.
+        /// Updates a container with unordered list data.
         /// </summary>
         /// <param name="info">Parser state.</param>
-        /// <param name="listData">Bullet list data.</param>
-        protected override void SetListData(BlockParserInfo info, BulletListData listData)
+        /// <param name="listData">Unordered list data.</param>
+        protected override void SetListData(BlockParserInfo info, UnorderedListData listData)
         {
-            info.Container.BulletListData = listData;
+            info.Container.UnorderedListData = listData;
         }
 
         /// <summary>
-        /// Attempts to parse a bullet list item marker.
+        /// Attempts to parse an unordered list item marker.
         /// </summary>
         /// <param name="info">Parser state.</param>
         /// <param name="adjustStart">Start value adjuster delegate.</param>
         /// <param name="data">Common list data.</param>
-        /// <param name="listData">Bullet list data.</param>
+        /// <param name="listData">Unordered list data.</param>
         /// <returns>Length of the marker, or 0 for no match.</returns>
         /// <remarks>Original: int parse_list_marker(string ln, int pos, ref ListData dataptr)</remarks>
-        protected override int ParseMarker(BlockParserInfo info, AdjustStartDelegate adjustStart, out ListData data, out BulletListData listData)
+        protected override int ParseMarker(BlockParserInfo info, AdjustStartDelegate adjustStart, out ListData data, out UnorderedListData listData)
         {
             data = null;
             listData = null;
@@ -147,14 +147,14 @@ namespace CommonMark.Parser.Blocks.Delimiters
         }
 
         /// <summary>
-        /// Creates and initializes bullet list data.
+        /// Creates and initializes unordered list data.
         /// </summary>
         /// <param name="curChar">Current character.</param>
         /// <param name="start">Start value.</param>
         /// <returns></returns>
-        protected override BulletListData GetListData(char curChar, int start)
+        protected override UnorderedListData GetListData(char curChar, int start)
         {
-            return new BulletListData
+            return new UnorderedListData
             {
                 BulletCharacter = curChar,
                 ListStyle = ListStyle,
@@ -171,7 +171,7 @@ namespace CommonMark.Parser.Blocks.Delimiters
             get;
         }
 
-        private static Parameters GetHandlerParameters(BulletListItemParameters parameters, BulletListItemDelimiterParameters delimiter)
+        private static Parameters GetHandlerParameters(UnorderedListItemParameters parameters, UnorderedListItemDelimiterParameters delimiter)
         {
             return new Parameters(parameters, delimiter);
         }

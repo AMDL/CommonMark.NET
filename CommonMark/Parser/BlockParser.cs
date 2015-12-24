@@ -263,7 +263,7 @@ namespace CommonMark.Parser
         {
             yield return new Blocks.DocumentParser(settings);
             yield return new Blocks.BlockQuoteParser(settings);
-            yield return new Blocks.BulletListParser(settings);
+            yield return new Blocks.UnorderedListParser(settings);
             yield return new Blocks.OrderedListParser(settings);
             yield return new Blocks.ListItemParser(settings);
             yield return new Blocks.IndentedCodeParser(settings);

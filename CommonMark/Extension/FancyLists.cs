@@ -35,7 +35,7 @@ namespace CommonMark.Extension
             AddRomanHandlers(handlers, settings);
             AddLatinHandlers(handlers, settings);
             AddSharpHandlers(handlers, settings);
-            AddBulletHandlers(handlers, settings);
+            AddUnorderedHandlers(handlers, settings);
             AddNumericHandlers(handlers, settings);
             AddAdditiveHandlers(handlers, settings);
             return handlers;
@@ -88,29 +88,29 @@ namespace CommonMark.Extension
             return new SharpListItemHandler(settings, parameters);
         }
 
-        private void AddBulletHandlers(List<IBlockDelimiterHandler> handlers, CommonMarkSettings settings)
+        private void AddUnorderedHandlers(List<IBlockDelimiterHandler> handlers, CommonMarkSettings settings)
         {
-            AddHandlers(handlers, settings, GetBulletParameters, CreateBulletHandler, (int)fancyListsSettings.Features, (int)FancyListsFeatures.Unordered);
+            AddHandlers(handlers, settings, GetUnorderedParameters, CreateUnorderedHandler, (int)fancyListsSettings.Features, (int)FancyListsFeatures.Unordered);
         }
 
-        private static IEnumerable<BulletListItemParameters> GetBulletParameters()
+        private static IEnumerable<UnorderedListItemParameters> GetUnorderedParameters()
         {
-            var delimiters = GetBulletDelimiters();
+            var delimiters = GetUnorderedDelimiters();
             foreach (var delimiter in delimiters)
-                yield return new BulletListItemParameters(delimiters: delimiter);
+                yield return new UnorderedListItemParameters(delimiters: delimiter);
         }
 
-        private static IEnumerable<BulletListItemDelimiterParameters> GetBulletDelimiters()
+        private static IEnumerable<UnorderedListItemDelimiterParameters> GetUnorderedDelimiters()
         {
-            yield return (new BulletListItemDelimiterParameters('●', listStyle: "disc"));
-            yield return (new BulletListItemDelimiterParameters('○', listStyle: "circle"));
-            yield return (new BulletListItemDelimiterParameters('■', listStyle: "square"));
-            yield return (new BulletListItemDelimiterParameters('∙', listStyle: "none"));
+            yield return (new UnorderedListItemDelimiterParameters('●', listStyle: "disc"));
+            yield return (new UnorderedListItemDelimiterParameters('○', listStyle: "circle"));
+            yield return (new UnorderedListItemDelimiterParameters('■', listStyle: "square"));
+            yield return (new UnorderedListItemDelimiterParameters('∙', listStyle: "none"));
         }
 
-        private static IBlockDelimiterHandler CreateBulletHandler(CommonMarkSettings settings, BulletListItemParameters parameters)
+        private static IBlockDelimiterHandler CreateUnorderedHandler(CommonMarkSettings settings, UnorderedListItemParameters parameters)
         {
-            return new BulletListItemHandler(settings, parameters, parameters.Delimiters[0]);
+            return new UnorderedListItemHandler(settings, parameters, parameters.Delimiters[0]);
         }
 
         private void AddNumericHandlers(List<IBlockDelimiterHandler> handlers, CommonMarkSettings settings)

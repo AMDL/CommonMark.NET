@@ -23,7 +23,7 @@ namespace CommonMark.Parser.Blocks
         /// <summary>
         /// Gets the list type.
         /// </summary>
-        [Obsolete("This API has been superceded by " + nameof(BlockTag.BulletList) + " and " + nameof(BlockTag.OrderedList) + ".")]
+        [Obsolete("This API has been superceded by " + nameof(BlockTag.UnorderedList) + " and " + nameof(BlockTag.OrderedList) + ".")]
         ListType ListType { get; }
     }
 
@@ -63,7 +63,7 @@ namespace CommonMark.Parser.Blocks
         /// <summary>
         /// Gets or sets the list type.
         /// </summary>
-        [Obsolete("This API has been superceded by " + nameof(BlockTag.BulletList) + " and " + nameof(BlockTag.OrderedList) + ".")]
+        [Obsolete("This API has been superceded by " + nameof(BlockTag.UnorderedList) + " and " + nameof(BlockTag.OrderedList) + ".")]
         public ListType ListType { get; set; }
 
         /// <summary>
@@ -101,7 +101,7 @@ namespace CommonMark.Parser.Blocks
         /// The default parameters instance.
         /// </summary>
         public static readonly ListParameters DefaultParameters = new ListParameters(
-            BulletListItemHandler.DefaultParameters,
+            UnorderedListItemHandler.DefaultParameters,
             NumericListItemHandler.DefaultParameters);
 
         /// <summary>
@@ -127,10 +127,10 @@ namespace CommonMark.Parser.Blocks
             {
                 foreach (var item in Parameters.Items)
                 {
-                    var bulletParameters = item as BulletListItemParameters;
-                    if (bulletParameters != null)
-                        foreach (var delimiter in bulletParameters.Delimiters)
-                            yield return new BulletListItemHandler(Settings, bulletParameters, delimiter);
+                    var unorderedParameters = item as UnorderedListItemParameters;
+                    if (unorderedParameters != null)
+                        foreach (var delimiter in unorderedParameters.Delimiters)
+                            yield return new UnorderedListItemHandler(Settings, unorderedParameters, delimiter);
 
                     var numericParameters = item as OrderedListItemParameters;
                     if (numericParameters != null && numericParameters.Markers.Length == 1)

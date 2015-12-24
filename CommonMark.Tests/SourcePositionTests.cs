@@ -245,7 +245,7 @@ is it?
             var data = "*  *";
             var doc = Helpers.ParseDocument(data, Settings);
 
-            var bl = doc.AsEnumerable().FirstOrDefault(o => o.Block != null && o.Block.Tag == Syntax.BlockTag.BulletList);
+            var bl = doc.AsEnumerable().FirstOrDefault(o => o.Block != null && o.Block.Tag == Syntax.BlockTag.UnorderedList);
             Assert.IsNotNull(bl);
             Assert.AreEqual(data, data.Substring(bl.Block.SourcePosition, bl.Block.SourceLength));
         }

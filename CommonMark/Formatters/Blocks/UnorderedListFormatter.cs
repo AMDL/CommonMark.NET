@@ -4,17 +4,17 @@ using System.Collections.Generic;
 namespace CommonMark.Formatters.Blocks
 {
     /// <summary>
-    /// <see cref="BlockTag.BulletList"/> element formatter.
+    /// <see cref="BlockTag.UnorderedList"/> element formatter.
     /// </summary>
-    public class BulletListFormatter : ListFormatter<BulletListData>
+    public class UnorderedListFormatter : ListFormatter<UnorderedListData>
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="BulletListFormatter"/> class.
+        /// Initializes a new instance of the <see cref="UnorderedListFormatter"/> class.
         /// </summary>
         /// <param name="parameters">Formatter parameters.</param>
         /// <param name="tag">Block element tag.</param>
         /// <param name="printerTag">Printer tag.</param>
-        public BulletListFormatter(FormatterParameters parameters, BlockTag tag = BlockTag.BulletList, string printerTag = "bullet_list")
+        public UnorderedListFormatter(FormatterParameters parameters, BlockTag tag = BlockTag.UnorderedList, string printerTag = "unordered_list")
             : base(parameters, tag, "ul", printerTag)
         {
         }
@@ -28,7 +28,7 @@ namespace CommonMark.Formatters.Blocks
         public override bool WriteOpening(IHtmlTextWriter writer, Block element)
         {
             StartWriteOpening(writer, element);
-            return CompleteWriteOpening(writer, element, element.BulletListData);
+            return CompleteWriteOpening(writer, element, element.UnorderedListData);
         }
 
         /// <summary>
@@ -42,14 +42,14 @@ namespace CommonMark.Formatters.Blocks
             return new Dictionary<string, object>
             {
                 { "tight", element.ListData.IsTight },
-                { "bullet_char", element.BulletListData.BulletCharacter },
+                { "bullet_char", element.UnorderedListData.BulletCharacter },
             };
         }
     }
 
-    internal sealed class LegacyBulletListFormatter : BulletListFormatter
+    internal sealed class LegacyUnorderedListFormatter : UnorderedListFormatter
     {
-        public LegacyBulletListFormatter(FormatterParameters parameters)
+        public LegacyUnorderedListFormatter(FormatterParameters parameters)
 #pragma warning disable 0618
             : base(parameters, BlockTag.List, "list")
 #pragma warning restore 0618

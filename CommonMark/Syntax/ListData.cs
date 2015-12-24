@@ -28,13 +28,13 @@ namespace CommonMark.Syntax
         /// Gets or sets the character used for unordered lists. Used if <see cref="ListData.ListType"/> is set to
         /// <see cref="F:ListType.Bullet"/>.
         /// </summary>
-        [Obsolete("This API has been superceded by " + nameof(BulletListData) + ".")]
+        [Obsolete("This API has been superceded by " + nameof(UnorderedListData) + ".")]
         public char BulletChar { get; set; }
 
         /// <summary>
         /// Gets or sets the type (ordered or unordered) of this list.
         /// </summary>
-        [Obsolete("This API has been superceded by " + nameof(BlockTag.BulletList) + " and " + nameof(BlockTag.OrderedList) + ".")]
+        [Obsolete("This API has been superceded by " + nameof(BlockTag.UnorderedList) + " and " + nameof(BlockTag.OrderedList) + ".")]
         public ListType ListType { get; set; }
 
         /// <summary>
@@ -67,7 +67,7 @@ namespace CommonMark.Syntax
         /// Determines whether the specified object contains matching list data.
         /// </summary>
         /// <param name="obj">Candidate object.</param>
-        /// <returns><c>true</c> if <paramref name="obj"/> is a bullet list data object containing matching data.</returns>
+        /// <returns><c>true</c> if <paramref name="obj"/> is a matching list data object containing matching data.</returns>
         public override bool Equals(object obj)
         {
             var other = obj as T;

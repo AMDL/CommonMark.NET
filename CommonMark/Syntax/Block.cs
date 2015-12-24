@@ -172,9 +172,9 @@ namespace CommonMark.Syntax
         public ListData ListData { get; set; }
 
         /// <summary>
-        /// Gets or sets the additional properties that apply to bullet list elements.
+        /// Gets or sets the additional properties that apply to unordered list elements.
         /// </summary>
-        public BulletListData BulletListData { get; set; }
+        public UnorderedListData UnorderedListData { get; set; }
 
         /// <summary>
         /// Gets or sets the additional properties that apply to ordered list elements.

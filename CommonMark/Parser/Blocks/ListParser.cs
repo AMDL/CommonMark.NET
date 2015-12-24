@@ -113,16 +113,16 @@ namespace CommonMark.Parser.Blocks
     }
 
     /// <summary>
-    /// <see cref="BlockTag.BulletList"/> element parser.
+    /// <see cref="BlockTag.UnorderedList"/> element parser.
     /// </summary>
-    public sealed class BulletListParser : ListParser
+    public sealed class UnorderedListParser : ListParser
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="BulletListParser"/> class.
+        /// Initializes a new instance of the <see cref="UnorderedListParser"/> class.
         /// </summary>
         /// <param name="settings">Common settings.</param>
-        public BulletListParser(CommonMarkSettings settings)
-            : base(settings, BlockTag.BulletList, BlockTag.ListItem)
+        public UnorderedListParser(CommonMarkSettings settings)
+            : base(settings, BlockTag.UnorderedList, BlockTag.ListItem)
         {
         }
     }

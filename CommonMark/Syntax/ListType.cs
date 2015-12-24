@@ -1,19 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace CommonMark.Syntax
 {
     /// <summary>
     /// Defines the type of a list block element.
     /// </summary>
-    [Obsolete("This API has been superceded by " + nameof(BlockTag.BulletList) + " and " + nameof(BlockTag.OrderedList) + ".")]
+    [Obsolete("This API has been superceded by " + nameof(BlockTag.UnorderedList) + " and " + nameof(BlockTag.OrderedList) + ".")]
     public enum ListType
     {
         /// <summary>
         /// The list is unordered and its items are represented with bullets.
         /// </summary>
-        [Obsolete("Use " + nameof(BlockTag.BulletList) + " instead.")]
+        [Obsolete("Use " + nameof(BlockTag.UnorderedList) + " instead.")]
         Bullet = 0,
 
         /// <summary>

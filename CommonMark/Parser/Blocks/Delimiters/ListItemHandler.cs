@@ -131,7 +131,7 @@ namespace CommonMark.Parser.Blocks.Delimiters
         /// <summary>
         /// Gets the type of the parent list.
         /// </summary>
-        [Obsolete("This API has been superceded by " + nameof(BlockTag.BulletList) + " and " + nameof(BlockTag.OrderedList) + ".")]
+        [Obsolete("This API has been superceded by " + nameof(BlockTag.UnorderedList) + " and " + nameof(BlockTag.OrderedList) + ".")]
         public ListType ListType
         {
             get;

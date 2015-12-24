@@ -32,11 +32,11 @@ namespace CommonMark.Extension
             yield return new ListParser(settings, BlockTag.List, BlockTag.ListItem);
 
             // These will ruin the default parameters, but that's alright since we're replacing the parser anyway.
-            var bulletListItemParameters = BulletListItemHandler.DefaultParameters;
-            bulletListItemParameters.ParentTag = BlockTag.List;
+            var unorderedListItemParameters = UnorderedListItemHandler.DefaultParameters;
+            unorderedListItemParameters.ParentTag = BlockTag.List;
             var numericListItemParameters = NumericListItemHandler.DefaultParameters;
             numericListItemParameters.ParentTag = BlockTag.List;
-            var listParameters = new ListParameters(bulletListItemParameters, numericListItemParameters);
+            var listParameters = new ListParameters(unorderedListItemParameters, numericListItemParameters);
 
             yield return new ListItemParser(settings, BlockTag.ListItem, listParameters);
 #pragma warning restore 0618
@@ -48,7 +48,7 @@ namespace CommonMark.Extension
         /// <param name="parameters">Formatter parameters.</param>
         protected override IEnumerable<IBlockFormatter> InitializeBlockFormatters(FormatterParameters parameters)
         {
-            yield return new LegacyBulletListFormatter(parameters);
+            yield return new LegacyUnorderedListFormatter(parameters);
             yield return new LegacyOrderedListFormatter(parameters);
         }
     }

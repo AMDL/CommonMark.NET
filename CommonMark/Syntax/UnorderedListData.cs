@@ -1,9 +1,9 @@
 ﻿namespace CommonMark.Syntax
 {
     /// <summary>
-    /// Contains additional data for bullet list block elements. Used in <see cref="Block.BulletListData"/> property.
+    /// Contains additional data for unordered list block elements. Used in <see cref="Block.UnorderedListData"/> property.
     /// </summary>
-    public sealed class BulletListData : ListData<BulletListData>
+    public sealed class UnorderedListData : ListData<UnorderedListData>
     {
         /// <summary>
         /// Gets or sets the bullet character.
@@ -11,13 +11,13 @@
         public char BulletCharacter { get; set; }
 
         /// <summary>
-        /// Determines whether the specified object contains matching bullet list data.
+        /// Determines whether the specified object contains matching unordered list data.
         /// </summary>
         /// <param name="obj">Candidate object.</param>
-        /// <returns><c>true</c> if <paramref name="obj"/> is a bullet list data object containing matching data.</returns>
+        /// <returns><c>true</c> if <paramref name="obj"/> is an unordered list data object containing matching data.</returns>
         public override bool Equals(object obj)
         {
-            var other = obj as BulletListData;
+            var other = obj as UnorderedListData;
             return other != null
                 && this.BulletCharacter == other.BulletCharacter
                 && base.Equals(obj);
