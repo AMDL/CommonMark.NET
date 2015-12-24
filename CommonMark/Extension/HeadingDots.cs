@@ -6,15 +6,15 @@ using CommonMark.Parser.Blocks;
 namespace CommonMark.Extension
 {
     /// <summary>
-    /// Four or more dots will be recognized as Level 3 setext header markers.
+    /// Four or more dots will be recognized as Level 3 setext heading markers.
     /// </summary>
-    public class HeaderDots : CommonMarkExtension
+    public class HeadingDots : CommonMarkExtension
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="HeaderDots"/> class.
+        /// Initializes a new instance of the <see cref="HeadingDots"/> class.
         /// </summary>
         /// <param name="settings"></param>
-        public HeaderDots(CommonMarkSettings settings)
+        public HeadingDots(CommonMarkSettings settings)
             : base(settings)
         {
         }
@@ -25,16 +25,16 @@ namespace CommonMark.Extension
         /// <param name="settings">Common settings.</param>
         protected override IEnumerable<IBlockParser> InitializeBlockParsers(CommonMarkSettings settings)
         {
-            var parameters = new SETextHeaderParameters()
+            var parameters = new SETextHeadingParameters()
             {
                 Delimiters = new[]
                 {
-                    new SETextHeaderDelimiterParameters('=', 1),
-                    new SETextHeaderDelimiterParameters('-', 2),
-                    new SETextHeaderDelimiterParameters('.', 3, 4),
+                    new SETextHeadingDelimiterParameters('=', 1),
+                    new SETextHeadingDelimiterParameters('-', 2),
+                    new SETextHeadingDelimiterParameters('.', 3, 4),
                 },
             };
-            yield return new SETextHeaderParser(settings, parameters);
+            yield return new SETextHeadingParser(settings, parameters);
         }
     }
 }

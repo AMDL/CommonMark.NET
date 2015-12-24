@@ -54,7 +54,7 @@
     <Compile Include="Extension\AdditiveListStyles.cs" />
     <Compile Include="Extension\FancyLists.cs" />
     <Compile Include="Extension\FancyListsSettings.cs" />
-    <Compile Include="Extension\HeaderDots.cs" />
+    <Compile Include="Extension\HeadingDots.cs" />
     <Compile Include="Extension\LegacyLists.cs" />
     <Compile Include="Extension\MathDollars.cs" />
     <Compile Include="Extension\NumericListStyles.cs" />
@@ -62,7 +62,7 @@
     <Compile Include="Extension\Subscript.cs" />
     <Compile Include="Extension\Superscript.cs" />
     <Compile Include="Formatters\Blocks\BulletListFormatter.cs" />
-    <Compile Include="Formatters\Blocks\HeaderFormatter.cs" />
+    <Compile Include="Formatters\Blocks\HeadingFormatter.cs" />
     <Compile Include="Formatters\Blocks\ListFormatter.cs" />
     <Compile Include="Formatters\Blocks\ListItemFormatter.cs" />
     <Compile Include="Formatters\Blocks\OrderedListFormatter.cs" />
@@ -70,7 +70,7 @@
     <Compile Include="Parser\BlockDelimiterHandler.cs" />
     <Compile Include="Parser\Blocks\BulletListItemParser.cs" />
     <Compile Include="Parser\Blocks\Delimiters\AlphaListItemHandler.cs" />
-    <Compile Include="Parser\Blocks\Delimiters\AtxHeaderHandler.cs" />
+    <Compile Include="Parser\Blocks\Delimiters\AtxHeadingHandler.cs" />
     <Compile Include="Parser\Blocks\Delimiters\BlockQuoteHandler.cs" />
     <Compile Include="Parser\Blocks\Delimiters\BulletListItemHandler.cs" />
     <Compile Include="Parser\Blocks\Delimiters\FencedCodeHandler.cs" />
@@ -84,7 +84,7 @@
     <Compile Include="Parser\Blocks\Delimiters\OrderedListItemHandler.cs" />
     <Compile Include="Parser\Blocks\Delimiters\ParagraphHandler.cs" />
     <Compile Include="Parser\Blocks\Delimiters\RomanListItemHandler.cs" />
-    <Compile Include="Parser\Blocks\Delimiters\SETextHeaderHandler.cs" />
+    <Compile Include="Parser\Blocks\Delimiters\SETextHeadingHandler.cs" />
     <Compile Include="Parser\Blocks\Delimiters\SharpListItemHandler.cs" />
     <Compile Include="Parser\Blocks\OrderedListItemParser.cs" />
     <Compile Include="Parser\DelegateBlockDelimiterHandler.cs" />
@@ -99,7 +99,7 @@
     <Compile Include="Formatters\IPrinter.cs" />
     <Compile Include="Parser\BlockParser.cs" />
     <Compile Include="Parser\BlockParserInfo.cs" />
-    <Compile Include="Parser\Blocks\AtxHeaderParser.cs" />
+    <Compile Include="Parser\Blocks\AtxHeadingParser.cs" />
     <Compile Include="Parser\Blocks\BlockQuoteParser.cs" />
     <Compile Include="Parser\Blocks\DocumentParser.cs" />
     <Compile Include="Parser\Blocks\FencedCodeParser.cs" />
@@ -109,7 +109,7 @@
     <Compile Include="Parser\Blocks\ListItemParser.cs" />
     <Compile Include="Parser\Blocks\ListParser.cs" />
     <Compile Include="Parser\Blocks\ParagraphParser.cs" />
-    <Compile Include="Parser\Blocks\SETextHeaderParser.cs" />
+    <Compile Include="Parser\Blocks\SETextHeadingParser.cs" />
     <Compile Include="Parser\DelegateBlockOpener.cs" />
     <Compile Include="Parser\DelegateBlockParser.cs" />
     <Compile Include="Extension\Figures.cs" />

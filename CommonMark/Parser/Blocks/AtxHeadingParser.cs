@@ -4,51 +4,51 @@ using System.Collections.Generic;
 namespace CommonMark.Parser.Blocks
 {
     /// <summary>
-    /// ATX header parameters.
+    /// ATX heading parameters.
     /// </summary>
-    public sealed class AtxHeaderParameters
+    public sealed class AtxHeadingParameters
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="AtxHeaderParameters"/> class.
+        /// Initializes a new instance of the <see cref="AtxHeadingParameters"/> class.
         /// </summary>
         /// <param name="opener">Opening character.</param>
         /// <param name="closer">Closing character. If unspecified, <paramref name="opener"/> will be used.</param>
-        public AtxHeaderParameters(char opener, char closer = (char)0)
+        public AtxHeadingParameters(char opener, char closer = (char)0)
         {
             Opener = opener;
             Closer = closer != 0 ? closer : opener;
         }
 
         /// <summary>
-        /// Gets or sets the header opener character.
+        /// Gets or sets the heading opener character.
         /// </summary>
         /// <value>Opener character.</value>
         public char Opener { get; set; }
 
         /// <summary>
-        /// Gets or sets the header closer character.
+        /// Gets or sets the heading closer character.
         /// </summary>
         /// <value>Closer character.</value>
         public char Closer { get; set; }
     }
 
     /// <summary>
-    /// <see cref="BlockTag.AtxHeader"/> element parser.
+    /// <see cref="BlockTag.AtxHeading"/> element parser.
     /// </summary>
-    public sealed class AtxHeaderParser : BlockParser
+    public sealed class AtxHeadingParser : BlockParser
     {
         /// <summary>
         /// The default parameters instance.
         /// </summary>
-        public static readonly AtxHeaderParameters DefaultParameters = new AtxHeaderParameters('#');
+        public static readonly AtxHeadingParameters DefaultParameters = new AtxHeadingParameters('#');
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AtxHeaderParser"/> class.
+        /// Initializes a new instance of the <see cref="AtxHeadingParser"/> class.
         /// </summary>
         /// <param name="settings">Common settings.</param>
         /// <param name="tag">Handled element tag.</param>
-        /// <param name="parameters">ATX header parameters.</param>
-        public AtxHeaderParser(CommonMarkSettings settings, BlockTag tag = BlockTag.AtxHeader, AtxHeaderParameters parameters = null)
+        /// <param name="parameters">ATX heading parameters.</param>
+        public AtxHeadingParser(CommonMarkSettings settings, BlockTag tag = BlockTag.AtxHeading, AtxHeadingParameters parameters = null)
             : base(settings, tag)
         {
             IsAcceptsLines = true;
@@ -65,7 +65,7 @@ namespace CommonMark.Parser.Blocks
         {
             get
             {
-                yield return new Delimiters.AtxHeaderHandler(Settings, Tag, Opener);
+                yield return new Delimiters.AtxHeadingHandler(Settings, Tag, Opener);
             }
         }
 
@@ -76,7 +76,7 @@ namespace CommonMark.Parser.Blocks
         /// <returns><c>true</c> if successful.</returns>
         public override bool Initialize(ref BlockParserInfo info)
         {
-            // a header can never contain more than one line
+            // a heading can never contain more than one line
             if (info.IsBlank)
             {
                 info.Container.IsLastLineBlank = true;
@@ -116,7 +116,7 @@ namespace CommonMark.Parser.Blocks
         }
 
         /// <summary>
-        /// Trims ATX header end.
+        /// Trims an ATX heading end.
         /// </summary>
         /// <param name="info">Parser state.</param>
         /// <returns>Adjusted offset.</returns>

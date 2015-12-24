@@ -5,20 +5,20 @@ using System.Collections.Generic;
 namespace CommonMark.Formatters.Blocks
 {
     /// <summary>
-    /// Abstract header element formatter class.
+    /// Base heading element formatter class.
     /// </summary>
-    public abstract class HeaderFormatter : BlockFormatter
+    public abstract class HeadingFormatter : BlockFormatter
     {
         private static readonly string[] OpenerTags = { "<h1>", "<h2>", "<h3>", "<h4>", "<h5>", "<h6>" };
         private static readonly string[] CloserTags = { "</h1>", "</h2>", "</h3>", "</h4>", "</h5>", "</h6>" };
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="HeaderFormatter"/> class.
+        /// Initializes a new instance of the <see cref="HeadingFormatter"/> class.
         /// </summary>
         /// <param name="parameters">Formatter parameters.</param>
         /// <param name="tag">Block element tag.</param>
         /// <param name="printerTag">Printer tag.</param>
-        protected HeaderFormatter(FormatterParameters parameters, BlockTag tag, string printerTag)
+        protected HeadingFormatter(FormatterParameters parameters, BlockTag tag, string printerTag)
             : base(parameters, tag, printerTag: printerTag)
         {
         }
@@ -32,16 +32,16 @@ namespace CommonMark.Formatters.Blocks
         public override bool WriteOpening(IHtmlTextWriter writer, Block element)
         {
             writer.EnsureLine();
-            var headerLevel = element.HeaderLevel;
-            if (Parameters.TrackPositions || headerLevel > 6)
+            var headingLevel = element.HeaderLevel;
+            if (Parameters.TrackPositions || headingLevel > 6)
             {
-                writer.WriteConstant("<h" + headerLevel.ToString(CultureInfo.InvariantCulture));
+                writer.WriteConstant("<h" + headingLevel.ToString(CultureInfo.InvariantCulture));
                 WritePosition(writer, element);
                 writer.Write('>');
             }
             else
             {
-                writer.WriteConstant(OpenerTags[headerLevel - 1]);
+                writer.WriteConstant(OpenerTags[headingLevel - 1]);
             }
             return false;
         }
@@ -54,10 +54,10 @@ namespace CommonMark.Formatters.Blocks
         /// <returns>The closing.</returns>
         public override string GetClosing(IHtmlFormatter formatter, Block element)
         {
-            var headerLevel = element.HeaderLevel;
-            return headerLevel > 6
-                ? "</h" + headerLevel.ToString(CultureInfo.InvariantCulture) + ">"
-                : CloserTags[headerLevel - 1];
+            var headingLevel = element.HeaderLevel;
+            return headingLevel > 6
+                ? "</h" + headingLevel.ToString(CultureInfo.InvariantCulture) + ">"
+                : CloserTags[headingLevel - 1];
         }
 
         /// <summary>
@@ -91,31 +91,31 @@ namespace CommonMark.Formatters.Blocks
     }
 
     /// <summary>
-    /// <see cref="BlockTag.AtxHeader"/> element formatter.
+    /// <see cref="BlockTag.AtxHeading"/> element formatter.
     /// </summary>
-    public sealed class AtxHeaderFormatter : HeaderFormatter
+    public sealed class AtxHeadingFormatter : HeadingFormatter
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="AtxHeaderFormatter"/> class.
+        /// Initializes a new instance of the <see cref="AtxHeadingFormatter"/> class.
         /// </summary>
         /// <param name="parameters">Formatter parameters.</param>
-        public AtxHeaderFormatter(FormatterParameters parameters)
-            : base(parameters, BlockTag.AtxHeader, "atx_header")
+        public AtxHeadingFormatter(FormatterParameters parameters)
+            : base(parameters, BlockTag.AtxHeading, "atx_header")
         {
         }
     }
 
     /// <summary>
-    /// <see cref="BlockTag.SETextHeader"/> element formatter.
+    /// <see cref="BlockTag.SETextHeading"/> element formatter.
     /// </summary>
-    public sealed class SETextHeaderFormatter : HeaderFormatter
+    public sealed class SETextHeadingFormatter : HeadingFormatter
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="SETextHeaderFormatter"/> class.
+        /// Initializes a new instance of the <see cref="SETextHeadingFormatter"/> class.
         /// </summary>
         /// <param name="parameters">Formatter parameters.</param>
-        public SETextHeaderFormatter(FormatterParameters parameters)
-            : base(parameters, BlockTag.SETextHeader, "setext_header")
+        public SETextHeadingFormatter(FormatterParameters parameters)
+            : base(parameters, BlockTag.SETextHeading, "setext_header")
         {
         }
     }

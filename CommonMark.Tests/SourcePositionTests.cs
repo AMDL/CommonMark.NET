@@ -41,7 +41,7 @@ namespace CommonMark.Tests
             var doc = Helpers.ParseDocument(data, Settings);
 
             var code = doc.AsEnumerable()
-                .FirstOrDefault(o => o.Block != null && o.Block.Tag == Syntax.BlockTag.SETextHeader);
+                .FirstOrDefault(o => o.Block != null && o.Block.Tag == Syntax.BlockTag.SETextHeading);
 
             Assert.IsNotNull(code);
             Assert.AreEqual("baz\n===\n",
@@ -56,7 +56,7 @@ namespace CommonMark.Tests
             var doc = Helpers.ParseDocument(data, Settings);
 
             var code = doc.AsEnumerable()
-                .FirstOrDefault(o => o.Block != null && o.Block.Tag == Syntax.BlockTag.AtxHeader);
+                .FirstOrDefault(o => o.Block != null && o.Block.Tag == Syntax.BlockTag.AtxHeading);
 
             Assert.IsNotNull(code);
             Assert.AreEqual("## baz\n",

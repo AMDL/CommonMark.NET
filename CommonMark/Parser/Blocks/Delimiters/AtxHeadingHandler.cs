@@ -3,17 +3,17 @@
 namespace CommonMark.Parser.Blocks.Delimiters
 {
     /// <summary>
-    /// ATX header delimiter handler.
+    /// ATX heading delimiter handler.
     /// </summary>
-    public sealed class AtxHeaderHandler : BlockDelimiterHandler
+    public sealed class AtxHeadingHandler : BlockDelimiterHandler
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="AtxHeaderHandler"/> class.
+        /// Initializes a new instance of the <see cref="AtxHeadingHandler"/> class.
         /// </summary>
         /// <param name="settings">Common settings.</param>
         /// <param name="tag">Handled element tag.</param>
         /// <param name="opener">Opener character.</param>
-        public AtxHeaderHandler(CommonMarkSettings settings, BlockTag tag, char opener)
+        public AtxHeadingHandler(CommonMarkSettings settings, BlockTag tag, char opener)
             : base(settings, tag, opener)
         {
             Opener = opener;
@@ -27,25 +27,25 @@ namespace CommonMark.Parser.Blocks.Delimiters
         public override bool Handle(ref BlockParserInfo info)
         {
             int offset;
-            int headerLevel;
-            if (!info.IsIndented && 0 != (offset = ScanStart(info, out headerLevel)))
+            int headingLevel;
+            if (!info.IsIndented && 0 != (offset = ScanStart(info, out headingLevel)))
             {
                 info.AdvanceOffset(info.FirstNonspace + offset - info.Offset, false);
                 info.Container = AppendChildBlock(info, Tag, info.FirstNonspace);
-                info.Container.HeaderLevel = headerLevel;
+                info.Container.HeaderLevel = headingLevel;
                 return true;
             }
             return false;
         }
 
         /// <summary>
-        /// Matches ATX header start.
+        /// Matches an ATX heading start.
         /// </summary>
         /// <param name="info">Parser state.</param>
-        /// <param name="headerLevel">Header level.</param>
+        /// <param name="headingLevel">Heading level.</param>
         /// <returns>Offset, or 0 for no match.</returns>
-        /// <remarks>Original: int scan_atx_header_start(string s, int pos, int sourceLength, out int headerLevel)</remarks>
-        private int ScanStart(BlockParserInfo info, out int headerLevel)
+        /// <remarks>Original: int scan_atx_heading_start(string s, int pos, int sourceLength, out int headerLevel)</remarks>
+        private int ScanStart(BlockParserInfo info, out int headingLevel)
         {
             var s = info.Line;
             var pos = info.FirstNonspace;
@@ -56,7 +56,7 @@ namespace CommonMark.Parser.Blocks.Delimiters
               .? { return 0; }
             */
 
-            headerLevel = 1;
+            headingLevel = 1;
             if (pos + 1 >= sourceLength)
                 return 0;
 
@@ -67,13 +67,13 @@ namespace CommonMark.Parser.Blocks.Delimiters
 
                 if (c == Opener)
                 {
-                    if (headerLevel == 6)
+                    if (headingLevel == 6)
                         return 0;
 
                     if (spaceExists)
                         return i - pos;
                     else
-                        headerLevel++;
+                        headingLevel++;
                 }
                 else if (c == ' ')
                 {

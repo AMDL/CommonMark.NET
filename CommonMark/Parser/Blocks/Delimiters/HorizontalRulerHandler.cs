@@ -56,7 +56,7 @@ namespace CommonMark.Parser.Blocks.Delimiters
         {
             if (!info.IsIndented && (info.Container.Tag != BlockTag.Paragraph || info.IsAllMatched) && ScanHorizontalRule(info, Character, MinCount))
             {
-                // it's only now that we know the line is not part of a setext header:
+                // it's only now that we know the line is not part of a setext heading:
                 info.Container = AppendChildBlock(info, Tag, info.FirstNonspace);
                 BlockMethods.Finalize(info.Container, info.LineInfo, Settings);
                 info.Container = info.Container.Parent;

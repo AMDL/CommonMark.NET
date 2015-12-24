@@ -267,8 +267,8 @@ namespace CommonMark.Parser
             yield return new Blocks.OrderedListParser(settings);
             yield return new Blocks.ListItemParser(settings);
             yield return new Blocks.IndentedCodeParser(settings);
-            yield return new Blocks.AtxHeaderParser(settings);
-            yield return new Blocks.SETextHeaderParser(settings);
+            yield return new Blocks.AtxHeadingParser(settings);
+            yield return new Blocks.SETextHeadingParser(settings);
             yield return new Blocks.FencedCodeParser(settings);
             yield return new Blocks.HtmlBlockParser(settings);
             yield return new Blocks.ParagraphParser(settings);

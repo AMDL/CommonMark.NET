@@ -85,8 +85,8 @@ namespace CommonMark.Formatters
 
         internal static IEnumerable<IBlockFormatter> InitializeFormatters(FormatterParameters parameters)
         {
-            yield return new AtxHeaderFormatter(parameters);
-            yield return new SETextHeaderFormatter(parameters);
+            yield return new AtxHeadingFormatter(parameters);
+            yield return new SETextHeadingFormatter(parameters);
             yield return new BulletListFormatter(parameters);
             yield return new OrderedListFormatter(parameters);
             yield return new ListItemFormatter(parameters);

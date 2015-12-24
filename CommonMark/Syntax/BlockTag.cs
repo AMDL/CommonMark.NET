@@ -51,14 +51,26 @@ namespace CommonMark.Syntax
         Paragraph,
 
         /// <summary>
-        /// A header element that was parsed from an ATX style markup (<c>## heading 2</c>).
+        /// A heading element that was parsed from an ATX style markup (<c>## heading 2</c>).
         /// </summary>
-        AtxHeader,
+        AtxHeading,
 
         /// <summary>
-        /// A header element that was parsed from a Setext style markup (<c>heading\n========</c>).
+        /// Obsolete. Use <see cref="AtxHeading"/> instead.
         /// </summary>
-        SETextHeader,
+        [Obsolete("Use " + nameof(AtxHeading) + " instead.")]
+        AtxHeader = AtxHeading,
+
+        /// <summary>
+        /// A heading element that was parsed from a Setext style markup (<c>heading\n========</c>).
+        /// </summary>
+        SETextHeading,
+
+        /// <summary>
+        /// Obsolete. Use <see cref="SETextHeading"/> instead.
+        /// </summary>
+        [Obsolete("Use " + nameof(SETextHeading) + " instead.")]
+        SETextHeader = SETextHeading,
 
         /// <summary>
         /// A horizontal ruler element.
