@@ -227,11 +227,13 @@ namespace CommonMark
                     case OutputFormat.SyntaxTree:
                         Printer.PrintBlocks(target, document, settings);
                         break;
+#pragma warning disable 0618
                     case OutputFormat.CustomDelegate:
                         if (settings.OutputDelegate == null)
                             throw new CommonMarkException("If `settings.OutputFormat` is set to `CustomDelegate`, the `settings.OutputDelegate` property must be populated.");
                         settings.OutputDelegate(document, target, settings);
                         break;
+#pragma warning restore 0618
                     default:
                         throw new CommonMarkException("Unsupported value '" + settings.OutputFormat + "' in `settings.OutputFormat`.");
                 }

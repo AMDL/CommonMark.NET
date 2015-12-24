@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace CommonMark
 {
@@ -22,6 +20,7 @@ namespace CommonMark
         /// <summary>
         /// The output is written using a delegate function specified in <see cref="CommonMarkSettings.OutputDelegate"/>.
         /// </summary>
+        [Obsolete("Use " + nameof(CommonMarkConverter.Parse) + "() instead.")]
         CustomDelegate
     }
 }
