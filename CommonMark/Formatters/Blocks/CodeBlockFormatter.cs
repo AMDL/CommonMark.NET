@@ -38,17 +38,6 @@ namespace CommonMark.Formatters.Blocks
         }
 
         /// <summary>
-        /// Returns the closing of an element.
-        /// </summary>
-        /// <param name="formatter">HTML formatter.</param>
-        /// <param name="element">Element.</param>
-        /// <returns>The closing.</returns>
-        public override string GetClosing(IHtmlFormatter formatter, Block element)
-        {
-            return null;
-        }
-
-        /// <summary>
         /// Returns the properties of an element.
         /// </summary>
         /// <param name="printer">Printer.</param>

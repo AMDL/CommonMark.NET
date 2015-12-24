@@ -116,7 +116,7 @@ namespace CommonMark.Formatters
         /// <returns>The closing.</returns>
         protected string DoGetClosing(TElement element)
         {
-            return "</" + HtmlTag + '>';
+            return HtmlTag != null ? "</" + HtmlTag + '>' : null;
         }
 
         /// <summary>
