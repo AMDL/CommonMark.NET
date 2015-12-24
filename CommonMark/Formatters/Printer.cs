@@ -118,7 +118,7 @@ namespace CommonMark.Formatters
                             PrintPosition(trackPositions, writer, block);
                             break;
 
-                        case BlockTag.HorizontalRuler:
+                        case BlockTag.ThematicBreak:
                             writer.Write("hrule");
                             PrintPosition(trackPositions, writer, block);
                             break;

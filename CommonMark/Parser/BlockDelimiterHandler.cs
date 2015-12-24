@@ -99,17 +99,17 @@ namespace CommonMark.Parser
         }
 
         /// <summary>
-        /// Scans a horizontal rule line: "...three or more hyphens, asterisks,
+        /// Scans a thematic break line: "...three or more hyphens, asterisks,
         /// or underscores on a line by themselves. If you wish, you may use
         /// spaces between the hyphens or asterisks."
         /// Assumes that there is a <paramref name="character"/> at the current position.
         /// </summary>
         /// <param name="info">Parser state.</param>
-        /// <param name="character">Horizontal rule character.</param>
-        /// <param name="minCount">Minimum horizontal rule character count.</param>
+        /// <param name="character">Thematic break character.</param>
+        /// <param name="minCount">Minimum thematic break character count.</param>
         /// <returns><c>true</c> if successfully matched.</returns>
-        /// <remarks>Original: int scan_hrule(string s, int pos, int sourceLength)</remarks>
-        public static bool ScanHorizontalRule(BlockParserInfo info, char character, int minCount = 3)
+        /// <remarks>Original: int scan_thematic_break(string s, int pos, int sourceLength)</remarks>
+        public static bool ScanThematicBreak(BlockParserInfo info, char character, int minCount = 3)
         {
             var line = info.Line;
             var offset = info.FirstNonspace;

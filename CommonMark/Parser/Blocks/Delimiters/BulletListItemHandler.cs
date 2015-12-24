@@ -11,20 +11,20 @@ namespace CommonMark.Parser.Blocks.Delimiters
         /// Initializes a new instance of the <see cref="BulletListItemDelimiterParameters"/> class.
         /// </summary>
         /// <param name="character">Delimiter character.</param>
-        /// <param name="isHorizontalRuleCharacter"><c>true</c> if the delimiter character doubles as a horizontal rule character.</param>
+        /// <param name="isThematicBreakCharacter"><c>true</c> if the delimiter character doubles as a thematic break character.</param>
         /// <param name="listStyle">List style.</param>
         /// <param name="minSpaceCount">Minimum space count.</param>
-        public BulletListItemDelimiterParameters(char character, bool isHorizontalRuleCharacter = false, string listStyle = null, int minSpaceCount = 1)
+        public BulletListItemDelimiterParameters(char character, bool isThematicBreakCharacter = false, string listStyle = null, int minSpaceCount = 1)
             : base(character, minSpaceCount)
         {
-            this.IsHorizontalRuleCharacter = isHorizontalRuleCharacter;
+            this.IsThematicBreakCharacter = isThematicBreakCharacter;
             this.ListStyle = listStyle;
         }
 
         /// <summary>
-        /// Gets or sets the value indicating whether the delimiter character doubles as a horizontal rule character.
+        /// Gets or sets the value indicating whether the delimiter character doubles as a thematic break character.
         /// </summary>
-        public bool IsHorizontalRuleCharacter { get; set; }
+        public bool IsThematicBreakCharacter { get; set; }
 
         /// <summary>
         /// Gets or sets the list style.
@@ -62,8 +62,8 @@ namespace CommonMark.Parser.Blocks.Delimiters
 #pragma warning disable 0618
             ListType.Bullet,
 #pragma warning restore 0618
-            new BulletListItemDelimiterParameters('*', isHorizontalRuleCharacter: true),
-            new BulletListItemDelimiterParameters('-', isHorizontalRuleCharacter: true),
+            new BulletListItemDelimiterParameters('*', isThematicBreakCharacter: true),
+            new BulletListItemDelimiterParameters('-', isThematicBreakCharacter: true),
             new BulletListItemDelimiterParameters('+'),
             new BulletListItemDelimiterParameters('•'));
 
@@ -76,7 +76,7 @@ namespace CommonMark.Parser.Blocks.Delimiters
         public BulletListItemHandler(CommonMarkSettings settings, BulletListItemParameters parameters, BulletListItemDelimiterParameters delimiter)
             : base(settings, GetHandlerParameters(parameters, delimiter))
         {
-            IsHorizontalRuleCharacter = delimiter.IsHorizontalRuleCharacter;
+            IsThematicBreakCharacter = delimiter.IsThematicBreakCharacter;
             ListStyle = delimiter.ListStyle;
         }
 
@@ -97,7 +97,7 @@ namespace CommonMark.Parser.Blocks.Delimiters
         /// <returns><c>true</c> if the current line may contain a handled list item element.</returns>
         protected override bool CanOpen(BlockParserInfo info)
         {
-            return base.CanOpen(info) && !(IsHorizontalRuleCharacter && ScanHorizontalRule(info, info.CurrentCharacter));
+            return base.CanOpen(info) && !(IsThematicBreakCharacter && ScanThematicBreak(info, info.CurrentCharacter));
         }
 
         /// <summary>
@@ -161,7 +161,7 @@ namespace CommonMark.Parser.Blocks.Delimiters
             };
         }
 
-        private bool IsHorizontalRuleCharacter
+        private bool IsThematicBreakCharacter
         {
             get;
         }

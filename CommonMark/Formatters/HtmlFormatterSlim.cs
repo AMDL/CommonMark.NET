@@ -285,7 +285,7 @@ namespace CommonMark.Formatters
 
                         break;
 
-                    case BlockTag.HorizontalRuler:
+                    case BlockTag.ThematicBreak:
                         if (trackPositions)
                         {
                             writer.WriteConstant("<hr");

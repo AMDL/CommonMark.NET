@@ -74,7 +74,7 @@
     <Compile Include="Parser\Blocks\Delimiters\BlockQuoteHandler.cs" />
     <Compile Include="Parser\Blocks\Delimiters\BulletListItemHandler.cs" />
     <Compile Include="Parser\Blocks\Delimiters\FencedCodeHandler.cs" />
-    <Compile Include="Parser\Blocks\Delimiters\HorizontalRulerHandler.cs" />
+    <Compile Include="Parser\Blocks\Delimiters\ThematicBreakHandler.cs" />
     <Compile Include="Parser\Blocks\Delimiters\HtmlBlockHandler.cs" />
     <Compile Include="Parser\Blocks\Delimiters\IndentedCodeHandler.cs" />
     <Compile Include="Parser\Blocks\Delimiters\LatinListItemHandler.cs" />
@@ -103,7 +103,7 @@
     <Compile Include="Parser\Blocks\BlockQuoteParser.cs" />
     <Compile Include="Parser\Blocks\DocumentParser.cs" />
     <Compile Include="Parser\Blocks\FencedCodeParser.cs" />
-    <Compile Include="Parser\Blocks\HorizontalRulerParser.cs" />
+    <Compile Include="Parser\Blocks\ThematicBreakParser.cs" />
     <Compile Include="Parser\Blocks\HtmlBlockParser.cs" />
     <Compile Include="Parser\Blocks\IndentedCodeParser.cs" />
     <Compile Include="Parser\Blocks\ListItemParser.cs" />

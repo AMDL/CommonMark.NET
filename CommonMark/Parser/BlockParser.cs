@@ -272,7 +272,7 @@ namespace CommonMark.Parser
             yield return new Blocks.FencedCodeParser(settings);
             yield return new Blocks.HtmlBlockParser(settings);
             yield return new Blocks.ParagraphParser(settings);
-            yield return new Blocks.HorizontalRulerParser(settings);
+            yield return new Blocks.ThematicBreakParser(settings);
         }
 
         #endregion InitializeParsers

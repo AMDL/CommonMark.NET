@@ -3,23 +3,23 @@
 namespace CommonMark.Parser.Blocks.Delimiters
 {
     /// <summary>
-    /// Horizontal rule character parameters.
+    /// Thematic break character parameters.
     /// </summary>
-    public sealed class HorizontalRulerDelimiterParameters
+    public sealed class ThematicBreakDelimiterParameters
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="HorizontalRulerDelimiterParameters"/> class.
+        /// Initializes a new instance of the <see cref="ThematicBreakDelimiterParameters"/> class.
         /// </summary>
-        /// <param name="character">Horizontal rule character.</param>
+        /// <param name="character">Thematic break character.</param>
         /// <param name="minCount">Minimum character count.</param>
-        public HorizontalRulerDelimiterParameters(char character, int minCount = 3)
+        public ThematicBreakDelimiterParameters(char character, int minCount = 3)
         {
             this.Character = character;
             this.MinCount = minCount;
         }
 
         /// <summary>
-        /// Gets or sets the horizontal rule character.
+        /// Gets or sets the thematic break character.
         /// </summary>
         public char Character { get; set; }
 
@@ -30,17 +30,17 @@ namespace CommonMark.Parser.Blocks.Delimiters
     }
 
     /// <summary>
-    /// Horizontal rule delimiter handler.
+    /// Thematic break delimiter handler.
     /// </summary>
-    public sealed class HorizontalRulerHandler : BlockDelimiterHandler
+    public sealed class ThematicBreakHandler : BlockDelimiterHandler
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="HorizontalRulerHandler"/> class.
+        /// Initializes a new instance of the <see cref="ThematicBreakHandler"/> class.
         /// </summary>
         /// <param name="settings">Common settings.</param>
         /// <param name="tag">Block element tag.</param>
-        /// <param name="parameters">Horizontal rule character parameters.</param>
-        public HorizontalRulerHandler(CommonMarkSettings settings, BlockTag tag, HorizontalRulerDelimiterParameters parameters)
+        /// <param name="parameters">Thematic break character parameters.</param>
+        public ThematicBreakHandler(CommonMarkSettings settings, BlockTag tag, ThematicBreakDelimiterParameters parameters)
             : base(settings, tag, parameters.Character)
         {
             Character = parameters.Character;
@@ -54,7 +54,7 @@ namespace CommonMark.Parser.Blocks.Delimiters
         /// <returns><c>true</c> if successful.</returns>
         public override bool Handle(ref BlockParserInfo info)
         {
-            if (!info.IsIndented && (info.Container.Tag != BlockTag.Paragraph || info.IsAllMatched) && ScanHorizontalRule(info, Character, MinCount))
+            if (!info.IsIndented && (info.Container.Tag != BlockTag.Paragraph || info.IsAllMatched) && ScanThematicBreak(info, Character, MinCount))
             {
                 // it's only now that we know the line is not part of a setext heading:
                 info.Container = AppendChildBlock(info, Tag, info.FirstNonspace);

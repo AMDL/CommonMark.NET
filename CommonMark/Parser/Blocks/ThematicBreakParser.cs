@@ -5,41 +5,41 @@ using System.Collections.Generic;
 namespace CommonMark.Parser.Blocks
 {
     /// <summary>
-    /// Horizontal rule parameters.
+    /// Thematic break parameters.
     /// </summary>
-    public sealed class HorizontalRulerParameters
+    public sealed class ThematicBreakParameters
     {
         /// <summary>
-        /// Gets or sets the horizontal rule character parameters.
+        /// Gets or sets the thematic break character parameters.
         /// </summary>
-        public HorizontalRulerDelimiterParameters[] Delimiters { get; set; }
+        public ThematicBreakDelimiterParameters[] Delimiters { get; set; }
     }
 
     /// <summary>
-    /// <see cref="BlockTag.HorizontalRuler"/> element parser.
+    /// <see cref="BlockTag.ThematicBreak"/> element parser.
     /// </summary>
-    public sealed class HorizontalRulerParser : BlockParser
+    public sealed class ThematicBreakParser : BlockParser
     {
         /// <summary>
         /// The default parameters instance.
         /// </summary>
-        public static readonly HorizontalRulerParameters DefaultParameters = new HorizontalRulerParameters
+        public static readonly ThematicBreakParameters DefaultParameters = new ThematicBreakParameters
         {
             Delimiters = new[]
             { 
-                new HorizontalRulerDelimiterParameters('*'),
-                new HorizontalRulerDelimiterParameters('-'),
-                new HorizontalRulerDelimiterParameters('_'),
+                new ThematicBreakDelimiterParameters('*'),
+                new ThematicBreakDelimiterParameters('-'),
+                new ThematicBreakDelimiterParameters('_'),
             },
         };
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="HorizontalRulerParser"/> class.
+        /// Initializes a new instance of the <see cref="ThematicBreakParser"/> class.
         /// </summary>
         /// <param name="settings">Common settings.</param>
-        /// <param name="parameters">Horizontal rule parameters.</param>
-        public HorizontalRulerParser(CommonMarkSettings settings, HorizontalRulerParameters parameters = null)
-            : base(settings, BlockTag.HorizontalRuler)
+        /// <param name="parameters">Thematic break parameters.</param>
+        public ThematicBreakParser(CommonMarkSettings settings, ThematicBreakParameters parameters = null)
+            : base(settings, BlockTag.ThematicBreak)
         {
             Parameters = parameters ?? DefaultParameters;
         }
@@ -53,7 +53,7 @@ namespace CommonMark.Parser.Blocks
             {
                 foreach (var delimiter in Parameters.Delimiters)
                 {
-                    yield return new HorizontalRulerHandler(Settings, Tag, delimiter);
+                    yield return new ThematicBreakHandler(Settings, Tag, delimiter);
                 }
             }
         }
@@ -68,7 +68,7 @@ namespace CommonMark.Parser.Blocks
             return true;
         }
 
-        private HorizontalRulerParameters Parameters
+        private ThematicBreakParameters Parameters
         {
             get;
         }
