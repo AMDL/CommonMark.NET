@@ -87,6 +87,7 @@ namespace CommonMark.Formatters
         {
             yield return new AtxHeadingFormatter(parameters);
             yield return new SETextHeadingFormatter(parameters);
+            yield return new ThematicBreakFormatter(parameters);
             yield return new BulletListFormatter(parameters);
             yield return new OrderedListFormatter(parameters);
             yield return new ListItemFormatter(parameters);

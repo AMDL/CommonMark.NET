@@ -182,21 +182,6 @@ namespace CommonMark.Formatters
 
                     break;
 
-                case BlockTag.ThematicBreak:
-                    ignoreChildNodes = true;
-                    if (Settings.TrackSourcePosition)
-                    {
-                        Write("<hr");
-                        WritePositionAttribute(block);
-                        WriteLine();
-                    }
-                    else
-                    {
-                        WriteLine("<hr />");
-                    }
-
-                    break;
-
                 case BlockTag.ReferenceDefinition:
                     break;
 

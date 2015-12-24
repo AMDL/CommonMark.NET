@@ -118,11 +118,6 @@ namespace CommonMark.Formatters
                             PrintPosition(trackPositions, writer, block);
                             break;
 
-                        case BlockTag.ThematicBreak:
-                            writer.Write("hrule");
-                            PrintPosition(trackPositions, writer, block);
-                            break;
-
                         case BlockTag.HtmlBlock:
                             writer.Write("html_block");
                             PrintPosition(trackPositions, writer, block);

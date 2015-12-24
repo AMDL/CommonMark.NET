@@ -66,6 +66,7 @@
     <Compile Include="Formatters\Blocks\ListFormatter.cs" />
     <Compile Include="Formatters\Blocks\ListItemFormatter.cs" />
     <Compile Include="Formatters\Blocks\OrderedListFormatter.cs" />
+    <Compile Include="Formatters\Blocks\ThematicBreakFormatter.cs" />
     <Compile Include="Formatters\Inlines\MathFormatter.cs" />
     <Compile Include="Parser\BlockDelimiterHandler.cs" />
     <Compile Include="Parser\Blocks\BulletListItemParser.cs" />

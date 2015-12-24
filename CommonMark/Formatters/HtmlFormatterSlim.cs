@@ -285,20 +285,6 @@ namespace CommonMark.Formatters
 
                         break;
 
-                    case BlockTag.ThematicBreak:
-                        if (trackPositions)
-                        {
-                            writer.WriteConstant("<hr");
-                            PrintPosition(writer, block);
-                            writer.WriteLine();
-                        }
-                        else
-                        {
-                            writer.WriteLineConstant("<hr />");
-                        }
-
-                        break;
-
                     case BlockTag.ReferenceDefinition:
                         break;
 
