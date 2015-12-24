@@ -5,7 +5,7 @@ namespace CommonMark.Formatters.Blocks
     internal class TableColumnFormatter : BlockFormatter
     {
         public TableColumnFormatter(FormatterParameters parameters)
-            : base(parameters, BlockTag.TableColumn, "col")
+            : base(parameters, BlockTag.TableColumn, printerTag: "table_col")
         {
         }
 
@@ -28,11 +28,6 @@ namespace CommonMark.Formatters.Blocks
             WritePosition(writer, block);
             writer.WriteLineConstant(" />");
             return false;
-        }
-
-        public override string GetClosing(IHtmlFormatter formatter, Block block)
-        {
-            return null;
         }
     }
 }
