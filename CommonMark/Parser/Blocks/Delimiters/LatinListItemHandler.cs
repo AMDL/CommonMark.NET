@@ -5,7 +5,7 @@ namespace CommonMark.Parser.Blocks.Delimiters
     /// <summary>
     /// ASCII letter ordered list item delimiter handler.
     /// </summary>
-    public sealed class LatinListItemHandler : MappingListItemHandler
+    public sealed class LatinListItemHandler : SingleRangeListItemHandler
     {
         /// <summary>
         /// The default parameters for lowercase ASCII letter lists.
@@ -16,8 +16,7 @@ namespace CommonMark.Parser.Blocks.Delimiters
             markerMinChar: 'a',
             markerMaxChar: 'z',
             maxMarkerLength: 3,
-            startValue: 1,
-            valueBase: 26);
+            startValue: 1);
 
         /// <summary>
         /// The default parameters for uppercase ASCII letter lists.
@@ -29,7 +28,6 @@ namespace CommonMark.Parser.Blocks.Delimiters
             markerMaxChar: 'Z',
             maxMarkerLength: 3,
             startValue: 1,
-            valueBase: 26,
             delimiters: ListItemDelimiterParameters.DefaultUpper);
 
         /// <summary>
@@ -38,7 +36,7 @@ namespace CommonMark.Parser.Blocks.Delimiters
         /// <param name="settings">Common settings.</param>
         /// <param name="parameters">Ordered list item parameters.</param>
         public LatinListItemHandler(CommonMarkSettings settings, OrderedListItemParameters parameters)
-            : base(settings, parameters)
+            : base(settings, parameters, true)
         {
         }
 

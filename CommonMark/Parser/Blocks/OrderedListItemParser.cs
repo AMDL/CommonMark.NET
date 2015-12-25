@@ -94,7 +94,7 @@ namespace CommonMark.Parser.Blocks
         /// <param name="listStyle">List style.</param>
         /// <param name="delimiters">Delimiter parameters.</param>
 #pragma warning disable 0618
-        public OrderedListItemParameters(char markerMinChar, char markerMaxChar, int startValue = 0, int valueBase = 10, int maxMarkerLength = 9,
+        public OrderedListItemParameters(char markerMinChar, char markerMaxChar, int startValue = 0, int valueBase = 0, int maxMarkerLength = 9,
             BlockTag tag = BlockTag.ListItem, BlockTag parentTag = BlockTag.OrderedList, ListType listType = ListType.Ordered,
             OrderedListMarkerType markerType = OrderedListMarkerType.None, string listStyle = null, ListItemDelimiterParameters[] delimiters = null)
 #pragma warning restore 0618
