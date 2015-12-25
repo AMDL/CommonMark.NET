@@ -63,6 +63,7 @@
     <Compile Include="Extension\ReferenceCase.cs" />
     <Compile Include="Extension\Subscript.cs" />
     <Compile Include="Extension\Superscript.cs" />
+    <Compile Include="Formatters\Blocks\DocumentFormatter.cs" />
     <Compile Include="Formatters\Blocks\UnorderedListFormatter.cs" />
     <Compile Include="Formatters\Blocks\HeadingFormatter.cs" />
     <Compile Include="Formatters\Blocks\ListFormatter.cs" />

@@ -102,11 +102,6 @@ namespace CommonMark.Formatters
                 }
                 else switch (block.Tag)
                     {
-                        case BlockTag.Document:
-                            writer.Write("document");
-                            PrintPosition(trackPositions, writer, block);
-                            break;
-
                         case BlockTag.BlockQuote:
                             writer.Write("block_quote");
                             PrintPosition(trackPositions, writer, block);

@@ -247,12 +247,6 @@ namespace CommonMark.Formatters
                 }
                 else switch (block.Tag)
                 {
-                    case BlockTag.Document:
-                        stackLiteral = null;
-                        stackTight = false;
-                        visitChildren = true;
-                        break;
-
                     case BlockTag.Paragraph:
                         if (tight)
                         {

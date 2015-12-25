@@ -135,9 +135,6 @@ namespace CommonMark.Formatters
             }
             else switch (block.Tag)
             {
-                case BlockTag.Document:
-                    break;
-
                 case BlockTag.Paragraph:
                     if (RenderTightParagraphs.Peek())
                         break;
