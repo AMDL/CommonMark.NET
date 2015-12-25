@@ -152,25 +152,6 @@ namespace CommonMark.Formatters
 
                     break;
 
-                case BlockTag.BlockQuote:
-                    if (isOpening)
-                    {
-                        EnsureNewLine();
-                        Write("<blockquote");
-                        if (Settings.TrackSourcePosition) WritePositionAttribute(block);
-                        WriteLine(">");
-
-                        RenderTightParagraphs.Push(false);
-                    }
-
-                    if (isClosing)
-                    {
-                        RenderTightParagraphs.Pop();
-                        WriteLine("</blockquote>");
-                    }
-
-                    break;
-
                 default:
                     throw new CommonMarkException("Block type " + block.Tag + " is not supported.", block);
             }

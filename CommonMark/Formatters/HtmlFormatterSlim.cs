@@ -263,17 +263,6 @@ namespace CommonMark.Formatters
                         }
                         break;
 
-                    case BlockTag.BlockQuote:
-                        writer.EnsureLine();
-                        writer.WriteConstant("<blockquote");
-                        if (trackPositions) PrintPosition(writer, block);
-                        writer.WriteLine('>');
-
-                        stackLiteral = "</blockquote>";
-                        stackTight = false;
-                        visitChildren = true;
-                        break;
-
                     default:
                         throw new CommonMarkException("Block type " + block.Tag + " is not supported.", block);
                 }
