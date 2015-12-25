@@ -88,6 +88,7 @@ namespace CommonMark.Formatters
         {
             yield return new StringFormatter(parameters);
             yield return new LineBreakFormatter(parameters);
+            yield return new SoftBreakFormatter(parameters);
             yield return new LinkFormatter(parameters);
         }
     }

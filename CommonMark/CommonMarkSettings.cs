@@ -44,11 +44,6 @@ namespace CommonMark
             }
         }
 
-        /// <summary>
-        /// Gets or sets a value indicating whether soft line breaks should be rendered as hard line breaks.
-        /// </summary>
-        public bool RenderSoftLineBreaksAsLineBreaks { get; set; }
-
         private bool _trackSourcePosition;
 
         /// <summary>
@@ -68,6 +63,33 @@ namespace CommonMark
         }
 
         #region Extensions
+
+        private bool _renderSoftLineBreaksAsLineBreaks;
+
+        /// <summary>
+        /// Gets or sets a value indicating whether soft line breaks should be rendered as hard line breaks.
+        /// </summary>
+        [Obsolete("Use " + nameof(Extension.HardLineBreaks) + " instead.")]
+        public bool RenderSoftLineBreaksAsLineBreaks
+        {
+            get
+            {
+                return _renderSoftLineBreaksAsLineBreaks;
+            }
+            set
+            {
+                if (_renderSoftLineBreaksAsLineBreaks != value)
+                {
+                    _renderSoftLineBreaksAsLineBreaks = value;
+                    var lineBreaks = new Extension.HardLineBreaks(this);
+                    if (value && !Extensions.IsRegistered(lineBreaks))
+                        Extensions.Register(lineBreaks);
+                    if (!value && Extensions.IsRegistered(lineBreaks))
+                        Extensions.Unregister(lineBreaks);
+                    Reset();
+                }
+            }
+        }
 
 #pragma warning disable 0618
         private CommonMarkAdditionalFeatures _additionalFeatures;

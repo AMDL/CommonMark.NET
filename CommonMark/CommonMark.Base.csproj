@@ -50,6 +50,7 @@
     <Compile Include="CommonMarkExtensionCollection.cs" />
     <Compile Include="CommonMarkSettings.cs" />
     <Compile Include="CommonMarkExtension.cs" />
+    <Compile Include="Extension\HardLineBreaks.cs" />
     <Compile Include="Extension\AlphaListStyles.cs" />
     <Compile Include="Extension\FancyListsFeatures.cs" />
     <Compile Include="Extension\AdditiveListStyles.cs" />
@@ -70,6 +71,7 @@
     <Compile Include="Formatters\Blocks\ThematicBreakFormatter.cs" />
     <Compile Include="Formatters\Inlines\LineBreakFormatter.cs" />
     <Compile Include="Formatters\Inlines\MathFormatter.cs" />
+    <Compile Include="Formatters\Inlines\SoftBreakFormatter.cs" />
     <Compile Include="Formatters\Inlines\StringFormatter.cs" />
     <Compile Include="Parser\BlockDelimiterHandler.cs" />
     <Compile Include="Parser\Blocks\Delimiters\SingleRangeListItemHandler.cs" />

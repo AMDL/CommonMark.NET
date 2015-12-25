@@ -187,11 +187,6 @@ namespace CommonMark.Formatters
                 }
                 else switch (inline.Tag)
                     {
-                        case InlineTag.SoftBreak:
-                            writer.Write("softbreak");
-                            PrintPosition(trackPositions, writer, inline);
-                            break;
-
                         case InlineTag.Code:
                             writer.Write("code {0}", format_str(inline.LiteralContent, buffer));
                             PrintPosition(trackPositions, writer, inline);

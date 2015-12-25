@@ -279,14 +279,6 @@ namespace CommonMark.Formatters
 
             switch (inline.Tag)
             {
-                case InlineTag.SoftBreak:
-                    ignoreChildNodes = true;
-                    if (Settings.RenderSoftLineBreaksAsLineBreaks)
-                        WriteLine("<br />");
-                    else
-                        WriteLine();
-                    break;
-
                 case InlineTag.Code:
                     ignoreChildNodes = true;
                     Write("<code");

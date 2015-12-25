@@ -442,13 +442,6 @@ namespace CommonMark.Formatters
                 }
                 else switch (inline.Tag)
                 {
-                    case InlineTag.SoftBreak:
-                        if (settings.RenderSoftLineBreaksAsLineBreaks)
-                            writer.WriteLineConstant("<br />");
-                        else
-                            writer.WriteLine();
-                        break;
-
                     case InlineTag.Code:
                         writer.WriteConstant("<code");
                         if (trackPositions) PrintPosition(writer, inline);
