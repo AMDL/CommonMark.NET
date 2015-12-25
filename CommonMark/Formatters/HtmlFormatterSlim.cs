@@ -448,14 +448,6 @@ namespace CommonMark.Formatters
                 }
                 else switch (inline.Tag)
                 {
-                    case InlineTag.Code:
-                        writer.WriteConstant("<code");
-                        if (trackPositions) PrintPosition(writer, inline);
-                        writer.Write('>');
-                        EscapeHtml(inline.LiteralContentValue, writer);
-                        writer.WriteConstant("</code>");
-                        break;
-
                     case InlineTag.RawHtml:
                         // cannot output source position for HTML blocks
                         writer.Write(inline.LiteralContentValue);

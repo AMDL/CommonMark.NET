@@ -69,6 +69,7 @@
     <Compile Include="Formatters\Blocks\ListItemFormatter.cs" />
     <Compile Include="Formatters\Blocks\OrderedListFormatter.cs" />
     <Compile Include="Formatters\Blocks\ThematicBreakFormatter.cs" />
+    <Compile Include="Formatters\Inlines\CodeFormatter.cs" />
     <Compile Include="Formatters\Inlines\EmphasisFormatter.cs" />
     <Compile Include="Formatters\Inlines\ImageFormatter.cs" />
     <Compile Include="Formatters\Inlines\LineBreakFormatter.cs" />

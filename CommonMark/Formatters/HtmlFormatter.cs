@@ -222,13 +222,15 @@ namespace CommonMark.Formatters
                 if (isOpening)
                 {
                     ignoreChildNodes = !formatter.WriteOpening(_target, inline, false);
-                    if (!isClosing && isRenderPlainTextInlines.HasValue)
+                    if (!isClosing && isRenderPlainTextInlines == true)
                         RenderPlainTextInlines.Push(isRenderPlainTextInlines.Value);
+                    if (isRenderPlainTextInlines == false)
+                        WriteEncodedHtml(inline.LiteralContentValue);
                 }
 
                 if (isClosing)
                 {
-                    if (!isOpening && isRenderPlainTextInlines.HasValue)
+                    if (!isOpening && isRenderPlainTextInlines == true)
                         RenderPlainTextInlines.Pop();
                     var closing = formatter.GetClosing(parameters.HtmlFormatter, inline, false);
                     if (closing != null)
@@ -242,15 +244,8 @@ namespace CommonMark.Formatters
             {
                 switch (inline.Tag)
                 {
-                    case InlineTag.String:
-                    case InlineTag.Code:
                     case InlineTag.RawHtml:
                         WriteEncodedHtml(inline.LiteralContentValue);
-                        break;
-
-                    case InlineTag.LineBreak:
-                    case InlineTag.SoftBreak:
-                        WriteLine();
                         break;
 
                     case InlineTag.Image:
@@ -285,15 +280,6 @@ namespace CommonMark.Formatters
 
             switch (inline.Tag)
             {
-                case InlineTag.Code:
-                    ignoreChildNodes = true;
-                    Write("<code");
-                    if (Settings.TrackSourcePosition) WritePositionAttribute(inline);
-                    Write('>');
-                    WriteEncodedHtml(inline.LiteralContentValue);
-                    Write("</code>");
-                    break;
-
                 case InlineTag.RawHtml:
                     ignoreChildNodes = true;
                     // cannot output source position for HTML blocks

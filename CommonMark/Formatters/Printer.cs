@@ -187,13 +187,6 @@ namespace CommonMark.Formatters
                 }
                 else switch (inline.Tag)
                     {
-                        case InlineTag.Code:
-                            writer.Write("code {0}", format_str(inline.LiteralContent, buffer));
-                            PrintPosition(trackPositions, writer, inline);
-                            writer.Write(' ');
-                            writer.Write(format_str(inline.LiteralContent, buffer));
-                            break;
-
                         case InlineTag.RawHtml:
                             writer.Write("html {0}", format_str(inline.LiteralContent, buffer));
                             writer.Write(' ');
