@@ -98,6 +98,7 @@ namespace CommonMark.Formatters
             yield return new ListItemFormatter(parameters);
             yield return new FencedCodeFormatter(parameters);
             yield return new IndentedCodeFormatter(parameters);
+            yield return new ReferenceDefinitionFormatter(parameters);
         }
     }
 }

@@ -178,9 +178,6 @@ namespace CommonMark.Formatters
 
                     break;
 
-                case BlockTag.ReferenceDefinition:
-                    break;
-
                 default:
                     throw new CommonMarkException("Block type " + block.Tag + " is not supported.", block);
             }

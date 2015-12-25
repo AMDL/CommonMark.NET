@@ -119,11 +119,6 @@ namespace CommonMark.Formatters
                             writer.Write(format_str(block.StringContent.ToString(buffer), buffer));
                             break;
 
-                        case BlockTag.ReferenceDefinition:
-                            writer.Write("reference_def");
-                            PrintPosition(trackPositions, writer, block);
-                            break;
-
                         default:
                             throw new CommonMarkException("Block type " + block.Tag + " is not supported.", block);
                     }
