@@ -90,6 +90,7 @@ namespace CommonMark.Formatters
             yield return new LineBreakFormatter(parameters);
             yield return new SoftBreakFormatter(parameters);
             yield return new CodeFormatter(parameters);
+            yield return new RawHtmlFormatter(parameters);
             yield return new LinkFormatter(parameters);
             yield return new ImageFormatter(parameters);
             yield return new WeakFormatter(parameters);

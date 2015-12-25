@@ -446,15 +446,9 @@ namespace CommonMark.Formatters
                         EscapeHtml(inline.LiteralContentValue, writer);
                     stackWithinLink = formatter.IsStackWithinLink(inline, withinLink);
                 }
-                else switch (inline.Tag)
+                else
                 {
-                    case InlineTag.RawHtml:
-                        // cannot output source position for HTML blocks
-                        writer.Write(inline.LiteralContentValue);
-                        break;
-
-                    default:
-                        throw new CommonMarkException("Inline type " + inline.Tag + " is not supported.", inline);
+                    throw new CommonMarkException("Inline type " + inline.Tag + " is not supported.", inline);
                 }
 
                 if (visitChildren)

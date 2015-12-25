@@ -244,10 +244,6 @@ namespace CommonMark.Formatters
             {
                 switch (inline.Tag)
                 {
-                    case InlineTag.RawHtml:
-                        WriteEncodedHtml(inline.LiteralContentValue);
-                        break;
-
                     case InlineTag.Image:
                         if (isOpening)
                             RenderPlainTextInlines.Push(true);
@@ -280,12 +276,6 @@ namespace CommonMark.Formatters
 
             switch (inline.Tag)
             {
-                case InlineTag.RawHtml:
-                    ignoreChildNodes = true;
-                    // cannot output source position for HTML blocks
-                    Write(inline.LiteralContentValue);
-                    break;
-
                 case InlineTag.Link:
                     ignoreChildNodes = false;
 

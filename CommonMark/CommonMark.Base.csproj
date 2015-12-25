@@ -74,6 +74,7 @@
     <Compile Include="Formatters\Inlines\ImageFormatter.cs" />
     <Compile Include="Formatters\Inlines\LineBreakFormatter.cs" />
     <Compile Include="Formatters\Inlines\MathFormatter.cs" />
+    <Compile Include="Formatters\Inlines\RawHtmlFormatter.cs" />
     <Compile Include="Formatters\Inlines\SoftBreakFormatter.cs" />
     <Compile Include="Formatters\Inlines\StringFormatter.cs" />
     <Compile Include="Formatters\Inlines\StrongFormatter.cs" />
