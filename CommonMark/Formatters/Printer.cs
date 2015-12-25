@@ -208,16 +208,6 @@ namespace CommonMark.Formatters
                                    format_str(inline.LiteralContent, buffer));
                             break;
 
-                        case InlineTag.Strong:
-                            writer.Write("strong");
-                            PrintPosition(trackPositions, writer, inline);
-                            break;
-
-                        case InlineTag.Emphasis:
-                            writer.Write("emph");
-                            PrintPosition(trackPositions, writer, inline);
-                            break;
-
                         default:
                             writer.Write("unknown: " + inline.Tag.ToString());
                             PrintPosition(trackPositions, writer, inline);

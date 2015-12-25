@@ -477,24 +477,6 @@ namespace CommonMark.Formatters
 
                         break;
 
-                    case InlineTag.Strong:
-                        writer.WriteConstant("<strong");
-                        if (trackPositions) PrintPosition(writer, inline);
-                        writer.Write('>');
-                        stackLiteral = "</strong>";
-                        stackWithinLink = withinLink;
-                        visitChildren = true;
-                        break;
-
-                    case InlineTag.Emphasis:
-                        writer.WriteConstant("<em");
-                        if (trackPositions) PrintPosition(writer, inline);
-                        writer.Write('>');
-                        stackLiteral = "</em>";
-                        visitChildren = true;
-                        stackWithinLink = withinLink;
-                        break;
-
                     default:
                         throw new CommonMarkException("Inline type " + inline.Tag + " is not supported.", inline);
                 }

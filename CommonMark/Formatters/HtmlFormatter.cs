@@ -208,8 +208,13 @@ namespace CommonMark.Formatters
             var plaintext = RenderPlainTextInlines.Peek();
 
             var parameters = Settings.FormatterParameters;
-            var formatter = parameters.InlineFormatters[(int)inline.Tag];
-            if (inline.Tag != InlineTag.Link && formatter != null) //TODO
+            IInlineFormatter formatter = null;
+            if (inline.Tag != InlineTag.Link && inline.Tag != InlineTag.Emphasis && inline.Tag != InlineTag.Strong)
+            {
+                formatter = parameters.InlineFormatters[(int)inline.Tag];
+            }
+
+            if (formatter != null)
             {
                 ignoreChildNodes = true;
                 var isRenderPlainTextInlines = formatter.IsRenderPlainTextInlines(inline, plaintext);

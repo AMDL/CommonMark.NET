@@ -9,7 +9,7 @@ namespace CommonMark.Formatters.Inlines
     public sealed class StringFormatter : InlineFormatter
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="InlineFormatter"/> class.
+        /// Initializes a new instance of the <see cref="StringFormatter"/> class.
         /// </summary>
         /// <param name="parameters">Formatter parameters.</param>
         public StringFormatter(FormatterParameters parameters)
