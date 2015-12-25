@@ -266,29 +266,36 @@ namespace CommonMark.Tests
         public void SharpListDisabledAlone()
         {
             var s = CommonMarkSettings.Default.Clone();
-            s.Extensions.Register(new FancyLists(s, new FancyListsSettings(FancyListsFeatures.All & ~FancyListsFeatures.DecimalSharps)));
+            s.Extensions.Register(new FancyLists(s, new FancyListsSettings(FancyListsFeatures.All & ~FancyListsFeatures.OrderedSharps)));
             Helpers.ExecuteTest("#. foo", "<p>#. foo</p>", s);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void DecimalListEnabled()
+        {
+            Helpers.ExecuteTest("1. foo", "<ol type=\"1\">\n<li>foo</li>\n</ol>", FullSettings);
         }
 
         [TestMethod]
         [TestCategory("Container blocks - Fancy lists")]
         public void SharpListEnabled()
         {
-            Helpers.ExecuteTest("#. foo", "<ol type=\"1\">\n<li>foo</li>\n</ol>", FullSettings);
+            Helpers.ExecuteTest("#. foo", "<ol>\n<li>foo</li>\n</ol>", FullSettings);
         }
 
         [TestMethod]
         [TestCategory("Container blocks - Fancy lists")]
         public void SharpListBeforeDecimalList()
         {
-            Helpers.ExecuteTest("#. foo\n1. bar", "<ol type=\"1\">\n<li>foo</li>\n</ol>\n<ol>\n<li>bar</li>\n</ol>", FullSettings);
+            Helpers.ExecuteTest("#. foo\n1. bar", "<ol>\n<li>foo</li>\n</ol>\n<ol type=\"1\">\n<li>bar</li>\n</ol>", FullSettings);
         }
 
         [TestMethod]
         [TestCategory("Container blocks - Fancy lists")]
         public void SharpListAfterDecimalList()
         {
-            Helpers.ExecuteTest("1. bar\n#. baz", "<ol>\n<li>bar</li>\n</ol>\n<ol type=\"1\">\n<li>baz</li>\n</ol>", FullSettings);
+            Helpers.ExecuteTest("1. bar\n#. baz", "<ol type=\"1\">\n<li>bar</li>\n</ol>\n<ol>\n<li>baz</li>\n</ol>", FullSettings);
         }
 
         [TestMethod]
@@ -408,6 +415,13 @@ namespace CommonMark.Tests
 
         [TestMethod]
         [TestCategory("Container blocks - Fancy lists")]
+        public void ArabicIndicStart10()
+        {
+            Helpers.ExecuteTest("١٠.\n", "<ol start=\"10\" style=\"list-style-type: arabic-indic\">\n<li></li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
         public void PersianDisabledByDefault()
         {
             Helpers.ExecuteTest("۰.\n", "<p>۰.</p>", EmptySettings);
@@ -438,6 +452,13 @@ namespace CommonMark.Tests
 
         [TestMethod]
         [TestCategory("Container blocks - Fancy lists")]
+        public void PersianStart10()
+        {
+            Helpers.ExecuteTest("۱۰.\n", "<ol start=\"10\" style=\"list-style-type: persian\">\n<li></li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
         public void FullWidthDecimalDisabledByDefault()
         {
             Helpers.ExecuteTest("０.\n", "<p>０.</p>", EmptySettings);
@@ -457,6 +478,13 @@ namespace CommonMark.Tests
         public void FullWidthDecimalStart9()
         {
             Helpers.ExecuteTest("９.\n", "<ol start=\"9\" style=\"list-style-type: fullwidth-decimal\">\n<li></li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void FullWidthDecimalStart10()
+        {
+            Helpers.ExecuteTest("１０.\n", "<ol start=\"10\" style=\"list-style-type: fullwidth-decimal\">\n<li></li>\n</ol>", FullSettings);
         }
 
         [TestMethod]
