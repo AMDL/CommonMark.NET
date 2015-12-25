@@ -12,7 +12,7 @@ namespace CommonMark.Formatters.Blocks
         /// </summary>
         /// <param name="parameters">Formatter parameters.</param>
         public ListItemFormatter(FormatterParameters parameters)
-            : base(parameters, BlockTag.ListItem, "li", "list_item")
+            : base(parameters, BlockTag.ListItem, "li", printerTag: "list_item")
         {
         }
 

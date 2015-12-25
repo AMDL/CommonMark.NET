@@ -12,30 +12,8 @@ namespace CommonMark.Formatters.Blocks
         /// </summary>
         /// <param name="parameters">Formatter parameters.</param>
         public ThematicBreakFormatter(FormatterParameters parameters)
-            : base(parameters, BlockTag.ThematicBreak, printerTag: "hrule")
+            : base(parameters, BlockTag.ThematicBreak, "hr", true, printerTag: "hrule")
         {
-        }
-
-        /// <summary>
-        /// Writes the opening of a block element.
-        /// </summary>
-        /// <param name="writer">HTML writer.</param>
-        /// <param name="element">Block element.</param>
-        /// <returns><c>true</c> if the parent formatter should visit the child elements.</returns>
-        public override bool WriteOpening(IHtmlTextWriter writer, Block element)
-        {
-            writer.EnsureLine();
-            if (Parameters.TrackPositions)
-            {
-                writer.WriteConstant("<hr");
-                WritePosition(writer, element);
-                writer.WriteLineConstant("/>");
-            }
-            else
-            {
-                writer.WriteLineConstant("<hr />");
-            }
-            return false;
         }
     }
 }

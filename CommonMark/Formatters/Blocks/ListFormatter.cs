@@ -17,7 +17,7 @@ namespace CommonMark.Formatters.Blocks
         /// <param name="htmlTag">HTML tag.</param>
         /// <param name="printerTag">Printer tag.</param>
         public ListFormatter(FormatterParameters parameters, BlockTag tag, string htmlTag, string printerTag)
-            : base(parameters, tag, htmlTag, printerTag)
+            : base(parameters, tag, htmlTag, printerTag: printerTag)
         {
         }
 

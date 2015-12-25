@@ -15,9 +15,10 @@ namespace CommonMark.Formatters
         /// <param name="parameters">Formatter parameters.</param>
         /// <param name="tag">Inline element tag.</param>
         /// <param name="htmlTag">HTML tag.</param>
+        /// <param name="isSelfClosing"><c>true</c> if <paramref name="htmlTag"/> is self-closing.</param>
         /// <param name="printerTag">Printer tag. If unspecified, <paramref name="htmlTag"/> will be used.</param>
-        public InlineFormatter(FormatterParameters parameters, InlineTag tag, string htmlTag = null, string printerTag = null)
-            : base(parameters, tag, htmlTag, printerTag)
+        public InlineFormatter(FormatterParameters parameters, InlineTag tag, string htmlTag = null, bool isSelfClosing = false, string printerTag = null)
+            : base(parameters, tag, htmlTag, isSelfClosing, printerTag)
         {
         }
 
@@ -43,8 +44,11 @@ namespace CommonMark.Formatters
             var value = "<" + HtmlTag;
             writer.WriteConstant(value);
             WritePosition(writer, element);
-            writer.Write('>');
-            return true;
+            if (IsSelfClosing)
+                writer.WriteConstant(" />");
+            else
+                writer.Write('>');
+            return !IsSelfClosing;
         }
 
         /// <summary>

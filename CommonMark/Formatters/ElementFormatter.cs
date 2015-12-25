@@ -17,13 +17,15 @@ namespace CommonMark.Formatters
         /// <param name="parameters">Formatter parameters.</param>
         /// <param name="tag">Element tag.</param>
         /// <param name="htmlTag">HTML tag.</param>
+        /// <param name="isSelfClosing"><c>true</c> if <paramref name="htmlTag"/> is self-closing.</param>
         /// <param name="printerTag">Printer tag. If unspecified, <paramref name="htmlTag"/> will be used.</param>
-        protected ElementFormatter(FormatterParameters parameters, TTag tag, string htmlTag, string printerTag = null)
+        protected ElementFormatter(FormatterParameters parameters, TTag tag, string htmlTag, bool isSelfClosing, string printerTag)
         {
             this.Parameters = parameters;
             this.Tag = tag;
             this.HtmlTag = htmlTag;
             this.PrinterTag = printerTag ?? htmlTag;
+            this.IsSelfClosing = isSelfClosing || htmlTag == null;
         }
 
         #endregion
@@ -116,7 +118,7 @@ namespace CommonMark.Formatters
         /// <returns>The closing.</returns>
         protected string DoGetClosing(TElement element)
         {
-            return HtmlTag != null ? "</" + HtmlTag + '>' : null;
+            return !IsSelfClosing ? "</" + HtmlTag + '>' : null;
         }
 
         /// <summary>
@@ -142,6 +144,15 @@ namespace CommonMark.Formatters
         /// Gets the formatter parameters.
         /// </summary>
         protected FormatterParameters Parameters
+        {
+            get;
+        }
+
+        /// <summary>
+        /// Gets the value indicating whether the HTML tag is self-closing.
+        /// </summary>
+        /// <value><c>true</c> if the HTML tag is self-closing.</value>
+        protected bool IsSelfClosing
         {
             get;
         }

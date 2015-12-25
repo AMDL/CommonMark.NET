@@ -13,7 +13,7 @@ namespace CommonMark.Formatters.Inlines
         /// </summary>
         /// <param name="parameters">Formatter parameters.</param>
         public LinkFormatter(FormatterParameters parameters)
-            : base(parameters, InlineTag.Link, "a", "link")
+            : base(parameters, InlineTag.Link, "a", printerTag: "link")
         {
         }
 
