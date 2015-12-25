@@ -116,10 +116,11 @@ namespace CommonMark.Formatters
             var formatter = parameters.BlockFormatters[(int)block.Tag];
             if (formatter != null)
             {
-                var stackTight = formatter.IsStackTight(block, RenderTightParagraphs.Peek());
+                var tight = RenderTightParagraphs.Peek();
+                var stackTight = formatter.IsStackTight(block, tight);
                 if (isOpening)
                 {
-                    ignoreChildNodes = !formatter.WriteOpening(_target, block) && isClosing;
+                    ignoreChildNodes = !formatter.WriteOpening(_target, block, tight) && isClosing;
                     if (stackTight.HasValue)
                         RenderTightParagraphs.Push(stackTight.Value);
                 }
@@ -128,32 +129,14 @@ namespace CommonMark.Formatters
                 {
                     if (stackTight.HasValue)
                         RenderTightParagraphs.Pop();
-                    var closing = formatter.GetClosing(parameters.HtmlFormatter, block);
+                    var closing = formatter.GetClosing(parameters.HtmlFormatter, block, tight);
                     if (closing != null)
                         WriteLine(closing);
                 }
             }
-            else switch (block.Tag)
+            else
             {
-                case BlockTag.Paragraph:
-                    if (RenderTightParagraphs.Peek())
-                        break;
-
-                    if (isOpening)
-                    {
-                        EnsureNewLine();
-                        Write("<p");
-                        if (Settings.TrackSourcePosition) WritePositionAttribute(block);
-                        Write('>');
-                    }
-
-                    if (isClosing)
-                        WriteLine("</p>");
-
-                    break;
-
-                default:
-                    throw new CommonMarkException("Block type " + block.Tag + " is not supported.", block);
+                throw new CommonMarkException("Block type " + block.Tag + " is not supported.", block);
             }
 
             if (ignoreChildNodes && !isClosing)

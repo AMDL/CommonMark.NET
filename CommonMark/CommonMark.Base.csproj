@@ -66,6 +66,7 @@
     <Compile Include="Formatters\Blocks\BlockQuoteFormatter.cs" />
     <Compile Include="Formatters\Blocks\DocumentFormatter.cs" />
     <Compile Include="Formatters\Blocks\HtmlBlockFormatter.cs" />
+    <Compile Include="Formatters\Blocks\ParagraphFormatter.cs" />
     <Compile Include="Formatters\Blocks\ReferenceDefinitionFormatter.cs" />
     <Compile Include="Formatters\Blocks\UnorderedListFormatter.cs" />
     <Compile Include="Formatters\Blocks\HeadingFormatter.cs" />

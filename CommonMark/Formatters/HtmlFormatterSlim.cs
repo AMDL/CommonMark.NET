@@ -232,39 +232,25 @@ namespace CommonMark.Formatters
                 formatter = formatters[(int)block.Tag];
                 if (formatter != null)
                 {
-                    visitChildren = formatter.WriteOpening(writer, block);
-                    stackLiteral = formatter.GetClosing(parameters.HtmlFormatter, block);
+                    visitChildren = formatter.WriteOpening(writer, block, tight);
+                    stackLiteral = formatter.GetClosing(parameters.HtmlFormatter, block, tight);
                     isRenderPlainTextInlines = formatter.IsRenderPlainTextInlines(block);
                     if (isRenderPlainTextInlines == false)
                     {
                         InlinesToHtml(writer, block.InlineContent, settings, inlineStack);
-                        writer.WriteLineConstant(stackLiteral);
+                        if (block.Tag == BlockTag.Paragraph)
+                            writer.WriteConstant(stackLiteral);
+                        else
+                            writer.WriteLineConstant(stackLiteral);
                         stackLiteral = null;
                     }
                     isStackTight = formatter.IsStackTight(block, tight);
                     if (isStackTight.HasValue)
                         stackTight = isStackTight.Value;
                 }
-                else switch (block.Tag)
+                else
                 {
-                    case BlockTag.Paragraph:
-                        if (tight)
-                        {
-                            InlinesToHtml(writer, block.InlineContent, settings, inlineStack);
-                        }
-                        else
-                        {
-                            writer.EnsureLine();
-                            writer.WriteConstant("<p");
-                            if (trackPositions) PrintPosition(writer, block);
-                            writer.Write('>');
-                            InlinesToHtml(writer, block.InlineContent, settings, inlineStack);
-                            writer.WriteLineConstant("</p>");
-                        }
-                        break;
-
-                    default:
-                        throw new CommonMarkException("Block type " + block.Tag + " is not supported.", block);
+                    throw new CommonMarkException("Block type " + block.Tag + " is not supported.", block);
                 }
 
                 if (visitChildren)

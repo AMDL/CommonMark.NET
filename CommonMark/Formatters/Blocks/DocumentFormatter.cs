@@ -21,8 +21,9 @@ namespace CommonMark.Formatters.Blocks
         /// </summary>
         /// <param name="writer">HTML writer.</param>
         /// <param name="element">Block element.</param>
+        /// <param name="tight"><c>true</c> to stack paragraphs tightly.</param>
         /// <returns><c>true</c> if the parent formatter should visit the child elements.</returns>
-        public override bool WriteOpening(IHtmlTextWriter writer, Block element)
+        public override bool WriteOpening(IHtmlTextWriter writer, Block element, bool tight)
         {
             return true;
         }

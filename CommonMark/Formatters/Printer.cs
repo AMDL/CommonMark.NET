@@ -100,16 +100,10 @@ namespace CommonMark.Formatters
                     if ((data = formatter.GetPrinterData(parameters.Printer, block)) != null)
                         PrintData(writer, data);
                 }
-                else switch (block.Tag)
-                    {
-                        case BlockTag.Paragraph:
-                            writer.Write("paragraph");
-                            PrintPosition(trackPositions, writer, block);
-                            break;
-
-                        default:
-                            throw new CommonMarkException("Block type " + block.Tag + " is not supported.", block);
-                    }
+                else
+                {
+                    throw new CommonMarkException("Block type " + block.Tag + " is not supported.", block);
+                }
 
                 writer.WriteLine();
 

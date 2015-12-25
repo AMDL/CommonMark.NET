@@ -53,18 +53,18 @@ namespace CommonMark.Formatters
         {
         }
 
-        public bool WriteOpening(IHtmlTextWriter writer, Block block)
+        public bool WriteOpening(IHtmlTextWriter writer, Block block, bool tight)
         {
             return inner.CanHandle(block)
-                ? inner.WriteOpening(writer, block)
-                : outer.WriteOpening(writer, block);
+                ? inner.WriteOpening(writer, block, tight)
+                : outer.WriteOpening(writer, block, tight);
         }
 
-        public string GetClosing(IHtmlFormatter formatter, Block block)
+        public string GetClosing(IHtmlFormatter formatter, Block block, bool tight)
         {
             return inner.CanHandle(block)
-                ? inner.GetClosing(formatter, block)
-                : outer.GetClosing(formatter, block);
+                ? inner.GetClosing(formatter, block, tight)
+                : outer.GetClosing(formatter, block, tight);
         }
 
         public bool? IsStackTight(Block block, bool tight)

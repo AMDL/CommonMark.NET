@@ -52,8 +52,9 @@ namespace CommonMark.Formatters
         /// </summary>
         /// <param name="writer">HTML writer.</param>
         /// <param name="element">Block element.</param>
+        /// <param name="tight"><c>true</c> to stack paragraphs tightly.</param>
         /// <returns><c>true</c> if the parent formatter should visit the child elements.</returns>
-        public virtual bool WriteOpening(IHtmlTextWriter writer, Block element)
+        public virtual bool WriteOpening(IHtmlTextWriter writer, Block element, bool tight)
         {
             writer.EnsureLine();
             var value = "<" + HtmlTag;
@@ -71,8 +72,9 @@ namespace CommonMark.Formatters
         /// </summary>
         /// <param name="formatter">HTML formatter.</param>
         /// <param name="element">Block element.</param>
+        /// <param name="tight"><c>true</c> to stack paragraphs tightly.</param>
         /// <returns>The closing.</returns>
-        public virtual string GetClosing(IHtmlFormatter formatter, Block element)
+        public virtual string GetClosing(IHtmlFormatter formatter, Block element, bool tight)
         {
             return base.DoGetClosing(element);
         }
@@ -92,6 +94,7 @@ namespace CommonMark.Formatters
             yield return new DocumentFormatter(parameters);
             yield return new AtxHeadingFormatter(parameters);
             yield return new SETextHeadingFormatter(parameters);
+            yield return new ParagraphFormatter(parameters);
             yield return new BlockQuoteFormatter(parameters);
             yield return new ThematicBreakFormatter(parameters);
             yield return new UnorderedListFormatter(parameters);
