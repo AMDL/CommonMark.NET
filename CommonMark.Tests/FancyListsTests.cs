@@ -90,6 +90,13 @@ namespace CommonMark.Tests
 
         [TestMethod]
         [TestCategory("Container blocks - Fancy lists")]
+        public void LowerLatinListMaxMarkerLength3()
+        {
+            Helpers.ExecuteTest("aaaa. baz\n", "<p>aaaa. baz</p>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
         public void UpperLatinListDisabledByDefault()
         {
             Helpers.ExecuteTest("A.  foo\n", "<p>A.  foo</p>", EmptySettings);
@@ -137,6 +144,13 @@ namespace CommonMark.Tests
         public void UpperLatinListStart27()
         {
             Helpers.ExecuteTest("AA.  foo\n", "<ol start=\"27\" type=\"A\" style=\"list-style-type: upper-latin\">\n<li>foo</li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void UpperLatinListMaxMarkerLength3()
+        {
+            Helpers.ExecuteTest("AAAA.  baz\n", "<p>AAAA.  baz</p>", FullSettings);
         }
 
         [TestMethod]
@@ -564,6 +578,20 @@ namespace CommonMark.Tests
 
         [TestMethod]
         [TestCategory("Container blocks - Fancy lists")]
+        public void LowerRussianListStart999()
+        {
+            Helpers.ExecuteTest("ажу) р", "<ol start=\"999\" style=\"list-style-type: lower-russian\">\n<li>р</li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void LowerRussianListMaxMarkerLength3()
+        {
+            Helpers.ExecuteTest("аааа) ржу", "<p>аааа) ржу</p>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
         public void UpperRussianListDisabledByDefault()
         {
             Helpers.ExecuteTest("А) арбузы", "<p>А) арбузы</p>", EmptySettings);
@@ -597,6 +625,20 @@ namespace CommonMark.Tests
         public void UpperRussianListStart29()
         {
             Helpers.ExecuteTest("АА) Алыча", "<ol start=\"29\" style=\"list-style-type: upper-russian\">\n<li>Алыча</li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void UpperRussianListStart999()
+        {
+            Helpers.ExecuteTest("АЖУ) Р", "<ol start=\"999\" style=\"list-style-type: upper-russian\">\n<li>Р</li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void UpperRussianListMaxMarkerLength3()
+        {
+            Helpers.ExecuteTest("АААА) ржу", "<p>АААА) ржу</p>", FullSettings);
         }
 
         [TestMethod]
@@ -723,6 +765,13 @@ namespace CommonMark.Tests
         public void HebrewListStart400()
         {
             Helpers.ExecuteTest("ת.  פ.", "<ol start=\"400\" style=\"list-style-type: hebrew\">\n<li>פ.</li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void HebrewListStartMaxMarkerLength3()
+        {
+            Helpers.ExecuteTest("תשעו.  פ.", "<p>תשעו.  פ.</p>", FullSettings);
         }
 
         [TestMethod]
