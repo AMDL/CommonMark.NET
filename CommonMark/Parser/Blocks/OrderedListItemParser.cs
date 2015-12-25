@@ -129,6 +129,15 @@ namespace CommonMark.Parser.Blocks
         }
 
         /// <summary>
+        /// Creates a copy of this parameters object.
+        /// </summary>
+        /// <returns>Parameters object.</returns>
+        public OrderedListItemParameters Clone()
+        {
+            return (OrderedListItemParameters)MemberwiseClone();
+        }
+
+        /// <summary>
         /// Gets or sets the list marker parameters.
         /// </summary>
         public OrderedListMarkerParameters[] Markers { get; set; }

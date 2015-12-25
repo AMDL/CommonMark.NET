@@ -52,6 +52,27 @@ namespace CommonMark.Parser.Blocks.Delimiters
         }
 
         /// <summary>
+        /// Determines whether the specified object is a delimiter handler of the same type.
+        /// </summary>
+        /// <param name="obj">The object to check.</param>
+        /// <returns><c>true</c> if the object is a list item delimiter handler that has the same type and list style.</returns>
+        public override bool Equals(object obj)
+        {
+            var other = obj as OrderedListItemHandler<TParameters>;
+            return other != null && this.ListStyle == other.ListStyle;
+        }
+
+        /// <summary>
+        /// Returns the hash code of the object.
+        /// </summary>
+        /// <returns>Hash code.</returns>
+        public override int GetHashCode()
+        {
+            return GetType().GetHashCode()
+                ^ (ListStyle != null ? ListStyle.GetHashCode() : 0);
+        }
+
+        /// <summary>
         /// Attempts to parse an ordered list item marker.
         /// </summary>
         /// <param name="info">Parser state.</param>

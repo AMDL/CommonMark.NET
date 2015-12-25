@@ -36,6 +36,7 @@ namespace CommonMark.Extension
             AddLatinHandlers(handlers, settings);
             AddSharpHandlers(handlers, settings);
             AddUnorderedHandlers(handlers, settings);
+            AddDecimalHandlers(handlers, settings);
             AddNumericHandlers(handlers, settings);
             AddAdditiveHandlers(handlers, settings);
             return handlers;
@@ -75,7 +76,7 @@ namespace CommonMark.Extension
 
         private void AddSharpHandlers(List<IBlockDelimiterHandler> handlers, CommonMarkSettings settings)
         {
-            AddHandlers(handlers, settings, GetSharpParameters, CreateSharpHandler, (int)fancyListsSettings.Features, (int)FancyListsFeatures.DecimalSharps);
+            AddHandlers(handlers, settings, GetSharpParameters, CreateSharpHandler, (int)fancyListsSettings.Features, (int)FancyListsFeatures.OrderedSharps);
         }
 
         private static IEnumerable<OrderedListItemParameters> GetSharpParameters()
@@ -111,6 +112,16 @@ namespace CommonMark.Extension
         private static IBlockDelimiterHandler CreateUnorderedHandler(CommonMarkSettings settings, UnorderedListItemParameters parameters)
         {
             return new UnorderedListItemHandler(settings, parameters, parameters.Delimiters[0]);
+        }
+
+        private void AddDecimalHandlers(List<IBlockDelimiterHandler> handlers, CommonMarkSettings settings)
+        {
+            if (0 != (fancyListsSettings.Features & FancyListsFeatures.OrderedSharps))
+            {
+                var parameters = NumericListItemHandler.DefaultParameters.Clone();
+                parameters.MarkerType = Syntax.OrderedListMarkerType.Decimal;
+                handlers.Add(new NumericListItemHandler(settings, parameters));
+            }
         }
 
         private void AddNumericHandlers(List<IBlockDelimiterHandler> handlers, CommonMarkSettings settings)

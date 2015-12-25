@@ -46,9 +46,9 @@ namespace CommonMark.Extension
         Latin = 12,
 
         /// <summary>
-        /// A sharp followed by a dot will be recognized as a decimal list marker.
+        /// <c>#</c> will be recognized as an ordered list marker.
         /// </summary>
-        DecimalSharps = 32,
+        OrderedSharps = 32,
 
         /// <summary>
         /// Unordered lists with filled circle markers.

@@ -1,6 +1,4 @@
-﻿using CommonMark.Syntax;
-
-namespace CommonMark.Parser.Blocks.Delimiters
+﻿namespace CommonMark.Parser.Blocks.Delimiters
 {
     /// <summary>
     /// Sharp decimal ordered list item delimiter handler.
@@ -14,8 +12,7 @@ namespace CommonMark.Parser.Blocks.Delimiters
             markers: new[]
             {
                 new OrderedListSingleMarkerParameters('#', 0)
-            },
-            markerType: OrderedListMarkerType.Decimal);
+            });
 
         /// <summary>
         /// Handler parameters.
