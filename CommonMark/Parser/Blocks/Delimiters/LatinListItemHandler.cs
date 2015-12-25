@@ -17,12 +17,7 @@ namespace CommonMark.Parser.Blocks.Delimiters
             markerMaxChar: 'z',
             maxMarkerLength: 3,
             startValue: 1,
-            valueBase: 26,
-            delimiters: new[]
-            {
-                new ListItemDelimiterParameters('.', 1),
-                new ListItemDelimiterParameters(')', 1),
-            });
+            valueBase: 26);
 
         /// <summary>
         /// The default parameters for uppercase ASCII letter lists.
@@ -35,11 +30,7 @@ namespace CommonMark.Parser.Blocks.Delimiters
             maxMarkerLength: 3,
             startValue: 1,
             valueBase: 26,
-            delimiters: new[]
-            {
-                new ListItemDelimiterParameters('.', 2),
-                new ListItemDelimiterParameters(')', 1),
-            });
+            delimiters: ListItemDelimiterParameters.DefaultUpper);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LatinListItemHandler"/> class.

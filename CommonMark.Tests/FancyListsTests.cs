@@ -477,9 +477,16 @@ namespace CommonMark.Tests
 
         [TestMethod]
         [TestCategory("Container blocks - Fancy lists")]
+        public void HebrewListStart1()
+        {
+            Helpers.ExecuteTest("א) תפוחים", "<ol style=\"list-style-type: hebrew\">\n<li>תפוחים</li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
         public void HebrewListStart11()
         {
-            Helpers.ExecuteTest("יא.  אללה הוא עכבר", "<ol start=\"11\" style=\"list-style-type: hebrew\">\n<li>אללה הוא עכבר</li>\n</ol>", FullSettings);
+            Helpers.ExecuteTest("יא.  תמרים", "<ol start=\"11\" style=\"list-style-type: hebrew\">\n<li>תמרים</li>\n</ol>", FullSettings);
         }
 
         [TestMethod]

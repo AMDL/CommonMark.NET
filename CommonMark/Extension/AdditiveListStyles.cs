@@ -14,7 +14,8 @@ namespace CommonMark.Extension
         None = 0,
 
         /// <summary>
-        /// Hebrew letters. At least two spaces after the dot are required.
+        /// Hebrew letters.
+        /// If dots are used as delimiters, at least two spaces after the dot are required.
         /// </summary>
         Hebrew,
 

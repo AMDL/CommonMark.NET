@@ -15,10 +15,6 @@ namespace CommonMark.Parser.Blocks.Delimiters
             {
                 new OrderedListSingleMarkerParameters('#', 0)
             },
-            delimiters: new[]
-            {
-                new ListItemDelimiterParameters('.')
-            },
             markerType: OrderedListMarkerType.Decimal);
 
         /// <summary>

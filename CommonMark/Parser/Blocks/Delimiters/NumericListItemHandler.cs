@@ -39,10 +39,7 @@ namespace CommonMark.Parser.Blocks.Delimiters
 #pragma warning disable 0618
             ListType.Ordered,
 #pragma warning restore 0618
-            OrderedListMarkerType.None,
-            null,
-            new ListItemDelimiterParameters('.'),
-            new ListItemDelimiterParameters(')'));
+            OrderedListMarkerType.None);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="NumericListItemHandler"/> class.

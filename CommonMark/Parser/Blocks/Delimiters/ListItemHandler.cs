@@ -9,6 +9,24 @@ namespace CommonMark.Parser.Blocks.Delimiters
     public class ListItemDelimiterParameters
     {
         /// <summary>
+        /// The default delimiter parameters for ordered lists.
+        /// </summary>
+        public static readonly ListItemDelimiterParameters[] Default = new[]
+        {
+            new ListItemDelimiterParameters('.', 1),
+            new ListItemDelimiterParameters(')', 1),
+        };
+
+        /// <summary>
+        /// The default delimiter parameters for ordered lists with uppercase ASCII letter markers.
+        /// </summary>
+        public static readonly ListItemDelimiterParameters[] DefaultUpper = new[]
+        {
+            new ListItemDelimiterParameters('.', 2),
+            new ListItemDelimiterParameters(')', 1),
+        };
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="ListItemDelimiterParameters"/> class.
         /// </summary>
         /// <param name="character">Delimiter character.</param>

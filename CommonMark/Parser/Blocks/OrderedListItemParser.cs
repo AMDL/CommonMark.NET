@@ -96,7 +96,7 @@ namespace CommonMark.Parser.Blocks
 #pragma warning disable 0618
         public OrderedListItemParameters(char markerMinChar, char markerMaxChar, int startValue = 0, int valueBase = 10, int maxMarkerLength = 9,
             BlockTag tag = BlockTag.ListItem, BlockTag parentTag = BlockTag.OrderedList, ListType listType = ListType.Ordered,
-            OrderedListMarkerType markerType = OrderedListMarkerType.None, string listStyle = null, params ListItemDelimiterParameters[] delimiters)
+            OrderedListMarkerType markerType = OrderedListMarkerType.None, string listStyle = null, ListItemDelimiterParameters[] delimiters = null)
 #pragma warning restore 0618
             : this(new[] { new OrderedListMarkerRangeParameters(markerMinChar, markerMaxChar, startValue) }, valueBase, maxMarkerLength, tag, parentTag, listType, markerType, listStyle, delimiters)
         {
@@ -117,8 +117,8 @@ namespace CommonMark.Parser.Blocks
 #pragma warning disable 0618
         public OrderedListItemParameters(OrderedListMarkerParameters[] markers, int valueBase = 1, int maxMarkerLength = 9,
             BlockTag tag = BlockTag.ListItem, BlockTag parentTag = BlockTag.OrderedList, ListType listType = ListType.Ordered,
-            OrderedListMarkerType markerType = OrderedListMarkerType.None, string listStyle = null, params ListItemDelimiterParameters[] delimiters)
-            : base(tag, parentTag, listType, delimiters)
+            OrderedListMarkerType markerType = OrderedListMarkerType.None, string listStyle = null, ListItemDelimiterParameters[] delimiters = null)
+            : base(tag, parentTag, listType, delimiters ?? ListItemDelimiterParameters.Default)
 #pragma warning restore 0618
         {
             this.ValueBase = valueBase;

@@ -22,11 +22,6 @@ namespace CommonMark.Parser.Blocks.Delimiters
                 new OrderedListSingleMarkerParameters('l', 50),
                 new OrderedListSingleMarkerParameters('c', 100),
                 new OrderedListSingleMarkerParameters('m', 1000),
-            },
-            delimiters: new[]
-            {
-                new ListItemDelimiterParameters('.', 1),
-                new ListItemDelimiterParameters(')', 1),
             });
 
         /// <summary>
@@ -45,11 +40,7 @@ namespace CommonMark.Parser.Blocks.Delimiters
                 new OrderedListSingleMarkerParameters('C', 100),
                 new OrderedListSingleMarkerParameters('M', 1000),
             },
-            delimiters: new[]
-            {
-                new ListItemDelimiterParameters('.', 2),
-                new ListItemDelimiterParameters(')', 1),
-            });
+            delimiters: ListItemDelimiterParameters.DefaultUpper);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RomanListItemHandler"/> class.
