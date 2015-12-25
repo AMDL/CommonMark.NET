@@ -80,13 +80,7 @@ namespace CommonMark
             {
                 if (_renderSoftLineBreaksAsLineBreaks != value)
                 {
-                    _renderSoftLineBreaksAsLineBreaks = value;
-                    var lineBreaks = new Extension.HardLineBreaks(this);
-                    if (value && !Extensions.IsRegistered(lineBreaks))
-                        Extensions.Register(lineBreaks);
-                    if (!value && Extensions.IsRegistered(lineBreaks))
-                        Extensions.Unregister(lineBreaks);
-                    Reset();
+                    _renderSoftLineBreaksAsLineBreaks = Update(value, new Extension.HardLineBreaks(this));
                 }
             }
         }
@@ -105,14 +99,12 @@ namespace CommonMark
             get { return this._additionalFeatures; }
             set
             {
-                this._additionalFeatures = value;
-                var strikeout = new Extension.Strikeout(this);
-                var strikethroughTilde = 0 != (value & CommonMarkAdditionalFeatures.StrikethroughTilde);
-                if (strikethroughTilde && !Extensions.IsRegistered(strikeout))
-                    Extensions.Register(strikeout);
-                if (!strikethroughTilde && Extensions.IsRegistered(strikeout))
-                    Extensions.Unregister(strikeout);
-                this.Reset();
+                if (this._additionalFeatures != value)
+                {
+                    this._additionalFeatures = value;
+                    var strikethroughTilde = 0 != (value & CommonMarkAdditionalFeatures.StrikethroughTilde);
+                    Update(strikethroughTilde, new Extension.Strikeout(this));
+                }
             }
         }
 
@@ -124,6 +116,23 @@ namespace CommonMark
         public CommonMarkExtensionCollection Extensions
         {
             get { return _extensions; }
+        }
+
+        private bool Update<T>(bool register, T extension) where T : ICommonMarkExtension
+        {
+            if (register && !Extensions.IsRegistered(extension))
+            {
+                Extensions.Register(extension);
+                Reset();
+            }
+
+            if (!register && Extensions.IsRegistered(extension))
+            {
+                Extensions.Unregister(extension);
+                Reset();
+            }
+
+            return register;
         }
 
         #endregion Extensions
