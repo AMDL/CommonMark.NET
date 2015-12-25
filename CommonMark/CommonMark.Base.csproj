@@ -199,7 +199,7 @@
     <Compile Include="Syntax\Enumerable.cs" />
     <Compile Include="Syntax\EnumeratorEntry.cs" />
     <Compile Include="Syntax\FencedCodeData.cs" />
-    <Compile Include="Formatters\HtmlFormatterSlim.cs" />
+    <Compile Include="Formatters\HtmlFormatter.cs" />
     <Compile Include="Formatters\HtmlTextWriter.cs" />
     <Compile Include="Syntax\Inline.cs" />
     <Compile Include="Parser\InlineMethods.cs" />

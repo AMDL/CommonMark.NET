@@ -6,7 +6,7 @@ using CommonMark.Syntax;
 
 namespace CommonMark.Formatters
 {
-    internal static class HtmlFormatterSlim
+    internal static class HtmlFormatter
     {
         private static readonly char[] EscapeHtmlCharacters = { '&', '<', '>', '"' };
         private const string HexCharacters = "0123456789ABCDEF";
@@ -478,7 +478,7 @@ namespace CommonMark.Formatters
                 using (TextWriter writer = new StreamWriter(stream))
                 {
                     var htmlWriter = new HtmlTextWriter(writer);
-                    HtmlFormatterSlim.EscapeHtml(part, htmlWriter);
+                    HtmlFormatter.EscapeHtml(part, htmlWriter);
                 }
                 var buffer = stream.ToArray();
                 return Encoding.UTF8.GetString(buffer, 0, buffer.Length);
@@ -492,7 +492,7 @@ namespace CommonMark.Formatters
                 using (TextWriter writer = new StreamWriter(stream))
                 {
                     var htmlWriter = new HtmlTextWriter(writer);
-                    HtmlFormatterSlim.EscapeUrl(url, htmlWriter);
+                    HtmlFormatter.EscapeUrl(url, htmlWriter);
                 }
                 var buffer = stream.ToArray();
                 return Encoding.UTF8.GetString(buffer, 0, buffer.Length);
@@ -506,7 +506,7 @@ namespace CommonMark.Formatters
                 using (TextWriter writer = new StreamWriter(stream))
                 {
                     var htmlWriter = new HtmlTextWriter(writer);
-                    HtmlFormatterSlim.PrintPosition(htmlWriter, element);
+                    HtmlFormatter.PrintPosition(htmlWriter, element);
                 }
                 var buffer = stream.ToArray();
                 return Encoding.UTF8.GetString(buffer, 0, buffer.Length);

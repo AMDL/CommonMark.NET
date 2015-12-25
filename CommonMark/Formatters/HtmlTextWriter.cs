@@ -4,7 +4,7 @@ using CommonMark.Syntax;
 namespace CommonMark.Formatters
 {
     /// <summary>
-    /// A wrapper for <see cref="HtmlFormatterSlim"/> that keeps track if the last symbol has been a newline.
+    /// A wrapper for <see cref="HtmlFormatter"/> that keeps track if the last symbol has been a newline.
     /// </summary>
     internal sealed class HtmlTextWriter : IHtmlTextWriter
     {
@@ -15,7 +15,7 @@ namespace CommonMark.Formatters
         
         /// <summary>
         /// A reusable char buffer. This is used internally in <see cref="Write(Syntax.StringPart)"/> (and thus will modify the buffer)
-        /// but can also be used from <see cref="HtmlFormatterSlim"/> class.
+        /// but can also be used from <see cref="HtmlFormatter"/> class.
         /// </summary>
         internal char[] Buffer = new char[256];
 
@@ -185,27 +185,27 @@ namespace CommonMark.Formatters
 
         void IHtmlTextWriter.WritePosition(Block block)
         {
-            HtmlFormatterSlim.PrintPosition(this, block);
+            HtmlFormatter.PrintPosition(this, block);
         }
 
         void IHtmlTextWriter.WritePosition(Inline inline)
         {
-            HtmlFormatterSlim.PrintPosition(this, inline);
+            HtmlFormatter.PrintPosition(this, inline);
         }
 
         void IHtmlTextWriter.WriteEncodedHtml(StringPart part)
         {
-            HtmlFormatterSlim.EscapeHtml(part, this);
+            HtmlFormatter.EscapeHtml(part, this);
         }
 
         void IHtmlTextWriter.WriteEncodedHtml(StringContent stringContent)
         {
-            HtmlFormatterSlim.EscapeHtml(stringContent, this);
+            HtmlFormatter.EscapeHtml(stringContent, this);
         }
 
         void IHtmlTextWriter.WriteEncodedUrl(string url)
         {
-            HtmlFormatterSlim.EscapeUrl(url, this);
+            HtmlFormatter.EscapeUrl(url, this);
         }
     }
 }
