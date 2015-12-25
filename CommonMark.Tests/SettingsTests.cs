@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace CommonMark.Tests
 {
@@ -15,7 +10,9 @@ namespace CommonMark.Tests
         public void RenderSoftLineBreakAsLineBreak()
         {
             var settings = CommonMarkSettings.Default.Clone();
+#pragma warning disable 0618
             settings.RenderSoftLineBreaksAsLineBreaks = true;
+#pragma warning restore 0618
             Helpers.ExecuteTest("A\nB\nC", "<p>A<br />\nB<br />\nC</p>", settings);
         }
     }
