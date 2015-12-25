@@ -16,5 +16,10 @@ namespace CommonMark.Formatters
         /// Escapes special URL characters.
         /// </summary>
         string EscapeUrl(string url);
+
+        /// <summary>
+        /// Prints inline element position.
+        /// </summary>
+        string PrintPosition(Inline element);
     }
 }

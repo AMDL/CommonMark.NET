@@ -209,7 +209,8 @@ namespace CommonMark.Formatters
 
             var parameters = Settings.FormatterParameters;
             IInlineFormatter formatter = null;
-            if (inline.Tag != InlineTag.Link && inline.Tag != InlineTag.Emphasis && inline.Tag != InlineTag.Strong)
+            if (inline.Tag != InlineTag.Link && inline.Tag != InlineTag.Image
+                && inline.Tag != InlineTag.Emphasis && inline.Tag != InlineTag.Strong)
             {
                 formatter = parameters.InlineFormatters[(int)inline.Tag];
             }

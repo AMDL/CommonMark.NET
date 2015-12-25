@@ -222,6 +222,7 @@ namespace CommonMark.Formatters
             var parameters = settings.FormatterParameters;
             IBlockFormatter[] formatters = parameters.BlockFormatters;
             IBlockFormatter formatter;
+            bool? isRenderPlainTextInlines;
             bool? isStackTight;
 
             while (block != null)
@@ -233,7 +234,8 @@ namespace CommonMark.Formatters
                 {
                     visitChildren = formatter.WriteOpening(writer, block);
                     stackLiteral = formatter.GetClosing(parameters.HtmlFormatter, block);
-                    if (formatter.IsRenderPlainTextInlines(block, false) == false)
+                    isRenderPlainTextInlines = formatter.IsRenderPlainTextInlines(block, false);
+                    if (isRenderPlainTextInlines == false)
                     {
                         InlinesToHtml(writer, block.InlineContent, settings, inlineStack);
                         writer.WriteLineConstant(stackLiteral);
@@ -432,12 +434,16 @@ namespace CommonMark.Formatters
                 if (formatter != null)
                 {
                     visitChildren = formatter.WriteOpening(writer, inline, withinLink);
+                    stackLiteral = formatter.GetClosing(parameters.HtmlFormatter, inline, withinLink);
                     isRenderPlainTextInlines = formatter.IsRenderPlainTextInlines(inline, false);
                     if (isRenderPlainTextInlines == true)
+                    {
                         InlinesToPlainText(writer, inline.FirstChild, stack);
+                        writer.WriteConstant(stackLiteral);
+                        stackLiteral = null;
+                    }
                     else if (isRenderPlainTextInlines == false)
                         EscapeHtml(inline.LiteralContentValue, writer);
-                    stackLiteral = formatter.GetClosing(parameters.HtmlFormatter, inline, withinLink);
                     stackWithinLink = formatter.IsStackWithinLink(inline, withinLink);
                 }
                 else switch (inline.Tag)
@@ -453,28 +459,6 @@ namespace CommonMark.Formatters
                     case InlineTag.RawHtml:
                         // cannot output source position for HTML blocks
                         writer.Write(inline.LiteralContentValue);
-                        break;
-
-                    case InlineTag.Image:
-                        writer.WriteConstant("<img src=\"");
-                        if (uriResolver != null)
-                            EscapeUrl(uriResolver(inline.TargetUrl), writer);
-                        else
-                            EscapeUrl(inline.TargetUrl, writer);
-
-                        writer.WriteConstant("\" alt=\"");
-                        InlinesToPlainText(writer, inline.FirstChild, stack);
-                        writer.Write('\"');
-                        if (inline.LiteralContentValue.Length > 0)
-                        {
-                            writer.WriteConstant(" title=\"");
-                            EscapeHtml(inline.LiteralContentValue, writer);
-                            writer.Write('\"');
-                        }
-
-                        if (trackPositions) PrintPosition(writer, inline);
-                        writer.WriteConstant(" />");
-
                         break;
 
                     default:
@@ -561,6 +545,20 @@ namespace CommonMark.Formatters
                 {
                     var htmlWriter = new HtmlTextWriter(writer);
                     HtmlFormatterSlim.EscapeUrl(url, htmlWriter);
+                }
+                var buffer = stream.ToArray();
+                return Encoding.UTF8.GetString(buffer, 0, buffer.Length);
+            }
+        }
+
+        string IHtmlFormatter.PrintPosition(Inline element)
+        {
+            using (MemoryStream stream = new MemoryStream())
+            {
+                using (TextWriter writer = new StreamWriter(stream))
+                {
+                    var htmlWriter = new HtmlTextWriter(writer);
+                    HtmlFormatterSlim.PrintPosition(htmlWriter, element);
                 }
                 var buffer = stream.ToArray();
                 return Encoding.UTF8.GetString(buffer, 0, buffer.Length);

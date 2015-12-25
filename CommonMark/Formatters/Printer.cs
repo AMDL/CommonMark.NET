@@ -200,14 +200,6 @@ namespace CommonMark.Formatters
                             writer.Write(format_str(inline.LiteralContent, buffer));
                             break;
 
-                        case InlineTag.Image:
-                            writer.Write("image");
-                            PrintPosition(trackPositions, writer, inline);
-                            writer.Write(" url={0} title={1}",
-                                   format_str(inline.TargetUrl, buffer),
-                                   format_str(inline.LiteralContent, buffer));
-                            break;
-
                         default:
                             writer.Write("unknown: " + inline.Tag.ToString());
                             PrintPosition(trackPositions, writer, inline);
