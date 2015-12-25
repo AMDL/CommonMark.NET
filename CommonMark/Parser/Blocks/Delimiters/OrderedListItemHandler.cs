@@ -18,9 +18,10 @@ namespace CommonMark.Parser.Blocks.Delimiters
             /// </summary>
             /// <param name="parameters">List item parameters.</param>
             /// <param name="characters">Handled characters.</param>
+            /// <param name="delimiter">Delimiter parameters.</param>
             /// <param name="isRequireContent"><c>true</c> if items on this list require content.</param>
-            protected Parameters(OrderedListItemParameters parameters, char[] characters, bool isRequireContent)
-                : base(parameters, characters, parameters.Delimiters, isRequireContent)
+            protected Parameters(OrderedListItemParameters parameters, char[] characters, ListItemDelimiterParameters delimiter, bool isRequireContent)
+                : base(parameters, characters, delimiter, isRequireContent)
             {
             }
 
@@ -45,7 +46,7 @@ namespace CommonMark.Parser.Blocks.Delimiters
         /// </summary>
         /// <param name="settings">Common settings.</param>
         /// <param name="handlerParameters">Handler parameters.</param>
-        public OrderedListItemHandler(CommonMarkSettings settings, TParameters handlerParameters)
+        protected OrderedListItemHandler(CommonMarkSettings settings, TParameters handlerParameters)
             : base(settings, handlerParameters)
         {
             MarkerMinCharacter = handlerParameters.MarkerMinChar;
@@ -64,7 +65,9 @@ namespace CommonMark.Parser.Blocks.Delimiters
         public override bool Equals(object obj)
         {
             var other = obj as OrderedListItemHandler<TParameters>;
-            return other != null && this.ListStyle == other.ListStyle;
+            return other != null
+                && this.DelimiterCharacter == other.DelimiterCharacter
+                && this.ListStyle == other.ListStyle;
         }
 
         /// <summary>
@@ -74,6 +77,7 @@ namespace CommonMark.Parser.Blocks.Delimiters
         public override int GetHashCode()
         {
             return GetType().GetHashCode()
+                ^ DelimiterCharacter.GetHashCode()
                 ^ (ListStyle != null ? ListStyle.GetHashCode() : 0);
         }
 

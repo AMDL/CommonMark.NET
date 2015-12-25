@@ -10,8 +10,9 @@
         /// </summary>
         /// <param name="settings">Common settings.</param>
         /// <param name="parameters">Ordered list item parameters.</param>
-        public AlphaListItemHandler(CommonMarkSettings settings, OrderedListItemParameters parameters)
-            : base(settings, parameters)
+        /// <param name="delimiter">Delimiter parameters.</param>
+        public AlphaListItemHandler(CommonMarkSettings settings, OrderedListItemParameters parameters, ListItemDelimiterParameters delimiter)
+            : base(settings, parameters, delimiter)
         {
         }
 

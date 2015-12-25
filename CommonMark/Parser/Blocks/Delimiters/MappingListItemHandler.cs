@@ -17,8 +17,9 @@ namespace CommonMark.Parser.Blocks.Delimiters
             /// </summary>
             /// <param name="parameters">List item parameters.</param>
             /// <param name="characters">Handled characters.</param>
-            public Parameters(OrderedListItemParameters parameters, char[] characters)
-                : base(parameters, characters, true)
+            /// <param name="delimiter">Delimiter parameters.</param>
+            public Parameters(OrderedListItemParameters parameters, char[] characters, ListItemDelimiterParameters delimiter)
+                : base(parameters, characters, delimiter, true)
             {
             }
 
@@ -33,8 +34,9 @@ namespace CommonMark.Parser.Blocks.Delimiters
         /// </summary>
         /// <param name="settings">Common settings.</param>
         /// <param name="parameters">Ordered list item parameters.</param>
-        protected MappingListItemHandler(CommonMarkSettings settings, OrderedListItemParameters parameters)
-            : base(settings, GetHandlerParameters(parameters))
+        /// <param name="delimiter">Delimiter parameters.</param>
+        protected MappingListItemHandler(CommonMarkSettings settings, OrderedListItemParameters parameters, ListItemDelimiterParameters delimiter)
+            : base(settings, GetHandlerParameters(parameters, delimiter))
         {
             this.ValueMap = HandlerParameters.ValueMap;
         }
@@ -62,7 +64,7 @@ namespace CommonMark.Parser.Blocks.Delimiters
             get;
         }
 
-        private static Parameters GetHandlerParameters(OrderedListItemParameters parameters)
+        private static Parameters GetHandlerParameters(OrderedListItemParameters parameters, ListItemDelimiterParameters delimiter)
         {
             var valueMapDict = new Dictionary<char, int>();
             var markerMinChar = char.MaxValue;
@@ -87,7 +89,7 @@ namespace CommonMark.Parser.Blocks.Delimiters
             var characters = new char[count];
             valueMapDict.Keys.CopyTo(characters, 0);
 
-            return new Parameters(parameters, characters)
+            return new Parameters(parameters, characters, delimiter)
             {
                 MarkerMinChar = markerMinChar,
                 MarkerMaxChar = markerMaxChar,

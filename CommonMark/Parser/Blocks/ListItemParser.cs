@@ -129,12 +129,11 @@ namespace CommonMark.Parser.Blocks
                 {
                     var unorderedParameters = item as UnorderedListItemParameters;
                     if (unorderedParameters != null)
-                        foreach (var delimiter in unorderedParameters.Delimiters)
-                            yield return new UnorderedListItemHandler(Settings, unorderedParameters, delimiter);
+                        yield return UnorderedListItemHandler.Create(Settings, unorderedParameters);
 
                     var numericParameters = item as OrderedListItemParameters;
                     if (numericParameters != null && numericParameters.Markers.Length == 1)
-                        yield return new NumericListItemHandler(Settings, numericParameters);
+                        yield return NumericListItemHandler.Create(Settings, numericParameters);
                 }
             }
         }

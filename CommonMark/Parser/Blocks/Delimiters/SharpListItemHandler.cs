@@ -21,8 +21,9 @@
             /// Initializes a new instance of the <see cref="Parameters"/> class.
             /// </summary>
             /// <param name="parameters">List item parameters.</param>
-            public Parameters(OrderedListItemParameters parameters)
-                : base(parameters, new[] { '#' }, false)
+            /// <param name="delimiter">Delimiter parameters.</param>
+            public Parameters(OrderedListItemParameters parameters, ListItemDelimiterParameters delimiter)
+                : base(parameters, new[] { '#' }, delimiter, false)
             {
             }
         }
@@ -32,8 +33,9 @@
         /// </summary>
         /// <param name="settings">Common settings.</param>
         /// <param name="parameters">List item parameters.</param>
-        public SharpListItemHandler(CommonMarkSettings settings, OrderedListItemParameters parameters)
-            : base(settings, GetHandlerParameters(parameters))
+        /// <param name="delimiter">Delimiter parameters.</param>
+        public SharpListItemHandler(CommonMarkSettings settings, OrderedListItemParameters parameters, ListItemDelimiterParameters delimiter)
+            : base(settings, GetHandlerParameters(parameters, delimiter))
         {
         }
 
@@ -60,9 +62,9 @@
             return true;
         }
 
-        private static Parameters GetHandlerParameters(OrderedListItemParameters parameters)
+        private static Parameters GetHandlerParameters(OrderedListItemParameters parameters, ListItemDelimiterParameters delimiter)
         {
-            return new Parameters(parameters);
+            return new Parameters(parameters, delimiter);
         }
     }
 }

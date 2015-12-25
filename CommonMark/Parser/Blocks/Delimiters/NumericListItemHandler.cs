@@ -20,12 +20,36 @@ namespace CommonMark.Parser.Blocks.Delimiters
         );
 
         /// <summary>
+        /// Creates a numeric ordered list item delimiter handler.
+        /// </summary>
+        /// <param name="settings">Common settings.</param>
+        /// <param name="parameters">List item parameters.</param>
+        /// <returns>Delegate delimiter handler.</returns>
+        public static IBlockDelimiterHandler Create(CommonMarkSettings settings, OrderedListItemParameters parameters)
+        {
+            var range = parameters.Markers[0] as OrderedListMarkerRangeParameters;
+            var characters = GetCharacters(range);
+            var handlers = GetHandlers(settings, parameters);
+            return DelegateBlockDelimiterHandler.Merge(characters, handlers);
+        }
+
+        private static IBlockDelimiterHandler[] GetHandlers(CommonMarkSettings settings, OrderedListItemParameters parameters)
+        {
+            var length = parameters.Delimiters.Length;
+            var handlers = new IBlockDelimiterHandler[length];
+            for (var i = 0; i < length; i++)
+                handlers[i] = new NumericListItemHandler(settings, parameters, parameters.Delimiters[i]);
+            return handlers;
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="NumericListItemHandler"/> class.
         /// </summary>
         /// <param name="settings">Common settings.</param>
         /// <param name="parameters">Ordered list parameters.</param>
-        public NumericListItemHandler(CommonMarkSettings settings, OrderedListItemParameters parameters)
-            : base(settings, parameters, false)
+        /// <param name="delimiter">Delimiter parameters.</param>
+        public NumericListItemHandler(CommonMarkSettings settings, OrderedListItemParameters parameters, ListItemDelimiterParameters delimiter)
+            : base(settings, parameters, delimiter, false)
         {
         }
 

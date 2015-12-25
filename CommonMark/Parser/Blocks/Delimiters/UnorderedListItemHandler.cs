@@ -48,7 +48,7 @@ namespace CommonMark.Parser.Blocks.Delimiters
             /// <param name="parameters">List item parameters.</param>
             /// <param name="delimiter">Delimiter parameters.</param>
             public Parameters(UnorderedListItemParameters parameters, UnorderedListItemDelimiterParameters delimiter)
-                : base(parameters, new[] { delimiter.Character }, new[] { delimiter }, false)
+                : base(parameters, new[] { delimiter.Character }, delimiter, false)
             {
             }
         }
@@ -66,6 +66,37 @@ namespace CommonMark.Parser.Blocks.Delimiters
             new UnorderedListItemDelimiterParameters('-', isThematicBreakCharacter: true),
             new UnorderedListItemDelimiterParameters('+'),
             new UnorderedListItemDelimiterParameters('•'));
+
+        /// <summary>
+        /// Creates an unordered list item delimiter handler.
+        /// </summary>
+        /// <param name="settings">Common settings.</param>
+        /// <param name="parameters">List item parameters.</param>
+        /// <returns>Delegate delimiter handler.</returns>
+        public static IBlockDelimiterHandler Create(CommonMarkSettings settings, UnorderedListItemParameters parameters)
+        {
+            var characters = GetCharacters(parameters);
+            var handlers = GetHandlers(settings, parameters);
+            return DelegateBlockDelimiterHandler.Merge(characters, handlers);
+        }
+
+        private static char[] GetCharacters(UnorderedListItemParameters parameters)
+        {
+            var length = parameters.Delimiters.Length;
+            var characters = new char[length];
+            for (var i = 0; i < length; i++)
+                characters[i] = parameters.Delimiters[i].Character;
+            return characters;
+        }
+
+        private static IBlockDelimiterHandler[] GetHandlers(CommonMarkSettings settings, UnorderedListItemParameters parameters)
+        {
+            var length = parameters.Delimiters.Length;
+            var handlers = new IBlockDelimiterHandler[length];
+            for (var i = 0; i < length; i++)
+                handlers[i] = new UnorderedListItemHandler(settings, parameters, parameters.Delimiters[i]);
+            return handlers;
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UnorderedListItemHandler"/> class.

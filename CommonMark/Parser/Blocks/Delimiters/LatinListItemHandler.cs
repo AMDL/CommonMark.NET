@@ -35,8 +35,9 @@ namespace CommonMark.Parser.Blocks.Delimiters
         /// </summary>
         /// <param name="settings">Common settings.</param>
         /// <param name="parameters">Ordered list item parameters.</param>
-        public LatinListItemHandler(CommonMarkSettings settings, OrderedListItemParameters parameters)
-            : base(settings, parameters, true)
+        /// <param name="delimiter">Delimiter parameters.</param>
+        public LatinListItemHandler(CommonMarkSettings settings, OrderedListItemParameters parameters, ListItemDelimiterParameters delimiter)
+            : base(settings, parameters, delimiter, true)
         {
         }
 

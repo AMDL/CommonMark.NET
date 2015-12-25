@@ -54,9 +54,9 @@ namespace CommonMark.Extension
             yield return RomanListItemHandler.UpperRomanParameters;
         }
 
-        private static IBlockDelimiterHandler CreateRomanHandler(CommonMarkSettings settings, OrderedListItemParameters parameters)
+        private static IBlockDelimiterHandler CreateRomanHandler(CommonMarkSettings settings, OrderedListItemParameters parameters, ListItemDelimiterParameters delimiter)
         {
-            return new RomanListItemHandler(settings, parameters);
+            return new RomanListItemHandler(settings, parameters, delimiter);
         }
 
         private void AddLatinHandlers(List<IBlockDelimiterHandler> handlers, CommonMarkSettings settings)
@@ -70,9 +70,9 @@ namespace CommonMark.Extension
             yield return LatinListItemHandler.UpperLatinParameters;
         }
 
-        private static IBlockDelimiterHandler CreateLatinHandler(CommonMarkSettings settings, OrderedListItemParameters parameters)
+        private static IBlockDelimiterHandler CreateLatinHandler(CommonMarkSettings settings, OrderedListItemParameters parameters, ListItemDelimiterParameters delimiter)
         {
-            return new LatinListItemHandler(settings, parameters);
+            return new LatinListItemHandler(settings, parameters, delimiter);
         }
 
         private void AddSharpHandlers(List<IBlockDelimiterHandler> handlers, CommonMarkSettings settings)
@@ -85,9 +85,9 @@ namespace CommonMark.Extension
             yield return SharpListItemHandler.DefaultParameters;
         }
 
-        private static SharpListItemHandler CreateSharpHandler(CommonMarkSettings settings, OrderedListItemParameters parameters)
+        private static SharpListItemHandler CreateSharpHandler(CommonMarkSettings settings, OrderedListItemParameters parameters, ListItemDelimiterParameters delimiter)
         {
-            return new SharpListItemHandler(settings, parameters);
+            return new SharpListItemHandler(settings, parameters, delimiter);
         }
 
         private void AddUnorderedHandlers(List<IBlockDelimiterHandler> handlers, CommonMarkSettings settings)
@@ -110,9 +110,9 @@ namespace CommonMark.Extension
             yield return (new UnorderedListItemDelimiterParameters('∙', listStyle: "none"));
         }
 
-        private static IBlockDelimiterHandler CreateUnorderedHandler(CommonMarkSettings settings, UnorderedListItemParameters parameters)
+        private static IBlockDelimiterHandler CreateUnorderedHandler(CommonMarkSettings settings, UnorderedListItemParameters parameters, UnorderedListItemDelimiterParameters delimiter)
         {
-            return new UnorderedListItemHandler(settings, parameters, parameters.Delimiters[0]);
+            return new UnorderedListItemHandler(settings, parameters, delimiter);
         }
 
         private void AddDecimalHandlers(List<IBlockDelimiterHandler> handlers, CommonMarkSettings settings)
@@ -121,7 +121,7 @@ namespace CommonMark.Extension
             {
                 var parameters = NumericListItemHandler.DefaultParameters.Clone();
                 parameters.MarkerType = Syntax.OrderedListMarkerType.Decimal;
-                handlers.Add(new NumericListItemHandler(settings, parameters));
+                handlers.Add(NumericListItemHandler.Create(settings, parameters));
             }
         }
 
@@ -158,9 +158,9 @@ namespace CommonMark.Extension
             yield return new OrderedListItemParameters(listStyle: "fullwidth-decimal", markerMinChar: '０', markerMaxChar: '９');
         }
 
-        private static IBlockDelimiterHandler CreateNumericHandler(CommonMarkSettings settings, OrderedListItemParameters parameters)
+        private static IBlockDelimiterHandler CreateNumericHandler(CommonMarkSettings settings, OrderedListItemParameters parameters, ListItemDelimiterParameters delimiter)
         {
-            return new NumericListItemHandler(settings, parameters);
+            return new NumericListItemHandler(settings, parameters, delimiter);
         }
 
         private void AddAlphaHandlers(List<IBlockDelimiterHandler> handlers, CommonMarkSettings settings)
@@ -257,22 +257,39 @@ namespace CommonMark.Extension
             delimiters: ListItemDelimiterParameters.DefaultUpper);
         }
 
-        private static IBlockDelimiterHandler CreateAlphaHandler(CommonMarkSettings settings, OrderedListItemParameters parameters)
+        private static IBlockDelimiterHandler CreateAlphaHandler(CommonMarkSettings settings, OrderedListItemParameters parameters, ListItemDelimiterParameters delimiter)
         {
-            return new AlphaListItemHandler(settings, parameters);
+            return new AlphaListItemHandler(settings, parameters, delimiter);
         }
 
-        private static List<IBlockDelimiterHandler> AddHandlers<TParameters>(List<IBlockDelimiterHandler> handlers, CommonMarkSettings settings, Func<IEnumerable<TParameters>> sourceFactory,
-            Func<CommonMarkSettings, TParameters, IBlockDelimiterHandler> handlerFactory, int flags, int flagsMask)
+        private static List<IBlockDelimiterHandler> AddHandlers(List<IBlockDelimiterHandler> handlers, CommonMarkSettings settings, Func<IEnumerable<UnorderedListItemParameters>> paramsFactory,
+            Func<CommonMarkSettings, UnorderedListItemParameters, UnorderedListItemDelimiterParameters, IBlockDelimiterHandler> handlerFactory, int flags, int flagsMask)
         {
-            if ((flags & flagsMask) != 0)
+            return AddHandlers<UnorderedListItemParameters, UnorderedListItemDelimiterParameters>(handlers, settings, paramsFactory, handlerFactory, flags, flagsMask);
+        }
+
+        private static List<IBlockDelimiterHandler> AddHandlers(List<IBlockDelimiterHandler> handlers, CommonMarkSettings settings, Func<IEnumerable<OrderedListItemParameters>> paramsFactory,
+            Func<CommonMarkSettings, OrderedListItemParameters, ListItemDelimiterParameters, IBlockDelimiterHandler> handlerFactory, int flags, int flagsMask)
+        {
+            return AddHandlers<OrderedListItemParameters, ListItemDelimiterParameters>(handlers, settings, paramsFactory, handlerFactory, flags, flagsMask);
+        }
+
+        private static List<IBlockDelimiterHandler> AddHandlers<TParameters, TDelimiter>(List<IBlockDelimiterHandler> handlers, CommonMarkSettings settings, Func<IEnumerable<TParameters>> paramsFactory,
+            Func<CommonMarkSettings, TParameters, TDelimiter, IBlockDelimiterHandler> handlerFactory, int flags, int flagsMask)
+            where TParameters : ListItemParameters<TDelimiter>
+            where TDelimiter : ListItemDelimiterParameters
+        {
+            if (0 != (flags & flagsMask))
             {
                 var mask = flagsMask & ~(flagsMask << 1);
-                var source = sourceFactory();
+                var source = paramsFactory();
                 foreach (var item in source)
                 {
                     if (0 != (flags & mask))
-                        handlers.Add(handlerFactory(settings, item));
+                    {
+                        foreach (var delimiter in item.Delimiters)
+                            handlers.Add(handlerFactory(settings, item, delimiter));
+                    }
                     mask <<= 1;
                 }
             }

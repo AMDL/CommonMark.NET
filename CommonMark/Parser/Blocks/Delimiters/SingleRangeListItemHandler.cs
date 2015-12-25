@@ -15,9 +15,10 @@
             /// </summary>
             /// <param name="parameters">List item parameters.</param>
             /// <param name="characters">Handled characters.</param>
+            /// <param name="delimiter">Delimiter parameters.</param>
             /// <param name="isRequireContent"><c>true</c> if items on this list require content.</param>
-            public Parameters(OrderedListItemParameters parameters, char[] characters, bool isRequireContent)
-                : base(parameters, characters, isRequireContent)
+            public Parameters(OrderedListItemParameters parameters, char[] characters, ListItemDelimiterParameters delimiter, bool isRequireContent)
+                : base(parameters, characters, delimiter, isRequireContent)
             {
             }
 
@@ -32,9 +33,10 @@
         /// </summary>
         /// <param name="settings">Common settings.</param>
         /// <param name="parameters">Ordered list parameters.</param>
+        /// <param name="delimiter">Delimiter parameters.</param>
         /// <param name="isRequireContent"><c>true</c> if items on this list require content.</param>
-        protected SingleRangeListItemHandler(CommonMarkSettings settings, OrderedListItemParameters parameters, bool isRequireContent)
-            : base(settings, GetHandlerParameters(parameters, isRequireContent))
+        protected SingleRangeListItemHandler(CommonMarkSettings settings, OrderedListItemParameters parameters, ListItemDelimiterParameters delimiter, bool isRequireContent)
+            : base(settings, GetHandlerParameters(parameters, delimiter, isRequireContent))
         {
             StartValue = HandlerParameters.StartValue;
         }
@@ -58,23 +60,26 @@
             get;
         }
 
-        private static Parameters GetHandlerParameters(OrderedListItemParameters parameters, bool isRequireContent)
+        private static Parameters GetHandlerParameters(OrderedListItemParameters parameters, ListItemDelimiterParameters delimiter, bool isRequireContent)
         {
             var range = parameters.Markers[0] as OrderedListMarkerRangeParameters;
-            var length = range.MaxCharacter - range.MinCharacter + 1;
-            var characters = new char[length];
-            for (var i = 0; i < length; i++)
-            {
-                characters[i] = (char)(i + range.MinCharacter);
-            }
-
-            return new Parameters(parameters, characters, isRequireContent)
+            var characters = GetCharacters(range);
+            return new Parameters(parameters, characters, delimiter, isRequireContent)
             {
                 MarkerMinChar = range.MinCharacter,
                 MarkerMaxChar = range.MaxCharacter,
                 StartValue = range.StartValue,
                 ValueBase = range.MaxCharacter - range.MinCharacter + 1,
             };
+        }
+
+        internal static char[] GetCharacters(OrderedListMarkerRangeParameters range)
+        {
+            var length = range.MaxCharacter - range.MinCharacter + 1;
+            var characters = new char[length];
+            for (var i = 0; i < length; i++)
+                characters[i] = (char)(i + range.MinCharacter);
+            return characters;
         }
     }
 }

@@ -60,13 +60,13 @@ namespace CommonMark.Parser.Blocks.Delimiters
         /// </summary>
         /// <param name="parameters">List item parameters.</param>
         /// <param name="characters">Handled characters.</param>
-        /// <param name="delimiters">Delimiter parameters.</param>
+        /// <param name="delimiter">Delimiter parameters.</param>
         /// <param name="isRequireContent"><c>true</c> if items on this list require content.</param>
-        protected ListItemHandlerParameters(TParameters parameters, char[] characters, ListItemDelimiterParameters[] delimiters, bool isRequireContent)
+        protected ListItemHandlerParameters(TParameters parameters, char[] characters, ListItemDelimiterParameters delimiter, bool isRequireContent)
         {
             Parameters = parameters;
             Characters = characters;
-            Delimiters = delimiters;
+            Delimiter = delimiter;
             IsRequireContent = isRequireContent;
         }
 
@@ -83,7 +83,7 @@ namespace CommonMark.Parser.Blocks.Delimiters
         /// <summary>
         /// Gets the delimiter parameters.
         /// </summary>
-        public ListItemDelimiterParameters[] Delimiters { get; }
+        public ListItemDelimiterParameters Delimiter { get; }
 
         /// <summary>
         /// Gets or sets the value indicating whether items on this list require content.
@@ -134,7 +134,8 @@ namespace CommonMark.Parser.Blocks.Delimiters
             ParentTag = handlerParameters.Parameters.ParentTag;
             ListType = handlerParameters.Parameters.ListType;
             IsRequireContent = handlerParameters.IsRequireContent;
-            SetDelimiters(handlerParameters.Delimiters);
+            DelimiterCharacter = handlerParameters.Delimiter.Character;
+            MinSpaceCount = handlerParameters.Delimiter.MinSpaceCount;
         }
 #pragma warning restore 0618
 
@@ -278,8 +279,7 @@ namespace CommonMark.Parser.Blocks.Delimiters
             data = null;
             listData = null;
 
-            var delimIndex = System.Array.IndexOf(DelimiterCharacters, curChar);
-            if (delimIndex < 0)
+            if (curChar != DelimiterCharacter)
                 return 0;
 
             var line = info.Line;
@@ -295,7 +295,7 @@ namespace CommonMark.Parser.Blocks.Delimiters
             if (offset == length - 1 && IsRequireContent)
                 return 0;
 
-            if (offset - delimOffset < MinSpaceCounts[delimIndex] && offset < length && line[offset] != '\n')
+            if (offset - delimOffset < MinSpaceCount && offset < length && line[offset] != '\n')
                 return 0;
 
             var markerLength = delimOffset - info.FirstNonspace;
@@ -329,28 +329,17 @@ namespace CommonMark.Parser.Blocks.Delimiters
         /// <returns></returns>
         protected abstract TData GetListData(char curChar, int start);
 
-        private void SetDelimiters(ListItemDelimiterParameters[] delimiters)
-        {
-            var length = delimiters.Length;
-            DelimiterCharacters = new char[length];
-            MinSpaceCounts = new int[length];
-            for (var i = 0; i < length; i++)
-            {
-                DelimiterCharacters[i] = delimiters[i].Character;
-                MinSpaceCounts[i] = delimiters[i].MinSpaceCount;
-            }
-        }
-
-        private char[] DelimiterCharacters
+        /// <summary>
+        /// Gets the delimiter character.
+        /// </summary>
+        protected char DelimiterCharacter
         {
             get;
-            set;
         }
 
-        private int[] MinSpaceCounts
+        private int MinSpaceCount
         {
             get;
-            set;
         }
 
         private bool IsRequireContent
