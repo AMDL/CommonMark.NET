@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using CommonMark.Syntax;
@@ -188,13 +187,6 @@ namespace CommonMark.Formatters
                 }
                 else switch (inline.Tag)
                     {
-                        case InlineTag.String:
-                            writer.Write("str");
-                            PrintPosition(trackPositions, writer, inline);
-                            writer.Write(' ');
-                            writer.Write(format_str(inline.LiteralContent, buffer));
-                            break;
-
                         case InlineTag.SoftBreak:
                             writer.Write("softbreak");
                             PrintPosition(trackPositions, writer, inline);

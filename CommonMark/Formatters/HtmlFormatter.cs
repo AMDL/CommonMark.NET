@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using CommonMark.Syntax;
 
@@ -280,23 +279,6 @@ namespace CommonMark.Formatters
 
             switch (inline.Tag)
             {
-                case InlineTag.String:
-                    ignoreChildNodes = true;
-                    if (Settings.TrackSourcePosition)
-                    {
-                        Write("<span");
-                        WritePositionAttribute(inline);
-                        Write('>');
-                        WriteEncodedHtml(inline.LiteralContentValue);
-                        Write("</span>");
-                    }
-                    else
-                    {
-                        WriteEncodedHtml(inline.LiteralContentValue);
-                    }
-
-                    break;
-
                 case InlineTag.SoftBreak:
                     ignoreChildNodes = true;
                     if (Settings.RenderSoftLineBreaksAsLineBreaks)

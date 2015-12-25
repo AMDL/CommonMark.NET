@@ -3,7 +3,6 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using CommonMark.Syntax;
-using System;
 
 namespace CommonMark.Formatters
 {
@@ -443,22 +442,6 @@ namespace CommonMark.Formatters
                 }
                 else switch (inline.Tag)
                 {
-                    case InlineTag.String:
-                        if (trackPositions)
-                        {
-                            writer.WriteConstant("<span");
-                            PrintPosition(writer, inline);
-                            writer.Write('>');
-                            EscapeHtml(inline.LiteralContentValue, writer);
-                            writer.WriteConstant("</span>");
-                        }
-                        else
-                        {
-                            EscapeHtml(inline.LiteralContentValue, writer);
-                        }
-
-                        break;
-
                     case InlineTag.SoftBreak:
                         if (settings.RenderSoftLineBreaksAsLineBreaks)
                             writer.WriteLineConstant("<br />");
