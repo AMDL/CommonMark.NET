@@ -9,10 +9,8 @@
         /// The default parameters instance.
         /// </summary>
         public static readonly OrderedListItemParameters DefaultParameters = new OrderedListItemParameters(
-            markers: new[]
-            {
-                new OrderedListSingleMarkerParameters('#', 0)
-            });
+            markerChars: new[] { '#' },
+            maxMarkerLength: 1);
 
         /// <summary>
         /// Handler parameters.
