@@ -93,17 +93,15 @@ namespace CommonMark.Formatters
                 writer.Write(new string(' ', indent));
 
                 formatter = formatters[(int)block.Tag];
-                if (formatter != null)
-                {
-                    writer.Write(formatter.PrinterTag);
-                    PrintPosition(trackPositions, writer, block);
-                    if ((data = formatter.GetPrinterData(parameters.Printer, block)) != null)
-                        PrintData(writer, data);
-                }
-                else
+                if (formatter == null)
                 {
                     throw new CommonMarkException("Block type " + block.Tag + " is not supported.", block);
                 }
+
+                writer.Write(formatter.PrinterTag);
+                PrintPosition(trackPositions, writer, block);
+                if ((data = formatter.GetPrinterData(parameters.Printer, block)) != null)
+                    PrintData(writer, data);
 
                 writer.WriteLine();
 
@@ -150,18 +148,15 @@ namespace CommonMark.Formatters
                 writer.Write(new string(' ', indent));
 
                 formatter = formatters[(int)inline.Tag];
-                if (formatter != null)
+                if (formatter == null)
                 {
-                    writer.Write(formatter.PrinterTag);
-                    PrintPosition(trackPositions, writer, inline);
-                    if ((data = formatter.GetPrinterData(parameters.Printer, inline)) != null)
-                        PrintData(writer, data);
+                    throw new CommonMarkException("Inline type " + inline.Tag + " is not supported.", inline);
                 }
-                else
-                {
-                    writer.Write("unknown: " + inline.Tag.ToString());
-                    PrintPosition(trackPositions, writer, inline);
-                }
+
+                writer.Write(formatter.PrinterTag);
+                PrintPosition(trackPositions, writer, inline);
+                if ((data = formatter.GetPrinterData(parameters.Printer, inline)) != null)
+                    PrintData(writer, data);
 
                 writer.WriteLine();
 

@@ -230,28 +230,28 @@ namespace CommonMark.Formatters
                 visitChildren = false;
 
                 formatter = formatters[(int)block.Tag];
-                if (formatter != null)
-                {
-                    visitChildren = formatter.WriteOpening(writer, block, tight);
-                    stackLiteral = formatter.GetClosing(parameters.HtmlFormatter, block, tight);
-                    isRenderPlainTextInlines = formatter.IsRenderPlainTextInlines(block);
-                    if (isRenderPlainTextInlines == false)
-                    {
-                        InlinesToHtml(writer, block.InlineContent, settings, inlineStack);
-                        if (block.Tag == BlockTag.Paragraph)
-                            writer.WriteConstant(stackLiteral);
-                        else
-                            writer.WriteLineConstant(stackLiteral);
-                        stackLiteral = null;
-                    }
-                    isStackTight = formatter.IsStackTight(block, tight);
-                    if (isStackTight.HasValue)
-                        stackTight = isStackTight.Value;
-                }
-                else
+                if (formatter == null)
                 {
                     throw new CommonMarkException("Block type " + block.Tag + " is not supported.", block);
                 }
+
+                visitChildren = formatter.WriteOpening(writer, block, tight);
+                stackLiteral = formatter.GetClosing(parameters.HtmlFormatter, block, tight);
+
+                isRenderPlainTextInlines = formatter.IsRenderPlainTextInlines(block);
+                if (isRenderPlainTextInlines == false)
+                {
+                    InlinesToHtml(writer, block.InlineContent, settings, inlineStack);
+                    if (block.Tag == BlockTag.Paragraph)
+                        writer.WriteConstant(stackLiteral);
+                    else
+                        writer.WriteLineConstant(stackLiteral);
+                    stackLiteral = null;
+                }
+
+                isStackTight = formatter.IsStackTight(block, tight);
+                if (isStackTight.HasValue)
+                    stackTight = isStackTight.Value;
 
                 if (visitChildren)
                 {
@@ -391,25 +391,27 @@ namespace CommonMark.Formatters
                 visitChildren = false;
 
                 formatter = formatters[(int)inline.Tag];
-                if (formatter != null)
-                {
-                    visitChildren = formatter.WriteOpening(writer, inline, withinLink);
-                    stackLiteral = formatter.GetClosing(parameters.HtmlFormatter, inline, withinLink);
-                    isRenderPlainTextInlines = formatter.IsRenderPlainTextInlines(inline);
-                    if (isRenderPlainTextInlines == true)
-                    {
-                        InlinesToPlainText(writer, inline.FirstChild, stack);
-                        writer.WriteConstant(stackLiteral);
-                        stackLiteral = null;
-                    }
-                    else if (isRenderPlainTextInlines == false)
-                        EscapeHtml(inline.LiteralContentValue, writer);
-                    stackWithinLink = formatter.IsStackWithinLink(inline, withinLink);
-                }
-                else
+                if (formatter == null)
                 {
                     throw new CommonMarkException("Inline type " + inline.Tag + " is not supported.", inline);
                 }
+
+                visitChildren = formatter.WriteOpening(writer, inline, withinLink);
+                stackLiteral = formatter.GetClosing(parameters.HtmlFormatter, inline, withinLink);
+
+                isRenderPlainTextInlines = formatter.IsRenderPlainTextInlines(inline);
+                if (isRenderPlainTextInlines == true)
+                {
+                    InlinesToPlainText(writer, inline.FirstChild, stack);
+                    writer.WriteConstant(stackLiteral);
+                    stackLiteral = null;
+                }
+                else if (isRenderPlainTextInlines == false)
+                {
+                    EscapeHtml(inline.LiteralContentValue, writer);
+                }
+
+                stackWithinLink = formatter.IsStackWithinLink(inline, withinLink);
 
                 if (visitChildren)
                 {
