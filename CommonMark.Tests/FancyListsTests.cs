@@ -601,6 +601,81 @@ namespace CommonMark.Tests
 
         [TestMethod]
         [TestCategory("Container blocks - Fancy lists")]
+        public void HiraganaListDisabledByDefault()
+        {
+            Helpers.ExecuteTest("あ、 1", "<p>あ、 1</p>", EmptySettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void HiraganaListDisabledAlone()
+        {
+            var s = CommonMarkSettings.Default.Clone();
+            s.Extensions.Register(new FancyLists(s, new FancyListsSettings(AlphaListStyles.All & ~AlphaListStyles.Hiragana)));
+            Helpers.ExecuteTest("あ、 1", "<p>あ、 1</p>", s);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void HiraganaListStart1()
+        {
+            Helpers.ExecuteTest("あ、 1", "<ol style=\"list-style-type: hiragana\">\n<li>1</li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void HiraganaListStart46()
+        {
+            Helpers.ExecuteTest("ん、 46", "<ol start=\"46\" style=\"list-style-type: hiragana\">\n<li>46</li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void HiraganaListStart47()
+        {
+            Helpers.ExecuteTest("ああ、 47", "<ol start=\"47\" style=\"list-style-type: hiragana\">\n<li>47</li>\n</ol>", FullSettings);
+        }
+
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void KatakanaListDisabledByDefault()
+        {
+            Helpers.ExecuteTest("ア、 1", "<p>ア、 1</p>", EmptySettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void KatakanaListDisabledAlone()
+        {
+            var s = CommonMarkSettings.Default.Clone();
+            s.Extensions.Register(new FancyLists(s, new FancyListsSettings(AlphaListStyles.All & ~AlphaListStyles.Katakana)));
+            Helpers.ExecuteTest("ア、 1", "<p>ア、 1</p>", s);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void KatakanaListStart1()
+        {
+            Helpers.ExecuteTest("ア、 1", "<ol style=\"list-style-type: katakana\">\n<li>1</li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void KatakanaListStart46()
+        {
+            Helpers.ExecuteTest("ン、 46", "<ol start=\"46\" style=\"list-style-type: katakana\">\n<li>46</li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void KatakanaListStart47()
+        {
+            Helpers.ExecuteTest("アア、 47", "<ol start=\"47\" style=\"list-style-type: katakana\">\n<li>47</li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
         public void HebrewListDisabledByDefault()
         {
             Helpers.ExecuteTest("יא. אללה הוא עכבר", "<p>יא. אללה הוא עכבר</p>", EmptySettings);

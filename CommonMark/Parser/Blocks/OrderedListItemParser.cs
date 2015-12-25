@@ -33,7 +33,7 @@ namespace CommonMark.Parser.Blocks
         /// </summary>
         /// <param name="character">Marker character.</param>
         /// <param name="value">Value.</param>
-        public OrderedListSingleMarkerParameters(char character, int value)
+        public OrderedListSingleMarkerParameters(char character, int value = 0)
             : base(value)
         {
             this.Character = character;
@@ -105,6 +105,18 @@ namespace CommonMark.Parser.Blocks
         /// <summary>
         /// Initializes a new instance of the <see cref="OrderedListItemParameters"/> class.
         /// </summary>
+        /// <param name="markerChars">Marker characters.</param>
+        /// <param name="maxMarkerLength">Maximum marker length.</param>
+        /// <param name="listStyle">List style.</param>
+        /// <param name="delimiterChars">Delimiter characters.</param>
+        public OrderedListItemParameters(char[] markerChars, int maxMarkerLength = 3, string listStyle = null, params char[] delimiterChars)
+            : this(listStyle: listStyle, markers: GetMarkers(markerChars), delimiters: GetDelimiters(delimiterChars), maxMarkerLength: maxMarkerLength)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="OrderedListItemParameters"/> class.
+        /// </summary>
         /// <param name="markers">Marker parameters.</param>
         /// <param name="valueBase">Value base (1 for additive lists).</param>
         /// <param name="maxMarkerLength">Maximum marker length.</param>
@@ -161,5 +173,21 @@ namespace CommonMark.Parser.Blocks
         /// Gets or sets the value base.
         /// </summary>
         public int ValueBase { get; set; }
+
+        private static OrderedListMarkerParameters[] GetMarkers(char[] markerChars)
+        {
+            var markers = new OrderedListMarkerParameters[markerChars.Length];
+            for (var i = 0; i < markerChars.Length; i++)
+                markers[i] = new OrderedListSingleMarkerParameters(markerChars[i]);
+            return markers;
+        }
+
+        private static ListItemDelimiterParameters[] GetDelimiters(char[] delimiterChars)
+        {
+            var delimiters = new ListItemDelimiterParameters[delimiterChars.Length];
+            for (var i = 0; i < delimiterChars.Length; i++)
+                delimiters[i] = new ListItemDelimiterParameters(delimiterChars[i]);
+            return delimiters;
+        }
     }
 }

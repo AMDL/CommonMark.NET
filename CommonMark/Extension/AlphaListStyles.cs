@@ -27,6 +27,16 @@
         UpperRussian = 4,
 
         /// <summary>
+        /// Hiragana syllables.
+        /// </summary>
+        Hiragana = 8,
+
+        /// <summary>
+        /// Katakana syllables.
+        /// </summary>
+        Katakana = 16,
+
+        /// <summary>
         /// All extended alphabetical list styles are enabled.
         /// </summary>
         All = 0x7FFFFFFF

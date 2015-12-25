@@ -77,12 +77,14 @@ namespace CommonMark.Parser.Blocks.Delimiters
             }
 
             var valueMap = new int[markerMaxChar - markerMinChar + 1];
+            var count = 0;
             foreach (var kvp in valueMapDict)
             {
-                valueMap[kvp.Key - markerMinChar] = kvp.Value;
+                ++count;
+                valueMap[kvp.Key - markerMinChar] = kvp.Value != 0 ? kvp.Value : count;
             }
 
-            var characters = new char[valueMapDict.Count];
+            var characters = new char[count];
             valueMapDict.Keys.CopyTo(characters, 0);
 
             return new Parameters(parameters, characters)
@@ -90,7 +92,7 @@ namespace CommonMark.Parser.Blocks.Delimiters
                 MarkerMinChar = markerMinChar,
                 MarkerMaxChar = markerMaxChar,
                 ValueMap = valueMap,
-                ValueBase = parameters.ValueBase != 0 ? parameters.ValueBase : valueMapDict.Count,
+                ValueBase = parameters.ValueBase != 0 ? parameters.ValueBase : count,
             };
         }
 
