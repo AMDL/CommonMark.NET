@@ -297,11 +297,6 @@ namespace CommonMark.Formatters
 
                     break;
 
-                case InlineTag.LineBreak:
-                    ignoreChildNodes = true;
-                    WriteLine("<br />");
-                    break;
-
                 case InlineTag.SoftBreak:
                     ignoreChildNodes = true;
                     if (Settings.RenderSoftLineBreaksAsLineBreaks)

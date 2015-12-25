@@ -195,11 +195,6 @@ namespace CommonMark.Formatters
                             writer.Write(format_str(inline.LiteralContent, buffer));
                             break;
 
-                        case InlineTag.LineBreak:
-                            writer.Write("linebreak");
-                            PrintPosition(trackPositions, writer, inline);
-                            break;
-
                         case InlineTag.SoftBreak:
                             writer.Write("softbreak");
                             PrintPosition(trackPositions, writer, inline);

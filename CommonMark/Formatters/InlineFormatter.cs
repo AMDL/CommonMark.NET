@@ -86,6 +86,7 @@ namespace CommonMark.Formatters
 
         internal static IEnumerable<IInlineFormatter> InitializeFormatters(FormatterParameters parameters)
         {
+            yield return new LineBreakFormatter(parameters);
             yield return new LinkFormatter(parameters);
         }
     }

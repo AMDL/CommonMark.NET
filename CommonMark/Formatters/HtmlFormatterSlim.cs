@@ -459,10 +459,6 @@ namespace CommonMark.Formatters
 
                         break;
 
-                    case InlineTag.LineBreak:
-                        writer.WriteLineConstant("<br />");
-                        break;
-
                     case InlineTag.SoftBreak:
                         if (settings.RenderSoftLineBreaksAsLineBreaks)
                             writer.WriteLineConstant("<br />");
