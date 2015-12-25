@@ -183,8 +183,7 @@ namespace CommonMark.Extension
             {
                 new OrderedListMarkerRangeParameters('α', 'ρ'),
                 new OrderedListMarkerRangeParameters('σ', 'ω'),
-            },
-            maxMarkerLength: 3);
+            });
         }
 
         private static OrderedListItemParameters GetLowerRussianParameters()
@@ -195,8 +194,7 @@ namespace CommonMark.Extension
                 new OrderedListMarkerRangeParameters('ж', 'и'),
                 new OrderedListMarkerRangeParameters('к', 'щ'),
                 new OrderedListMarkerRangeParameters('э', 'я'),
-            },
-            maxMarkerLength: 3);
+            });
         }
 
         private static OrderedListItemParameters GetUpperRussianParameters()
@@ -208,7 +206,6 @@ namespace CommonMark.Extension
                 new OrderedListMarkerRangeParameters('К', 'Щ'),
                 new OrderedListMarkerRangeParameters('Э', 'Я'),
             },
-            maxMarkerLength: 3,
             delimiters: ListItemDelimiterParameters.DefaultUpper);
         }
 
@@ -257,7 +254,6 @@ namespace CommonMark.Extension
                 new OrderedListSingleMarkerParameters('ת', 400),
             },
             valueBase: 1,
-            maxMarkerLength: 3,
             delimiters: ListItemDelimiterParameters.DefaultUpper);
         }
 

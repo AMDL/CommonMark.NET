@@ -127,7 +127,7 @@ namespace CommonMark.Parser.Blocks
         /// <param name="listStyle">List style.</param>
         /// <param name="delimiters">Delimiter parameters.</param>
 #pragma warning disable 0618
-        public OrderedListItemParameters(OrderedListMarkerParameters[] markers, int valueBase = 0, int maxMarkerLength = 9,
+        public OrderedListItemParameters(OrderedListMarkerParameters[] markers, int valueBase = 0, int maxMarkerLength = 3,
             BlockTag tag = BlockTag.ListItem, BlockTag parentTag = BlockTag.OrderedList, ListType listType = ListType.Ordered,
             OrderedListMarkerType markerType = OrderedListMarkerType.None, string listStyle = null, ListItemDelimiterParameters[] delimiters = null)
             : base(tag, parentTag, listType, delimiters ?? ListItemDelimiterParameters.Default)
@@ -176,16 +176,22 @@ namespace CommonMark.Parser.Blocks
 
         private static OrderedListMarkerParameters[] GetMarkers(char[] markerChars)
         {
-            var markers = new OrderedListMarkerParameters[markerChars.Length];
-            for (var i = 0; i < markerChars.Length; i++)
+            var length = markerChars.Length;
+            if (length == 0)
+                return null;
+            var markers = new OrderedListMarkerParameters[length];
+            for (var i = 0; i < length; i++)
                 markers[i] = new OrderedListSingleMarkerParameters(markerChars[i]);
             return markers;
         }
 
         private static ListItemDelimiterParameters[] GetDelimiters(char[] delimiterChars)
         {
-            var delimiters = new ListItemDelimiterParameters[delimiterChars.Length];
-            for (var i = 0; i < delimiterChars.Length; i++)
+            var length = delimiterChars.Length;
+            if (length == 0)
+                return null;
+            var delimiters = new ListItemDelimiterParameters[length];
+            for (var i = 0; i < length; i++)
                 delimiters[i] = new ListItemDelimiterParameters(delimiterChars[i]);
             return delimiters;
         }
