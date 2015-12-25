@@ -51,7 +51,7 @@ namespace CommonMark.Formatters.Blocks
         /// <param name="printer">Printer.</param>
         /// <param name="element">Element.</param>
         /// <returns>Properties or <c>null</c>.</returns>
-        public override IDictionary<string, object> GetPrinterData(IPrinter printer, Block element)
+        public override IEnumerable<KeyValuePair<string, object>> GetPrinterData(IPrinter printer, Block element)
         {
             return new Dictionary<string, object>
             {
@@ -78,7 +78,7 @@ namespace CommonMark.Formatters.Blocks
 #pragma warning restore 0618
         }
 
-        public override IDictionary<string, object> GetPrinterData(IPrinter printer, Block element)
+        public override IEnumerable<KeyValuePair<string, object>> GetPrinterData(IPrinter printer, Block element)
         {
             return new Dictionary<string, object>
             {

@@ -38,7 +38,7 @@ namespace CommonMark.Formatters
                 : outer.IsRenderPlainTextInlines(element, plaintext);
         }
 
-        public IDictionary<string, object> GetPrinterData(IPrinter printer, TElement element)
+        public IEnumerable<KeyValuePair<string, object>> GetPrinterData(IPrinter printer, TElement element)
         {
             return inner.CanHandle(element)
                 ? inner.GetPrinterData(printer, element)

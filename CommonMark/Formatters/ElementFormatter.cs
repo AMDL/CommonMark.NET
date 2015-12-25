@@ -91,7 +91,7 @@ namespace CommonMark.Formatters
         /// <param name="printer">Printer.</param>
         /// <param name="element">Element.</param>
         /// <returns>Properties or <c>null</c>.</returns>
-        public virtual IDictionary<string, object> GetPrinterData(IPrinter printer, TElement element)
+        public virtual IEnumerable<KeyValuePair<string, object>> GetPrinterData(IPrinter printer, TElement element)
         {
             return null;
         }

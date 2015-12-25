@@ -86,7 +86,7 @@ namespace CommonMark.Formatters
             var parameters = settings.FormatterParameters;
             IBlockFormatter[] formatters = parameters.BlockFormatters;
             IBlockFormatter formatter;
-            IDictionary<string, object> data;
+            IEnumerable<KeyValuePair<string, object>> data;
 
             while (block != null)
             {
@@ -171,7 +171,7 @@ namespace CommonMark.Formatters
             var parameters = settings.FormatterParameters;
             IInlineFormatter[] formatters = parameters.InlineFormatters;
             IInlineFormatter formatter;
-            IDictionary<string, object> data;
+            IEnumerable<KeyValuePair<string, object>> data;
 
             while (inline != null)
             {
@@ -241,9 +241,10 @@ namespace CommonMark.Formatters
             }
         }
 
-        private static void PrintData(TextWriter writer, IDictionary<string, object> data)
+        private static void PrintData(TextWriter writer, IEnumerable<KeyValuePair<string, object>> data)
         {
-            if (data.Count > 1 || !data.ContainsKey(string.Empty))
+            var multi = IsMultiValue(data);
+            if (multi)
                 writer.Write(" (");
             foreach (var kvp in data)
             {
@@ -252,8 +253,22 @@ namespace CommonMark.Formatters
                 else
                     writer.Write(" {0}={1}", kvp.Key, kvp.Value);
             }
-            if (data.Count > 1 || !data.ContainsKey(string.Empty))
+            if (multi)
                 writer.Write(')');
+        }
+
+        private static bool IsMultiValue(IEnumerable<KeyValuePair<string, object>> data)
+        {
+            var count = 0;
+            var containsEmptyKey = false;
+            foreach (var kvp in data)
+            {
+                if (++count > 1)
+                    return true;
+                if (kvp.Key.Length == 0)
+                    containsEmptyKey = true;
+            }
+            return !containsEmptyKey;
         }
 
         private struct BlockStackEntry

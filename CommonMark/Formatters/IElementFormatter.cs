@@ -34,7 +34,7 @@ namespace CommonMark.Formatters
         /// <param name="printer">Printer.</param>
         /// <param name="element">Element.</param>
         /// <returns>Properties or <c>null</c>.</returns>
-        IDictionary<string, object> GetPrinterData(IPrinter printer, TElement element);
+        IEnumerable<KeyValuePair<string, object>> GetPrinterData(IPrinter printer, TElement element);
 
         /// <summary>
         /// Returns the inline content rendering option.

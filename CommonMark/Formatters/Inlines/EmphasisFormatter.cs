@@ -37,7 +37,7 @@ namespace CommonMark.Formatters.Inlines
         /// <param name="printer">Printer.</param>
         /// <param name="element">Element.</param>
         /// <returns>Properties or <c>null</c>.</returns>
-        public override IDictionary<string, object> GetPrinterData(IPrinter printer, Inline element)
+        public override IEnumerable<KeyValuePair<string, object>> GetPrinterData(IPrinter printer, Inline element)
         {
             return new Dictionary<string, object>
             {

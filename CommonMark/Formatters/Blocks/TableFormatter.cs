@@ -10,7 +10,7 @@ namespace CommonMark.Formatters.Blocks
         {
         }
 
-        public override IDictionary<string, object> GetPrinterData(IPrinter printer, Block block)
+        public override IEnumerable<KeyValuePair<string, object>> GetPrinterData(IPrinter printer, Block block)
         {
             return new Dictionary<string, object>
             {
