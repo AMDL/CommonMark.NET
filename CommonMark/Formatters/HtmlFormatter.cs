@@ -171,13 +171,6 @@ namespace CommonMark.Formatters
 
                     break;
 
-                case BlockTag.HtmlBlock:
-                    ignoreChildNodes = true;
-                    // cannot output source position for HTML blocks
-                    Write(block.StringContent);
-
-                    break;
-
                 default:
                     throw new CommonMarkException("Block type " + block.Tag + " is not supported.", block);
             }

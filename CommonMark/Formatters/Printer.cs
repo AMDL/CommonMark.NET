@@ -112,13 +112,6 @@ namespace CommonMark.Formatters
                             PrintPosition(trackPositions, writer, block);
                             break;
 
-                        case BlockTag.HtmlBlock:
-                            writer.Write("html_block");
-                            PrintPosition(trackPositions, writer, block);
-                            writer.Write(' ');
-                            writer.Write(format_str(block.StringContent.ToString(buffer), buffer));
-                            break;
-
                         default:
                             throw new CommonMarkException("Block type " + block.Tag + " is not supported.", block);
                     }

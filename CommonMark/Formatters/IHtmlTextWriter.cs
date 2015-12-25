@@ -43,6 +43,11 @@ namespace CommonMark.Formatters
         void Write(char[] value, int index, int count);
 
         /// <summary>
+        /// Writes a value.
+        /// </summary>
+        void Write(StringContent stringContent);
+
+        /// <summary>
         /// Writes a newline.
         /// </summary>
         void WriteLine();

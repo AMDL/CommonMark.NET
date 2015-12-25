@@ -178,6 +178,11 @@ namespace CommonMark.Formatters
                 this.WriteLine();
         }
 
+        void IHtmlTextWriter.Write(StringContent stringContent)
+        {
+            stringContent.WriteTo(_inner);
+        }
+
         void IHtmlTextWriter.WritePosition(Block block)
         {
             HtmlFormatterSlim.PrintPosition(this, block);

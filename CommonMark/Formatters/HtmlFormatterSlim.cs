@@ -274,12 +274,6 @@ namespace CommonMark.Formatters
                         visitChildren = true;
                         break;
 
-                    case BlockTag.HtmlBlock:
-                        // cannot output source position for HTML blocks
-                        block.StringContent.WriteTo(writer);
-
-                        break;
-
                     default:
                         throw new CommonMarkException("Block type " + block.Tag + " is not supported.", block);
                 }
