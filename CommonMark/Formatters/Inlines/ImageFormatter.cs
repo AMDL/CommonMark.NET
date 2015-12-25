@@ -65,13 +65,12 @@ namespace CommonMark.Formatters.Inlines
         /// Returns the inline content rendering option.
         /// </summary>
         /// <param name="element">Element.</param>
-        /// <param name="plaintext">Current inline rendering option.</param>
         /// <returns>
         /// <c>true</c> to render the child inlines as plain text,
         /// <c>false</c> to render the literal content as HTML,
         /// or <c>null</c> to skip content rendering.
         /// </returns>
-        public override bool? IsRenderPlainTextInlines(Inline element, bool plaintext)
+        public override bool? IsRenderPlainTextInlines(Inline element)
         {
             return true;
         }

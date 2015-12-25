@@ -234,7 +234,7 @@ namespace CommonMark.Formatters
                 {
                     visitChildren = formatter.WriteOpening(writer, block);
                     stackLiteral = formatter.GetClosing(parameters.HtmlFormatter, block);
-                    isRenderPlainTextInlines = formatter.IsRenderPlainTextInlines(block, false);
+                    isRenderPlainTextInlines = formatter.IsRenderPlainTextInlines(block);
                     if (isRenderPlainTextInlines == false)
                     {
                         InlinesToHtml(writer, block.InlineContent, settings, inlineStack);
@@ -435,7 +435,7 @@ namespace CommonMark.Formatters
                 {
                     visitChildren = formatter.WriteOpening(writer, inline, withinLink);
                     stackLiteral = formatter.GetClosing(parameters.HtmlFormatter, inline, withinLink);
-                    isRenderPlainTextInlines = formatter.IsRenderPlainTextInlines(inline, false);
+                    isRenderPlainTextInlines = formatter.IsRenderPlainTextInlines(inline);
                     if (isRenderPlainTextInlines == true)
                     {
                         InlinesToPlainText(writer, inline.FirstChild, stack);

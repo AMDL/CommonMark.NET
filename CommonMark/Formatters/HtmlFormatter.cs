@@ -218,7 +218,7 @@ namespace CommonMark.Formatters
             if (formatter != null)
             {
                 ignoreChildNodes = true;
-                var isRenderPlainTextInlines = formatter.IsRenderPlainTextInlines(inline, plaintext);
+                var isRenderPlainTextInlines = formatter.IsRenderPlainTextInlines(inline);
                 if (isOpening)
                 {
                     ignoreChildNodes = !formatter.WriteOpening(_target, inline, false);

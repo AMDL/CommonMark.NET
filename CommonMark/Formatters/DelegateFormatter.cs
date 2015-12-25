@@ -31,11 +31,11 @@ namespace CommonMark.Formatters
             return inner.CanHandle(element) || outer.CanHandle(element);
         }
 
-        public bool? IsRenderPlainTextInlines(TElement element, bool plaintext)
+        public bool? IsRenderPlainTextInlines(TElement element)
         {
             return inner.CanHandle(element)
-                ? inner.IsRenderPlainTextInlines(element, plaintext)
-                : outer.IsRenderPlainTextInlines(element, plaintext);
+                ? inner.IsRenderPlainTextInlines(element)
+                : outer.IsRenderPlainTextInlines(element);
         }
 
         public IEnumerable<KeyValuePair<string, object>> GetPrinterData(IPrinter printer, TElement element)
