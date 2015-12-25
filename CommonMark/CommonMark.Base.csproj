@@ -145,7 +145,6 @@
     <Compile Include="Formatters\ElementFormatter.cs" />
     <Compile Include="Formatters\FormatterParameters.cs" />
     <Compile Include="Formatters\Blocks\TableColumnFormatter.cs" />
-    <Compile Include="Formatters\HtmlFormatter.cs" />
     <Compile Include="Formatters\IElementFormatter.cs" />
     <Compile Include="Formatters\IHtmlFormatter.cs" />
     <Compile Include="Formatters\IHtmlTextWriter.cs" />

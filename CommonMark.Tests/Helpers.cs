@@ -46,15 +46,7 @@ namespace CommonMark.Tests
             actual = Helpers.Tidy(actual);
             Assert.AreEqual(Helpers.Tidy(html), actual);
 
-            // Verify that the extendable HTML formatter returns the same result
-            var settingsHtmlFormatter = settings.Clone();
-#pragma warning disable 0618
-            settingsHtmlFormatter.OutputDelegate = (doc, target, stngs) => new Formatters.HtmlFormatter(target, stngs).WriteDocument(doc);
-#pragma warning restore 0618
-            var actual2 = CommonMarkConverter.Convert(commonMark, settingsHtmlFormatter);
-            Assert.AreEqual(actual, Helpers.Tidy(actual2), "HtmlFormatter returned a different result than HtmlFormatterSlim.");
-
-            // Additionally verify that the parser included source position information.
+            // Verify that the parser included source position information.
             // This is done here to catch cases during specification tests that might not be 
             // covered in SourcePositionTests.cs.
             var firstFail = document.AsEnumerable().FirstOrDefault(o => o.Inline != null && o.IsOpening && o.Inline.SourceLength <= 0);

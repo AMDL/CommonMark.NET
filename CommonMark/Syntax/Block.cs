@@ -1,7 +1,5 @@
-﻿using CommonMark.Syntax;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace CommonMark.Syntax
 {
@@ -155,7 +153,7 @@ namespace CommonMark.Syntax
 
         /// <summary>
         /// Gets or sets the string content of this block. The content consists of multiple string parts to avoid string concatenation.
-        /// Note that some parts of the parser (for example, <see cref="Formatters.HtmlFormatter"/>) might assume that
+        /// Note that some parts of the parser might assume that
         /// the parts are not split within certain objects, so it is advised that the parts are split on newline.
         /// </summary>
         public StringContent StringContent { get; set; }
