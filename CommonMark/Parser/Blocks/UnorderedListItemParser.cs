@@ -11,6 +11,16 @@ namespace CommonMark.Parser.Blocks
         /// <summary>
         /// Initializes a new instance of the <see cref="UnorderedListItemParameters"/> class.
         /// </summary>
+        /// <param name="listStyle">List style.</param>
+        /// <param name="markerChars">Marker characters.</param>
+        public UnorderedListItemParameters(string listStyle = null, params char[] markerChars)
+            : this(delimiters: GetDelimiters(listStyle, markerChars))
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UnorderedListItemParameters"/> class.
+        /// </summary>
         /// <param name="tag">List item element tag.</param>
         /// <param name="parentTag">List element tag.</param>
         /// <param name="listType">List type (obsolete).</param>
@@ -21,6 +31,15 @@ namespace CommonMark.Parser.Blocks
 #pragma warning restore 0618
             : base(tag, parentTag, listType, delimiters)
         {
+        }
+
+        private static UnorderedListItemDelimiterParameters[] GetDelimiters(string listStyle, char[] markerChars)
+        {
+            var length = markerChars.Length;
+            var delimiters = new UnorderedListItemDelimiterParameters[length];
+            for (var i = 0; i < length; i++)
+                delimiters[i] = new UnorderedListItemDelimiterParameters(markerChars[i], listStyle: listStyle);
+            return delimiters;
         }
     }
 }

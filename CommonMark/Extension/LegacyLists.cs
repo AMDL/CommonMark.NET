@@ -51,5 +51,15 @@ namespace CommonMark.Extension
             yield return new LegacyUnorderedListFormatter(parameters);
             yield return new LegacyOrderedListFormatter(parameters);
         }
+
+        /// <summary>
+        /// Initializes the block delimiter handlers.
+        /// </summary>
+        /// <param name="settings">Common settings.</param>
+        protected override IEnumerable<IBlockDelimiterHandler> InitializeBlockDelimiterHandlers(CommonMarkSettings settings)
+        {
+            var parameters = new UnorderedListItemParameters(markerChars: '•');
+            yield return UnorderedListItemHandler.Create(settings, parameters);
+        }
     }
 }

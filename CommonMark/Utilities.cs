@@ -46,7 +46,8 @@
         public static bool IsEscapableSymbol(char c)
         {
             // char.IsSymbol also works with Unicode symbols that cannot be escaped based on the specification.
-            return (c > ' ' && c < '0') || (c > '9' && c < 'A') || (c > 'Z' && c < 'a') || (c > 'z' && c < 127) || c == '•';
+            return (c > ' ' && c < '0') || (c > '9' && c < 'A') || (c > 'Z' && c < 'a') || (c > 'z' && c < 127)
+                || c == '•' || c == 'o' || c == '';
         }
 
 #if OptimizeFor45

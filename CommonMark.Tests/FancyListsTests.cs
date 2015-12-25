@@ -315,6 +315,117 @@ namespace CommonMark.Tests
 
         [TestMethod]
         [TestCategory("Container blocks - Fancy lists")]
+        public void BulletList1Escape()
+        {
+            Helpers.ExecuteTest("\\• foo\n\\• bar", "<p>• foo\n• bar</p>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void BulletList1DisabledByDefault()
+        {
+            Helpers.ExecuteTest("• foo\n• bar", "<p>• foo\n• bar</p>", EmptySettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void BulletList1DisabledAlone()
+        {
+            var s = CommonMarkSettings.Default.Clone();
+            s.Extensions.Register(new FancyLists(s, new FancyListsSettings(FancyListsFeatures.All & ~FancyListsFeatures.Bullets)));
+            Helpers.ExecuteTest("• foo\n• bar", "<p>• foo\n• bar</p>", s);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void BulletList1()
+        {
+            Helpers.ExecuteTest("• foo\n• bar", "<ul>\n<li>foo</li>\n<li>bar</li>\n</ul>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void BulletList2Escape()
+        {
+            Helpers.ExecuteTest("\\o foo\n\\o bar", "<p>o foo\no bar</p>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void BulletList2DisabledByDefault()
+        {
+            Helpers.ExecuteTest("o foo\no bar", "<p>o foo\no bar</p>", EmptySettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void BulletList2DisabledAlone()
+        {
+            var s = CommonMarkSettings.Default.Clone();
+            s.Extensions.Register(new FancyLists(s, new FancyListsSettings(FancyListsFeatures.All & ~FancyListsFeatures.Bullets)));
+            Helpers.ExecuteTest("o foo\no bar", "<p>o foo\no bar</p>", s);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void BulletList2()
+        {
+            Helpers.ExecuteTest("o foo\no bar", "<ul>\n<li>foo</li>\n<li>bar</li>\n</ul>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void BulletList3Escape()
+        {
+            Helpers.ExecuteTest("\\ foo\n\\ bar", "<p> foo\n bar</p>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void BulletList3DisabledByDefault()
+        {
+            Helpers.ExecuteTest(" foo\n bar", "<p> foo\n bar</p>", EmptySettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void BulletList3DisabledAlone()
+        {
+            var s = CommonMarkSettings.Default.Clone();
+            s.Extensions.Register(new FancyLists(s, new FancyListsSettings(FancyListsFeatures.All & ~FancyListsFeatures.Bullets)));
+            Helpers.ExecuteTest(" foo\n bar", "<p> foo\n bar</p>", s);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void BulletList3()
+        {
+            Helpers.ExecuteTest(" foo\n bar", "<ul>\n<li>foo</li>\n<li>bar</li>\n</ul>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void BulletList1BeforeBulletList2()
+        {
+            Helpers.ExecuteTest("• foo\no bar", "<ul>\n<li>foo</li>\n</ul>\n<ul>\n<li>bar</li>\n</ul>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void BulletList2BeforeBulletList3()
+        {
+            Helpers.ExecuteTest("o foo\n bar", "<ul>\n<li>foo</li>\n</ul>\n<ul>\n<li>bar</li>\n</ul>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void BulletList3BeforeBulletList1()
+        {
+            Helpers.ExecuteTest(" foo\n• bar", "<ul>\n<li>foo</li>\n</ul>\n<ul>\n<li>bar</li>\n</ul>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
         public void DiscListDisabledByDefault()
         {
             Helpers.ExecuteTest("● foo\n● bar", "<p>● foo\n● bar</p>", EmptySettings);
@@ -325,7 +436,7 @@ namespace CommonMark.Tests
         public void DiscListDisabledAlone()
         {
             var s = CommonMarkSettings.Default.Clone();
-            s.Extensions.Register(new FancyLists(s, new FancyListsSettings(FancyListsFeatures.All & ~FancyListsFeatures.Disc)));
+            s.Extensions.Register(new FancyLists(s, new FancyListsSettings(FancyListsFeatures.All & ~FancyListsFeatures.Discs)));
             Helpers.ExecuteTest("● foo\n● bar", "<p>● foo\n● bar</p>", s);
         }
 
@@ -340,7 +451,7 @@ namespace CommonMark.Tests
         [TestCategory("Container blocks - Fancy lists")]
         public void CircleListDisabledByDefault()
         {
-            Helpers.ExecuteTest("○ foo\n○ bar", "<p>○ foo\n○ bar</p>", EmptySettings);
+            Helpers.ExecuteTest("◦ foo\n◦ bar", "<p>◦ foo\n◦ bar</p>", EmptySettings);
         }
 
         [TestMethod]
@@ -348,22 +459,22 @@ namespace CommonMark.Tests
         public void CircleListDisabledAlone()
         {
             var s = CommonMarkSettings.Default.Clone();
-            s.Extensions.Register(new FancyLists(s, new FancyListsSettings(FancyListsFeatures.All & ~FancyListsFeatures.Circle)));
-            Helpers.ExecuteTest("○ foo\n○ bar", "<p>○ foo\n○ bar</p>", s);
+            s.Extensions.Register(new FancyLists(s, new FancyListsSettings(FancyListsFeatures.All & ~FancyListsFeatures.Circles)));
+            Helpers.ExecuteTest("◦ foo\n◦ bar", "<p>◦ foo\n◦ bar</p>", s);
         }
 
         [TestMethod]
         [TestCategory("Container blocks - Fancy lists")]
         public void CircleList1()
         {
-            Helpers.ExecuteTest("○ foo\n○ bar", "<ul style=\"list-style-type: circle\">\n<li>foo</li>\n<li>bar</li>\n</ul>", FullSettings);
+            Helpers.ExecuteTest("◦ foo\n◦ bar", "<ul style=\"list-style-type: circle\">\n<li>foo</li>\n<li>bar</li>\n</ul>", FullSettings);
         }
 
         [TestMethod]
         [TestCategory("Container blocks - Fancy lists")]
         public void SquareListDisabledByDefault()
         {
-            Helpers.ExecuteTest("■ foo\n■ bar", "<p>■ foo\n■ bar</p>", EmptySettings);
+            Helpers.ExecuteTest("▪ foo\n▪ bar", "<p>▪ foo\n▪ bar</p>", EmptySettings);
         }
 
         [TestMethod]
@@ -371,15 +482,15 @@ namespace CommonMark.Tests
         public void SquareListDisabledAlone()
         {
             var s = CommonMarkSettings.Default.Clone();
-            s.Extensions.Register(new FancyLists(s, new FancyListsSettings(FancyListsFeatures.All & ~FancyListsFeatures.Square)));
-            Helpers.ExecuteTest("■ foo\n■ bar", "<p>■ foo\n■ bar</p>", s);
+            s.Extensions.Register(new FancyLists(s, new FancyListsSettings(FancyListsFeatures.All & ~FancyListsFeatures.Squares)));
+            Helpers.ExecuteTest("▪ foo\n▪ bar", "<p>▪ foo\n▪ bar</p>", s);
         }
 
         [TestMethod]
         [TestCategory("Container blocks - Fancy lists")]
         public void SquareList1()
         {
-            Helpers.ExecuteTest("■ foo\n■ bar", "<ul style=\"list-style-type: square\">\n<li>foo</li>\n<li>bar</li>\n</ul>", FullSettings);
+            Helpers.ExecuteTest("▪ foo\n▪ bar", "<ul style=\"list-style-type: square\">\n<li>foo</li>\n<li>bar</li>\n</ul>", FullSettings);
         }
 
         [TestMethod]

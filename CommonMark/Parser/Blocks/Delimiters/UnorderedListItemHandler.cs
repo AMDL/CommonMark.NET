@@ -64,8 +64,7 @@ namespace CommonMark.Parser.Blocks.Delimiters
 #pragma warning restore 0618
             new UnorderedListItemDelimiterParameters('*', isThematicBreakCharacter: true),
             new UnorderedListItemDelimiterParameters('-', isThematicBreakCharacter: true),
-            new UnorderedListItemDelimiterParameters('+'),
-            new UnorderedListItemDelimiterParameters('•'));
+            new UnorderedListItemDelimiterParameters('+'));
 
         /// <summary>
         /// Creates an unordered list item delimiter handler.

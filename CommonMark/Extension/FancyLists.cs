@@ -97,17 +97,11 @@ namespace CommonMark.Extension
 
         private static IEnumerable<UnorderedListItemParameters> GetUnorderedParameters()
         {
-            var delimiters = GetUnorderedDelimiters();
-            foreach (var delimiter in delimiters)
-                yield return new UnorderedListItemParameters(delimiters: delimiter);
-        }
-
-        private static IEnumerable<UnorderedListItemDelimiterParameters> GetUnorderedDelimiters()
-        {
-            yield return (new UnorderedListItemDelimiterParameters('●', listStyle: "disc"));
-            yield return (new UnorderedListItemDelimiterParameters('○', listStyle: "circle"));
-            yield return (new UnorderedListItemDelimiterParameters('■', listStyle: "square"));
-            yield return (new UnorderedListItemDelimiterParameters('∙', listStyle: "none"));
+            yield return new UnorderedListItemParameters(markerChars: new[] { '•', 'o', '' });
+            yield return new UnorderedListItemParameters("disc", '●');
+            yield return new UnorderedListItemParameters("circle", '◦');
+            yield return new UnorderedListItemParameters("square", '▪');
+            yield return new UnorderedListItemParameters("none", '∙');
         }
 
         private static IBlockDelimiterHandler CreateUnorderedHandler(CommonMarkSettings settings, UnorderedListItemParameters parameters, UnorderedListItemDelimiterParameters delimiter)

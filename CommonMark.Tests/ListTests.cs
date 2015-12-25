@@ -1,5 +1,4 @@
-﻿using CommonMark.Extension;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
 namespace CommonMark.Tests
@@ -27,20 +26,6 @@ namespace CommonMark.Tests
 </li>
 </ul>
 ", s);
-        }
-
-        [TestMethod]
-        [TestCategory("Container blocks - List items")]
-        public void UnicodeBulletEscape()
-        {
-            Helpers.ExecuteTest("\\• foo\n\n\\* bar", "<p>• foo</p>\n<p>* bar</p>");
-        }
-
-        [TestMethod]
-        [TestCategory("Container blocks - List items")]
-        public void UnicodeBulletList()
-        {
-            Helpers.ExecuteTest("• foo\n• bar", "<ul>\n<li>foo</li>\n<li>bar</li>\n</ul>");
         }
 
         [TestMethod]

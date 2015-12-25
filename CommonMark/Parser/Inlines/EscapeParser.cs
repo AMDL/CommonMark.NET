@@ -35,7 +35,7 @@ namespace CommonMark.Parser.Inlines
             if (Utilities.IsEscapableSymbol(nextChar))
             {
                 // only ascii symbols and newline can be escaped
-                // the exception is the unicode bullet char since it can be used for defining list items
+                // unicode bullet chars are an exception since they can be used for defining list items
                 subj.Position++;
                 return new Inline(nextChar.ToString(), subj.Position - 2, subj.Position);
             }
