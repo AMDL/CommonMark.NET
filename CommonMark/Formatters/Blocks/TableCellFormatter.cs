@@ -15,7 +15,7 @@ namespace CommonMark.Formatters.Blocks
             return block.Tag == BlockTag.TableCell && block.Parent.Tag == BlockTag.TableBody;
         }
 
-        public override bool WriteOpening(IHtmlTextWriter writer, Block block)
+        public override bool WriteOpening(IHtmlTextWriter writer, Block block, bool tight)
         {
             writer.WriteConstant("<td");
             switch (block.TableCellData.ColumnData.Alignment)

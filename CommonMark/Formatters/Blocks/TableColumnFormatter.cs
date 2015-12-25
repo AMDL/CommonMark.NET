@@ -9,7 +9,7 @@ namespace CommonMark.Formatters.Blocks
         {
         }
 
-        public override bool WriteOpening(IHtmlTextWriter writer, Block block)
+        public override bool WriteOpening(IHtmlTextWriter writer, Block block, bool tight)
         {
             writer.WriteConstant("<col");
             TableColumnData columnData = null;
