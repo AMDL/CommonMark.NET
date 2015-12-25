@@ -98,6 +98,7 @@ namespace CommonMark
             {
                 Features = Extension.FancyListsFeatures.All,
                 NumericListStyles = Extension.NumericListStyles.All,
+                AlphaListStyles = Extension.AlphaListStyles.All,
                 AdditiveListStyles = Extension.AdditiveListStyles.All,
             }));
             Register(new Extension.DefinitionLists(Settings, new Extension.DefinitionListsSettings(Extension.DefinitionListsFeatures.All)));

@@ -33,6 +33,11 @@ namespace CommonMark.Parser.Blocks.Delimiters
             /// Gets or sets the last marker character.
             /// </summary>
             public char MarkerMaxChar { get; set; }
+
+            /// <summary>
+            /// Gets or sets the value base.
+            /// </summary>
+            public int ValueBase { get; set; }
         }
 
         /// <summary>
@@ -48,9 +53,7 @@ namespace CommonMark.Parser.Blocks.Delimiters
             MaxMarkerLength = handlerParameters.Parameters.MaxMarkerLength;
             MarkerType = handlerParameters.Parameters.MarkerType;
             ListStyle = handlerParameters.Parameters.ListStyle;
-            ValueBase = handlerParameters.Parameters.ValueBase != 0
-                ? handlerParameters.Parameters.ValueBase
-                : MarkerMaxCharacter - MarkerMinCharacter + 1;
+            ValueBase = handlerParameters.ValueBase;
         }
 
         /// <summary>

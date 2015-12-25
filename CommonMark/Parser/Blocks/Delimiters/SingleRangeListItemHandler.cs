@@ -73,6 +73,7 @@
                 MarkerMinChar = range.MinCharacter,
                 MarkerMaxChar = range.MaxCharacter,
                 StartValue = range.StartValue,
+                ValueBase = range.MaxCharacter - range.MinCharacter + 1,
             };
         }
     }

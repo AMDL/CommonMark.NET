@@ -35,6 +35,7 @@ namespace CommonMark.Tests
                     {
                         Features = Extension.FancyListsFeatures.All,
                         NumericListStyles = Extension.NumericListStyles.All,
+                        AlphaListStyles = Extension.AlphaListStyles.All,
                         AdditiveListStyles = Extension.AdditiveListStyles.All,
                     }));
                     _fullSettings = s;
@@ -485,6 +486,117 @@ namespace CommonMark.Tests
         public void FullWidthDecimalStart10()
         {
             Helpers.ExecuteTest("１０.\n", "<ol start=\"10\" style=\"list-style-type: fullwidth-decimal\">\n<li></li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void LowerGreekListDisabledByDefault()
+        {
+            Helpers.ExecuteTest("α) άλφα", "<p>α) άλφα</p>", EmptySettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void LowerGreekListDisabledAlone()
+        {
+            var s = CommonMarkSettings.Default.Clone();
+            s.Extensions.Register(new FancyLists(s, new FancyListsSettings(AlphaListStyles.All & ~AlphaListStyles.LowerGreek)));
+            Helpers.ExecuteTest("α. άλφα", "<p>α. άλφα</p>", s);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void LowerGreekListStart1()
+        {
+            Helpers.ExecuteTest("α) άλφα", "<ol style=\"list-style-type: lower-greek\">\n<li>άλφα</li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void LowerGreekListStart24()
+        {
+            Helpers.ExecuteTest("ω. ωμέγα", "<ol start=\"24\" style=\"list-style-type: lower-greek\">\n<li>ωμέγα</li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void LowerGreekListStart25()
+        {
+            Helpers.ExecuteTest("αα) δυο άλφα", " <ol start=\"25\" style=\"list-style-type: lower-greek\">\n<li>δυο άλφα</li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void LowerRussianListDisabledByDefault()
+        {
+            Helpers.ExecuteTest("а) арбузы", "<p>а) арбузы</p>", EmptySettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void LowerRussianListDisabledAlone()
+        {
+            var s = CommonMarkSettings.Default.Clone();
+            s.Extensions.Register(new FancyLists(s, new FancyListsSettings(AlphaListStyles.All & ~AlphaListStyles.LowerRussian)));
+            Helpers.ExecuteTest("а. арбузы", "<p>а. арбузы</p>", s);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void LowerRussianListStart1()
+        {
+            Helpers.ExecuteTest("а) арбузы", "<ol style=\"list-style-type: lower-russian\">\n<li>арбузы</li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void LowerRussianListStart28()
+        {
+            Helpers.ExecuteTest("я. яблоки", "<ol start=\"28\" style=\"list-style-type: lower-russian\">\n<li>яблоки</li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void LowerRussianListStart29()
+        {
+            Helpers.ExecuteTest("аа) алыча", "<ol start=\"29\" style=\"list-style-type: lower-russian\">\n<li>алыча</li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void UpperRussianListDisabledByDefault()
+        {
+            Helpers.ExecuteTest("А) арбузы", "<p>А) арбузы</p>", EmptySettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void UpperRussianListDisabledAlone()
+        {
+            var s = CommonMarkSettings.Default.Clone();
+            s.Extensions.Register(new FancyLists(s, new FancyListsSettings(AlphaListStyles.All & ~AlphaListStyles.UpperRussian)));
+            Helpers.ExecuteTest("А.  Арбузы", "<p>А.  Арбузы</p>", s);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void UpperRussianListStart1()
+        {
+            Helpers.ExecuteTest("А) Арбузы", "<ol style=\"list-style-type: upper-russian\">\n<li>Арбузы</li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void UpperRussianListStart28()
+        {
+            Helpers.ExecuteTest("Я.  Яблоки", "<ol start=\"28\" style=\"list-style-type: upper-russian\">\n<li>Яблоки</li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void UpperRussianListStart29()
+        {
+            Helpers.ExecuteTest("АА) Алыча", "<ol start=\"29\" style=\"list-style-type: upper-russian\">\n<li>Алыча</li>\n</ol>", FullSettings);
         }
 
         [TestMethod]

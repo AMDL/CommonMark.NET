@@ -90,6 +90,7 @@ namespace CommonMark.Parser.Blocks.Delimiters
                 MarkerMinChar = markerMinChar,
                 MarkerMaxChar = markerMaxChar,
                 ValueMap = valueMap,
+                ValueBase = parameters.ValueBase != 0 ? parameters.ValueBase : valueMapDict.Count,
             };
         }
 
@@ -117,7 +118,7 @@ namespace CommonMark.Parser.Blocks.Delimiters
             var rangeMax = range.MaxCharacter;
             for (int i = 0; i <= rangeMax - rangeMin; i++)
             {
-                valueMap.Add((char)(i + rangeMin), range.StartValue + i);
+                valueMap.Add((char)(i + rangeMin), valueMap.Count + 1);
             }
             if (rangeMin < min)
                 min = rangeMin;

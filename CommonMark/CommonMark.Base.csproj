@@ -50,6 +50,7 @@
     <Compile Include="CommonMarkExtensionCollection.cs" />
     <Compile Include="CommonMarkSettings.cs" />
     <Compile Include="CommonMarkExtension.cs" />
+    <Compile Include="Extension\AlphaListStyles.cs" />
     <Compile Include="Extension\FancyListsFeatures.cs" />
     <Compile Include="Extension\AdditiveListStyles.cs" />
     <Compile Include="Extension\FancyLists.cs" />

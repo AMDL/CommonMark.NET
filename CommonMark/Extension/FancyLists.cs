@@ -38,6 +38,7 @@ namespace CommonMark.Extension
             AddUnorderedHandlers(handlers, settings);
             AddDecimalHandlers(handlers, settings);
             AddNumericHandlers(handlers, settings);
+            AddAlphaHandlers(handlers, settings);
             AddAdditiveHandlers(handlers, settings);
             return handlers;
         }
@@ -162,6 +163,53 @@ namespace CommonMark.Extension
             return new NumericListItemHandler(settings, parameters);
         }
 
+        private void AddAlphaHandlers(List<IBlockDelimiterHandler> handlers, CommonMarkSettings settings)
+        {
+            AddHandlers(handlers, settings, GetAlphaParameters, CreateAlphaHandler, (int)fancyListsSettings.AlphaListStyles, (int)AlphaListStyles.All);
+        }
+
+        private static IEnumerable<OrderedListItemParameters> GetAlphaParameters()
+        {
+            yield return GetLowerGreekParameters();
+            yield return GetLowerRussianParameters();
+            yield return GetUpperRussianParameters();
+        }
+
+        private static OrderedListItemParameters GetLowerGreekParameters()
+        {
+            return new OrderedListItemParameters(listStyle: "lower-greek", markers: new[]
+            {
+                new OrderedListMarkerRangeParameters('α', 'ρ'),
+                new OrderedListMarkerRangeParameters('σ', 'ω'),
+            },
+            maxMarkerLength: 3);
+        }
+
+        private static OrderedListItemParameters GetLowerRussianParameters()
+        {
+            return new OrderedListItemParameters(listStyle: "lower-russian", markers: new[]
+            {
+                new OrderedListMarkerRangeParameters('а', 'е'),
+                new OrderedListMarkerRangeParameters('ж', 'и'),
+                new OrderedListMarkerRangeParameters('к', 'щ'),
+                new OrderedListMarkerRangeParameters('э', 'я'),
+            },
+            maxMarkerLength: 3);
+        }
+
+        private static OrderedListItemParameters GetUpperRussianParameters()
+        {
+            return new OrderedListItemParameters(listStyle: "upper-russian", markers: new[]
+            {
+                new OrderedListMarkerRangeParameters('А', 'Е'),
+                new OrderedListMarkerRangeParameters('Ж', 'И'),
+                new OrderedListMarkerRangeParameters('К', 'Щ'),
+                new OrderedListMarkerRangeParameters('Э', 'Я'),
+            },
+            maxMarkerLength: 3,
+            delimiters: ListItemDelimiterParameters.DefaultUpper);
+        }
+
         private void AddAdditiveHandlers(List<IBlockDelimiterHandler> handlers, CommonMarkSettings settings)
         {
             AddHandlers(handlers, settings, GetAdditiveParameters, CreateAlphaHandler, (int)fancyListsSettings.AdditiveListStyles, (int)AdditiveListStyles.All);
@@ -176,7 +224,7 @@ namespace CommonMark.Extension
         {
             return new OrderedListItemParameters(listStyle: "hebrew", markers: new OrderedListMarkerParameters[]
             {
-                new OrderedListMarkerRangeParameters('א', 'י', 1),
+                new OrderedListMarkerRangeParameters('א', 'י'),
                 new OrderedListSingleMarkerParameters('כ', 20),
                 new OrderedListSingleMarkerParameters('ל', 30),
                 new OrderedListSingleMarkerParameters('מ', 40),
@@ -190,6 +238,7 @@ namespace CommonMark.Extension
                 new OrderedListSingleMarkerParameters('ש', 300),
                 new OrderedListSingleMarkerParameters('ת', 400),
             },
+            valueBase: 1,
             maxMarkerLength: 3,
             delimiters: ListItemDelimiterParameters.DefaultUpper);
         }

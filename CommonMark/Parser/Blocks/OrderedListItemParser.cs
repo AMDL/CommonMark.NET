@@ -18,9 +18,9 @@ namespace CommonMark.Parser.Blocks
         }
 
         /// <summary>
-        /// Gets or sets the start value (0 for decimal numerals).
+        /// Gets the start value (0 for decimal numerals).
         /// </summary>
-        public int StartValue { get; set; }
+        public int StartValue { get; }
     }
 
     /// <summary>
@@ -56,7 +56,7 @@ namespace CommonMark.Parser.Blocks
         /// <param name="minChar">First marker character.</param>
         /// <param name="maxChar">Last marker character.</param>
         /// <param name="startValue">Start value.</param>
-        public OrderedListMarkerRangeParameters(char minChar, char maxChar, int startValue)
+        public OrderedListMarkerRangeParameters(char minChar, char maxChar, int startValue = 0)
             : base(startValue)
         {
             this.MinCharacter = minChar;
@@ -115,7 +115,7 @@ namespace CommonMark.Parser.Blocks
         /// <param name="listStyle">List style.</param>
         /// <param name="delimiters">Delimiter parameters.</param>
 #pragma warning disable 0618
-        public OrderedListItemParameters(OrderedListMarkerParameters[] markers, int valueBase = 1, int maxMarkerLength = 9,
+        public OrderedListItemParameters(OrderedListMarkerParameters[] markers, int valueBase = 0, int maxMarkerLength = 9,
             BlockTag tag = BlockTag.ListItem, BlockTag parentTag = BlockTag.OrderedList, ListType listType = ListType.Ordered,
             OrderedListMarkerType markerType = OrderedListMarkerType.None, string listStyle = null, ListItemDelimiterParameters[] delimiters = null)
             : base(tag, parentTag, listType, delimiters ?? ListItemDelimiterParameters.Default)

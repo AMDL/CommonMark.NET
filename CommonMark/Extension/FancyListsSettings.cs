@@ -10,11 +10,13 @@
         /// </summary>
         /// <param name="features">Fancy lists features.</param>
         /// <param name="numericListStyles">Numeral list styles.</param>
+        /// <param name="alphaListStyles">Alphabetical list styles.</param>
         /// <param name="additiveListStyles">Additive list styles.</param>
-        public FancyListsSettings(FancyListsFeatures features, NumericListStyles numericListStyles, AdditiveListStyles additiveListStyles)
+        public FancyListsSettings(FancyListsFeatures features, NumericListStyles numericListStyles, AlphaListStyles alphaListStyles, AdditiveListStyles additiveListStyles)
         {
             this.Features = features;
             this.NumericListStyles = numericListStyles;
+            this.AlphaListStyles = alphaListStyles;
             this.AdditiveListStyles = additiveListStyles;
         }
 
@@ -23,7 +25,7 @@
         /// </summary>
         /// <param name="features">Fancy lists features.</param>
         public FancyListsSettings(FancyListsFeatures features)
-            : this(features, NumericListStyles.None, AdditiveListStyles.None)
+            : this(features, NumericListStyles.None, AlphaListStyles.None, AdditiveListStyles.None)
         {
         }
 
@@ -32,7 +34,16 @@
         /// </summary>
         /// <param name="numericListStyles">Numeric list styles.</param>
         public FancyListsSettings(NumericListStyles numericListStyles)
-            : this(FancyListsFeatures.None, numericListStyles, AdditiveListStyles.None)
+            : this(FancyListsFeatures.None, numericListStyles, AlphaListStyles.None, AdditiveListStyles.None)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FancyListsSettings"/> structure.
+        /// </summary>
+        /// <param name="alphaListStyles">Alphabetical list styles.</param>
+        public FancyListsSettings(AlphaListStyles alphaListStyles)
+            : this(FancyListsFeatures.None, NumericListStyles.None, alphaListStyles, AdditiveListStyles.None)
         {
         }
 
@@ -41,7 +52,7 @@
         /// </summary>
         /// <param name="additiveListStyles">Additive list styles.</param>
         public FancyListsSettings(AdditiveListStyles additiveListStyles)
-            : this(FancyListsFeatures.None, NumericListStyles.None, additiveListStyles)
+            : this(FancyListsFeatures.None, NumericListStyles.None, AlphaListStyles.None, additiveListStyles)
         {
         }
 
@@ -54,6 +65,11 @@
         /// Gets or sets the numeric list styles.
         /// </summary>
         public NumericListStyles NumericListStyles { get; set; }
+
+        /// <summary>
+        /// Gets or sets the alphabetical list styles.
+        /// </summary>
+        public AlphaListStyles AlphaListStyles { get; set; }
 
         /// <summary>
         /// Gets or sets the additive list styles.
