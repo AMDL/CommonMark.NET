@@ -15,8 +15,8 @@ namespace CommonMark.Parser.Blocks.Delimiters
             listStyle: "lower-latin",
             markerMinChar: 'a',
             markerMaxChar: 'z',
-            maxMarkerLength: 3,
-            startValue: 1);
+            startValue: 1,
+            delimiters: ListItemDelimiterParameters.DefaultLower);
 
         /// <summary>
         /// The default parameters for uppercase ASCII letter lists.
@@ -26,7 +26,6 @@ namespace CommonMark.Parser.Blocks.Delimiters
             listStyle: "upper-latin",
             markerMinChar: 'A',
             markerMaxChar: 'Z',
-            maxMarkerLength: 3,
             startValue: 1,
             delimiters: ListItemDelimiterParameters.DefaultUpper);
 

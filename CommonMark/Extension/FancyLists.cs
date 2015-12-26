@@ -185,7 +185,8 @@ namespace CommonMark.Extension
             {
                 new OrderedListMarkerRangeParameters('α', 'ρ'),
                 new OrderedListMarkerRangeParameters('σ', 'ω'),
-            });
+            },
+            delimiters: ListItemDelimiterParameters.DefaultLower);
         }
 
         private static OrderedListItemParameters GetLowerRussianParameters()
@@ -196,7 +197,8 @@ namespace CommonMark.Extension
                 new OrderedListMarkerRangeParameters('ж', 'и'),
                 new OrderedListMarkerRangeParameters('к', 'щ'),
                 new OrderedListMarkerRangeParameters('э', 'я'),
-            });
+            },
+            delimiters: ListItemDelimiterParameters.DefaultLower);
         }
 
         private static OrderedListItemParameters GetUpperRussianParameters()

@@ -15,8 +15,11 @@ namespace CommonMark.Extension
 
         /// <summary>
         /// Hebrew letters.
-        /// If dots are used as delimiters, at least two spaces after the dot are required.
         /// </summary>
+        /// <remarks>
+        /// If dots are used as delimiters, at least two spaces after the dot are required.
+        /// If parentheses are used as delimiters, only single letters will be recognized as markers.
+        /// </remarks>
         Hebrew,
 
         /// <summary>

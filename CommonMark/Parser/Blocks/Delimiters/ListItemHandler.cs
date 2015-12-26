@@ -18,12 +18,21 @@ namespace CommonMark.Parser.Blocks.Delimiters
         };
 
         /// <summary>
-        /// The default delimiter parameters for ordered lists with uppercase ASCII letter markers.
+        /// The default delimiter parameters for ordered lists with lowercase letter markers.
+        /// </summary>
+        public static readonly ListItemDelimiterParameters[] DefaultLower = new[]
+        {
+            new ListItemDelimiterParameters('.', 1, 3),
+            new ListItemDelimiterParameters(')', 1, 1),
+        };
+
+        /// <summary>
+        /// The default delimiter parameters for ordered lists with uppercase letter markers.
         /// </summary>
         public static readonly ListItemDelimiterParameters[] DefaultUpper = new[]
         {
-            new ListItemDelimiterParameters('.', 2),
-            new ListItemDelimiterParameters(')', 1),
+            new ListItemDelimiterParameters('.', 2, 3),
+            new ListItemDelimiterParameters(')', 1, 1),
         };
 
         /// <summary>
@@ -31,21 +40,28 @@ namespace CommonMark.Parser.Blocks.Delimiters
         /// </summary>
         /// <param name="character">Delimiter character.</param>
         /// <param name="minSpaceCount">Minimum space count.</param>
-        public ListItemDelimiterParameters(char character, int minSpaceCount = 1)
+        /// <param name="maxMarkerLength">Maximum marker length.</param>
+        public ListItemDelimiterParameters(char character, int minSpaceCount = 1, int maxMarkerLength = 9)
         {
             Character = character;
             MinSpaceCount = minSpaceCount;
+            MaxMarkerLength = maxMarkerLength;
         }
 
         /// <summary>
-        /// Gets or sets the delimiter character.
+        /// Gets the delimiter character.
         /// </summary>
-        public char Character { get; set; }
+        public char Character { get; }
 
         /// <summary>
-        /// Gets or sets the minimum number of space characters between the delimiter and the item content.
+        /// Gets the minimum number of space characters between the delimiter and the item content.
         /// </summary>
-        public int MinSpaceCount { get; set; }
+        public int MinSpaceCount { get; }
+
+        /// <summary>
+        /// Gets the maximum marker length.
+        /// </summary>
+        public int MaxMarkerLength { get; }
     }
 
     /// <summary>

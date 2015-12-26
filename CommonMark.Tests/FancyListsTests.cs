@@ -90,6 +90,13 @@ namespace CommonMark.Tests
 
         [TestMethod]
         [TestCategory("Container blocks - Fancy lists")]
+        public void LowerLatinListMaxMarkerLength1()
+        {
+            Helpers.ExecuteTest("aa) bar\n", "<p>aa) bar</p>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
         public void LowerLatinListMaxMarkerLength3()
         {
             Helpers.ExecuteTest("aaaa. baz\n", "<p>aaaa. baz</p>", FullSettings);
@@ -144,6 +151,13 @@ namespace CommonMark.Tests
         public void UpperLatinListStart27()
         {
             Helpers.ExecuteTest("AA.  foo\n", "<ol start=\"27\" type=\"A\" style=\"list-style-type: upper-latin\">\n<li>foo</li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void UpperLatinListMaxMarkerLength1()
+        {
+            Helpers.ExecuteTest("AA) bar\n", "<p>AA) bar</p>", FullSettings);
         }
 
         [TestMethod]
@@ -213,6 +227,20 @@ namespace CommonMark.Tests
 
         [TestMethod]
         [TestCategory("Container blocks - Fancy lists")]
+        public void LowerRomanListMaxLength3()
+        {
+            Helpers.ExecuteTest("mcml) O_O", "<p>mcml) O_O</p>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void LowerRomanListMaxLength9()
+        {
+            Helpers.ExecuteTest("mcmlxxxvii. O_O", "<p>mcmlxxxvii. O_O</p>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
         public void LowerRomanInsideLowerLatinList()
         {
             Helpers.ExecuteTest("a. Apples\nb. Blackberries\nc. Cantaloops\nd. Durians", "<ol type=\"a\" style=\"list-style-type: lower-latin\">\n<li>Apples</li>\n<li>Blackberries</li>\n<li>Cantaloops</li>\n<li>Durians</li>\n</ol>", FullSettings);
@@ -253,6 +281,20 @@ namespace CommonMark.Tests
         public void UpperRomanListStart1984()
         {
             Helpers.ExecuteTest("MCMLXXXIV.  O.", "<ol start=\"1984\" type=\"I\" style=\"list-style-type: upper-roman\">\n<li>O.</li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void UpperRomanListMaxLength3()
+        {
+            Helpers.ExecuteTest("MCML) O_O", "<p>MCML) O_O</p>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void UpperRomanListMaxLength9()
+        {
+            Helpers.ExecuteTest("MCMLXXXVII.  O_O", "<p>MCMLXXXVII.  O_O</p>", FullSettings);
         }
 
         [TestMethod]
@@ -301,6 +343,13 @@ namespace CommonMark.Tests
 
         [TestMethod]
         [TestCategory("Container blocks - Fancy lists")]
+        public void HashListEnabled2()
+        {
+            Helpers.ExecuteTest("#) foo", "<ol>\n<li>foo</li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
         public void HashListBeforeDecimalList()
         {
             Helpers.ExecuteTest("#. foo\n1. bar", "<ol>\n<li>foo</li>\n</ol>\n<ol type=\"1\">\n<li>bar</li>\n</ol>", FullSettings);
@@ -311,6 +360,20 @@ namespace CommonMark.Tests
         public void HashListAfterDecimalList()
         {
             Helpers.ExecuteTest("1. bar\n#. baz", "<ol type=\"1\">\n<li>bar</li>\n</ol>\n<ol>\n<li>baz</li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void HashListMaxMarkerLength1()
+        {
+            Helpers.ExecuteTest("##. foo", "<p>##. foo</p>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void HashListMaxMarkerLength1_2()
+        {
+            Helpers.ExecuteTest("##) foo", "<p>##) foo</p>", FullSettings);
         }
 
         [TestMethod]
@@ -647,7 +710,14 @@ namespace CommonMark.Tests
         [TestCategory("Container blocks - Fancy lists")]
         public void LowerGreekListStart25()
         {
-            Helpers.ExecuteTest("αα) δυο άλφα", " <ol start=\"25\" style=\"list-style-type: lower-greek\">\n<li>δυο άλφα</li>\n</ol>", FullSettings);
+            Helpers.ExecuteTest("αα. δυο άλφα", "<ol start=\"25\" style=\"list-style-type: lower-greek\">\n<li>δυο άλφα</li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void LowerGreekListMaxMarkerLength1()
+        {
+            Helpers.ExecuteTest("αα) δυο άλφα", "<p>αα) δυο άλφα</p>", FullSettings);
         }
 
         [TestMethod]
@@ -684,21 +754,28 @@ namespace CommonMark.Tests
         [TestCategory("Container blocks - Fancy lists")]
         public void LowerRussianListStart29()
         {
-            Helpers.ExecuteTest("аа) алыча", "<ol start=\"29\" style=\"list-style-type: lower-russian\">\n<li>алыча</li>\n</ol>", FullSettings);
+            Helpers.ExecuteTest("аа. алыча", "<ol start=\"29\" style=\"list-style-type: lower-russian\">\n<li>алыча</li>\n</ol>", FullSettings);
         }
 
         [TestMethod]
         [TestCategory("Container blocks - Fancy lists")]
         public void LowerRussianListStart999()
         {
-            Helpers.ExecuteTest("ажу) р", "<ol start=\"999\" style=\"list-style-type: lower-russian\">\n<li>р</li>\n</ol>", FullSettings);
+            Helpers.ExecuteTest("ажу. р", "<ol start=\"999\" style=\"list-style-type: lower-russian\">\n<li>р</li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void LowerRussianListMaxMarkerLength1()
+        {
+            Helpers.ExecuteTest("аа) ржу", "<p>аа) ржу</p>", FullSettings);
         }
 
         [TestMethod]
         [TestCategory("Container blocks - Fancy lists")]
         public void LowerRussianListMaxMarkerLength3()
         {
-            Helpers.ExecuteTest("аааа) ржу", "<p>аааа) ржу</p>", FullSettings);
+            Helpers.ExecuteTest("аааа. ржу", "<p>аааа. ржу</p>", FullSettings);
         }
 
         [TestMethod]
@@ -735,21 +812,28 @@ namespace CommonMark.Tests
         [TestCategory("Container blocks - Fancy lists")]
         public void UpperRussianListStart29()
         {
-            Helpers.ExecuteTest("АА) Алыча", "<ol start=\"29\" style=\"list-style-type: upper-russian\">\n<li>Алыча</li>\n</ol>", FullSettings);
+            Helpers.ExecuteTest("АА.  Алыча", "<ol start=\"29\" style=\"list-style-type: upper-russian\">\n<li>Алыча</li>\n</ol>", FullSettings);
         }
 
         [TestMethod]
         [TestCategory("Container blocks - Fancy lists")]
         public void UpperRussianListStart999()
         {
-            Helpers.ExecuteTest("АЖУ) Р", "<ol start=\"999\" style=\"list-style-type: upper-russian\">\n<li>Р</li>\n</ol>", FullSettings);
+            Helpers.ExecuteTest("АЖУ.  Р", "<ol start=\"999\" style=\"list-style-type: upper-russian\">\n<li>Р</li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void UpperRussianListMaxMarkerLength1()
+        {
+            Helpers.ExecuteTest("АА) ржу", "<p>АА) ржу</p>", FullSettings);
         }
 
         [TestMethod]
         [TestCategory("Container blocks - Fancy lists")]
         public void UpperRussianListMaxMarkerLength3()
         {
-            Helpers.ExecuteTest("АААА) ржу", "<p>АААА) ржу</p>", FullSettings);
+            Helpers.ExecuteTest("АААА.  ржу", "<p>АААА.  ржу</p>", FullSettings);
         }
 
         [TestMethod]
@@ -876,6 +960,13 @@ namespace CommonMark.Tests
         public void HebrewListStart400()
         {
             Helpers.ExecuteTest("ת.  פ.", "<ol start=\"400\" style=\"list-style-type: hebrew\">\n<li>פ.</li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void HebrewListStartMaxMarkerLength1()
+        {
+            Helpers.ExecuteTest("יא) פ.", "<p>יא) פ.</p>", FullSettings);
         }
 
         [TestMethod]

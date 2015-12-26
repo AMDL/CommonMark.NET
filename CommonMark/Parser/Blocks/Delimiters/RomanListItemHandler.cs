@@ -13,15 +13,19 @@ namespace CommonMark.Parser.Blocks.Delimiters
         public static readonly OrderedListItemParameters LowerRomanParameters = new OrderedListItemParameters(
             markerType: OrderedListMarkerType.LowerRoman,
             listStyle: "lower-roman",
-            maxMarkerLength: 9,
             markers: new[]
             {
-                new OrderedListSingleMarkerParameters('i', 1),
-                new OrderedListSingleMarkerParameters('v', 5),
-                new OrderedListSingleMarkerParameters('x', 10),
-                new OrderedListSingleMarkerParameters('l', 50),
-                new OrderedListSingleMarkerParameters('c', 100),
-                new OrderedListSingleMarkerParameters('m', 1000),
+                new OrderedListSingleMarkerParameters('i', value:1),
+                new OrderedListSingleMarkerParameters('v', value:5),
+                new OrderedListSingleMarkerParameters('x', value:10),
+                new OrderedListSingleMarkerParameters('l', value:50),
+                new OrderedListSingleMarkerParameters('c', value:100),
+                new OrderedListSingleMarkerParameters('m', value:1000),
+            },
+            delimiters: new[]
+            {
+                new ListItemDelimiterParameters('.', 1, 9),
+                new ListItemDelimiterParameters(')', 1, 3),
             });
 
         /// <summary>
@@ -30,17 +34,20 @@ namespace CommonMark.Parser.Blocks.Delimiters
         public static readonly OrderedListItemParameters UpperRomanParameters = new OrderedListItemParameters(
             markerType: OrderedListMarkerType.UpperRoman,
             listStyle: "upper-roman",
-            maxMarkerLength: 9,
             markers: new[]
             {
-                new OrderedListSingleMarkerParameters('I', 1),
-                new OrderedListSingleMarkerParameters('V', 5),
-                new OrderedListSingleMarkerParameters('X', 10),
-                new OrderedListSingleMarkerParameters('L', 50),
-                new OrderedListSingleMarkerParameters('C', 100),
-                new OrderedListSingleMarkerParameters('M', 1000),
+                new OrderedListSingleMarkerParameters('I', value:1),
+                new OrderedListSingleMarkerParameters('V', value:5),
+                new OrderedListSingleMarkerParameters('X', value:10),
+                new OrderedListSingleMarkerParameters('L', value:50),
+                new OrderedListSingleMarkerParameters('C', value:100),
+                new OrderedListSingleMarkerParameters('M', value:1000),
             },
-            delimiters: ListItemDelimiterParameters.DefaultUpper);
+            delimiters: new[]
+            {
+                new ListItemDelimiterParameters('.', 2, 9),
+                new ListItemDelimiterParameters(')', 1, 3),
+            });
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RomanListItemHandler"/> class.

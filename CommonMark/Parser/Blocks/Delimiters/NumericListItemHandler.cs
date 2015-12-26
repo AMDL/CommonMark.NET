@@ -11,7 +11,7 @@ namespace CommonMark.Parser.Blocks.Delimiters
         /// The default parameters instance.
         /// </summary>
         public static readonly OrderedListItemParameters DefaultParameters = new OrderedListItemParameters(
-            '0', '9', 0, 10, 9,
+            '0', '9', 0, 10,
             BlockTag.ListItem,
             BlockTag.OrderedList,
 #pragma warning disable 0618

@@ -22,14 +22,14 @@ namespace CommonMark.Parser.Blocks.Delimiters
         }
 
         /// <summary>
-        /// Gets or sets the value indicating whether the delimiter character doubles as a thematic break character.
+        /// Gets the value indicating whether the delimiter character doubles as a thematic break character.
         /// </summary>
-        public bool IsThematicBreakCharacter { get; set; }
+        public bool IsThematicBreakCharacter { get; }
 
         /// <summary>
-        /// Gets or sets the list style.
+        /// Gets the list style.
         /// </summary>
-        public string ListStyle { get; set; }
+        public string ListStyle { get; }
     }
 
     /// <summary>

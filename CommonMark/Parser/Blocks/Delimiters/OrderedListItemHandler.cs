@@ -51,7 +51,7 @@ namespace CommonMark.Parser.Blocks.Delimiters
         {
             MarkerMinCharacter = handlerParameters.MarkerMinChar;
             MarkerMaxCharacter = handlerParameters.MarkerMaxChar;
-            MaxMarkerLength = handlerParameters.Parameters.MaxMarkerLength;
+            MaxMarkerLength = handlerParameters.Delimiter.MaxMarkerLength;
             MarkerType = handlerParameters.Parameters.MarkerType;
             ListStyle = handlerParameters.Parameters.ListStyle;
             ValueBase = handlerParameters.ValueBase;

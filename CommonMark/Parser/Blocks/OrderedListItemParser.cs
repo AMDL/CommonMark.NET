@@ -86,7 +86,6 @@ namespace CommonMark.Parser.Blocks
         /// <param name="markerMaxChar">Last marker character.</param>
         /// <param name="startValue">Start value (0 for decimal numerals).</param>
         /// <param name="valueBase">Value base (10 for decimal numerals).</param>
-        /// <param name="maxMarkerLength">Maximum marker length.</param>
         /// <param name="tag">List item element tag.</param>
         /// <param name="parentTag">List element tag.</param>
         /// <param name="listType">List type (obsolete).</param>
@@ -94,11 +93,11 @@ namespace CommonMark.Parser.Blocks
         /// <param name="listStyle">List style.</param>
         /// <param name="delimiters">Delimiter parameters.</param>
 #pragma warning disable 0618
-        public OrderedListItemParameters(char markerMinChar, char markerMaxChar, short startValue = 0, short valueBase = 0, int maxMarkerLength = 9,
+        public OrderedListItemParameters(char markerMinChar, char markerMaxChar, short startValue = 0, short valueBase = 0,
             BlockTag tag = BlockTag.ListItem, BlockTag parentTag = BlockTag.OrderedList, ListType listType = ListType.Ordered,
             OrderedListMarkerType markerType = OrderedListMarkerType.None, string listStyle = null, ListItemDelimiterParameters[] delimiters = null)
 #pragma warning restore 0618
-            : this(new[] { new OrderedListMarkerRangeParameters(markerMinChar, markerMaxChar, startValue) }, valueBase, maxMarkerLength, tag, parentTag, listType, markerType, listStyle, delimiters)
+            : this(new[] { new OrderedListMarkerRangeParameters(markerMinChar, markerMaxChar, startValue) }, valueBase, tag, parentTag, listType, markerType, listStyle, delimiters)
         {
         }
 
@@ -110,7 +109,7 @@ namespace CommonMark.Parser.Blocks
         /// <param name="listStyle">List style.</param>
         /// <param name="delimiterChars">Delimiter characters.</param>
         public OrderedListItemParameters(char[] markerChars, int maxMarkerLength = 3, string listStyle = null, params char[] delimiterChars)
-            : this(listStyle: listStyle, markers: GetMarkers(markerChars), delimiters: GetDelimiters(delimiterChars), maxMarkerLength: maxMarkerLength)
+            : this(listStyle: listStyle, markers: GetMarkers(markerChars), delimiters: GetDelimiters(delimiterChars, maxMarkerLength))
         {
         }
 
@@ -119,7 +118,6 @@ namespace CommonMark.Parser.Blocks
         /// </summary>
         /// <param name="markers">Marker parameters.</param>
         /// <param name="valueBase">Value base (1 for additive lists).</param>
-        /// <param name="maxMarkerLength">Maximum marker length.</param>
         /// <param name="tag">List item element tag.</param>
         /// <param name="parentTag">List element tag.</param>
         /// <param name="listType">List type (obsolete).</param>
@@ -127,14 +125,13 @@ namespace CommonMark.Parser.Blocks
         /// <param name="listStyle">List style.</param>
         /// <param name="delimiters">Delimiter parameters.</param>
 #pragma warning disable 0618
-        public OrderedListItemParameters(OrderedListMarkerParameters[] markers, short valueBase = 0, int maxMarkerLength = 3,
+        public OrderedListItemParameters(OrderedListMarkerParameters[] markers, short valueBase = 0,
             BlockTag tag = BlockTag.ListItem, BlockTag parentTag = BlockTag.OrderedList, ListType listType = ListType.Ordered,
             OrderedListMarkerType markerType = OrderedListMarkerType.None, string listStyle = null, ListItemDelimiterParameters[] delimiters = null)
             : base(tag, parentTag, listType, delimiters ?? ListItemDelimiterParameters.Default)
 #pragma warning restore 0618
         {
             this.ValueBase = valueBase;
-            this.MaxMarkerLength = maxMarkerLength;
             this.MarkerType = markerType;
             this.Markers = markers;
             this.ListStyle = listStyle;
@@ -153,11 +150,6 @@ namespace CommonMark.Parser.Blocks
         /// Gets or sets the list marker parameters.
         /// </summary>
         public OrderedListMarkerParameters[] Markers { get; set; }
-
-        /// <summary>
-        /// Gets or sets the maximum marker length.
-        /// </summary>
-        public int MaxMarkerLength { get; set; }
 
         /// <summary>
         /// Gets or sets the list marker type.
@@ -185,14 +177,14 @@ namespace CommonMark.Parser.Blocks
             return markers;
         }
 
-        private static ListItemDelimiterParameters[] GetDelimiters(char[] delimiterChars)
+        private static ListItemDelimiterParameters[] GetDelimiters(char[] delimiterChars, int maxMarkerLength)
         {
             var length = delimiterChars.Length;
             if (length == 0)
                 return null;
             var delimiters = new ListItemDelimiterParameters[length];
             for (var i = 0; i < length; i++)
-                delimiters[i] = new ListItemDelimiterParameters(delimiterChars[i]);
+                delimiters[i] = new ListItemDelimiterParameters(delimiterChars[i], maxMarkerLength: maxMarkerLength);
             return delimiters;
         }
     }

@@ -16,12 +16,18 @@ namespace CommonMark.Extension
         /// <summary>
         /// Ordered lists with lowercase Roman numeral markers.
         /// </summary>
+        /// <remarks>
+        /// If parentheses are used as delimiters, markers cannot be longer than than three letters.
+        /// </remarks>
         LowerRoman = 1,
 
         /// <summary>
         /// Ordered lists with uppercase Roman numeral markers.
-        /// If dots are used as delimiters, at least two spaces after the dot are required.
         /// </summary>
+        /// <remarks>
+        /// If dots are used as delimiters, at least two spaces after the dot are required.
+        /// If parentheses are used as delimiters, markers cannot be longer than than three letters.
+        /// </remarks>
         UpperRoman = 2,
 
         /// <summary>
@@ -32,12 +38,18 @@ namespace CommonMark.Extension
         /// <summary>
         /// Ordered lists with lowercase ASCII letter markers.
         /// </summary>
+        /// <remarks>
+        /// If parentheses are used as delimiters, only single-letter markers will be recognized.
+        /// </remarks>
         LowerLatin = 4,
 
         /// <summary>
         /// Ordered lists with uppercase ASCII letter markers.
-        /// If dots are used as delimiters, at least two spaces after the dot are required.
         /// </summary>
+        /// <remarks>
+        /// If dots are used as delimiters, at least two spaces after the dot are required.
+        /// If parentheses are used as delimiters, only single-letter markers will be recognized.
+        /// </remarks>
         UpperLatin = 8,
 
         /// <summary>
