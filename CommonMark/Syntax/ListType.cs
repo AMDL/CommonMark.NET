@@ -5,7 +5,7 @@ namespace CommonMark.Syntax
     /// <summary>
     /// Defines the type of a list block element.
     /// </summary>
-    [Obsolete("This API has been superceded by " + nameof(BlockTag.UnorderedList) + " and " + nameof(BlockTag.OrderedList) + ".")]
+    [Obsolete("This API has been superseded by " + nameof(BlockTag.UnorderedList) + " and " + nameof(BlockTag.OrderedList) + ".")]
     public enum ListType
     {
         /// <summary>

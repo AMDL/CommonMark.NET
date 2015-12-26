@@ -5,7 +5,43 @@ namespace CommonMark.Syntax
     /// <summary>
     /// Contains additional data for list block elements. Used in <see cref="Block.ListData"/> property.
     /// </summary>
-    public sealed class ListData
+    [Obsolete("This API has been superseded by " + nameof(UnorderedListData) + " and " + nameof(OrderedListData) + ".")]
+    public sealed class ListData : ListData<ListData>
+    {
+        /// <summary>
+        /// Gets or sets the number for the first list item if <see cref="ListData.ListType"/> is set to
+        /// <see cref="F:ListType.Ordered"/>.
+        /// </summary>
+        [Obsolete("This API has been superseded by " + nameof(OrderedListData) + ".")]
+        public int Start { get; set; }
+
+        /// <summary>
+        /// Gets or sets the character used for unordered lists. Used if <see cref="ListData.ListType"/> is set to
+        /// <see cref="F:ListType.Bullet"/>.
+        /// </summary>
+        [Obsolete("This API has been superseded by " + nameof(UnorderedListData) + ".")]
+        public char BulletChar { get; set; }
+
+        /// <summary>
+        /// Gets or sets the type (ordered or unordered) of this list.
+        /// </summary>
+        [Obsolete("This API has been superseded by " + nameof(BlockTag.UnorderedList) + " and " + nameof(BlockTag.OrderedList) + ".")]
+        public ListType ListType { get; set; }
+
+        /// <summary>
+        /// Gets or sets the character that follows the number if <see cref="ListData.ListType"/> is set to
+        /// <see cref="F:ListType.Ordered"/>.
+        /// </summary>
+        [Obsolete("This API has been superseded by " + nameof(OrderedListData) + ".")]
+        public ListDelimiter Delimiter { get; set; }
+    }
+
+    /// <summary>
+    /// Base list data class.
+    /// </summary>
+    /// <typeparam name="T">Type of list data.</typeparam>
+    public abstract class ListData<T>
+        where T : ListData<T>
     {
         /// <summary>
         /// Gets or sets the number of spaces the list markers are indented.
@@ -18,46 +54,11 @@ namespace CommonMark.Syntax
         public int Padding { get; set; }
 
         /// <summary>
-        /// Gets or sets the number for the first list item if <see cref="ListData.ListType"/> is set to
-        /// <see cref="F:ListType.Ordered"/>.
-        /// </summary>
-        [Obsolete("This API has been superceded by " + nameof(OrderedListData) + ".")]
-        public int Start { get; set; }
-
-        /// <summary>
-        /// Gets or sets the character used for unordered lists. Used if <see cref="ListData.ListType"/> is set to
-        /// <see cref="F:ListType.Bullet"/>.
-        /// </summary>
-        [Obsolete("This API has been superceded by " + nameof(UnorderedListData) + ".")]
-        public char BulletChar { get; set; }
-
-        /// <summary>
-        /// Gets or sets the type (ordered or unordered) of this list.
-        /// </summary>
-        [Obsolete("This API has been superceded by " + nameof(BlockTag.UnorderedList) + " and " + nameof(BlockTag.OrderedList) + ".")]
-        public ListType ListType { get; set; }
-
-        /// <summary>
-        /// Gets or sets the character that follows the number if <see cref="ListData.ListType"/> is set to
-        /// <see cref="F:ListType.Ordered"/>.
-        /// </summary>
-        [Obsolete("This API has been superceded by " + nameof(OrderedListData) + ".")]
-        public ListDelimiter Delimiter { get; set; }
-
-        /// <summary>
         /// Gets or sets a value indicating whether the list is tight (such list will not render additional explicit
         /// paragraph elements).
         /// </summary>
         public bool IsTight { get; set; }
-    }
 
-    /// <summary>
-    /// Base specific list data class.
-    /// </summary>
-    /// <typeparam name="T">Type of list data.</typeparam>
-    public abstract class ListData<T>
-        where T : ListData<T>
-    {
         /// <summary>
         /// Gets or sets the list style.
         /// </summary>

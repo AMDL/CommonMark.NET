@@ -55,8 +55,22 @@ namespace CommonMark.Parser.Blocks
         /// <returns><c>true</c> if successful.</returns>
         public override bool Finalize(Block container)
         {
+#pragma warning disable 0618
+            return DoFinalize(container, container.ListData);
+#pragma warning restore 0618
+        }
+
+        /// <summary>
+        /// Finalizes a handled element.
+        /// </summary>
+        /// <param name="container">Block element.</param>
+        /// <param name="listData">List data.</param>
+        /// <returns><c>true</c> if successful.</returns>
+        protected bool DoFinalize<TData>(Block container, TData listData)
+            where TData : ListData<TData>
+        {
             // determine tight/loose status
-            container.ListData.IsTight = true; // tight by default
+            listData.IsTight = true; // tight by default
             var item = container.FirstChild;
             Block subitem;
 
@@ -65,7 +79,7 @@ namespace CommonMark.Parser.Blocks
                 // check for non-final non-empty list item ending with blank line:
                 if (item.IsLastLineBlank && item.NextSibling != null)
                 {
-                    container.ListData.IsTight = false;
+                    listData.IsTight = false;
                     break;
                 }
 
@@ -75,14 +89,14 @@ namespace CommonMark.Parser.Blocks
                 {
                     if (EndsWithBlankLine(subitem) && (item.NextSibling != null || subitem.NextSibling != null))
                     {
-                        container.ListData.IsTight = false;
+                        listData.IsTight = false;
                         break;
                     }
 
                     subitem = subitem.NextSibling;
                 }
 
-                if (!container.ListData.IsTight)
+                if (!listData.IsTight)
                     break;
 
                 item = item.NextSibling;
@@ -109,36 +123,6 @@ namespace CommonMark.Parser.Blocks
                 if (block == null)
                     return false;
             }
-        }
-    }
-
-    /// <summary>
-    /// <see cref="BlockTag.UnorderedList"/> element parser.
-    /// </summary>
-    public sealed class UnorderedListParser : ListParser
-    {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="UnorderedListParser"/> class.
-        /// </summary>
-        /// <param name="settings">Common settings.</param>
-        public UnorderedListParser(CommonMarkSettings settings)
-            : base(settings, BlockTag.UnorderedList, BlockTag.ListItem)
-        {
-        }
-    }
-
-    /// <summary>
-    /// <see cref="BlockTag.OrderedList"/> element parser.
-    /// </summary>
-    public sealed class OrderedListParser : ListParser
-    {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="OrderedListParser"/> class.
-        /// </summary>
-        /// <param name="settings">Common settings.</param>
-        public OrderedListParser(CommonMarkSettings settings)
-            : base(settings, BlockTag.OrderedList, BlockTag.ListItem)
-        {
         }
     }
 }

@@ -23,7 +23,7 @@ namespace CommonMark.Parser.Blocks
         /// <summary>
         /// Gets the list type.
         /// </summary>
-        [Obsolete("This API has been superceded by " + nameof(BlockTag.UnorderedList) + " and " + nameof(BlockTag.OrderedList) + ".")]
+        [Obsolete("This API has been superseded by " + nameof(BlockTag.UnorderedList) + " and " + nameof(BlockTag.OrderedList) + ".")]
         ListType ListType { get; }
     }
 
@@ -63,7 +63,7 @@ namespace CommonMark.Parser.Blocks
         /// <summary>
         /// Gets or sets the list type.
         /// </summary>
-        [Obsolete("This API has been superceded by " + nameof(BlockTag.UnorderedList) + " and " + nameof(BlockTag.OrderedList) + ".")]
+        [Obsolete("This API has been superseded by " + nameof(BlockTag.UnorderedList) + " and " + nameof(BlockTag.OrderedList) + ".")]
         public ListType ListType { get; set; }
 
         /// <summary>
@@ -110,9 +110,7 @@ namespace CommonMark.Parser.Blocks
         /// <param name="settings">Common settings.</param>
         /// <param name="tag">Handled element tag.</param>
         /// <param name="parameters">List parameters.</param>
-#pragma warning disable 0618
         public ListItemParser(CommonMarkSettings settings, BlockTag tag = BlockTag.ListItem, ListParameters parameters = null)
-#pragma warning restore 0618
             : base(settings, tag)
         {
             Parameters = parameters ?? DefaultParameters;
@@ -175,7 +173,23 @@ namespace CommonMark.Parser.Blocks
         /// <returns><c>true</c> if successful.</returns>
         public override bool Initialize(ref BlockParserInfo info)
         {
-            var count = info.Container.ListData.MarkerOffset + info.Container.ListData.Padding;
+            switch (info.Container.Parent.Tag)
+            {
+                case BlockTag.UnorderedList:
+                    return DoInitialize(info, info.Container.UnorderedListData);
+                case BlockTag.OrderedList:
+                    return DoInitialize(info, info.Container.OrderedListData);
+                default:
+#pragma warning disable 0618
+                    return DoInitialize(info, info.Container.ListData);
+#pragma warning restore 0618
+            }
+        }
+
+        private static bool DoInitialize<TData>(BlockParserInfo info, TData listData)
+            where TData : ListData<TData>
+        {
+            var count = listData.MarkerOffset + listData.Padding;
             if (info.Indent >= count)
             {
                 info.AdvanceOffset(count, true);

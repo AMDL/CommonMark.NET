@@ -86,6 +86,8 @@
     <Compile Include="Formatters\Inlines\WeakFormatter.cs" />
     <Compile Include="Parser\BlockDelimiterHandler.cs" />
     <Compile Include="Parser\Blocks\Delimiters\SingleRangeListItemHandler.cs" />
+    <Compile Include="Parser\Blocks\OrderedListParser.cs" />
+    <Compile Include="Parser\Blocks\UnorderedListParser.cs" />
     <Compile Include="Parser\Blocks\UnorderedListItemParser.cs" />
     <Compile Include="Parser\Blocks\Delimiters\AlphaListItemHandler.cs" />
     <Compile Include="Parser\Blocks\Delimiters\AtxHeadingHandler.cs" />

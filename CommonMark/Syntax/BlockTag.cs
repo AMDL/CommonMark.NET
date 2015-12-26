@@ -20,7 +20,7 @@ namespace CommonMark.Syntax
         /// <summary>
         /// A list element. Will contain nested blocks with type of <see cref="BlockTag.ListItem"/>.
         /// </summary>
-        [Obsolete("This API has been superceded by " + nameof(UnorderedList) + " and " + nameof(OrderedList) + ".")]
+        [Obsolete("This API has been superseded by " + nameof(UnorderedList) + " and " + nameof(OrderedList) + ".")]
         List,
 
         /// <summary>

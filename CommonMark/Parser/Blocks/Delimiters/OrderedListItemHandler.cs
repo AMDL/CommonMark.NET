@@ -90,7 +90,9 @@ namespace CommonMark.Parser.Blocks.Delimiters
         /// <param name="listData">Ordered list data.</param>
         /// <returns>Length of the marker, or 0 for no match.</returns>
         /// <remarks>Original: int parse_list_marker(string ln, int pos, ref ListData dataptr)</remarks>
+#pragma warning disable 0618
         protected sealed override int ParseMarker(BlockParserInfo info, AdjustStartDelegate adjustStart, out ListData data, out OrderedListData listData)
+#pragma warning restore 0618
         {
             data = null;
             listData = null;

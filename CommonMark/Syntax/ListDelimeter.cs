@@ -5,7 +5,7 @@ namespace CommonMark.Syntax
     /// <summary>
     /// Defines the delimeter used in the source for ordered lists.
     /// </summary>
-    [Obsolete("This API has been superceded by " + nameof(OrderedListData) + ".")]
+    [Obsolete("This API has been superseded by " + nameof(OrderedListData) + ".")]
     public enum ListDelimiter
     {
         /// <summary>

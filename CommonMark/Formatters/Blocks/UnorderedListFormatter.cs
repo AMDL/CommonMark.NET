@@ -33,6 +33,21 @@ namespace CommonMark.Formatters.Blocks
         }
 
         /// <summary>
+        /// Returns the paragraph stacking option for a block element.
+        /// </summary>
+        /// <param name="element">Block element.</param>
+        /// <param name="tight">The parent's stacking option.</param>
+        /// <returns>
+        /// <c>true</c> to stack paragraphs tightly,
+        /// <c>false</c> to stack paragraphs loosely,
+        /// or <c>null</c> to skip paragraph stacking.
+        /// </returns>
+        public override bool? IsStackTight(Block element, bool tight)
+        {
+            return element.UnorderedListData.IsTight;
+        }
+
+        /// <summary>
         /// Returns the properties of an element.
         /// </summary>
         /// <param name="printer">Printer.</param>
@@ -42,7 +57,7 @@ namespace CommonMark.Formatters.Blocks
         {
             return new Dictionary<string, object>
             {
-                { "tight", element.ListData.IsTight },
+                { "tight", element.UnorderedListData.IsTight },
                 { "bullet_char", element.UnorderedListData.BulletCharacter },
             };
         }
@@ -75,8 +90,8 @@ namespace CommonMark.Formatters.Blocks
             return new Dictionary<string, object>
             {
                 { "type", "bullet" },
-                { "tight", element.ListData.IsTight },
 #pragma warning disable 0618
+                { "tight", element.ListData.IsTight },
                 { "bullet_char", element.ListData.BulletChar },
 #pragma warning restore 0618
             };
