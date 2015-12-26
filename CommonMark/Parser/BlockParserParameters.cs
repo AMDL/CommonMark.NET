@@ -97,24 +97,8 @@ namespace CommonMark.Parser
 
         private IBlockParser[] GetParsers()
         {
-            var p = BlockParser.InitializeParsers(Settings);
-            var parsers = new IBlockParser[(int)BlockTag.Count];
-            foreach (var parser in p)
-            {
-                var tag = parser.Tag;
-                parsers[(int)tag] = DelegateBlockParser.Merge(tag, parsers[(int)tag], parser);
-            }
-            foreach (var extension in Settings.Extensions)
-	        {
-                if (extension.BlockParsers != null)
-                {
-                    foreach (var parser in extension.BlockParsers)
-                    {
-                        parsers[(int)parser.Tag] = DelegateBlockParser.Merge(parser.Tag, parsers[(int)parser.Tag], parser);
-                    }
-                }
-	        }
-            return parsers;
+            return Settings.Extensions.GetItems(BlockParser.InitializeParsers(Settings), (int)BlockTag.Count,
+                ext => ext.BlockParsers, p => (int)p.Tag, (i, o) => DelegateBlockParser.Merge(o.Tag, i, o));
         }
 
         #endregion Parsers
