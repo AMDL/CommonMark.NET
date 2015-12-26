@@ -131,27 +131,6 @@ namespace CommonMark.Parser.Blocks.Delimiters
         }
 
         /// <summary>
-        /// Matches a list item to an unordered list.
-        /// </summary>
-        /// <param name="info">Parser state.</param>
-        /// <param name="listData">Unordered list data.</param>
-        /// <returns><c>true</c> if the container may continue a list having <paramref name="listData"/>.</returns>
-        protected override bool MatchList(BlockParserInfo info, UnorderedListData listData)
-        {
-            return listData.Equals(info.Container.UnorderedListData);
-        }
-
-        /// <summary>
-        /// Updates a container with unordered list data.
-        /// </summary>
-        /// <param name="info">Parser state.</param>
-        /// <param name="listData">Unordered list data.</param>
-        protected override void SetListData(BlockParserInfo info, UnorderedListData listData)
-        {
-            info.Container.UnorderedListData = listData;
-        }
-
-        /// <summary>
         /// Attempts to parse an unordered list item marker.
         /// </summary>
         /// <param name="info">Parser state.</param>
@@ -174,6 +153,30 @@ namespace CommonMark.Parser.Blocks.Delimiters
                 return 0;
 
             return CompleteScan(info, offset, 1, curChar, curChar, '\0', GetListData, out data, out listData);
+        }
+
+        /// <summary>
+        /// Matches a list item to an unordered list.
+        /// </summary>
+        /// <param name="info">Parser state.</param>
+        /// <param name="listData">Unordered list data.</param>
+        /// <returns><c>true</c> if the container may continue a list having <paramref name="listData"/>.</returns>
+        protected override bool MatchList(BlockParserInfo info, UnorderedListData listData)
+        {
+            var containerListData = info.Container.UnorderedListData;
+            return containerListData != null
+                && containerListData.BulletCharacter == listData.BulletCharacter
+                && ((containerListData.ListStyle == null && listData.ListStyle == null) || (containerListData.ListStyle != null && containerListData.ListStyle.Equals(listData.ListStyle)));
+        }
+
+        /// <summary>
+        /// Updates a container with unordered list data.
+        /// </summary>
+        /// <param name="info">Parser state.</param>
+        /// <param name="listData">Unordered list data.</param>
+        protected override void SetListData(BlockParserInfo info, UnorderedListData listData)
+        {
+            info.Container.UnorderedListData = listData;
         }
 
         /// <summary>

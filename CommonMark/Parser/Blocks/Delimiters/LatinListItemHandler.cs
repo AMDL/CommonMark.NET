@@ -59,12 +59,13 @@ namespace CommonMark.Parser.Blocks.Delimiters
         /// <returns><c>true</c> if the container may continue a list having <paramref name="listData"/>.</returns>
         protected override bool MatchList(BlockParserInfo info, OrderedListData listData)
         {
-            if (base.MatchList(info, listData))
-                return true;
             var containerListData = info.Container.OrderedListData;
-            if (containerListData != null && containerListData.DelimiterCharacter == listData.DelimiterCharacter
-                && (containerListData.MarkerType == OrderedListMarkerType.LowerRoman && listData.MarkerType == OrderedListMarkerType.LowerLatin
-                || containerListData.MarkerType == OrderedListMarkerType.UpperRoman && listData.MarkerType == OrderedListMarkerType.UpperLatin))
+            if (containerListData == null || containerListData.DelimiterCharacter != listData.DelimiterCharacter)
+                return false;
+            if (containerListData.MarkerType == listData.MarkerType)
+                return true;
+            if (containerListData.MarkerType == OrderedListMarkerType.LowerRoman && listData.MarkerType == OrderedListMarkerType.LowerLatin
+                || containerListData.MarkerType == OrderedListMarkerType.UpperRoman && listData.MarkerType == OrderedListMarkerType.UpperLatin)
             {
                 int start = 0;
                 short value = 0;

@@ -133,7 +133,11 @@ namespace CommonMark.Parser.Blocks.Delimiters
         /// <returns><c>true</c> if the container may continue a list having <paramref name="listData"/>.</returns>
         protected override bool MatchList(BlockParserInfo info, OrderedListData listData)
         {
-            return listData.Equals(info.Container.OrderedListData);
+            var containerListData = info.Container.OrderedListData;
+            return containerListData != null
+                && containerListData.DelimiterCharacter == listData.DelimiterCharacter
+                && containerListData.MarkerType == listData.MarkerType
+                && ((containerListData.ListStyle == null && listData.ListStyle == null) || (containerListData.ListStyle != null && containerListData.ListStyle.Equals(listData.ListStyle)));
         }
 
         /// <summary>
