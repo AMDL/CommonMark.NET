@@ -66,8 +66,8 @@ namespace CommonMark.Parser.Blocks.Delimiters
                 && (containerListData.MarkerType == OrderedListMarkerType.LowerRoman && listData.MarkerType == OrderedListMarkerType.LowerLatin
                 || containerListData.MarkerType == OrderedListMarkerType.UpperRoman && listData.MarkerType == OrderedListMarkerType.UpperLatin))
             {
-                var start = 0;
-                var value = 0;
+                int start = 0;
+                short value = 0;
                 AdjustStart(ref start, ref value, info.CurrentCharacter);
                 containerListData.Start = start - 1; //assuming consecutive markers
                 containerListData.MarkerType = listData.MarkerType;

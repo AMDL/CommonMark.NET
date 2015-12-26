@@ -56,7 +56,7 @@
         /// <param name="value">Current character value.</param>
         /// <param name="curChar">Current character.</param>
         /// <returns><c>true</c> if successful.</returns>
-        protected override bool AdjustStart(ref int start, ref int value, char curChar)
+        protected override bool AdjustStart(ref int start, ref short value, char curChar)
         {
             start = 1;
             return true;

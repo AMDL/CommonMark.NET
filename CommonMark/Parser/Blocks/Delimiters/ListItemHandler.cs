@@ -109,7 +109,7 @@ namespace CommonMark.Parser.Blocks.Delimiters
         /// <param name="value">Current character value.</param>
         /// <param name="curChar">Current character.</param>
         /// <returns><c>true</c> if successful.</returns>
-        protected delegate bool AdjustStartDelegate(ref int start, ref int value, char curChar);
+        protected delegate bool AdjustStartDelegate(ref int start, ref short value, char curChar);
 
         /// <summary>
         /// List marker parser delegate.

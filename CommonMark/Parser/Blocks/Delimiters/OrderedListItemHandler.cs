@@ -38,7 +38,7 @@ namespace CommonMark.Parser.Blocks.Delimiters
             /// <summary>
             /// Gets or sets the value base.
             /// </summary>
-            public int ValueBase { get; set; }
+            public short ValueBase { get; set; }
         }
 
         /// <summary>
@@ -100,8 +100,8 @@ namespace CommonMark.Parser.Blocks.Delimiters
             var offset = info.FirstNonspace;
 
             var curChar = info.CurrentCharacter;
-            var start = 0;
-            var value = 0;
+            int start = 0;
+            short value = 0;
             adjustStart(ref start, ref value, curChar);
 
             do
@@ -172,7 +172,7 @@ namespace CommonMark.Parser.Blocks.Delimiters
         /// <param name="value">Current character value.</param>
         /// <param name="curChar">Current character.</param>
         /// <returns><c>true</c> if successful.</returns>
-        protected abstract bool AdjustStart(ref int start, ref int value, char curChar);
+        protected abstract bool AdjustStart(ref int start, ref short value, char curChar);
 
         /// <summary>
         /// Gets the first marker character.

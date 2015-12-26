@@ -26,7 +26,7 @@ namespace CommonMark.Parser.Blocks.Delimiters
             /// <summary>
             /// Gets or sets the value map.
             /// </summary>
-            public int[] ValueMap { get; set; }
+            public short[] ValueMap { get; set; }
         }
 
         /// <summary>
@@ -48,7 +48,7 @@ namespace CommonMark.Parser.Blocks.Delimiters
         /// <param name="value">Current character value.</param>
         /// <param name="curChar">Current character.</param>
         /// <returns><c>true</c> if successful.</returns>
-        protected override bool AdjustStart(ref int start, ref int value, char curChar)
+        protected override bool AdjustStart(ref int start, ref short value, char curChar)
         {
             if ((value = ValueMap[curChar - MarkerMinCharacter]) == 0)
                 return false;
@@ -59,14 +59,14 @@ namespace CommonMark.Parser.Blocks.Delimiters
         /// <summary>
         /// Gets the value map.
         /// </summary>
-        protected int[] ValueMap
+        protected short[] ValueMap
         {
             get;
         }
 
         private static Parameters GetHandlerParameters(OrderedListItemParameters parameters, ListItemDelimiterParameters delimiter)
         {
-            var valueMapDict = new Dictionary<char, int>();
+            var valueMapDict = new Dictionary<char, short>();
             var markerMinChar = char.MaxValue;
             var markerMaxChar = char.MinValue;
             foreach (var marker in parameters.Markers)
@@ -78,8 +78,8 @@ namespace CommonMark.Parser.Blocks.Delimiters
                 }
             }
 
-            var valueMap = new int[markerMaxChar - markerMinChar + 1];
-            var count = 0;
+            var valueMap = new short[markerMaxChar - markerMinChar + 1];
+            short count = 0;
             foreach (var kvp in valueMapDict)
             {
                 ++count;
@@ -98,7 +98,7 @@ namespace CommonMark.Parser.Blocks.Delimiters
             };
         }
 
-        private static bool AddSingle(OrderedListSingleMarkerParameters single, Dictionary<char, int> valueMap, ref char min, ref char max)
+        private static bool AddSingle(OrderedListSingleMarkerParameters single, Dictionary<char, short> valueMap, ref char min, ref char max)
         {
             if (single == null)
                 return false;
@@ -113,16 +113,18 @@ namespace CommonMark.Parser.Blocks.Delimiters
             return true;
         }
 
-        private static bool AddRange(OrderedListMarkerRangeParameters range, Dictionary<char, int> valueMap, ref char min, ref char max)
+        private static bool AddRange(OrderedListMarkerRangeParameters range, Dictionary<char, short> valueMap, ref char min, ref char max)
         {
             if (range == null)
                 return false;
 
             var rangeMin = range.MinCharacter;
             var rangeMax = range.MaxCharacter;
+            short count = (short)valueMap.Count;
             for (int i = 0; i <= rangeMax - rangeMin; i++)
             {
-                valueMap.Add((char)(i + rangeMin), valueMap.Count + 1);
+                ++count;
+                valueMap.Add((char)(i + rangeMin), count);
             }
             if (rangeMin < min)
                 min = rangeMin;

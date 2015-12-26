@@ -25,7 +25,7 @@
             /// <summary>
             /// Gets or sets the start value.
             /// </summary>
-            public int StartValue { get; set; }
+            public short StartValue { get; set; }
         }
 
         /// <summary>
@@ -48,14 +48,14 @@
         /// <param name="value">Current character value.</param>
         /// <param name="curChar">Current character.</param>
         /// <returns><c>true</c> if successful.</returns>
-        protected override bool AdjustStart(ref int start, ref int value, char curChar)
+        protected override bool AdjustStart(ref int start, ref short value, char curChar)
         {
-            value = curChar - MarkerMinCharacter + StartValue;
+            value = (short)(curChar - MarkerMinCharacter + StartValue);
             start = start * ValueBase + value;
             return true;
         }
 
-        private int StartValue
+        private short StartValue
         {
             get;
         }
@@ -69,7 +69,7 @@
                 MarkerMinChar = range.MinCharacter,
                 MarkerMaxChar = range.MaxCharacter,
                 StartValue = range.StartValue,
-                ValueBase = range.MaxCharacter - range.MinCharacter + 1,
+                ValueBase = (short)(range.MaxCharacter - range.MinCharacter + 1),
             };
         }
 
