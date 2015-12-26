@@ -31,12 +31,12 @@ namespace CommonMark.Extension
 #pragma warning disable 0618
             yield return new ListParser(settings, BlockTag.List, BlockTag.ListItem);
 
-            // These will ruin the default parameters, but that's alright since we're replacing the parser anyway.
-            var unorderedListItemParameters = UnorderedListItemHandler.DefaultParameters;
-            unorderedListItemParameters.ParentTag = BlockTag.List;
-            var numericListItemParameters = NumericListItemHandler.DefaultParameters;
-            numericListItemParameters.ParentTag = BlockTag.List;
-            var listParameters = new ListParameters(unorderedListItemParameters, numericListItemParameters);
+            var unorderedParameters = UnorderedListItemHandler.DefaultParameters.Clone();
+            unorderedParameters.ParentTag = BlockTag.List;
+            unorderedParameters.Delimiters = InitializeDelimiters(unorderedParameters.Delimiters);
+            var numericParameters = NumericListItemHandler.DefaultParameters.Clone();
+            numericParameters.ParentTag = BlockTag.List;
+            var listParameters = new ListParameters(unorderedParameters, numericParameters);
 
             yield return new ListItemParser(settings, BlockTag.ListItem, listParameters);
 #pragma warning restore 0618
@@ -52,14 +52,11 @@ namespace CommonMark.Extension
             yield return new LegacyOrderedListFormatter(parameters);
         }
 
-        /// <summary>
-        /// Initializes the block delimiter handlers.
-        /// </summary>
-        /// <param name="settings">Common settings.</param>
-        protected override IEnumerable<IBlockDelimiterHandler> InitializeBlockDelimiterHandlers(CommonMarkSettings settings)
+        private UnorderedListItemDelimiterParameters[] InitializeDelimiters(UnorderedListItemDelimiterParameters[] delimiters)
         {
-            var parameters = new UnorderedListItemParameters(markerChars: '•');
-            yield return UnorderedListItemHandler.Create(settings, parameters);
+            var list = new List<UnorderedListItemDelimiterParameters>(delimiters);
+            list.Add(new UnorderedListItemDelimiterParameters('•'));
+            return list.ToArray();
         }
     }
 }

@@ -33,6 +33,15 @@ namespace CommonMark.Parser.Blocks
         {
         }
 
+        /// <summary>
+        /// Creates a copy of this parameters object.
+        /// </summary>
+        /// <returns>Parameters object.</returns>
+        public UnorderedListItemParameters Clone()
+        {
+            return (UnorderedListItemParameters)MemberwiseClone();
+        }
+
         private static UnorderedListItemDelimiterParameters[] GetDelimiters(string listStyle, char[] markerChars)
         {
             var length = markerChars.Length;
