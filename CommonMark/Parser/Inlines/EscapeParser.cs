@@ -32,7 +32,7 @@ namespace CommonMark.Parser.Inlines
 
             var nextChar = subj.Buffer[subj.Position];
 
-            if (Utilities.IsEscapableSymbol(nextChar))
+            if (Settings.InlineParserParameters.IsEscapableCharacter(nextChar))
             {
                 // only ascii symbols and newline can be escaped
                 // unicode bullet chars are an exception since they can be used for defining list items

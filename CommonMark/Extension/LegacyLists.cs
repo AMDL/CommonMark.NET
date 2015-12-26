@@ -43,6 +43,14 @@ namespace CommonMark.Extension
         }
 
         /// <summary>
+        /// Initializes the escapable characters.
+        /// </summary>
+        protected override IEnumerable<char> InitializeEscapableCharacters()
+        {
+            yield return '•';
+        }
+
+        /// <summary>
         /// Initializes the block formatters.
         /// </summary>
         /// <param name="parameters">Formatter parameters.</param>

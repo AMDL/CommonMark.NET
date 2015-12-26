@@ -1,4 +1,6 @@
-﻿namespace CommonMark
+﻿using System.Collections.Generic;
+
+namespace CommonMark
 {
     /// <summary>
     /// Character type.
@@ -40,14 +42,16 @@
             System.Diagnostics.Debug.WriteLine(message, "Warning");
         }
 
-#if OptimizeFor45
-        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-#endif
-        public static bool IsEscapableSymbol(char c)
+        public static IEnumerable<char> InitializeEscapableCharacters()
         {
-            // char.IsSymbol also works with Unicode symbols that cannot be escaped based on the specification.
-            return (c > ' ' && c < '0') || (c > '9' && c < 'A') || (c > 'Z' && c < 'a') || (c > 'z' && c < 127)
-                || c == '•' || c == 'o' || c == '';
+            for (var c = (char)(' ' + 1); c < '0'; c++)
+                yield return c;
+            for (var c = (char)('9' + 1); c < 'A'; c++)
+                yield return c;
+            for (var c = (char)('Z' + 1); c < 'a'; c++)
+                yield return c;
+            for (var c = (char)('z' + 1); c < 127; c++)
+                yield return c;
         }
 
 #if OptimizeFor45

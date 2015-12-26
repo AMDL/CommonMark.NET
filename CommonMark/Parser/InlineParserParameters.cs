@@ -36,6 +36,7 @@ namespace CommonMark.Parser
             this._parsers = GetParsers();
             this._handlers = GetHandlers();
             this._specialCharacters = GetSpecialCharacters();
+            this._escapableCharacters = GetEscapableCharacters();
             this._referenceNormalizer = GetReferenceNormalizer();
         }
 
@@ -211,6 +212,26 @@ namespace CommonMark.Parser
         }
 
         #endregion SpecialCharacters
+
+        #region EscapableCharacters
+
+        private readonly bool[] _escapableCharacters;
+
+        private bool[] GetEscapableCharacters()
+        {
+            return Settings.Extensions.GetItems(Utilities.InitializeEscapableCharacters(),
+                ext => ext.EscapableCharacters, c => c, _ => true, (_1, _2) => true);
+        }
+
+#if OptimizeFor45
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+#endif
+        internal bool IsEscapableCharacter(char c)
+        {
+            return c < _escapableCharacters.Length && _escapableCharacters[c];
+        }
+
+        #endregion EscapableCharacters
 
         #region ReferenceNormalizer
 

@@ -1,6 +1,5 @@
 ﻿using CommonMark.Syntax;
 using System;
-using System.Collections.Generic;
 
 namespace CommonMark.Parser.Inlines
 {
@@ -108,9 +107,9 @@ namespace CommonMark.Parser.Inlines
                 {
                     subj.Position = endall + 1;
                     url = subj.Buffer.Substring(starturl, endurl - starturl);
-                    url = InlineMethods.CleanUrl(url);
+                    url = InlineMethods.CleanUrl(url, parameters);
                     title = subj.Buffer.Substring(starttitle, endtitle - starttitle);
-                    title = InlineMethods.CleanTitle(title);
+                    title = InlineMethods.CleanTitle(title, parameters);
 
                     return new Reference() { Title = title, Url = url };
                 }

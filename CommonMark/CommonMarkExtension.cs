@@ -22,6 +22,7 @@ namespace CommonMark
             this._blockDelimiterHandlers = settings.GetLazy(() => InitializeBlockDelimiterHandlers(settings));
             this._inlineParsers = settings.GetLazy(() => InitializeInlineParsers(settings));
             this._inlineDelimiterHandlers = settings.GetLazy(InitializeInlineDelimiterHandlers);
+            this._escapableCharacters = settings.GetLazy(InitializeEscapableCharacters);
 
             this._referenceNormalizer = settings.GetLazy(InitializeReferenceNormalizer);
 
@@ -120,6 +121,25 @@ namespace CommonMark
         protected IDictionary<char, IInlineDelimiterHandler> Register(char c, IInlineDelimiterHandler handler)
         {
             return Register(_inlineDelimiterHandlers, c, handler);
+        }
+
+        #endregion
+
+        #region Escapable Characters
+
+        private readonly Lazy<IEnumerable<char>> _escapableCharacters;
+
+        IEnumerable<char> ICommonMarkExtension.EscapableCharacters
+        {
+            get { return _escapableCharacters.Value; }
+        }
+
+        /// <summary>
+        /// Initializes the escapable characters.
+        /// </summary>
+        protected virtual IEnumerable<char> InitializeEscapableCharacters()
+        {
+            return null;
         }
 
         #endregion

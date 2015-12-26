@@ -119,7 +119,7 @@ namespace CommonMark.Parser.Blocks
         {
             // first line of contents becomes info
             var firstlinelen = container.StringContent.IndexOf('\n') + 1;
-            container.FencedCodeData.Info = InlineMethods.Unescape(container.StringContent.TakeFromStart(firstlinelen, true).Trim());
+            container.FencedCodeData.Info = InlineMethods.Unescape(container.StringContent.TakeFromStart(firstlinelen, true).Trim(), Settings.InlineParserParameters);
             return true;
         }
 

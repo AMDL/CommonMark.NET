@@ -247,7 +247,8 @@ namespace CommonMark.Parser
         /// Destructively unescape a string: remove backslashes before punctuation or symbol characters.
         /// </summary>
         /// <param name="url">The string data that will be changed by unescaping any punctuation or symbol characters.</param>
-        public static string Unescape(string url)
+        /// <param name="parameters">Inline parser parameters.</param>
+        public static string Unescape(string url, InlineParserParameters parameters)
         {
             // remove backslashes before punctuation chars:
             int searchPos = 0;
@@ -268,7 +269,7 @@ namespace CommonMark.Parser
                         break;
 
                     c = url[searchPos];
-                    if (Utilities.IsEscapableSymbol(c))
+                    if (parameters.IsEscapableCharacter(c))
                     {
                         if (sb == null) sb = new StringBuilder(url.Length);
                         sb.Append(url, lastPos, searchPos - lastPos - 1);
@@ -331,8 +332,10 @@ namespace CommonMark.Parser
         /// <summary>
         /// Clean a URL: remove surrounding whitespace and surrounding &lt; &gt; and remove \ that escape punctuation and other symbols.
         /// </summary>
+        /// <param name="url">The string data that will be changed by unescaping any punctuation or symbol characters.</param>
+        /// <param name="parameters">Inline parser parameters.</param>
         /// <remarks>Original: clean_url(ref string)</remarks>
-        public static string CleanUrl(string url)
+        public static string CleanUrl(string url, InlineParserParameters parameters)
         {
             if (url.Length == 0)
                 return url;
@@ -343,14 +346,16 @@ namespace CommonMark.Parser
             if (url[0] == '<' && url[url.Length - 1] == '>')
                 url = url.Substring(1, url.Length - 2);
 
-            return Unescape(url);
+            return Unescape(url, parameters);
         }
 
         /// <summary>
         /// Clean a title: remove surrounding quotes and remove \ that escape punctuation.
         /// </summary>
+        /// <param name="title">The string data that will be changed by unescaping any punctuation or symbol characters.</param>
+        /// <param name="parameters">Inline parser parameters.</param>
         /// <remarks>Original: clean_title(ref string)</remarks>
-        internal static string CleanTitle(string title)
+        internal static string CleanTitle(string title, InlineParserParameters parameters)
         {
             // remove surrounding quotes if any:
             int titlelength = title.Length;
@@ -362,7 +367,7 @@ namespace CommonMark.Parser
             if ((a == '\'' && b == '\'') || (a == '(' && b == ')') || (a == '"' && b == '"'))
                 title = title.Substring(1, titlelength - 2);
 
-            return Unescape(title);
+            return Unescape(title, parameters);
         }
 
         // Parse zero or more space characters, including at most one newline.
@@ -482,7 +487,7 @@ namespace CommonMark.Parser
                 goto INVALID;
 
             var url = subj.Buffer.Substring(subj.Position, matchlen);
-            url = CleanUrl(url);
+            url = CleanUrl(url, parameters);
             subj.Position += matchlen;
 
             // parse optional link_title
@@ -493,7 +498,7 @@ namespace CommonMark.Parser
             if (matchlen > 0)
             {
                 title = subj.Buffer.Substring(subj.Position, matchlen);
-                title = CleanTitle(title);
+                title = CleanTitle(title, parameters);
                 subj.Position += matchlen;
             }
             else

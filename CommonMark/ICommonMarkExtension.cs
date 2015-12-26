@@ -30,6 +30,11 @@ namespace CommonMark
         IDictionary<char, IInlineDelimiterHandler> InlineDelimiterHandlers { get; }
 
         /// <summary>
+        /// Gets the escapable characters.
+        /// </summary>
+        IEnumerable<char> EscapableCharacters { get; }
+
+        /// <summary>
         /// Gets the reference normalizer.
         /// </summary>
         StringNormalizerDelegate ReferenceNormalizer { get; }

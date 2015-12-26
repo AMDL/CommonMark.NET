@@ -251,6 +251,47 @@ namespace CommonMark
             return items;
         }
 
+        internal TValue[] GetItems<TKey, TValue>(IEnumerable<TKey> initItems,
+            Func<ICommonMarkExtension, IEnumerable<TKey>> itemsFactory,
+            Func<TKey, int> keyFactory, Func<TKey, TValue> valueFactory, Func<TValue, TValue, TValue> mergeFactory)
+        {
+            var itemList = new List<TKey>(initItems);
+
+            if (_list != null)
+            {
+                foreach (var extenison in _list)
+                {
+                    var extensionItems = itemsFactory(extenison);
+                    if (extensionItems != null)
+                    {
+                        itemList.AddRange(extensionItems);
+                    }
+                }
+            }
+
+            var dictionary = new Dictionary<int, TValue>();
+            var maxKey = 0;
+
+            TValue inner;
+            foreach (var item in itemList)
+            {
+                var key = keyFactory(item);
+                var value = valueFactory(item);
+                dictionary.TryGetValue(key, out inner);
+                dictionary[key] = mergeFactory(inner, value);
+                maxKey = maxKey > key ? maxKey : key;
+            }
+
+            var items = new TValue[maxKey + 1];
+
+            foreach (var kvp in dictionary)
+            {
+                items[kvp.Key] = kvp.Value;
+            }
+
+            return items;
+        }
+
         internal TValue[] GetItems<TKey, TValue>(TValue[] items,
             Func<ICommonMarkExtension, IDictionary<TKey, TValue>> itemMapFactory,
             Func<TKey, int> keyFactory,

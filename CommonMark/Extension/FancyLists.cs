@@ -43,6 +43,14 @@ namespace CommonMark.Extension
             return handlers;
         }
 
+        /// <summary>
+        /// Initializes the escapable characters.
+        /// </summary>
+        protected override IEnumerable<char> InitializeEscapableCharacters()
+        {
+            return GetCharacters(GetUnorderedParameters, (int)fancyListsSettings.Features, (int)FancyListsFeatures.Unordered);
+        }
+
         private void AddRomanHandlers(List<IBlockDelimiterHandler> handlers, CommonMarkSettings settings)
         {
             AddHandlers(handlers, settings, GetRomanParameters, CreateRomanHandler, (int)fancyListsSettings.Features, (int)FancyListsFeatures.Roman);
@@ -259,17 +267,26 @@ namespace CommonMark.Extension
         private static List<IBlockDelimiterHandler> AddHandlers(List<IBlockDelimiterHandler> handlers, CommonMarkSettings settings, Func<IEnumerable<UnorderedListItemParameters>> paramsFactory,
             Func<CommonMarkSettings, UnorderedListItemParameters, UnorderedListItemDelimiterParameters, IBlockDelimiterHandler> handlerFactory, int flags, int flagsMask)
         {
-            return AddHandlers<UnorderedListItemParameters, UnorderedListItemDelimiterParameters>(handlers, settings, paramsFactory, handlerFactory, flags, flagsMask);
+            Func<UnorderedListItemParameters, UnorderedListItemDelimiterParameters, IBlockDelimiterHandler> itemFactory = (p, d) => handlerFactory(settings, p, d);
+            handlers.AddRange(GetItems(paramsFactory, itemFactory, flags, flagsMask));
+            return handlers;
         }
 
         private static List<IBlockDelimiterHandler> AddHandlers(List<IBlockDelimiterHandler> handlers, CommonMarkSettings settings, Func<IEnumerable<OrderedListItemParameters>> paramsFactory,
             Func<CommonMarkSettings, OrderedListItemParameters, ListItemDelimiterParameters, IBlockDelimiterHandler> handlerFactory, int flags, int flagsMask)
         {
-            return AddHandlers<OrderedListItemParameters, ListItemDelimiterParameters>(handlers, settings, paramsFactory, handlerFactory, flags, flagsMask);
+            Func<OrderedListItemParameters, ListItemDelimiterParameters, IBlockDelimiterHandler> itemFactory = (p, d) => handlerFactory(settings, p, d);
+            handlers.AddRange(GetItems(paramsFactory, itemFactory, flags, flagsMask));
+            return handlers;
         }
 
-        private static List<IBlockDelimiterHandler> AddHandlers<TParameters, TDelimiter>(List<IBlockDelimiterHandler> handlers, CommonMarkSettings settings, Func<IEnumerable<TParameters>> paramsFactory,
-            Func<CommonMarkSettings, TParameters, TDelimiter, IBlockDelimiterHandler> handlerFactory, int flags, int flagsMask)
+        private static IEnumerable<char> GetCharacters(Func<IEnumerable<UnorderedListItemParameters>> paramsFactory, int flags, int flagsMask)
+        {
+            Func<UnorderedListItemParameters, UnorderedListItemDelimiterParameters, char> itemFactory = (p, d) => d.Character;
+            return GetItems(paramsFactory, itemFactory, flags, flagsMask);
+        }
+
+        private static IEnumerable<T> GetItems<TParameters, TDelimiter, T>(Func<IEnumerable<TParameters>> paramsFactory, Func<TParameters, TDelimiter, T> itemFactory, int flags, int flagsMask)
             where TParameters : ListItemParameters<TDelimiter>
             where TDelimiter : ListItemDelimiterParameters
         {
@@ -277,17 +294,16 @@ namespace CommonMark.Extension
             {
                 var mask = flagsMask & ~(flagsMask << 1);
                 var source = paramsFactory();
-                foreach (var item in source)
+                foreach (var parameters in source)
                 {
                     if (0 != (flags & mask))
                     {
-                        foreach (var delimiter in item.Delimiters)
-                            handlers.Add(handlerFactory(settings, item, delimiter));
+                        foreach (var delimiter in parameters.Delimiters)
+                            yield return itemFactory(parameters, delimiter);
                     }
                     mask <<= 1;
                 }
             }
-            return handlers;
         }
     }
 }
