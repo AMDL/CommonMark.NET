@@ -1,9 +1,9 @@
 ﻿namespace CommonMark.Parser.Blocks.Delimiters
 {
     /// <summary>
-    /// Sharp decimal ordered list item delimiter handler.
+    /// Hash decimal ordered list item delimiter handler.
     /// </summary>
-    public sealed class SharpListItemHandler : OrderedListItemHandler<SharpListItemHandler.Parameters>
+    public sealed class HashListItemHandler : OrderedListItemHandler<HashListItemHandler.Parameters>
     {
         /// <summary>
         /// The default parameters instance.
@@ -29,12 +29,12 @@
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SharpListItemHandler"/> class.
+        /// Initializes a new instance of the <see cref="HashListItemHandler"/> class.
         /// </summary>
         /// <param name="settings">Common settings.</param>
         /// <param name="parameters">List item parameters.</param>
         /// <param name="delimiter">Delimiter parameters.</param>
-        public SharpListItemHandler(CommonMarkSettings settings, OrderedListItemParameters parameters, ListItemDelimiterParameters delimiter)
+        public HashListItemHandler(CommonMarkSettings settings, OrderedListItemParameters parameters, ListItemDelimiterParameters delimiter)
             : base(settings, GetHandlerParameters(parameters, delimiter))
         {
         }

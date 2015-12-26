@@ -271,17 +271,17 @@ namespace CommonMark.Tests
 
         [TestMethod]
         [TestCategory("Container blocks - Fancy lists")]
-        public void SharpListDisabledByDefault()
+        public void HashListDisabledByDefault()
         {
             Helpers.ExecuteTest("#. foo", "<p>#. foo</p>", EmptySettings);
         }
 
         [TestMethod]
         [TestCategory("Container blocks - Fancy lists")]
-        public void SharpListDisabledAlone()
+        public void HashListDisabledAlone()
         {
             var s = CommonMarkSettings.Default.Clone();
-            s.Extensions.Register(new FancyLists(s, new FancyListsSettings(FancyListsFeatures.All & ~FancyListsFeatures.OrderedSharps)));
+            s.Extensions.Register(new FancyLists(s, new FancyListsSettings(FancyListsFeatures.All & ~FancyListsFeatures.OrderedHashes)));
             Helpers.ExecuteTest("#. foo", "<p>#. foo</p>", s);
         }
 
@@ -294,21 +294,21 @@ namespace CommonMark.Tests
 
         [TestMethod]
         [TestCategory("Container blocks - Fancy lists")]
-        public void SharpListEnabled()
+        public void HashListEnabled()
         {
             Helpers.ExecuteTest("#. foo", "<ol>\n<li>foo</li>\n</ol>", FullSettings);
         }
 
         [TestMethod]
         [TestCategory("Container blocks - Fancy lists")]
-        public void SharpListBeforeDecimalList()
+        public void HashListBeforeDecimalList()
         {
             Helpers.ExecuteTest("#. foo\n1. bar", "<ol>\n<li>foo</li>\n</ol>\n<ol type=\"1\">\n<li>bar</li>\n</ol>", FullSettings);
         }
 
         [TestMethod]
         [TestCategory("Container blocks - Fancy lists")]
-        public void SharpListAfterDecimalList()
+        public void HashListAfterDecimalList()
         {
             Helpers.ExecuteTest("1. bar\n#. baz", "<ol type=\"1\">\n<li>bar</li>\n</ol>\n<ol>\n<li>baz</li>\n</ol>", FullSettings);
         }

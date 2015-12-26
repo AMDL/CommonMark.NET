@@ -48,7 +48,7 @@ namespace CommonMark.Extension
         /// <summary>
         /// <c>#</c> will be recognized as an ordered list marker.
         /// </summary>
-        OrderedSharps = 32,
+        OrderedHashes = 32,
 
         /// <summary>
         /// <c>•</c>, <c>o</c> and <c></c> will be recognized as unordered list markers.
