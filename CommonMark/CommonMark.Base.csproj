@@ -84,6 +84,7 @@
     <Compile Include="Formatters\Inlines\StringFormatter.cs" />
     <Compile Include="Formatters\Inlines\StrongFormatter.cs" />
     <Compile Include="Formatters\Inlines\WeakFormatter.cs" />
+    <Compile Include="Formatters\SyntaxFormatter.cs" />
     <Compile Include="Parser\BlockDelimiterHandler.cs" />
     <Compile Include="Parser\Blocks\Delimiters\SingleRangeListItemHandler.cs" />
     <Compile Include="Parser\Blocks\OrderedListParser.cs" />
@@ -116,7 +117,7 @@
     <Compile Include="Formatters\IBlockFormatter.cs" />
     <Compile Include="Formatters\IInlineFormatter.cs" />
     <Compile Include="Formatters\Inlines\LinkFormatter.cs" />
-    <Compile Include="Formatters\IPrinter.cs" />
+    <Compile Include="Formatters\ISyntaxFormatter.cs" />
     <Compile Include="Parser\BlockParser.cs" />
     <Compile Include="Parser\BlockParserInfo.cs" />
     <Compile Include="Parser\Blocks\AtxHeadingParser.cs" />
@@ -210,7 +211,7 @@
     <Compile Include="Syntax\InlineContentLinkable.cs" />
     <Compile Include="Syntax\InlineTag.cs" />
     <Compile Include="Syntax\ListData.cs" />
-    <Compile Include="Formatters\Printer.cs" />
+    <Compile Include="Formatters\TextSyntaxFormatter.cs" />
     <Compile Include="Syntax\ListDelimeter.cs" />
     <Compile Include="Syntax\ListType.cs" />
     <Compile Include="Syntax\OrderedListData.cs" />

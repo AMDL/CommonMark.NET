@@ -5,7 +5,7 @@ using CommonMark.Syntax;
 
 namespace CommonMark.Formatters
 {
-    internal static class Printer
+    internal static class TextSyntaxFormatter
     {
         internal static string format_str(string s, StringBuilder buffer)
         {
@@ -42,40 +42,10 @@ namespace CommonMark.Formatters
             return buffer.ToString();
         }
 
-#if OptimizeFor45
-        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-#endif
-        private static void PrintPosition(bool enabled, TextWriter writer, Block block)
-        {
-            if (enabled)
-            {
-                writer.Write(" [");
-                writer.Write(block.SourcePosition);
-                writer.Write('-');
-                writer.Write(block.SourceLastPosition);
-                writer.Write(']');
-            }
-        }
-
-#if OptimizeFor45
-        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-#endif
-        private static void PrintPosition(bool enabled, TextWriter writer, Inline inline)
-        {
-            if (enabled)
-            {
-                writer.Write(" [");
-                writer.Write(inline.SourcePosition);
-                writer.Write('-');
-                writer.Write(inline.SourceLastPosition);
-                writer.Write(']');
-            }
-        }
-
         /// <summary>
         /// Write the block data to the given writer.
         /// </summary>
-        public static void PrintBlocks(TextWriter writer, Block block, CommonMarkSettings settings)
+        public static void PrintBlocks(TextWriter writer, Block element, CommonMarkSettings settings)
         {
             int indent = 0;
             var stack = new Stack<BlockStackEntry>();
@@ -88,54 +58,61 @@ namespace CommonMark.Formatters
             IBlockFormatter formatter;
             IEnumerable<KeyValuePair<string, object>> data;
 
-            while (block != null)
+            while (element != null)
             {
                 writer.Write(new string(' ', indent));
 
-                formatter = formatters[(int)block.Tag];
+                formatter = formatters[(int)element.Tag];
                 if (formatter == null)
                 {
-                    throw new CommonMarkException("Block type " + block.Tag + " is not supported.", block);
+                    throw new CommonMarkException("Block type " + element.Tag + " is not supported.", element);
                 }
 
-                writer.Write(formatter.PrinterTag);
-                PrintPosition(trackPositions, writer, block);
-                if ((data = formatter.GetPrinterData(parameters.Printer, block)) != null)
+                writer.Write(formatter.TextTag);
+                if (trackPositions)
+                {
+                    writer.Write(" [");
+                    writer.Write(element.SourcePosition);
+                    writer.Write('-');
+                    writer.Write(element.SourceLastPosition);
+                    writer.Write(']');
+                }
+                if ((data = formatter.GetSyntaxData(parameters.SyntaxFormatter, element)) != null)
                     PrintData(writer, data);
 
                 writer.WriteLine();
 
-                if (block.InlineContent != null)
+                if (element.InlineContent != null)
                 {
-                    PrintInlines(writer, block.InlineContent, indent + 2, inlineStack, buffer, settings);
+                    PrintInlines(writer, element.InlineContent, indent + 2, inlineStack, buffer, settings);
                 }
 
-                if (block.FirstChild != null)
+                if (element.FirstChild != null)
                 {
-                    if (block.NextSibling != null)
-                        stack.Push(new BlockStackEntry(indent, block.NextSibling));
+                    if (element.NextSibling != null)
+                        stack.Push(new BlockStackEntry(indent, element.NextSibling));
 
                     indent += 2;
-                    block = block.FirstChild;
+                    element = element.FirstChild;
                 }
-                else if (block.NextSibling != null)
+                else if (element.NextSibling != null)
                 {
-                    block = block.NextSibling;
+                    element = element.NextSibling;
                 }
                 else if (stack.Count > 0)
                 {
                     var entry = stack.Pop();
                     indent = entry.Indent;
-                    block = entry.Target;
+                    element = entry.Target;
                 }
                 else
                 {
-                    block = null;
+                    element = null;
                 }
             }
         }
 
-        private static void PrintInlines(TextWriter writer, Inline inline, int indent, Stack<InlineStackEntry> stack, StringBuilder buffer, CommonMarkSettings settings)
+        private static void PrintInlines(TextWriter writer, Inline element, int indent, Stack<InlineStackEntry> stack, StringBuilder buffer, CommonMarkSettings settings)
         {
             var trackPositions = settings.TrackSourcePosition;
             var parameters = settings.FormatterParameters;
@@ -143,44 +120,51 @@ namespace CommonMark.Formatters
             IInlineFormatter formatter;
             IEnumerable<KeyValuePair<string, object>> data;
 
-            while (inline != null)
+            while (element != null)
             {
                 writer.Write(new string(' ', indent));
 
-                formatter = formatters[(int)inline.Tag];
+                formatter = formatters[(int)element.Tag];
                 if (formatter == null)
                 {
-                    throw new CommonMarkException("Inline type " + inline.Tag + " is not supported.", inline);
+                    throw new CommonMarkException("Inline type " + element.Tag + " is not supported.", element);
                 }
 
-                writer.Write(formatter.PrinterTag);
-                PrintPosition(trackPositions, writer, inline);
-                if ((data = formatter.GetPrinterData(parameters.Printer, inline)) != null)
+                writer.Write(formatter.TextTag);
+                if (trackPositions)
+                {
+                    writer.Write(" [");
+                    writer.Write(element.SourcePosition);
+                    writer.Write('-');
+                    writer.Write(element.SourceLastPosition);
+                    writer.Write(']');
+                }
+                if ((data = formatter.GetSyntaxData(parameters.SyntaxFormatter, element)) != null)
                     PrintData(writer, data);
 
                 writer.WriteLine();
 
-                if (inline.FirstChild != null)
+                if (element.FirstChild != null)
                 {
-                    if (inline.NextSibling != null)
-                        stack.Push(new InlineStackEntry(indent, inline.NextSibling));
+                    if (element.NextSibling != null)
+                        stack.Push(new InlineStackEntry(indent, element.NextSibling));
 
                     indent += 2;
-                    inline = inline.FirstChild;
+                    element = element.FirstChild;
                 }
-                else if (inline.NextSibling != null)
+                else if (element.NextSibling != null)
                 {
-                    inline = inline.NextSibling;
+                    element = element.NextSibling;
                 }
                 else if (stack.Count > 0)
                 {
                     var entry = stack.Pop();
                     indent = entry.Indent;
-                    inline = entry.Target;
+                    element = entry.Target;
                 }
                 else
                 {
-                    inline = null;
+                    element = null;
                 }
             }
         }
@@ -234,27 +218,6 @@ namespace CommonMark.Formatters
                 this.Indent = indent;
                 this.Target = target;
             }
-        }
-    }
-
-    internal class PrinterImpl : IPrinter
-    {
-
-        private StringBuilder buffer;
-
-        internal PrinterImpl()
-        {
-            this.buffer = new StringBuilder();
-        }
-
-        string IPrinter.Format(string s)
-        {
-            return Printer.format_str(s, buffer);
-        }
-
-        string IPrinter.Format(StringContent stringContent)
-        {
-            return ((IPrinter)this).Format(stringContent.ToString(buffer));
         }
     }
 }

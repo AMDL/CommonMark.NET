@@ -16,9 +16,9 @@ namespace CommonMark.Formatters
         /// <param name="tag">Inline element tag.</param>
         /// <param name="htmlTag">HTML tag.</param>
         /// <param name="isSelfClosing"><c>true</c> if <paramref name="htmlTag"/> is self-closing.</param>
-        /// <param name="printerTag">Printer tag. If unspecified, <paramref name="htmlTag"/> will be used.</param>
-        public InlineFormatter(FormatterParameters parameters, InlineTag tag, string htmlTag = null, bool isSelfClosing = false, string printerTag = null)
-            : base(parameters, tag, htmlTag, isSelfClosing, printerTag)
+        /// <param name="textTag">Text syntax tree tag. If unspecified, <paramref name="htmlTag"/> will be used.</param>
+        public InlineFormatter(FormatterParameters parameters, InlineTag tag, string htmlTag = null, bool isSelfClosing = false, string textTag = null)
+            : base(parameters, tag, htmlTag, isSelfClosing, textTag)
         {
         }
 

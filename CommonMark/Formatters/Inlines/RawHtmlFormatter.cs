@@ -13,7 +13,7 @@ namespace CommonMark.Formatters.Inlines
         /// </summary>
         /// <param name="parameters">Formatter parameters.</param>
         public RawHtmlFormatter(FormatterParameters parameters)
-            : base(parameters, InlineTag.RawHtml, printerTag: "html")
+            : base(parameters, InlineTag.RawHtml, textTag: "html")
         {
         }
 
@@ -34,14 +34,14 @@ namespace CommonMark.Formatters.Inlines
         /// <summary>
         /// Returns the properties of an element.
         /// </summary>
-        /// <param name="printer">Printer.</param>
+        /// <param name="formatter">Syntax formatter.</param>
         /// <param name="element">Element.</param>
         /// <returns>Properties or <c>null</c>.</returns>
-        public override IEnumerable<KeyValuePair<string, object>> GetPrinterData(IPrinter printer, Inline element)
+        public override IEnumerable<KeyValuePair<string, object>> GetSyntaxData(ISyntaxFormatter formatter, Inline element)
         {
             return new Dictionary<string, object>
             {
-                { string.Empty, printer.Format(element.LiteralContent) },
+                { string.Empty, formatter.Format(element.LiteralContent) },
             };
         }
     }

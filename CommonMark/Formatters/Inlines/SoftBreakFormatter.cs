@@ -12,7 +12,7 @@ namespace CommonMark.Formatters.Inlines
         /// </summary>
         /// <param name="parameters">Formatter parameters.</param>
         public SoftBreakFormatter(FormatterParameters parameters)
-            : base(parameters, InlineTag.SoftBreak, printerTag: "softbreak")
+            : base(parameters, InlineTag.SoftBreak, textTag: "softbreak")
         {
         }
 

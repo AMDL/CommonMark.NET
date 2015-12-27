@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace CommonMark.Formatters
 {
@@ -20,7 +19,7 @@ namespace CommonMark.Formatters
             this._blockFormatters = GetBlockFormatters();
             this._inlineFormatters = GetInlineFormatters();
             this._htmlFormatter = new HtmlFormatterImpl();
-            this._printer = new PrinterImpl();
+            this._syntaxFormatter = new SyntaxFormatter();
         }
 
         #endregion Constructor
@@ -102,16 +101,16 @@ namespace CommonMark.Formatters
 
         #endregion HtmlFormatter
 
-        #region Printer
+        #region SyntaxFormatter
 
-        private PrinterImpl _printer;
+        private SyntaxFormatter _syntaxFormatter;
 
-        internal IPrinter Printer
+        internal ISyntaxFormatter SyntaxFormatter
         {
-            get { return _printer; }
+            get { return _syntaxFormatter; }
         }
 
-        #endregion Printer
+        #endregion SyntaxFormatter
 
         #region Settings
 

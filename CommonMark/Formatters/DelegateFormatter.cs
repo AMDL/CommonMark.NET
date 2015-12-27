@@ -21,14 +21,19 @@ namespace CommonMark.Formatters
             get;
         }
 
-        public string PrinterTag
+        public string TextTag
         {
-            get { return inner.PrinterTag ?? outer.PrinterTag; }
+            get
+            {
+                return inner.TextTag
+                    ?? outer.TextTag;
+            }
         }
 
         public bool CanHandle(TElement element)
         {
-            return inner.CanHandle(element) || outer.CanHandle(element);
+            return inner.CanHandle(element)
+                || outer.CanHandle(element);
         }
 
         public bool? IsRenderPlainTextInlines(TElement element)
@@ -38,11 +43,11 @@ namespace CommonMark.Formatters
                 : outer.IsRenderPlainTextInlines(element);
         }
 
-        public IEnumerable<KeyValuePair<string, object>> GetPrinterData(IPrinter printer, TElement element)
+        public IEnumerable<KeyValuePair<string, object>> GetSyntaxData(ISyntaxFormatter formatter, TElement element)
         {
             return inner.CanHandle(element)
-                ? inner.GetPrinterData(printer, element)
-                : outer.GetPrinterData(printer, element);
+                ? inner.GetSyntaxData(formatter, element)
+                : outer.GetSyntaxData(formatter, element);
         }
     }
 

@@ -16,10 +16,10 @@ namespace CommonMark.Formatters
         TTag Tag { get; }
 
         /// <summary>
-        /// Gets the syntax tree node tag.
+        /// Gets the text syntax tree tag.
         /// </summary>
         /// <value>Tag.</value>
-        string PrinterTag { get; }
+        string TextTag { get; }
 
         /// <summary>
         /// Checks whether the formatter can handle an element.
@@ -31,10 +31,10 @@ namespace CommonMark.Formatters
         /// <summary>
         /// Returns the properties of an element.
         /// </summary>
-        /// <param name="printer">Printer.</param>
+        /// <param name="formatter">Syntax formatter.</param>
         /// <param name="element">Element.</param>
         /// <returns>Properties or <c>null</c>.</returns>
-        IEnumerable<KeyValuePair<string, object>> GetPrinterData(IPrinter printer, TElement element);
+        IEnumerable<KeyValuePair<string, object>> GetSyntaxData(ISyntaxFormatter formatter, TElement element);
 
         /// <summary>
         /// Returns the inline content rendering option.

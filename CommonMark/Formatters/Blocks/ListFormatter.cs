@@ -15,9 +15,9 @@ namespace CommonMark.Formatters.Blocks
         /// <param name="parameters">Formatter parameters.</param>
         /// <param name="tag">Block element tag.</param>
         /// <param name="htmlTag">HTML tag.</param>
-        /// <param name="printerTag">Printer tag.</param>
-        public ListFormatter(FormatterParameters parameters, BlockTag tag, string htmlTag, string printerTag)
-            : base(parameters, tag, htmlTag, printerTag: printerTag)
+        /// <param name="textTag">Text syntax tree tag.</param>
+        public ListFormatter(FormatterParameters parameters, BlockTag tag, string htmlTag, string textTag)
+            : base(parameters, tag, htmlTag, textTag: textTag)
         {
         }
 

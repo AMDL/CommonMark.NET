@@ -12,7 +12,7 @@ namespace CommonMark.Formatters.Blocks
         /// </summary>
         /// <param name="parameters">Formatter parameters.</param>
         public DocumentFormatter(FormatterParameters parameters)
-            : base(parameters, BlockTag.Document, printerTag: "document")
+            : base(parameters, BlockTag.Document, textTag: "document")
         {
         }
 

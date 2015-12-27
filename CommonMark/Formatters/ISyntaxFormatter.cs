@@ -1,9 +1,9 @@
 ﻿namespace CommonMark.Formatters
 {
     /// <summary>
-    /// Syntax tree printer interface.
+    /// Syntax tree formatter interface.
     /// </summary>
-    public interface IPrinter
+    public interface ISyntaxFormatter
     {
         /// <summary>
         /// Formats a string.

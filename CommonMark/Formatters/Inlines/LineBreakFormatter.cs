@@ -12,7 +12,7 @@ namespace CommonMark.Formatters.Inlines
         /// </summary>
         /// <param name="parameters">Formatter parameters.</param>
         public LineBreakFormatter(FormatterParameters parameters)
-            : base(parameters, InlineTag.LineBreak, printerTag: "linebreak")
+            : base(parameters, InlineTag.LineBreak, textTag: "linebreak")
         {
         }
 

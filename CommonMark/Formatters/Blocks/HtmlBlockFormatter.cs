@@ -13,7 +13,7 @@ namespace CommonMark.Formatters.Blocks
         /// </summary>
         /// <param name="parameters">Formatter parameters.</param>
         public HtmlBlockFormatter(FormatterParameters parameters)
-            : base(parameters, BlockTag.HtmlBlock, printerTag: "html_block")
+            : base(parameters, BlockTag.HtmlBlock, textTag: "html_block")
         {
         }
 
@@ -34,14 +34,14 @@ namespace CommonMark.Formatters.Blocks
         /// <summary>
         /// Returns the properties of an element.
         /// </summary>
-        /// <param name="printer">Printer.</param>
+        /// <param name="formatter">Syntax formatter.</param>
         /// <param name="element">Element.</param>
         /// <returns>Properties or <c>null</c>.</returns>
-        public override IEnumerable<KeyValuePair<string, object>> GetPrinterData(IPrinter printer, Block element)
+        public override IEnumerable<KeyValuePair<string, object>> GetSyntaxData(ISyntaxFormatter formatter, Block element)
         {
             return new Dictionary<string, object>
             {
-                { string.Empty, printer.Format(element.StringContent) },
+                { string.Empty, formatter.Format(element.StringContent) },
             };
         }
     }

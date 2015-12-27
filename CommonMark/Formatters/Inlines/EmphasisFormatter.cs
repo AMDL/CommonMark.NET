@@ -14,9 +14,9 @@ namespace CommonMark.Formatters.Inlines
         /// <param name="parameters">Formatter parameters.</param>
         /// <param name="tag">Inline element tag.</param>
         /// <param name="htmlTag">HTML tag.</param>
-        /// <param name="printerTag">Printer tag. If unspecified, <paramref name="htmlTag"/> will be used.</param>
-        protected EmphasisFormatter(FormatterParameters parameters, InlineTag tag, string htmlTag, string printerTag = null)
-            : base(parameters, tag, htmlTag, printerTag: printerTag)
+        /// <param name="textTag">Text syntax tree tag. If unspecified, <paramref name="htmlTag"/> will be used.</param>
+        protected EmphasisFormatter(FormatterParameters parameters, InlineTag tag, string htmlTag, string textTag = null)
+            : base(parameters, tag, htmlTag, textTag: textTag)
         {
         }
 
@@ -34,10 +34,10 @@ namespace CommonMark.Formatters.Inlines
         /// <summary>
         /// Returns the properties of an element.
         /// </summary>
-        /// <param name="printer">Printer.</param>
+        /// <param name="formatter">Syntax formatter.</param>
         /// <param name="element">Element.</param>
         /// <returns>Properties or <c>null</c>.</returns>
-        public override IEnumerable<KeyValuePair<string, object>> GetPrinterData(IPrinter printer, Inline element)
+        public override IEnumerable<KeyValuePair<string, object>> GetSyntaxData(ISyntaxFormatter formatter, Inline element)
         {
             return new Dictionary<string, object>
             {

@@ -14,7 +14,7 @@ namespace CommonMark.Formatters.Inlines
         /// </summary>
         /// <param name="parameters">Formatter parameters.</param>
         public ImageFormatter(FormatterParameters parameters)
-            : base(parameters, InlineTag.Image, printerTag: "image")
+            : base(parameters, InlineTag.Image, textTag: "image")
         {
         }
 
@@ -78,15 +78,15 @@ namespace CommonMark.Formatters.Inlines
         /// <summary>
         /// Returns the properties of an element.
         /// </summary>
-        /// <param name="printer">Printer.</param>
+        /// <param name="formatter">Syntax formatter.</param>
         /// <param name="element">Element.</param>
         /// <returns>Properties or <c>null</c>.</returns>
-        public override IEnumerable<KeyValuePair<string, object>> GetPrinterData(IPrinter printer, Inline element)
+        public override IEnumerable<KeyValuePair<string, object>> GetSyntaxData(ISyntaxFormatter formatter, Inline element)
         {
             return new Dictionary<string, object>
             {
-                { "url", printer.Format(element.TargetUrl) },
-                { "title", printer.Format(element.LiteralContent) },
+                { "url", formatter.Format(element.TargetUrl) },
+                { "title", formatter.Format(element.LiteralContent) },
             };
         }
     }

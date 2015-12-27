@@ -18,13 +18,13 @@ namespace CommonMark.Formatters
         /// <param name="tag">Element tag.</param>
         /// <param name="htmlTag">HTML tag.</param>
         /// <param name="isSelfClosing"><c>true</c> if <paramref name="htmlTag"/> is self-closing.</param>
-        /// <param name="printerTag">Printer tag. If unspecified, <paramref name="htmlTag"/> will be used.</param>
-        protected ElementFormatter(FormatterParameters parameters, TTag tag, string htmlTag, bool isSelfClosing, string printerTag)
+        /// <param name="textTag">Text syntax tree tag. If unspecified, <paramref name="htmlTag"/> will be used.</param>
+        protected ElementFormatter(FormatterParameters parameters, TTag tag, string htmlTag, bool isSelfClosing, string textTag)
         {
             this.Parameters = parameters;
             this.Tag = tag;
             this.HtmlTag = htmlTag;
-            this.PrinterTag = printerTag ?? htmlTag;
+            this.TextTag = textTag ?? htmlTag;
             this.IsSelfClosing = isSelfClosing || htmlTag == null;
         }
 
@@ -51,10 +51,10 @@ namespace CommonMark.Formatters
         }
 
         /// <summary>
-        /// Gets the syntax tree node tag.
+        /// Gets the text syntax tree tag.
         /// </summary>
         /// <value>Tag.</value>
-        public string PrinterTag
+        public string TextTag
         {
             get;
         }
@@ -87,10 +87,10 @@ namespace CommonMark.Formatters
         /// <summary>
         /// Returns the properties of an element.
         /// </summary>
-        /// <param name="printer">Printer.</param>
+        /// <param name="formatter">Syntax formatter.</param>
         /// <param name="element">Element.</param>
         /// <returns>Properties or <c>null</c>.</returns>
-        public virtual IEnumerable<KeyValuePair<string, object>> GetPrinterData(IPrinter printer, TElement element)
+        public virtual IEnumerable<KeyValuePair<string, object>> GetSyntaxData(ISyntaxFormatter formatter, TElement element)
         {
             return null;
         }

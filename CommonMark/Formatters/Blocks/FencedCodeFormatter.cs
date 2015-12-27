@@ -13,7 +13,7 @@ namespace CommonMark.Formatters.Blocks
         /// </summary>
         /// <param name="parameters">Formatter parameters.</param>
         public FencedCodeFormatter(FormatterParameters parameters)
-            : base(parameters, BlockTag.FencedCode, printerTag: "fenced_code")
+            : base(parameters, BlockTag.FencedCode, textTag: "fenced_code")
         {
         }
 
@@ -40,15 +40,15 @@ namespace CommonMark.Formatters.Blocks
         /// <summary>
         /// Returns the additional properties of an element.
         /// </summary>
-        /// <param name="printer">Printer.</param>
+        /// <param name="formatter">Syntax formatter.</param>
         /// <param name="element">Element.</param>
         /// <returns>Additional properties.</returns>
-        protected override Dictionary<string, object> GetData(IPrinter printer, Block element)
+        protected override Dictionary<string, object> GetData(ISyntaxFormatter formatter, Block element)
         {
             return new Dictionary<string, object>
             {
                 { "length", element.FencedCode?.FenceLength },
-                { "info", printer.Format(element.FencedCode?.Info) },
+                { "info", formatter.Format(element.FencedCode?.Info) },
             };
         }
     }

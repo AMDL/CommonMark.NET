@@ -12,7 +12,7 @@ namespace CommonMark.Formatters.Blocks
         /// </summary>
         /// <param name="parameters"></param>
         public BlockQuoteFormatter(FormatterParameters parameters)
-            : base(parameters, BlockTag.BlockQuote, "blockquote", printerTag: "block_quote")
+            : base(parameters, BlockTag.BlockQuote, "blockquote", textTag: "block_quote")
         {
         }
 

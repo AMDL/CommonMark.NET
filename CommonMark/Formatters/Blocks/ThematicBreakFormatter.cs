@@ -12,7 +12,7 @@ namespace CommonMark.Formatters.Blocks
         /// </summary>
         /// <param name="parameters">Formatter parameters.</param>
         public ThematicBreakFormatter(FormatterParameters parameters)
-            : base(parameters, BlockTag.ThematicBreak, "hr", true, printerTag: "hrule")
+            : base(parameters, BlockTag.ThematicBreak, "hr", true, textTag: "thematic_break")
         {
         }
     }

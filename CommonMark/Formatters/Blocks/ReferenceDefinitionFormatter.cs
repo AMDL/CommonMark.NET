@@ -12,7 +12,7 @@ namespace CommonMark.Formatters.Blocks
         /// </summary>
         /// <param name="parameters">Formatter parameters.</param>
         public ReferenceDefinitionFormatter(FormatterParameters parameters)
-            : base(parameters, BlockTag.ReferenceDefinition, printerTag: "reference_def")
+            : base(parameters, BlockTag.ReferenceDefinition, textTag: "reference_def")
         {
         }
 

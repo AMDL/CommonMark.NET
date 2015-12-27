@@ -13,9 +13,9 @@ namespace CommonMark.Formatters.Blocks
         /// </summary>
         /// <param name="parameters">Formatter parameters.</param>
         /// <param name="tag">Block element tag.</param>
-        /// <param name="printerTag">Printer tag.</param>
-        public UnorderedListFormatter(FormatterParameters parameters, BlockTag tag = BlockTag.UnorderedList, string printerTag = "unordered_list")
-            : base(parameters, tag, "ul", printerTag)
+        /// <param name="textTag">Text syntax tree tag.</param>
+        public UnorderedListFormatter(FormatterParameters parameters, BlockTag tag = BlockTag.UnorderedList, string textTag = "unordered_list")
+            : base(parameters, tag, "ul", textTag)
         {
         }
 
@@ -50,10 +50,10 @@ namespace CommonMark.Formatters.Blocks
         /// <summary>
         /// Returns the properties of an element.
         /// </summary>
-        /// <param name="printer">Printer.</param>
+        /// <param name="formatter">Syntax formatter.</param>
         /// <param name="element">Element.</param>
         /// <returns>Properties or <c>null</c>.</returns>
-        public override IEnumerable<KeyValuePair<string, object>> GetPrinterData(IPrinter printer, Block element)
+        public override IEnumerable<KeyValuePair<string, object>> GetSyntaxData(ISyntaxFormatter formatter, Block element)
         {
             return new Dictionary<string, object>
             {
@@ -82,10 +82,10 @@ namespace CommonMark.Formatters.Blocks
         /// <summary>
         /// Returns the properties of an element.
         /// </summary>
-        /// <param name="printer">Printer.</param>
+        /// <param name="formatter">Syntax formatter.</param>
         /// <param name="element">Element.</param>
         /// <returns>Properties or <c>null</c>.</returns>
-        public override IEnumerable<KeyValuePair<string, object>> GetPrinterData(IPrinter printer, Block element)
+        public override IEnumerable<KeyValuePair<string, object>> GetSyntaxData(ISyntaxFormatter formatter, Block element)
         {
             return new Dictionary<string, object>
             {
