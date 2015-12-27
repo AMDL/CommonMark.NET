@@ -222,7 +222,7 @@ namespace CommonMark
                     case OutputFormat.Html:
                         HtmlFormatter.BlocksToHtml(target, document, settings);
                         break;
-                    case OutputFormat.SyntaxTree:
+                    case OutputFormat.TextSyntaxTree:
                         Printer.PrintBlocks(target, document, settings);
                         break;
 #pragma warning disable 0618
