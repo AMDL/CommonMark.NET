@@ -913,6 +913,66 @@ namespace CommonMark.Tests
 
         [TestMethod]
         [TestCategory("Container blocks - Fancy lists")]
+        public void EarthlyBranchListDisabledByDefault()
+        {
+            Helpers.ExecuteTest("子、 1", "<p>子、 1</p>", EmptySettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void EarthlyBranchListDisabledAlone()
+        {
+            var s = CommonMarkSettings.Default.Clone();
+            s.Extensions.Register(new FancyLists(s, new FancyListsSettings(AlphaListStyles.None & ~AlphaListStyles.EarthlyBranch)));
+            Helpers.ExecuteTest("子、 1", "<p>子、 1</p>", s);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void EarthlyBranchListStart1()
+        {
+            Helpers.ExecuteTest("子、 1", "<ol style=\"list-style-type: cjk-earthly-branch\">\n<li>1</li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void EarthlyBranchListStart1860()
+        {
+            Helpers.ExecuteTest("亥酉亥、 1860", "<ol start=\"1860\" style=\"list-style-type: cjk-earthly-branch\">\n<li>1860</li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void HeavenlyStemListDisabledByDefault()
+        {
+            Helpers.ExecuteTest("甲、 1", "<p>甲、 1</p>", EmptySettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void HeavenlyStemListDisabledAlone()
+        {
+            var s = CommonMarkSettings.Default.Clone();
+            s.Extensions.Register(new FancyLists(s, new FancyListsSettings(AlphaListStyles.None & ~AlphaListStyles.HeavenlyStem)));
+            Helpers.ExecuteTest("甲、 1", "<p>甲、 1</p>", s);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void HeavenlyStemListStart1()
+        {
+            Helpers.ExecuteTest("甲、 1", "<ol style=\"list-style-type: cjk-heavenly-stem\">\n<li>1</li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void HeavenlyStemListStart1065()
+        {
+            Helpers.ExecuteTest("癸己戊、 1065", "<ol start=\"1065\" style=\"list-style-type: cjk-heavenly-stem\">\n<li>1065</li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
         public void HebrewListDisabledByDefault()
         {
             Helpers.ExecuteTest("יא. אללה הוא עכבר", "<p>יא. אללה הוא עכבר</p>", EmptySettings);

@@ -38,12 +38,34 @@
         /// <summary>
         /// Hiragana syllables.
         /// </summary>
+        /// <remarks>
+        /// At least one space after the comma is required.
+        /// </remarks>
         Hiragana = 8,
 
         /// <summary>
         /// Katakana syllables.
         /// </summary>
+        /// <remarks>
+        /// At least one space after the comma is required.
+        /// </remarks>
         Katakana = 16,
+
+        /// <summary>
+        /// Earthly Branch ideographs.
+        /// </summary>
+        /// <remarks>
+        /// At least one space after the comma is required.
+        /// </remarks>
+        EarthlyBranch = 32,
+
+        /// <summary>
+        /// Heavenly Stem ideographs.
+        /// </summary>
+        /// <remarks>
+        /// At least one space after the comma is required.
+        /// </remarks>
+        HeavenlyStem = 64,
 
         /// <summary>
         /// All extended alphabetical list styles are enabled.

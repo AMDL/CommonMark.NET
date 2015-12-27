@@ -108,7 +108,7 @@ namespace CommonMark.Parser.Blocks
         /// <param name="maxMarkerLength">Maximum marker length.</param>
         /// <param name="listStyle">List style.</param>
         /// <param name="delimiterChars">Delimiter characters.</param>
-        public OrderedListItemParameters(char[] markerChars, int maxMarkerLength = 3, string listStyle = null, params char[] delimiterChars)
+        public OrderedListItemParameters(string markerChars, int maxMarkerLength = 3, string listStyle = null, params char[] delimiterChars)
             : this(listStyle: listStyle, markers: GetMarkers(markerChars), delimiters: GetDelimiters(delimiterChars, maxMarkerLength))
         {
         }
@@ -166,7 +166,7 @@ namespace CommonMark.Parser.Blocks
         /// </summary>
         public short ValueBase { get; set; }
 
-        private static OrderedListMarkerParameters[] GetMarkers(char[] markerChars)
+        private static OrderedListMarkerParameters[] GetMarkers(string markerChars)
         {
             var length = markerChars.Length;
             if (length == 0)

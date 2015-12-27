@@ -177,6 +177,8 @@ namespace CommonMark.Extension
             yield return GetUpperRussianParameters();
             yield return GetHiraganaParameters();
             yield return GetKatakanaParameters();
+            yield return GetEarthlyBranchParameters();
+            yield return GetHeavenlyStemParameters();
         }
 
         private static OrderedListItemParameters GetLowerGreekParameters()
@@ -217,7 +219,7 @@ namespace CommonMark.Extension
         {
             return new OrderedListItemParameters(
                 listStyle: "hiragana",
-                markerChars: new[] { 'あ', 'い', 'う', 'え', 'お', 'か', 'き', 'く', 'け', 'こ', 'さ', 'し', 'す', 'せ', 'そ', 'た', 'ち', 'つ', 'て', 'と', 'な', 'に', 'ぬ', 'ね', 'の', 'は', 'ひ', 'ふ', 'へ', 'ほ', 'ま', 'み', 'む', 'め', 'も', 'や', 'ゆ', 'よ', 'ら', 'り', 'る', 'れ', 'ろ', 'わ', 'を', 'ん' },
+                markerChars: "あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをん",
                 delimiterChars: '、');
         }
 
@@ -225,7 +227,23 @@ namespace CommonMark.Extension
         {
             return new OrderedListItemParameters(
                 listStyle: "katakana",
-                markerChars: new[] { 'ア', 'イ', 'ウ', 'エ', 'オ', 'カ', 'キ', 'ク', 'ケ', 'コ', 'サ', 'シ', 'ス', 'セ', 'ソ', 'タ', 'チ', 'ツ', 'テ', 'ト', 'ナ', 'ニ', 'ヌ', 'ネ', 'ノ', 'ハ', 'ヒ', 'フ', 'ヘ', 'ホ', 'マ', 'ミ', 'ム', 'メ', 'モ', 'ヤ', 'ユ', 'ヨ', 'ラ', 'リ', 'ル', 'レ', 'ロ', 'ワ', 'ヲ', 'ン' },
+                markerChars: "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン",
+                delimiterChars: '、');
+        }
+
+        private static OrderedListItemParameters GetEarthlyBranchParameters()
+        {
+            return new OrderedListItemParameters(
+                listStyle: "cjk-earthly-branch",
+                markerChars: "子丑寅卯辰巳午未申酉戌亥",
+                delimiterChars: '、');
+        }
+
+        private static OrderedListItemParameters GetHeavenlyStemParameters()
+        {
+            return new OrderedListItemParameters(
+                listStyle: "cjk-heavenly-stem",
+                markerChars: "甲乙丙丁戊己庚辛壬癸",
                 delimiterChars: '、');
         }
 

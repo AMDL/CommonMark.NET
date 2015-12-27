@@ -9,7 +9,7 @@
         /// The default parameters instance.
         /// </summary>
         public static readonly OrderedListItemParameters DefaultParameters = new OrderedListItemParameters(
-            markerChars: new[] { '#' },
+            markerChars: "#",
             maxMarkerLength: 1);
 
         /// <summary>
