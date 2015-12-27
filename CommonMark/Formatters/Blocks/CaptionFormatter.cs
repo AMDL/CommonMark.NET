@@ -29,8 +29,8 @@ namespace CommonMark.Formatters.Blocks
         {
             return new Dictionary<string, object>
             {
-                { "placement", element.CaptionData.Placement },
-                { "lead", element.CaptionData.Lead },
+                { "placement", element.Caption.Placement },
+                { "lead", element.Caption.Lead },
             };
         }
     }

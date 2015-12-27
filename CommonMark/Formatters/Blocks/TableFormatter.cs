@@ -14,10 +14,10 @@ namespace CommonMark.Formatters.Blocks
         {
             return new Dictionary<string, object>
             {
-                {"type", block.TableData.TableType},
-                {"head_delim", block.TableData.HeaderDelimiter},
-                {"head_col_delim", block.TableData.HeaderColumnDelimiter},
-                {"col_delim", block.TableData.ColumnDelimiter},
+                {"type", block.Table.TableType},
+                {"head_delim", block.Table.HeaderDelimiter},
+                {"head_col_delim", block.Table.HeaderColumnDelimiter},
+                {"col_delim", block.Table.ColumnDelimiter},
             };
         }
     }

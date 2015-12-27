@@ -92,12 +92,12 @@ namespace CommonMark.Extension
 
         public override bool Handle(ref BlockParserInfo info)
         {
-            TableData data;
-            if (!info.IsIndented && info.Container.Tag == BlockTag.Paragraph && null != (data = ScanHeaderLine(info.Line, info.FirstNonspace, info.Line.Length))
+            TableData table;
+            if (!info.IsIndented && info.Container.Tag == BlockTag.Paragraph && null != (table = ScanHeaderLine(info.Line, info.FirstNonspace, info.Line.Length))
                 && BlockParser.ContainsSingleLine(info.Container.StringContent))
             {
                 info.Container.Tag = BlockTag.Table;
-                info.Container.TableData = data;
+                info.Container.Table = table;
                 info.AdvanceOffset(info.Line.Length - 1 - info.Offset, false);
                 return false;
             }
@@ -302,7 +302,7 @@ namespace CommonMark.Extension
 #pragma warning disable 0618
                 Previous = lastChild,
 #pragma warning restore 0618
-                TableRowData = new TableRowData(),
+                TableRow = new TableRowData(),
                 StringContent = block.StringContent,
             };
 
@@ -317,8 +317,8 @@ namespace CommonMark.Extension
             if (block.Tag != BlockTag.TableCell)
                 return;
 
-            var tableData = block.Parent.TableData;
-            var columnData = tableData.FirstColumn;
+            var table = block.Parent.Table;
+            var columnData = table.FirstColumn;
             var cellCount = 0;
 
             var sourcePosition = block.SourcePosition;
@@ -346,7 +346,7 @@ namespace CommonMark.Extension
 #pragma warning restore 0618
                 {
                     Parent = block,
-                    TableCellData = new TableCellData
+                    TableCell = new TableCellData
                     {
                         ColumnData = columnData ?? new TableColumnData()
                     },
@@ -373,7 +373,7 @@ namespace CommonMark.Extension
                     columnData = columnData.NextSibling;
             }
 
-            block.TableRowData.CellCount = cellCount;
+            block.TableRow.CellCount = cellCount;
             block.InlineContent = null;
         }
 

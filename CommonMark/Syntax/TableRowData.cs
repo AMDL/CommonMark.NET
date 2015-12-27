@@ -1,7 +1,7 @@
 ﻿namespace CommonMark.Syntax
 {
     /// <summary>
-    /// Contains additional data for table row element. Used in the <see cref="Block.TableRowData"/> property.
+    /// Contains additional data for table row element. Used in the <see cref="Block.TableRow"/> property.
     /// </summary>
     public sealed class TableRowData
     {

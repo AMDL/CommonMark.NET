@@ -18,7 +18,7 @@ namespace CommonMark.Formatters.Blocks
         public override bool WriteOpening(IHtmlTextWriter writer, Block block, bool tight)
         {
             writer.WriteConstant("<td");
-            switch (block.TableCellData.ColumnData.Alignment)
+            switch (block.TableCell.ColumnData.Alignment)
             {
                 case TableColumnAlignment.Left:
                     writer.WriteConstant(" style=\"text-align: left\"");
@@ -40,7 +40,7 @@ namespace CommonMark.Formatters.Blocks
         {
             return new Dictionary<string, object>
             {
-                {"align", block.TableCellData.ColumnData.Alignment},
+                {"align", block.TableCell.ColumnData.Alignment},
             };
         }
     }

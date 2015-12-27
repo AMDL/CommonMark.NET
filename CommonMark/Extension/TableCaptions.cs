@@ -89,7 +89,7 @@ namespace CommonMark.Extension
             if ((IsEnabled(TableCaptionsFeatures.ColonDefinition) && block.ListData.BulletChar == ':')
                 || (IsEnabled(TableCaptionsFeatures.TildeDefinition) && block.ListData.BulletChar == '~'))
             {
-                block.CaptionData = new CaptionData();
+                block.Caption = new CaptionData();
                 return true;
             }
             return false;
@@ -109,7 +109,7 @@ namespace CommonMark.Extension
         private static bool PreprocessMatch(Block block, Inline inline, string content, int index, string prefix)
         {
             inline.LiteralContent = content.Substring(index + 1).TrimStart();
-            block.CaptionData = new CaptionData
+            block.Caption = new CaptionData
             {
                 Lead = prefix,
             };
@@ -150,7 +150,7 @@ namespace CommonMark.Extension
         {
             caption.Parent = table;
             caption.Tag = BlockTag.TableCaption;
-            caption.CaptionData.Placement = placement;
+            caption.Caption.Placement = placement;
 
             var first = table.FirstChild;
             table.FirstChild = caption;

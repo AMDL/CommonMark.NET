@@ -1,7 +1,7 @@
 ﻿namespace CommonMark.Syntax
 {
     /// <summary>
-    /// Contains additional data for a caption element. Used in the <see cref="Block.CaptionData"/> property.
+    /// Contains additional data for a caption element. Used in the <see cref="Block.Caption"/> property.
     /// </summary>
     public sealed class CaptionData
     {
