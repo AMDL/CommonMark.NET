@@ -59,7 +59,7 @@ namespace CommonMark.Parser.Blocks.Delimiters
             if (!info.IsIndented && 0 != (fenceLength = ScanOpening(info)))
             {
                 info.Container = AppendChildBlock(info, Tag, info.FirstNonspace);
-                info.Container.FencedCodeData = new FencedCodeData
+                info.Container.FencedCode = new FencedCodeData
                 {
                     FenceChar = info.CurrentCharacter,
                     FenceLength = fenceLength,

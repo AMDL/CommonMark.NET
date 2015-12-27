@@ -183,7 +183,17 @@ namespace CommonMark.Syntax
         /// <summary>
         /// Gets or sets the additional properties that apply to fenced code blocks.
         /// </summary>
-        public FencedCodeData FencedCodeData { get; set; }
+        public FencedCodeData FencedCode { get; set; }
+
+        /// <summary>
+        /// Gets or sets the additional properties that apply to fenced code blocks.
+        /// </summary>
+        [Obsolete("Use " + nameof(FencedCode) + " instead.")]
+        public FencedCodeData FencedCodeData
+        {
+            get { return FencedCode; }
+            set { FencedCode = value; }
+        }
 
         /// <summary>
         /// Gets or sets the heading level (as in <c>&lt;h1&gt;</c> or <c>&lt;h2&gt;</c>).

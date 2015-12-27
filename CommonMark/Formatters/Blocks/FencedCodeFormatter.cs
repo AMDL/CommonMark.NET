@@ -24,7 +24,7 @@ namespace CommonMark.Formatters.Blocks
         /// <param name="element">Element.</param>
         protected override void WriteInfo(IHtmlTextWriter writer, Block element)
         {
-            var info = element.FencedCodeData?.Info;
+            var info = element.FencedCode?.Info;
             if (info != null && info.Length > 0)
             {
                 var x = info.IndexOf(' ');
@@ -47,8 +47,8 @@ namespace CommonMark.Formatters.Blocks
         {
             return new Dictionary<string, object>
             {
-                { "length", element.FencedCodeData?.FenceLength },
-                { "info", printer.Format(element.FencedCodeData?.Info) },
+                { "length", element.FencedCode?.FenceLength },
+                { "info", printer.Format(element.FencedCode?.Info) },
             };
         }
     }

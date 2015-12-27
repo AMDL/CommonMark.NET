@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace CommonMark.Syntax
+﻿namespace CommonMark.Syntax
 {
     /// <summary>
-    /// Contains additional data for fenced code blocks. Used in <see cref="Block.FencedCodeData"/>/
+    /// Contains additional data for fenced code blocks. Used in <see cref="Block.FencedCode"/>/
     /// </summary>
     public sealed class FencedCodeData
     {

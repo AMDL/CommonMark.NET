@@ -72,7 +72,7 @@ namespace CommonMark.Parser.Blocks
         public override bool Initialize(ref BlockParserInfo info)
         {
             // -1 means we've seen closer 
-            if (info.Container.FencedCodeData.FenceLength == -1)
+            if (info.Container.FencedCode.FenceLength == -1)
             {
                 if (info.IsBlank)
                     info.Container.IsLastLineBlank = true;
@@ -80,7 +80,7 @@ namespace CommonMark.Parser.Blocks
             }
 
             // skip optional spaces of fence offset
-            var i = info.Container.FencedCodeData.FenceOffset;
+            var i = info.Container.FencedCode.FenceOffset;
             while (i > 0 && info.Line[info.Offset] == ' ')
             {
                 info.Offset++;
@@ -101,7 +101,7 @@ namespace CommonMark.Parser.Blocks
             if (!info.IsIndented && CanClose(info) && 0 != ScanClosing(info))
             {
                 // if closing fence, set fence length to -1. it will be closed when the next line is processed. 
-                info.Container.FencedCodeData.FenceLength = -1;
+                info.Container.FencedCode.FenceLength = -1;
             }
             else
             {
@@ -119,7 +119,7 @@ namespace CommonMark.Parser.Blocks
         {
             // first line of contents becomes info
             var firstlinelen = container.StringContent.IndexOf('\n') + 1;
-            container.FencedCodeData.Info = InlineMethods.Unescape(container.StringContent.TakeFromStart(firstlinelen, true).Trim(), Settings.InlineParserParameters);
+            container.FencedCode.Info = InlineMethods.Unescape(container.StringContent.TakeFromStart(firstlinelen, true).Trim(), Settings.InlineParserParameters);
             return true;
         }
 
@@ -132,7 +132,7 @@ namespace CommonMark.Parser.Blocks
         {
             return Parameters.Delimiters.Length == 1
                 ? info.CurrentCharacter == Parameters.Delimiters[0].Opener
-                : info.CurrentCharacter == info.Container.FencedCodeData.FenceChar;
+                : info.CurrentCharacter == info.Container.FencedCode.FenceChar;
         }
 
         /// <summary>
@@ -145,7 +145,7 @@ namespace CommonMark.Parser.Blocks
         {
             var s = info.Line;
             var pos = info.FirstNonspace;
-            var len = info.Container.FencedCodeData.FenceLength;
+            var len = info.Container.FencedCode.FenceLength;
             var sourceLength = s.Length;
 
             /*!re2c
