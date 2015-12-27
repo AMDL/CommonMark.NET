@@ -228,12 +228,6 @@ namespace CommonMark.Syntax
         public TableCellData TableCell { get; set; }
 
         /// <summary>
-        /// Gets or sets the additional properties that apply to table row elements.
-        /// Only set for <see cref="BlockTag.TableRow"/> elements if tables are enabled.
-        /// </summary>
-        public TableRowData TableRow { get; set; }
-
-        /// <summary>
         /// Gets or sets the additional properties that apply to table elements.
         /// Only set for <see cref="BlockTag.Table"/> elements if tables are enabled.
         /// </summary>

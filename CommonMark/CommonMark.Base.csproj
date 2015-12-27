@@ -226,7 +226,6 @@
     <Compile Include="Syntax\TableColumnAlignment.cs" />
     <Compile Include="Syntax\TableColumnData.cs" />
     <Compile Include="Syntax\TableData.cs" />
-    <Compile Include="Syntax\TableRowData.cs" />
     <Compile Include="Syntax\TableType.cs" />
     <Compile Include="Utilities.cs" />
   </ItemGroup>

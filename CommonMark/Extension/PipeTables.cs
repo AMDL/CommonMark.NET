@@ -302,7 +302,6 @@ namespace CommonMark.Extension
 #pragma warning disable 0618
                 Previous = lastChild,
 #pragma warning restore 0618
-                TableRow = new TableRowData(),
                 StringContent = block.StringContent,
             };
 
@@ -319,7 +318,6 @@ namespace CommonMark.Extension
 
             var table = block.Parent.Table;
             var columnData = table.FirstColumn;
-            var cellCount = 0;
 
             var sourcePosition = block.SourcePosition;
 #pragma warning disable 0618
@@ -353,8 +351,6 @@ namespace CommonMark.Extension
                     InlineContent = inline,
                 };
 
-                cellCount++;
-
                 if (child == null)
                     block.FirstChild = nextChild;
                 else
@@ -373,7 +369,6 @@ namespace CommonMark.Extension
                     columnData = columnData.NextSibling;
             }
 
-            block.TableRow.CellCount = cellCount;
             block.InlineContent = null;
         }
 
