@@ -58,7 +58,7 @@ namespace CommonMark
                     }
                     else if (string.Equals(args[i], "--ast", StringComparison.OrdinalIgnoreCase))
                     {
-                        settings.OutputFormat = OutputFormat.SyntaxTree;
+                        settings.OutputFormat = OutputFormat.TextSyntaxTree;
                     }
                     else if (string.Equals(args[i], "--sourcepos", StringComparison.OrdinalIgnoreCase))
                     {
