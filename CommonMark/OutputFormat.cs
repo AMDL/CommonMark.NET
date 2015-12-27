@@ -1,4 +1,6 @@
-﻿namespace CommonMark
+﻿using System;
+
+namespace CommonMark
 {
     /// <summary>
     /// Specifies different formatters supported by the converter.
@@ -14,5 +16,11 @@
         /// The output is a debug view of the syntax tree. Usable for debugging.
         /// </summary>
         SyntaxTree,
+
+        /// <summary>
+        /// The output is written using a delegate function specified in <see cref="CommonMarkSettings.OutputDelegate"/>.
+        /// </summary>
+        [Obsolete("Use " + nameof(CommonMarkConverter.Parse) + "() instead.")]
+        CustomDelegate
     }
 }
