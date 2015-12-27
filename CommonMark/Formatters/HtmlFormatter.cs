@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Text;
 using CommonMark.Syntax;
 
 namespace CommonMark.Formatters
 {
-    internal static class HtmlFormatter
+    internal class HtmlFormatter : IHtmlFormatter
     {
         private static readonly char[] EscapeHtmlCharacters = { '&', '<', '>', '"' };
         private const string HexCharacters = "0123456789ABCDEF";
@@ -184,43 +183,38 @@ namespace CommonMark.Formatters
                 target.Write(buffer, lastPos - part.StartIndex, part.Length - lastPos + part.StartIndex);
             }
         }
-        
-        public static void BlocksToHtml(TextWriter writer, Block block, CommonMarkSettings settings)
+
+        private readonly CommonMarkSettings settings;
+        private readonly Stack<BlockStackEntry> blockStack;
+        private readonly Stack<InlineStackEntry> inlineStack;
+        private readonly IBlockFormatter[] blockFormatters;
+        private readonly IInlineFormatter[] inlineFormatters;
+
+        public HtmlFormatter(CommonMarkSettings settings)
+        {
+            this.settings = settings;
+            blockStack = new Stack<BlockStackEntry>();
+            inlineStack = new Stack<InlineStackEntry>();
+            blockFormatters = settings.FormatterParameters.BlockFormatters;
+            inlineFormatters = settings.FormatterParameters.InlineFormatters;
+        }
+
+        public void BlocksToHtml(TextWriter writer, Block block)
         {
             var wrapper = new HtmlTextWriter(writer);
-            BlocksToHtmlInner(wrapper, block, settings);
+            BlocksToHtmlInner(wrapper, block);
         }
 
-        internal static void PrintPosition(HtmlTextWriter writer, Block block)
+        private void BlocksToHtmlInner(HtmlTextWriter writer, Block block)
         {
-            writer.WriteConstant(" data-sourcepos=\"");
-            writer.WriteConstant(block.SourcePosition.ToString(CultureInfo.InvariantCulture));
-            writer.Write('-');
-            writer.WriteConstant(block.SourceLastPosition.ToString(CultureInfo.InvariantCulture));
-            writer.WriteConstant("\"");
-        }
+            blockStack.Clear();
+            inlineStack.Clear();
 
-        internal static void PrintPosition(HtmlTextWriter writer, Inline inline)
-        {
-            writer.WriteConstant(" data-sourcepos=\"");
-            writer.WriteConstant(inline.SourcePosition.ToString(CultureInfo.InvariantCulture));
-            writer.Write('-');
-            writer.WriteConstant(inline.SourceLastPosition.ToString(CultureInfo.InvariantCulture));
-            writer.WriteConstant("\"");
-        }
-
-        private static void BlocksToHtmlInner(HtmlTextWriter writer, Block block, CommonMarkSettings settings)
-        {
-            var stack = new Stack<BlockStackEntry>();
-            var inlineStack = new Stack<InlineStackEntry>();
             bool visitChildren;
             string stackLiteral = null;
             bool stackTight = false;
             bool tight = false;
-            bool trackPositions = settings.TrackSourcePosition;
 
-            var parameters = settings.FormatterParameters;
-            IBlockFormatter[] formatters = parameters.BlockFormatters;
             IBlockFormatter formatter;
             bool? isRenderPlainTextInlines;
             bool? isStackTight;
@@ -229,19 +223,19 @@ namespace CommonMark.Formatters
             {
                 visitChildren = false;
 
-                formatter = formatters[(int)block.Tag];
+                formatter = blockFormatters[(int)block.Tag];
                 if (formatter == null)
                 {
                     throw new CommonMarkException("Block type " + block.Tag + " is not supported.", block);
                 }
 
                 visitChildren = formatter.WriteOpening(writer, block, tight);
-                stackLiteral = formatter.GetClosing(parameters.HtmlFormatter, block, tight);
+                stackLiteral = formatter.GetClosing(this, block, tight);
 
                 isRenderPlainTextInlines = formatter.IsRenderPlainTextInlines(block);
                 if (isRenderPlainTextInlines == false)
                 {
-                    InlinesToHtml(writer, block.InlineContent, settings, inlineStack);
+                    InlinesToHtml(writer, block.InlineContent);
                     if (block.Tag == BlockTag.Paragraph)
                         writer.WriteConstant(stackLiteral);
                     else
@@ -255,7 +249,7 @@ namespace CommonMark.Formatters
 
                 if (visitChildren)
                 {
-                    stack.Push(new BlockStackEntry(stackLiteral, block.NextSibling, tight));
+                    blockStack.Push(new BlockStackEntry(stackLiteral, block.NextSibling, tight));
 
                     tight = stackTight;
                     block = block.FirstChild;
@@ -269,9 +263,9 @@ namespace CommonMark.Formatters
                     block = null;
                 }
 
-                while (block == null && stack.Count > 0)
+                while (block == null && blockStack.Count > 0)
                 {
-                    var entry = stack.Pop();
+                    var entry = blockStack.Pop();
 
                     writer.WriteLineConstant(entry.Literal);
                     tight = entry.IsTight;
@@ -281,141 +275,49 @@ namespace CommonMark.Formatters
         }
 
         /// <summary>
-        /// Writes the inline list to the given writer as plain text (without any HTML tags).
-        /// </summary>
-        /// <seealso href="https://github.com/jgm/CommonMark/issues/145"/>
-        private static void InlinesToPlainText(HtmlTextWriter writer, Inline inline, Stack<InlineStackEntry> stack)
-        {
-            bool withinLink = false;
-            bool stackWithinLink = false; 
-            bool visitChildren;
-            string stackLiteral = null;
-            var origStackCount = stack.Count;
-
-            while (inline != null)
-            {
-                visitChildren = false;
-
-                switch (inline.Tag)
-                {
-                    case InlineTag.String:
-                    case InlineTag.Code:
-                    case InlineTag.RawHtml:
-                        EscapeHtml(inline.LiteralContentValue, writer);
-                        break;
-
-                    case InlineTag.LineBreak:
-                    case InlineTag.SoftBreak:
-                        writer.WriteLine();
-                        break;
-
-                    case InlineTag.Link:
-                        if (withinLink)
-                        {
-                            writer.Write('[');
-                            stackLiteral = "]";
-                            visitChildren = true;
-                            stackWithinLink = true;
-                        }
-                        else
-                        {
-                            visitChildren = true;
-                            stackWithinLink = true;
-                            stackLiteral = string.Empty;
-                        }
-                        break;
-
-                    case InlineTag.Image:
-                        visitChildren = true;
-                        stackWithinLink = true;
-                        stackLiteral = string.Empty;
-                        break;
-
-                    case InlineTag.Strong:
-                    case InlineTag.Emphasis:
-                    case InlineTag.Strikethrough:
-                        stackLiteral = string.Empty;
-                        stackWithinLink = withinLink;
-                        visitChildren = true;
-                        break;
-
-                    default:
-                        throw new CommonMarkException("Inline type " + inline.Tag + " is not supported.", inline);
-                }
-
-                if (visitChildren)
-                {
-                    stack.Push(new InlineStackEntry(stackLiteral, inline.NextSibling, withinLink));
-
-                    withinLink = stackWithinLink;
-                    inline = inline.FirstChild;
-                }
-                else if (inline.NextSibling != null)
-                {
-                    inline = inline.NextSibling;
-                }
-                else
-                {
-                    inline = null;
-                }
-
-                while (inline == null && stack.Count > origStackCount)
-                {
-                    var entry = stack.Pop();
-                    writer.WriteConstant(entry.Literal);
-                    inline = entry.Target;
-                    withinLink = entry.IsWithinLink;
-                }
-            }
-        }
-
-        /// <summary>
         /// Writes the inline list to the given writer as HTML code. 
         /// </summary>
-        private static void InlinesToHtml(HtmlTextWriter writer, Inline inline, CommonMarkSettings settings, Stack<InlineStackEntry> stack)
+        private void InlinesToHtml(HtmlTextWriter writer, Inline inline)
         {
-            var uriResolver = settings.UriResolver;
+            bool plaintext = false;
             bool withinLink = false;
             bool stackWithinLink = false;
             bool visitChildren;
-            bool trackPositions = settings.TrackSourcePosition;
             string stackLiteral = null;
 
-            var parameters = settings.FormatterParameters;
-            IInlineFormatter[] formatters = parameters.InlineFormatters;
             IInlineFormatter formatter;
             bool? isRenderPlainTextInlines;
 
             while (inline != null)
             {
-                visitChildren = false;
-
-                formatter = formatters[(int)inline.Tag];
+                formatter = inlineFormatters[(int)inline.Tag];
                 if (formatter == null)
                 {
                     throw new CommonMarkException("Inline type " + inline.Tag + " is not supported.", inline);
                 }
 
-                visitChildren = formatter.WriteOpening(writer, inline, withinLink);
-                stackLiteral = formatter.GetClosing(parameters.HtmlFormatter, inline, withinLink);
+                visitChildren = formatter.WriteOpening(writer, inline, plaintext, withinLink);
+                stackLiteral = formatter.GetClosing(this, inline, plaintext, withinLink);
 
-                isRenderPlainTextInlines = formatter.IsRenderPlainTextInlines(inline);
-                if (isRenderPlainTextInlines == true)
+                if (!plaintext)
                 {
-                    InlinesToPlainText(writer, inline.FirstChild, stack);
-                    writer.WriteConstant(stackLiteral);
-                    stackLiteral = null;
-                }
-                else if (isRenderPlainTextInlines == false)
-                {
-                    EscapeHtml(inline.LiteralContentValue, writer);
+                    isRenderPlainTextInlines = formatter.IsRenderPlainTextInlines(inline);
+                    if (isRenderPlainTextInlines == true)
+                    {
+                        plaintext = true;
+                        visitChildren = true;
+                    }
+                    else if (isRenderPlainTextInlines == false)
+                    {
+                        EscapeHtml(inline.LiteralContentValue, writer);
+                    }
                 }
 
                 stackWithinLink = formatter.IsStackWithinLink(inline, withinLink);
 
                 if (visitChildren)
                 {
-                    stack.Push(new InlineStackEntry(stackLiteral, inline.NextSibling, withinLink));
+                    inlineStack.Push(new InlineStackEntry(stackLiteral, inline.NextSibling, plaintext, withinLink));
 
                     withinLink = stackWithinLink;
                     inline = inline.FirstChild;
@@ -429,21 +331,23 @@ namespace CommonMark.Formatters
                     inline = null;
                 }
 
-                while (inline == null && stack.Count > 0)
+                while (inline == null && inlineStack.Count > 0)
                 {
-                    var entry = stack.Pop();
+                    var entry = inlineStack.Pop();
                     writer.WriteConstant(entry.Literal);
                     inline = entry.Target;
                     withinLink = entry.IsWithinLink;
+                    plaintext = entry.IsPlaintext;
                 }
             }
         }
 
         private struct BlockStackEntry
         {
-            public readonly string Literal;
-            public readonly Block Target;
-            public readonly bool IsTight;
+            public string Literal { get; }
+            public Block Target { get; }
+            public bool IsTight { get; }
+
             public BlockStackEntry(string literal, Block target, bool isTight)
             {
                 Literal = literal;
@@ -451,24 +355,21 @@ namespace CommonMark.Formatters
                 IsTight = isTight;
             }
         }
+
         private struct InlineStackEntry
         {
-            public readonly string Literal;
-            public readonly Inline Target;
-            public readonly bool IsWithinLink;
-            public InlineStackEntry(string literal, Inline target, bool isWithinLink)
+            public string Literal { get; }
+            public Inline Target { get; }
+            public bool IsPlaintext { get; }
+            public bool IsWithinLink { get; }
+
+            public InlineStackEntry(string literal, Inline target, bool isPlaintext, bool isWithinLink)
             {
                 Literal = literal;
                 Target = target;
+                IsPlaintext = isPlaintext;
                 IsWithinLink = isWithinLink;
             }
-        }
-    }
-
-    internal sealed class HtmlFormatterImpl : IHtmlFormatter
-    {
-        internal HtmlFormatterImpl()
-        {
         }
 
         string IHtmlFormatter.EscapeHtml(StringPart part)
@@ -478,7 +379,7 @@ namespace CommonMark.Formatters
                 using (TextWriter writer = new StreamWriter(stream))
                 {
                     var htmlWriter = new HtmlTextWriter(writer);
-                    HtmlFormatter.EscapeHtml(part, htmlWriter);
+                    EscapeHtml(part, htmlWriter);
                 }
                 var buffer = stream.ToArray();
                 return Encoding.UTF8.GetString(buffer, 0, buffer.Length);
@@ -492,7 +393,7 @@ namespace CommonMark.Formatters
                 using (TextWriter writer = new StreamWriter(stream))
                 {
                     var htmlWriter = new HtmlTextWriter(writer);
-                    HtmlFormatter.EscapeUrl(url, htmlWriter);
+                    EscapeUrl(url, htmlWriter);
                 }
                 var buffer = stream.ToArray();
                 return Encoding.UTF8.GetString(buffer, 0, buffer.Length);
@@ -506,7 +407,7 @@ namespace CommonMark.Formatters
                 using (TextWriter writer = new StreamWriter(stream))
                 {
                     var htmlWriter = new HtmlTextWriter(writer);
-                    HtmlFormatter.PrintPosition(htmlWriter, element);
+                    htmlWriter.WritePosition(element);
                 }
                 var buffer = stream.ToArray();
                 return Encoding.UTF8.GetString(buffer, 0, buffer.Length);

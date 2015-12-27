@@ -24,7 +24,7 @@ namespace CommonMark.Formatters.Inlines
         /// <param name="element">Inline element.</param>
         /// <param name="withinLink">The parent's link stacking option.</param>
         /// <returns><c>true</c> if the parent formatter should visit the child elements.</returns>
-        public override bool WriteOpening(IHtmlTextWriter writer, Inline element, bool withinLink)
+        public override bool WriteOpening(IHtmlTextWriter writer, Inline element, bool plaintext, bool withinLink)
         {
             // cannot output source position for HTML blocks
             writer.Write(element.LiteralContentValue);

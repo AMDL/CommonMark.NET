@@ -37,17 +37,25 @@ namespace CommonMark.Formatters
         /// </summary>
         /// <param name="writer">HTML writer.</param>
         /// <param name="element">Inline element.</param>
+        /// <param name="plaintext"><c>true</c> to render inline elements as plaintext.</param>
         /// <param name="withinLink">The parent's link stacking option.</param>
         /// <returns><c>true</c> if the parent formatter should visit the child elements.</returns>
-        public virtual bool WriteOpening(IHtmlTextWriter writer, Inline element, bool withinLink)
+        public virtual bool WriteOpening(IHtmlTextWriter writer, Inline element, bool plaintext, bool withinLink)
         {
-            var value = "<" + HtmlTag;
-            writer.WriteConstant(value);
-            WritePosition(writer, element);
-            if (IsSelfClosing)
-                writer.WriteConstant(" />");
+            if (plaintext)
+            {
+                writer.WriteEncodedHtml(element.LiteralContentValue);
+            }
             else
-                writer.Write('>');
+            {
+                var value = "<" + HtmlTag;
+                writer.WriteConstant(value);
+                WritePosition(writer, element);
+                if (IsSelfClosing)
+                    writer.WriteConstant(" />");
+                else
+                    writer.Write('>');
+            }
             return !IsSelfClosing;
         }
 
@@ -56,11 +64,12 @@ namespace CommonMark.Formatters
         /// </summary>
         /// <param name="formatter">HTML formatter.</param>
         /// <param name="element">Inline element.</param>
+        /// <param name="plaintext"><c>true</c> to render inline elements as plaintext.</param>
         /// <param name="withinLink">The parent's link stacking option.</param>
         /// <returns>The closing.</returns>
-        public virtual string GetClosing(IHtmlFormatter formatter, Inline element, bool withinLink)
+        public virtual string GetClosing(IHtmlFormatter formatter, Inline element, bool plaintext, bool withinLink)
         {
-            return base.DoGetClosing(element);
+            return !plaintext ? DoGetClosing(element) : null;
         }
 
         /// <summary>

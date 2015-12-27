@@ -23,10 +23,16 @@ namespace CommonMark.Formatters.Inlines
         /// </summary>
         /// <param name="writer">HTML writer.</param>
         /// <param name="element">Inline lement.</param>
+        /// <param name="plaintext"><c>true</c> to render inline elements as plaintext.</param>
         /// <param name="withinLink">The parent's link stacking option.</param>
         /// <returns><c>true</c> if the parent formatter should visit the child elements.</returns>
-        public override bool WriteOpening(IHtmlTextWriter writer, Inline element, bool withinLink)
+        public override bool WriteOpening(IHtmlTextWriter writer, Inline element, bool plaintext, bool withinLink)
         {
+            if (plaintext)
+            {
+                return true;
+            }
+
             writer.WriteConstant("<img src=\"");
             writer.WriteEncodedUrl(ResolveUri(element.TargetUrl));
             writer.WriteConstant("\" alt=\"");
@@ -38,10 +44,16 @@ namespace CommonMark.Formatters.Inlines
         /// </summary>
         /// <param name="formatter">HTML formatter.</param>
         /// <param name="element">Inline lement.</param>
+        /// <param name="plaintext"><c>true</c> to render inline elements as plaintext.</param>
         /// <param name="withinLink">The parent's link stacking option.</param>
         /// <returns>The closing.</returns>
-        public override string GetClosing(IHtmlFormatter formatter, Inline element, bool withinLink)
+        public override string GetClosing(IHtmlFormatter formatter, Inline element, bool plaintext, bool withinLink)
         {
+            if (plaintext)
+            {
+                return null;
+            }
+
             var sb = new StringBuilder();
             sb.Append('\"');
 

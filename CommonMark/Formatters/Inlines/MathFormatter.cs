@@ -5,21 +5,16 @@ namespace CommonMark.Formatters.Inlines
     internal sealed class MathFormatter : InlineFormatter
     {
         public MathFormatter(FormatterParameters parameters)
-            : base(parameters, InlineTag.Math, textTag: "math")
+            : base(parameters, InlineTag.Math, "span", textTag: "math")
         {
         }
 
-        public override bool WriteOpening(IHtmlTextWriter writer, Inline element, bool withinLink)
+        public override bool WriteOpening(IHtmlTextWriter writer, Inline element, bool plaintext, bool withinLink)
         {
             writer.WriteConstant("<span class=\"math\"");
             WritePosition(writer, element);
             writer.Write('>');
             return true;
-        }
-
-        public override string GetClosing(IHtmlFormatter formatter, Inline element, bool withinLink)
-        {
-            return "</span>";
         }
     }
 }

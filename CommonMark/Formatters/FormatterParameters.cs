@@ -18,7 +18,6 @@ namespace CommonMark.Formatters
             this.Settings = settings;
             this._blockFormatters = GetBlockFormatters();
             this._inlineFormatters = GetInlineFormatters();
-            this._htmlFormatter = new HtmlFormatterImpl();
             this._syntaxFormatter = new SyntaxFormatter();
         }
 
@@ -89,17 +88,6 @@ namespace CommonMark.Formatters
         }
 
         #endregion InlineFormatters
-
-        #region HtmlFormatter
-
-        private HtmlFormatterImpl _htmlFormatter;
-
-        internal IHtmlFormatter HtmlFormatter
-        {
-            get { return _htmlFormatter; }
-        }
-
-        #endregion HtmlFormatter
 
         #region SyntaxFormatter
 

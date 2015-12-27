@@ -101,18 +101,18 @@ namespace CommonMark.Formatters
                 : outer;
         }
 
-        public bool WriteOpening(IHtmlTextWriter writer, Inline inline, bool withinLink)
+        public bool WriteOpening(IHtmlTextWriter writer, Inline inline, bool plaintext, bool withinLink)
         {
             return inner.CanHandle(inline)
-                ? inner.WriteOpening(writer, inline, withinLink)
-                : outer.WriteOpening(writer, inline, withinLink);
+                ? inner.WriteOpening(writer, inline, plaintext, withinLink)
+                : outer.WriteOpening(writer, inline, plaintext, withinLink);
         }
 
-        public string GetClosing(IHtmlFormatter formatter, Inline inline, bool withinLink)
+        public string GetClosing(IHtmlFormatter formatter, Inline inline, bool plaintext, bool withinLink)
         {
             return inner.CanHandle(inline)
-                ? inner.GetClosing(formatter, inline, withinLink)
-                : outer.GetClosing(formatter, inline, withinLink);
+                ? inner.GetClosing(formatter, inline, plaintext, withinLink)
+                : outer.GetClosing(formatter, inline, plaintext, withinLink);
         }
 
         public bool IsStackWithinLink(Inline inline, bool withinLink)

@@ -22,11 +22,13 @@ namespace CommonMark.Formatters.Inlines
         /// </summary>
         /// <param name="writer">HTML writer.</param>
         /// <param name="element">Inline element.</param>
+        /// <param name="plaintext"><c>true</c> to render inline elements as plaintext.</param>
         /// <param name="withinLink">The parent's link stacking option.</param>
         /// <returns><c>true</c> if the parent formatter should visit the child elements.</returns>
-        public override bool WriteOpening(IHtmlTextWriter writer, Inline element, bool withinLink)
+        public override bool WriteOpening(IHtmlTextWriter writer, Inline element, bool plaintext, bool withinLink)
         {
-            if (Parameters.TrackPositions)
+            var writeTag = !plaintext && Parameters.TrackPositions;
+            if (writeTag)
             {
                 writer.WriteConstant("<span");
                 WritePosition(writer, element);
@@ -35,7 +37,7 @@ namespace CommonMark.Formatters.Inlines
 
             writer.WriteEncodedHtml(element.LiteralContentValue);
             
-            if (Parameters.TrackPositions)
+            if (writeTag)
             {
                 writer.WriteConstant("</span>");
             }

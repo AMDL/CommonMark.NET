@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using CommonMark.Syntax;
+using System.Globalization;
 
 namespace CommonMark.Formatters
 {
@@ -178,19 +179,27 @@ namespace CommonMark.Formatters
                 this.WriteLine();
         }
 
+        public void WritePosition(Block block)
+        {
+            WriteConstant(" data-sourcepos=\"");
+            WriteConstant(block.SourcePosition.ToString(CultureInfo.InvariantCulture));
+            Write('-');
+            WriteConstant(block.SourceLastPosition.ToString(CultureInfo.InvariantCulture));
+            WriteConstant("\"");
+        }
+
+        public void WritePosition(Inline inline)
+        {
+            WriteConstant(" data-sourcepos=\"");
+            WriteConstant(inline.SourcePosition.ToString(CultureInfo.InvariantCulture));
+            Write('-');
+            WriteConstant(inline.SourceLastPosition.ToString(CultureInfo.InvariantCulture));
+            WriteConstant("\"");
+        }
+
         void IHtmlTextWriter.Write(StringContent stringContent)
         {
             stringContent.WriteTo(_inner);
-        }
-
-        void IHtmlTextWriter.WritePosition(Block block)
-        {
-            HtmlFormatter.PrintPosition(this, block);
-        }
-
-        void IHtmlTextWriter.WritePosition(Inline inline)
-        {
-            HtmlFormatter.PrintPosition(this, inline);
         }
 
         void IHtmlTextWriter.WriteEncodedHtml(StringPart part)
