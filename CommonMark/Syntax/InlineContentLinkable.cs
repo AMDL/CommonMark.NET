@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace CommonMark.Syntax
 {
@@ -9,7 +7,7 @@ namespace CommonMark.Syntax
     /// </summary>
     [Obsolete("These properties have been moved directly into the Inline element.")]
     [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-    public sealed class InlineContentLinkable
+    public struct InlineContentLinkable
     {
         /// <summary>
         /// Gets or sets the URL of a link. Moved to <see cref="Inline.TargetUrl"/>.
