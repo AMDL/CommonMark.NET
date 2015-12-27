@@ -67,7 +67,7 @@ namespace CommonMark.Parser.Blocks.Delimiters
         /// <returns><c>true</c> if successful.</returns>
         public override bool Handle(ref BlockParserInfo info)
         {
-            return DoHandle(info, CanOpen, ParseMarker, AdjustStart, MatchList, SetListData);
+            return DoHandle(info, CanOpen, ParseMarker, AdjustStart, MatchList, SetList);
         }
 
         /// <summary>
@@ -104,16 +104,16 @@ namespace CommonMark.Parser.Blocks.Delimiters
         /// Matches a list item to a Roman numeral ordered list.
         /// </summary>
         /// <param name="info">Parser state.</param>
-        /// <param name="listData">Ordered list data.</param>
-        /// <returns><c>true</c> if the container may continue a list having <paramref name="listData"/>.</returns>
-        protected override bool MatchList(BlockParserInfo info, OrderedListData listData)
+        /// <param name="list">Ordered list data.</param>
+        /// <returns><c>true</c> if the container may continue a list having <paramref name="list"/>.</returns>
+        protected override bool MatchList(BlockParserInfo info, OrderedListData list)
         {
-            var containerListData = info.Container.OrderedListData;
-            if (containerListData == null || containerListData.DelimiterCharacter != listData.DelimiterCharacter)
+            var containerList = info.Container.OrderedList;
+            if (containerList == null || containerList.DelimiterCharacter != list.DelimiterCharacter)
                 return false;
-            return containerListData.MarkerType == listData.MarkerType
-                || containerListData.MarkerType == OrderedListMarkerType.LowerLatin && listData.MarkerType == OrderedListMarkerType.LowerRoman
-                || containerListData.MarkerType == OrderedListMarkerType.UpperLatin && listData.MarkerType == OrderedListMarkerType.UpperRoman;
+            return containerList.MarkerType == list.MarkerType
+                || containerList.MarkerType == OrderedListMarkerType.LowerLatin && list.MarkerType == OrderedListMarkerType.LowerRoman
+                || containerList.MarkerType == OrderedListMarkerType.UpperLatin && list.MarkerType == OrderedListMarkerType.UpperRoman;
         }
     }
 }

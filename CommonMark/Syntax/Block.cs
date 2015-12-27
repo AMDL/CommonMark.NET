@@ -167,18 +167,18 @@ namespace CommonMark.Syntax
         /// <summary>
         /// Gets or sets the additional properties that apply to list elements.
         /// </summary>
-        [Obsolete("This API has been superseded by " + nameof(UnorderedListData) + " and " + nameof(OrderedListData) + ".")]
+        [Obsolete("This API has been superseded by " + nameof(UnorderedList) + " and " + nameof(OrderedList) + ".")]
         public ListData ListData { get; set; }
 
         /// <summary>
         /// Gets or sets the additional properties that apply to unordered list elements.
         /// </summary>
-        public UnorderedListData UnorderedListData { get; set; }
+        public UnorderedListData UnorderedList { get; set; }
 
         /// <summary>
         /// Gets or sets the additional properties that apply to ordered list elements.
         /// </summary>
-        public OrderedListData OrderedListData { get; set; }
+        public OrderedListData OrderedList { get; set; }
 
         /// <summary>
         /// Gets or sets the additional properties that apply to fenced code blocks.

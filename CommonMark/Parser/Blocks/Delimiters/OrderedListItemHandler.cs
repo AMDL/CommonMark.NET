@@ -87,15 +87,15 @@ namespace CommonMark.Parser.Blocks.Delimiters
         /// <param name="info">Parser state.</param>
         /// <param name="adjustStart">Start value adjuster delegate.</param>
         /// <param name="data">Common list data.</param>
-        /// <param name="listData">Ordered list data.</param>
+        /// <param name="list">Ordered list data.</param>
         /// <returns>Length of the marker, or 0 for no match.</returns>
         /// <remarks>Original: int parse_list_marker(string ln, int pos, ref ListData dataptr)</remarks>
 #pragma warning disable 0618
-        protected sealed override int ParseMarker(BlockParserInfo info, AdjustStartDelegate adjustStart, out ListData data, out OrderedListData listData)
+        protected sealed override int ParseMarker(BlockParserInfo info, AdjustStartDelegate adjustStart, out ListData data, out OrderedListData list)
 #pragma warning restore 0618
         {
             data = null;
-            listData = null;
+            list = null;
 
             var line = info.Line;
             var length = line.Length;
@@ -124,32 +124,32 @@ namespace CommonMark.Parser.Blocks.Delimiters
             if (markerLength > MaxMarkerLength)
                 return 0;
 
-            return CompleteScan(info, offset, start, curChar, '\0', curChar, GetListData, out data, out listData);
+            return CompleteScan(info, offset, start, curChar, '\0', curChar, GetList, out data, out list);
         }
 
         /// <summary>
         /// Matches a list item to an ordered list.
         /// </summary>
         /// <param name="info">Parser state.</param>
-        /// <param name="listData">Ordered list data.</param>
-        /// <returns><c>true</c> if the container may continue a list having <paramref name="listData"/>.</returns>
-        protected override bool MatchList(BlockParserInfo info, OrderedListData listData)
+        /// <param name="list">Ordered list data.</param>
+        /// <returns><c>true</c> if the container may continue a list having <paramref name="list"/>.</returns>
+        protected override bool MatchList(BlockParserInfo info, OrderedListData list)
         {
-            var containerListData = info.Container.OrderedListData;
-            return containerListData != null
-                && containerListData.DelimiterCharacter == listData.DelimiterCharacter
-                && containerListData.MarkerType == listData.MarkerType
-                && ((containerListData.ListStyle == null && listData.ListStyle == null) || (containerListData.ListStyle != null && containerListData.ListStyle.Equals(listData.ListStyle)));
+            var containerList = info.Container.OrderedList;
+            return containerList != null
+                && containerList.DelimiterCharacter == list.DelimiterCharacter
+                && containerList.MarkerType == list.MarkerType
+                && ((containerList.Style == null && list.Style == null) || (containerList.Style != null && containerList.Style.Equals(list.Style)));
         }
 
         /// <summary>
         /// Updates a container with ordered list data.
         /// </summary>
         /// <param name="info">Parser state.</param>
-        /// <param name="listData">Ordered list data.</param>
-        protected override void SetListData(BlockParserInfo info, OrderedListData listData)
+        /// <param name="list">Ordered list data.</param>
+        protected override void SetList(BlockParserInfo info, OrderedListData list)
         {
-            info.Container.OrderedListData = listData;
+            info.Container.OrderedList = list;
         }
 
         /// <summary>
@@ -158,17 +158,15 @@ namespace CommonMark.Parser.Blocks.Delimiters
         /// <param name="curChar">Current character.</param>
         /// <param name="start">Start value.</param>
         /// <returns></returns>
-        protected override OrderedListData GetListData(char curChar, int start)
+        protected override OrderedListData GetList(char curChar, int start)
         {
-            var orderedListData = new OrderedListData
+            return new OrderedListData
             {
                 Start = start,
                 DelimiterCharacter = curChar,
                 MarkerType = MarkerType,
-                ListStyle = ListStyle,
+                Style = ListStyle,
             };
-
-            return orderedListData;
         }
 
         /// <summary>

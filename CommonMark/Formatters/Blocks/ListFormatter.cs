@@ -38,14 +38,14 @@ namespace CommonMark.Formatters.Blocks
         /// </summary>
         /// <param name="writer">HTML writer.</param>
         /// <param name="element">List element.</param>
-        /// <param name="listData">Specific list data.</param>
+        /// <param name="list">Specific list data.</param>
         /// <returns><c>true</c> if the parent formatter should visit the child elements.</returns>
-        protected bool CompleteWriteOpening(IHtmlTextWriter writer, Block element, TData listData)
+        protected bool CompleteWriteOpening(IHtmlTextWriter writer, Block element, TData list)
         {
-            if (listData.ListStyle != null)
+            if (list.Style != null)
             {
                 writer.WriteConstant(" style=\"list-style-type: ");
-                writer.WriteConstant(listData.ListStyle);
+                writer.WriteConstant(list.Style);
                 writer.Write('\"');
             }
             WritePosition(writer, element);

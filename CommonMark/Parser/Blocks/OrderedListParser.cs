@@ -23,7 +23,7 @@ namespace CommonMark.Parser.Blocks
         /// <returns><c>true</c> if successful.</returns>
         public override bool Finalize(Block container)
         {
-            return DoFinalize(container, container.OrderedListData);
+            return DoFinalize(container, container.OrderedList);
         }
     }
 }

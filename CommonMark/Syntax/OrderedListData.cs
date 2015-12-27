@@ -1,7 +1,7 @@
 ﻿namespace CommonMark.Syntax
 {
     /// <summary>
-    /// Contains additional data for ordered list block elements. Used in <see cref="Block.OrderedListData"/> property.
+    /// Contains additional data for ordered list block elements. Used in <see cref="Block.OrderedList"/> property.
     /// </summary>
     public sealed class OrderedListData : ListData<OrderedListData>
     {

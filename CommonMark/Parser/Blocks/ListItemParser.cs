@@ -176,9 +176,9 @@ namespace CommonMark.Parser.Blocks
             switch (info.Container.Parent.Tag)
             {
                 case BlockTag.UnorderedList:
-                    return DoInitialize(info, info.Container.UnorderedListData);
+                    return DoInitialize(info, info.Container.UnorderedList);
                 case BlockTag.OrderedList:
-                    return DoInitialize(info, info.Container.OrderedListData);
+                    return DoInitialize(info, info.Container.OrderedList);
                 default:
 #pragma warning disable 0618
                     return DoInitialize(info, info.Container.ListData);
@@ -186,10 +186,10 @@ namespace CommonMark.Parser.Blocks
             }
         }
 
-        private static bool DoInitialize<TData>(BlockParserInfo info, TData listData)
+        private static bool DoInitialize<TData>(BlockParserInfo info, TData list)
             where TData : ListData<TData>
         {
-            var count = listData.MarkerOffset + listData.Padding;
+            var count = list.MarkerOffset + list.Padding;
             if (info.Indent >= count)
             {
                 info.AdvanceOffset(count, true);

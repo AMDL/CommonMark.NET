@@ -64,13 +64,13 @@ namespace CommonMark.Parser.Blocks
         /// Finalizes a handled element.
         /// </summary>
         /// <param name="container">Block element.</param>
-        /// <param name="listData">List data.</param>
+        /// <param name="list">List data.</param>
         /// <returns><c>true</c> if successful.</returns>
-        protected bool DoFinalize<TData>(Block container, TData listData)
+        protected bool DoFinalize<TData>(Block container, TData list)
             where TData : ListData<TData>
         {
             // determine tight/loose status
-            listData.IsTight = true; // tight by default
+            list.IsTight = true; // tight by default
             var item = container.FirstChild;
             Block subitem;
 
@@ -79,7 +79,7 @@ namespace CommonMark.Parser.Blocks
                 // check for non-final non-empty list item ending with blank line:
                 if (item.IsLastLineBlank && item.NextSibling != null)
                 {
-                    listData.IsTight = false;
+                    list.IsTight = false;
                     break;
                 }
 
@@ -89,14 +89,14 @@ namespace CommonMark.Parser.Blocks
                 {
                     if (EndsWithBlankLine(subitem) && (item.NextSibling != null || subitem.NextSibling != null))
                     {
-                        listData.IsTight = false;
+                        list.IsTight = false;
                         break;
                     }
 
                     subitem = subitem.NextSibling;
                 }
 
-                if (!listData.IsTight)
+                if (!list.IsTight)
                     break;
 
                 item = item.NextSibling;

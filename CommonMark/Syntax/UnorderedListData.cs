@@ -1,7 +1,7 @@
 ﻿namespace CommonMark.Syntax
 {
     /// <summary>
-    /// Contains additional data for unordered list block elements. Used in <see cref="Block.UnorderedListData"/> property.
+    /// Contains additional data for unordered list block elements. Used in <see cref="Block.UnorderedList"/> property.
     /// </summary>
     public sealed class UnorderedListData : ListData<UnorderedListData>
     {

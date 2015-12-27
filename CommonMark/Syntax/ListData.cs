@@ -62,7 +62,7 @@ namespace CommonMark.Syntax
         /// <summary>
         /// Gets or sets the list style.
         /// </summary>
-        public string ListStyle { get; set; }
+        public string Style { get; set; }
 
         /// <summary>
         /// Determines whether the specified object contains matching list data.
@@ -73,7 +73,7 @@ namespace CommonMark.Syntax
         {
             var other = obj as T;
             return other != null
-                && ((this.ListStyle == null && other.ListStyle == null) || (this.ListStyle != null && this.ListStyle.Equals(other.ListStyle)));
+                && ((this.Style == null && other.Style == null) || (this.Style != null && this.Style.Equals(other.Style)));
         }
 
         /// <summary>
@@ -83,7 +83,7 @@ namespace CommonMark.Syntax
         public override int GetHashCode()
         {
             return GetType().GetHashCode()
-                ^ (ListStyle != null ? ListStyle.GetHashCode() : 0);
+                ^ (Style != null ? Style.GetHashCode() : 0);
         }
     }
 }

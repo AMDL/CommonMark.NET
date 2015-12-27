@@ -117,7 +117,7 @@ namespace CommonMark.Parser.Blocks.Delimiters
         /// <returns><c>true</c> if successful.</returns>
         public override bool Handle(ref BlockParserInfo info)
         {
-            return DoHandle(info, CanOpen, ParseMarker, null, MatchList, SetListData);
+            return DoHandle(info, CanOpen, ParseMarker, null, MatchList, SetList);
         }
 
         /// <summary>
@@ -136,15 +136,15 @@ namespace CommonMark.Parser.Blocks.Delimiters
         /// <param name="info">Parser state.</param>
         /// <param name="adjustStart">Start value adjuster delegate.</param>
         /// <param name="data">Common list data.</param>
-        /// <param name="listData">Unordered list data.</param>
+        /// <param name="list">Unordered list data.</param>
         /// <returns>Length of the marker, or 0 for no match.</returns>
         /// <remarks>Original: int parse_list_marker(string ln, int pos, ref ListData dataptr)</remarks>
 #pragma warning disable 0618
-        protected override int ParseMarker(BlockParserInfo info, AdjustStartDelegate adjustStart, out ListData data, out UnorderedListData listData)
+        protected override int ParseMarker(BlockParserInfo info, AdjustStartDelegate adjustStart, out ListData data, out UnorderedListData list)
 #pragma warning restore 0618
         {
             data = null;
-            listData = null;
+            list = null;
 
             var curChar = info.CurrentCharacter;
             var line = info.Line;
@@ -154,31 +154,31 @@ namespace CommonMark.Parser.Blocks.Delimiters
             if (offset == length - 1)
                 return 0;
 
-            return CompleteScan(info, offset, 1, curChar, curChar, '\0', GetListData, out data, out listData);
+            return CompleteScan(info, offset, 1, curChar, curChar, '\0', GetList, out data, out list);
         }
 
         /// <summary>
         /// Matches a list item to an unordered list.
         /// </summary>
         /// <param name="info">Parser state.</param>
-        /// <param name="listData">Unordered list data.</param>
-        /// <returns><c>true</c> if the container may continue a list having <paramref name="listData"/>.</returns>
-        protected override bool MatchList(BlockParserInfo info, UnorderedListData listData)
+        /// <param name="list">Unordered list data.</param>
+        /// <returns><c>true</c> if the container may continue a list having <paramref name="list"/>.</returns>
+        protected override bool MatchList(BlockParserInfo info, UnorderedListData list)
         {
-            var containerListData = info.Container.UnorderedListData;
-            return containerListData != null
-                && containerListData.BulletCharacter == listData.BulletCharacter
-                && ((containerListData.ListStyle == null && listData.ListStyle == null) || (containerListData.ListStyle != null && containerListData.ListStyle.Equals(listData.ListStyle)));
+            var containerList = info.Container.UnorderedList;
+            return containerList != null
+                && containerList.BulletCharacter == list.BulletCharacter
+                && ((containerList.Style == null && list.Style == null) || (containerList.Style != null && containerList.Style.Equals(list.Style)));
         }
 
         /// <summary>
         /// Updates a container with unordered list data.
         /// </summary>
         /// <param name="info">Parser state.</param>
-        /// <param name="listData">Unordered list data.</param>
-        protected override void SetListData(BlockParserInfo info, UnorderedListData listData)
+        /// <param name="list">Unordered list data.</param>
+        protected override void SetList(BlockParserInfo info, UnorderedListData list)
         {
-            info.Container.UnorderedListData = listData;
+            info.Container.UnorderedList = list;
         }
 
         /// <summary>
@@ -187,12 +187,12 @@ namespace CommonMark.Parser.Blocks.Delimiters
         /// <param name="curChar">Current character.</param>
         /// <param name="start">Start value.</param>
         /// <returns></returns>
-        protected override UnorderedListData GetListData(char curChar, int start)
+        protected override UnorderedListData GetList(char curChar, int start)
         {
             return new UnorderedListData
             {
                 BulletCharacter = curChar,
-                ListStyle = ListStyle,
+                Style = ListStyle,
             };
         }
 

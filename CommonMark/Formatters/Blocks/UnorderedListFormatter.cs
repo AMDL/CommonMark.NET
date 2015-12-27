@@ -29,7 +29,7 @@ namespace CommonMark.Formatters.Blocks
         public override bool WriteOpening(IHtmlTextWriter writer, Block element, bool tight)
         {
             StartWriteOpening(writer, element);
-            return CompleteWriteOpening(writer, element, element.UnorderedListData);
+            return CompleteWriteOpening(writer, element, element.UnorderedList);
         }
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace CommonMark.Formatters.Blocks
         /// </returns>
         public override bool? IsStackTight(Block element, bool tight)
         {
-            return element.UnorderedListData.IsTight;
+            return element.UnorderedList.IsTight;
         }
 
         /// <summary>
@@ -57,8 +57,8 @@ namespace CommonMark.Formatters.Blocks
         {
             return new Dictionary<string, object>
             {
-                { "tight", element.UnorderedListData.IsTight },
-                { "bullet_char", element.UnorderedListData.BulletCharacter },
+                { "tight", element.UnorderedList.IsTight },
+                { "bullet_char", element.UnorderedList.BulletCharacter },
             };
         }
     }

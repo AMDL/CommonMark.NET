@@ -133,10 +133,10 @@ namespace CommonMark.Parser.Blocks.Delimiters
         /// <param name="info">Parser state.</param>
         /// <param name="data">Common list data.</param>
         /// <param name="adjustStart">Start value adjuster delegate.</param>
-        /// <param name="listData">Specific list data.</param>
+        /// <param name="list">Specific list data.</param>
         /// <returns>Length of the marker, or 0 for no match.</returns>
 #pragma warning disable 0618
-        protected delegate int ParseMarkerDelegate(BlockParserInfo info, AdjustStartDelegate adjustStart, out ListData data, out TData listData);
+        protected delegate int ParseMarkerDelegate(BlockParserInfo info, AdjustStartDelegate adjustStart, out ListData data, out TData list);
 #pragma warning restore 0618
 
         /// <summary>
@@ -200,21 +200,21 @@ namespace CommonMark.Parser.Blocks.Delimiters
         /// <param name="parseMarker">Marker parser delegate.</param>
         /// <param name="adjustStart">Start value adjuster delegate.</param>
         /// <param name="matchList">List data matcher delegate.</param>
-        /// <param name="setListData">List data mutator delegate.</param>
+        /// <param name="setList">List data mutator delegate.</param>
         /// <returns><c>true</c> if successful.</returns>
         protected bool DoHandle(BlockParserInfo info, Func<BlockParserInfo, bool> canOpen, ParseMarkerDelegate parseMarker,
-            AdjustStartDelegate adjustStart, Func<BlockParserInfo, TData, bool> matchList, Action<BlockParserInfo, TData> setListData)
+            AdjustStartDelegate adjustStart, Func<BlockParserInfo, TData, bool> matchList, Action<BlockParserInfo, TData> setList)
         {
             int markerLength;
 #pragma warning disable 0618
             ListData data;
 #pragma warning restore 0618
-            TData listData;
-            if (!canOpen(info) || 0 == (markerLength = parseMarker(info, adjustStart, out data, out listData)))
+            TData list;
+            if (!canOpen(info) || 0 == (markerLength = parseMarker(info, adjustStart, out data, out list)))
                 return false;
 
             // save the offset before advancing it
-            listData.MarkerOffset = data.MarkerOffset = info.Indent;
+            list.MarkerOffset = data.MarkerOffset = info.Indent;
 
             // compute padding:
             info.AdvanceOffset(info.FirstNonspace + markerLength - info.Offset, false);
@@ -225,7 +225,7 @@ namespace CommonMark.Parser.Blocks.Delimiters
             // i = number of spaces after marker, up to 5
             if (i >= 5 || i < 1 || info.Line[info.Offset] == '\n')
             {
-                listData.Padding = data.Padding = markerLength + 1;
+                list.Padding = data.Padding = markerLength + 1;
                 if (i > 0)
                 {
                     info.Column++;
@@ -234,19 +234,19 @@ namespace CommonMark.Parser.Blocks.Delimiters
             }
             else
             {
-                listData.Padding = data.Padding = markerLength + i;
+                list.Padding = data.Padding = markerLength + i;
                 info.AdvanceOffset(i, true);
             }
 
             // check container; if it's a list, see if this list item
             // can continue the list; otherwise, create a list container.
-            if (info.Container.Tag != ParentTag || !matchList(info, listData))
+            if (info.Container.Tag != ParentTag || !matchList(info, list))
             {
                 info.Container = AppendChildBlock(info, ParentTag, info.FirstNonspace);
 #pragma warning disable 0618
                 info.Container.ListData = data;
 #pragma warning restore 0618
-                setListData(info, listData);
+                setList(info, list);
             }
 
             // add the list item
@@ -254,7 +254,7 @@ namespace CommonMark.Parser.Blocks.Delimiters
 #pragma warning disable 0618
             info.Container.ListData = data;
 #pragma warning restore 0618
-            setListData(info, listData);
+            setList(info, list);
 
             return true;
         }
@@ -265,26 +265,26 @@ namespace CommonMark.Parser.Blocks.Delimiters
         /// <param name="info">Parser state.</param>
         /// <param name="adjustStart">Start value adjuster delegate.</param>
         /// <param name="data">Common list data.</param>
-        /// <param name="listData">Specific list data.</param>
+        /// <param name="list">Specific list data.</param>
         /// <returns>Length of the marker, or 0 for no match.</returns>
 #pragma warning disable 0618
-        protected abstract int ParseMarker(BlockParserInfo info, AdjustStartDelegate adjustStart, out ListData data, out TData listData);
+        protected abstract int ParseMarker(BlockParserInfo info, AdjustStartDelegate adjustStart, out ListData data, out TData list);
 #pragma warning restore 0618
 
         /// <summary>
         /// Matches a list item to a list.
         /// </summary>
         /// <param name="info">Parser state.</param>
-        /// <param name="listData">Specific list data.</param>
-        /// <returns><c>true</c> if the container may continue a list having <paramref name="listData"/>.</returns>
-        protected abstract bool MatchList(BlockParserInfo info, TData listData);
+        /// <param name="list">Specific list data.</param>
+        /// <returns><c>true</c> if the container may continue a list having <paramref name="list"/>.</returns>
+        protected abstract bool MatchList(BlockParserInfo info, TData list);
 
         /// <summary>
         /// Updates a container with specific list data.
         /// </summary>
         /// <param name="info">Parser state.</param>
-        /// <param name="listData">Specific list data.</param>
-        protected abstract void SetListData(BlockParserInfo info, TData listData);
+        /// <param name="list">Specific list data.</param>
+        protected abstract void SetList(BlockParserInfo info, TData list);
 
         /// <summary>
         /// Scans the line past the delimiter.
@@ -295,17 +295,17 @@ namespace CommonMark.Parser.Blocks.Delimiters
         /// <param name="start">Start value.</param>
         /// <param name="bulletChar">Bullet character.</param>
         /// <param name="delimiter">Delimiter character.</param>
-        /// <param name="listDataFactory">Creates and initializes a list data object.</param>
+        /// <param name="listFactory">Creates and initializes a list data object.</param>
         /// <param name="data">Common list data object.</param>
-        /// <param name="listData">Specific list data object.</param>
+        /// <param name="list">Specific list data object.</param>
         /// <returns>Length of the marker, or 0 for no match.</returns>
 #pragma warning disable 0618
         protected int CompleteScan(BlockParserInfo info, int offset, int start, char curChar, char bulletChar, char delimiter,
-            Func<char, int, TData> listDataFactory, out ListData data, out TData listData)
+            Func<char, int, TData> listFactory, out ListData data, out TData list)
 #pragma warning restore 0618
         {
             data = null;
-            listData = null;
+            list = null;
 
             if (curChar != DelimiterCharacter)
                 return 0;
@@ -342,7 +342,7 @@ namespace CommonMark.Parser.Blocks.Delimiters
                 data.Delimiter = ListDelimiter.Parenthesis;
 #pragma warning restore 0618
 
-            listData = listDataFactory(curChar, start);
+            list = listFactory(curChar, start);
 
             return markerLength;
         }
@@ -353,7 +353,7 @@ namespace CommonMark.Parser.Blocks.Delimiters
         /// <param name="curChar">Current character.</param>
         /// <param name="start">Start value.</param>
         /// <returns></returns>
-        protected abstract TData GetListData(char curChar, int start);
+        protected abstract TData GetList(char curChar, int start);
 
         /// <summary>
         /// Gets the delimiter character.

@@ -29,21 +29,21 @@ namespace CommonMark.Formatters.Blocks
         /// <returns><c>true</c> if the parent formatter should visit the child elements.</returns>
         public override bool WriteOpening(IHtmlTextWriter writer, Block element, bool tight)
         {
-            var listData = element.OrderedListData;
+            var list = element.OrderedList;
             StartWriteOpening(writer, element);
-            if (listData.Start != 1)
+            if (list.Start != 1)
             {
                 writer.WriteConstant(" start=\"");
-                writer.WriteConstant(listData.Start.ToString(CultureInfo.InvariantCulture));
+                writer.WriteConstant(list.Start.ToString(CultureInfo.InvariantCulture));
                 writer.Write('\"');
             }
-            if (listData.MarkerType != 0)
+            if (list.MarkerType != 0)
             {
                 writer.WriteConstant(" type=\"");
-                writer.Write((char)listData.MarkerType);
+                writer.Write((char)list.MarkerType);
                 writer.Write('\"');
             }
-            return CompleteWriteOpening(writer, element, listData);
+            return CompleteWriteOpening(writer, element, list);
         }
 
         /// <summary>
@@ -58,7 +58,7 @@ namespace CommonMark.Formatters.Blocks
         /// </returns>
         public override bool? IsStackTight(Block element, bool tight)
         {
-            return element.OrderedListData.IsTight;
+            return element.OrderedList.IsTight;
         }
 
         /// <summary>
@@ -71,9 +71,9 @@ namespace CommonMark.Formatters.Blocks
         {
             return new Dictionary<string, object>
             {
-                { "tight", element.OrderedListData.IsTight },
-                { "start", element.OrderedListData.Start },
-                { "delim", element.OrderedListData.DelimiterCharacter },
+                { "tight", element.OrderedList.IsTight },
+                { "start", element.OrderedList.Start },
+                { "delim", element.OrderedList.DelimiterCharacter },
             };
         }
     }

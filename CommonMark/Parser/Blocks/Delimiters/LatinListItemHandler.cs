@@ -47,31 +47,31 @@ namespace CommonMark.Parser.Blocks.Delimiters
         /// <returns><c>true</c> if successful.</returns>
         public override bool Handle(ref BlockParserInfo info)
         {
-            return DoHandle(info, CanOpen, ParseMarker, AdjustStart, MatchList, SetListData);
+            return DoHandle(info, CanOpen, ParseMarker, AdjustStart, MatchList, SetList);
         }
 
         /// <summary>
         /// Matches a list item to a ASCII letter ordered list.
         /// </summary>
         /// <param name="info">Parser state.</param>
-        /// <param name="listData">Ordered list data.</param>
-        /// <returns><c>true</c> if the container may continue a list having <paramref name="listData"/>.</returns>
-        protected override bool MatchList(BlockParserInfo info, OrderedListData listData)
+        /// <param name="list">Ordered list data.</param>
+        /// <returns><c>true</c> if the container may continue a list having <paramref name="list"/>.</returns>
+        protected override bool MatchList(BlockParserInfo info, OrderedListData list)
         {
-            var containerListData = info.Container.OrderedListData;
-            if (containerListData == null || containerListData.DelimiterCharacter != listData.DelimiterCharacter)
+            var containerList = info.Container.OrderedList;
+            if (containerList == null || containerList.DelimiterCharacter != list.DelimiterCharacter)
                 return false;
-            if (containerListData.MarkerType == listData.MarkerType)
+            if (containerList.MarkerType == list.MarkerType)
                 return true;
-            if (containerListData.MarkerType == OrderedListMarkerType.LowerRoman && listData.MarkerType == OrderedListMarkerType.LowerLatin
-                || containerListData.MarkerType == OrderedListMarkerType.UpperRoman && listData.MarkerType == OrderedListMarkerType.UpperLatin)
+            if (containerList.MarkerType == OrderedListMarkerType.LowerRoman && list.MarkerType == OrderedListMarkerType.LowerLatin
+                || containerList.MarkerType == OrderedListMarkerType.UpperRoman && list.MarkerType == OrderedListMarkerType.UpperLatin)
             {
                 int start = 0;
                 short value = 0;
                 AdjustStart(ref start, ref value, info.CurrentCharacter);
-                containerListData.Start = start - 1; //assuming consecutive markers
-                containerListData.MarkerType = listData.MarkerType;
-                containerListData.ListStyle = listData.ListStyle;
+                containerList.Start = start - 1; //assuming consecutive markers
+                containerList.MarkerType = list.MarkerType;
+                containerList.Style = list.Style;
                 return true;
             }
             return false;
