@@ -22,10 +22,10 @@ namespace CommonMark.Formatters.Blocks
         /// <summary>
         /// Returns the properties of an element.
         /// </summary>
-        /// <param name="printer">Printer.</param>
+        /// <param name="formatter">Syntax formatter.</param>
         /// <param name="element">Element.</param>
         /// <returns>Properties or <c>null</c>.</returns>
-        public override IEnumerable<KeyValuePair<string, object>> GetPrinterData(IPrinter printer, Block element)
+        public override IEnumerable<KeyValuePair<string, object>> GetSyntaxData(ISyntaxFormatter formatter, Block element)
         {
             return new Dictionary<string, object>
             {

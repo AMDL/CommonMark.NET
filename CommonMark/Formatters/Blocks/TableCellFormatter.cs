@@ -36,7 +36,7 @@ namespace CommonMark.Formatters.Blocks
             return true;
         }
 
-        public override IEnumerable<KeyValuePair<string, object>> GetPrinterData(IPrinter printer, Block block)
+        public override IEnumerable<KeyValuePair<string, object>> GetSyntaxData(ISyntaxFormatter formatter, Block block)
         {
             return new Dictionary<string, object>
             {

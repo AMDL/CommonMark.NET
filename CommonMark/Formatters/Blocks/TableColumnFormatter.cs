@@ -5,7 +5,7 @@ namespace CommonMark.Formatters.Blocks
     internal class TableColumnFormatter : BlockFormatter
     {
         public TableColumnFormatter(FormatterParameters parameters)
-            : base(parameters, BlockTag.TableColumn, printerTag: "table_col")
+            : base(parameters, BlockTag.TableColumn, textTag: "table_col")
         {
         }
 
