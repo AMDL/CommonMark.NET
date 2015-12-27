@@ -187,7 +187,7 @@ namespace CommonMark.Syntax
 
         /// <summary>
         /// Custom block element.
-        /// Any additional properties are set through <see cref="Block.CustomData"/>.
+        /// Any additional properties are set through the <see cref="Block.Custom"/> property.
         /// </summary>
         Custom,
 

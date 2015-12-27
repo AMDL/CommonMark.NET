@@ -220,7 +220,7 @@ namespace CommonMark.Syntax
         /// Gets or sets the additional properties that apply to custom block elements.
         /// Set for <see cref="BlockTag.Custom"/> elements by custom extensions.
         /// </summary>
-        public object CustomData { get; set; }
+        public object Custom { get; set; }
 
         /// <summary>
         /// Gets or sets the additional properties that apply to document nodes.

@@ -90,7 +90,7 @@
 
         /// <summary>
         /// Represents a custom inline element.
-        /// Any additional properties are set through <see cref="Inline.CustomData"/>.
+        /// Any additional properties are set through the <see cref="Inline.Custom"/> property.
         /// </summary>
         Custom,
 
