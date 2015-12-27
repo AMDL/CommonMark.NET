@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace CommonMark.Syntax
+﻿namespace CommonMark.Syntax
 {
     /// <summary>
     /// Specifies the type of the HTML block a <see cref="Block"/> instance represents.
     /// See http://spec.commonmark.org/0.22/#html-block
     /// </summary>
-    public enum HtmlBlockType
+    public enum HtmlBlockType : byte
     {
         /// <summary>
         /// This is not a HTML block.

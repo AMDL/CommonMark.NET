@@ -6,7 +6,7 @@ namespace CommonMark.Syntax
     /// Defines the type of a list block element.
     /// </summary>
     [Obsolete("This API has been superseded by " + nameof(BlockTag.UnorderedList) + " and " + nameof(BlockTag.OrderedList) + ".")]
-    public enum ListType
+    public enum ListType : byte
     {
         /// <summary>
         /// The list is unordered and its items are represented with bullets.

@@ -5,7 +5,7 @@ namespace CommonMark.Syntax
     /// <summary>
     /// Contains additional data for list block elements. Used in the <see cref="Block.Document"/> property.
     /// </summary>
-    public class DocumentData
+    public sealed class DocumentData
     {
         /// <summary>
         /// Gets or sets the dictionary containing resolved link references. Only set on the document node, <c>null</c>
