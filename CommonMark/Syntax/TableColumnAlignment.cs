@@ -3,7 +3,7 @@
     /// <summary>
     /// Defines the alignment to use for a table column.
     /// </summary>
-    public enum TableColumnAlignment
+    public enum TableColumnAlignment : byte
     {
         /// <summary>
         /// Default

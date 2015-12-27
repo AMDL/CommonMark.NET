@@ -3,7 +3,7 @@
     /// <summary>
     /// Caption placement.
     /// </summary>
-    public enum CaptionPlacement
+    public enum CaptionPlacement : byte
     {
         /// <summary>
         /// The caption element immediately precedes the container element.
