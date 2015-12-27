@@ -77,7 +77,10 @@ namespace CommonMark.Syntax
             this.LiteralContentValue.Length = length; 
             this.SourcePosition = sourcePosition;
             this.SourceLastPosition = sourceLastPosition;
-            this.DelimiterCharacter = delimiterCharacter;
+            this.Emphasis = new EmphasisData
+            {
+                DelimiterCharacter = delimiterCharacter,
+            };
         }
 
         /// <summary>
@@ -195,9 +198,9 @@ namespace CommonMark.Syntax
         }
 
         /// <summary>
-        /// Gets the delimiter character for this inline element.
+        /// Gets the additional properties that apply to emphasis elements.
         /// </summary>
-        public char DelimiterCharacter { get; }
+        public EmphasisData Emphasis { get; }
 
         /// <summary>
         /// Gets or sets the additional properties that apply to custom inline elements.

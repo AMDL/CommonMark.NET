@@ -41,7 +41,7 @@ namespace CommonMark.Formatters.Inlines
         {
             return new Dictionary<string, object>
             {
-                { "delim", element.DelimiterCharacter },
+                { "delim", element.Emphasis.DelimiterCharacter },
             };
         }
     }

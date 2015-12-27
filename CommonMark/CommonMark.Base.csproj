@@ -193,6 +193,7 @@
     <Compile Include="Extension\PipeTablesFeatures.cs" />
     <Compile Include="Syntax\Block.cs" />
     <Compile Include="Parser\BlockMethods.cs" />
+    <Compile Include="Syntax\EmphasisData.cs" />
     <Compile Include="Syntax\UnorderedListData.cs" />
     <Compile Include="Syntax\CaptionData.cs" />
     <Compile Include="Syntax\DocumentData.cs" />
