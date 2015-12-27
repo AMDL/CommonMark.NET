@@ -65,9 +65,12 @@ namespace CommonMark.Parser.Blocks.Delimiters
             if (!info.IsIndented && info.Container.Tag == BlockTag.Paragraph && ScanLine(info)
                 && BlockParser.ContainsSingleLine(info.Container.StringContent))
             {
-                info.Container.Tag = Tag;
-                info.Container.HeaderLevel = HeadingLevel;
                 info.AdvanceOffset(info.Line.Length - 1 - info.Offset, false);
+                info.Container.Tag = Tag;
+                info.Container.Heading = new HeadingData
+                {
+                    Level = HeadingLevel <= byte.MaxValue ? (byte)HeadingLevel : byte.MaxValue,
+                };
                 return true;
             }
             return false;

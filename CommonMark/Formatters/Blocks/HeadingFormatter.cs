@@ -33,7 +33,7 @@ namespace CommonMark.Formatters.Blocks
         public override bool WriteOpening(IHtmlTextWriter writer, Block element, bool tight)
         {
             writer.EnsureLine();
-            var headingLevel = element.HeaderLevel;
+            var headingLevel = element.Heading.Level;
             if (Parameters.TrackPositions || headingLevel > 6)
             {
                 writer.WriteConstant("<h" + headingLevel.ToString(CultureInfo.InvariantCulture));
@@ -56,7 +56,7 @@ namespace CommonMark.Formatters.Blocks
         /// <returns>The closing.</returns>
         public override string GetClosing(IHtmlFormatter formatter, Block element, bool tight)
         {
-            var headingLevel = element.HeaderLevel;
+            var headingLevel = element.Heading.Level;
             return headingLevel > 6
                 ? "</h" + headingLevel.ToString(CultureInfo.InvariantCulture) + ">"
                 : CloserTags[headingLevel - 1];
@@ -86,7 +86,7 @@ namespace CommonMark.Formatters.Blocks
         {
             return new Dictionary<string, object>
             {
-                { "level", element.HeaderLevel },
+                { "level", element.Heading.Level },
             };
         }
     }

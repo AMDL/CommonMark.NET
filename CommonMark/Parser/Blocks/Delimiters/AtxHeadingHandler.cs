@@ -32,7 +32,10 @@ namespace CommonMark.Parser.Blocks.Delimiters
             {
                 info.AdvanceOffset(info.FirstNonspace + offset - info.Offset, false);
                 info.Container = AppendChildBlock(info, Tag, info.FirstNonspace);
-                info.Container.HeaderLevel = headingLevel;
+                info.Container.Heading = new HeadingData
+                {
+                    Level = headingLevel <= byte.MaxValue ? (byte)headingLevel : byte.MaxValue,
+                };
                 return true;
             }
             return false;

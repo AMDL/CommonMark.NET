@@ -196,9 +196,25 @@ namespace CommonMark.Syntax
         }
 
         /// <summary>
+        /// Gets or sets the additional properties that apply to heading elements.
+        /// </summary>
+        public HeadingData Heading { get; set; }
+
+        /// <summary>
         /// Gets or sets the heading level (as in <c>&lt;h1&gt;</c> or <c>&lt;h2&gt;</c>).
         /// </summary>
-        public int HeaderLevel { get; set; }
+        [Obsolete("Use " + nameof(Heading) + " instead.")]
+        public int HeaderLevel
+        {
+            get { return Heading.Level; }
+            set
+            {
+                Heading = new HeadingData
+                {
+                    Level = (byte)value,
+                };
+            }
+        }
 
         /// <summary>
         /// Gets or sets the additional properties that apply to table cell elements.
