@@ -36,11 +36,25 @@ namespace CommonMark.Formatters
                 || outer.CanHandle(element);
         }
 
-        public bool? IsRenderPlainTextInlines(TElement element)
+        public bool WriteOpening(IHtmlTextWriter writer, TElement element, bool flag)
         {
             return inner.CanHandle(element)
-                ? inner.IsRenderPlainTextInlines(element)
-                : outer.IsRenderPlainTextInlines(element);
+                ? inner.WriteOpening(writer, element, flag)
+                : outer.WriteOpening(writer, element, flag);
+        }
+
+        public string GetClosing(TElement element, bool withinLink)
+        {
+            return inner.CanHandle(element)
+                ? inner.GetClosing(element, withinLink)
+                : outer.GetClosing(element, withinLink);
+        }
+
+        public bool IsHtmlInlines(TElement element)
+        {
+            return inner.CanHandle(element)
+                ? inner.IsHtmlInlines(element)
+                : outer.IsHtmlInlines(element);
         }
 
         public IEnumerable<KeyValuePair<string, object>> GetSyntaxData(ISyntaxFormatter formatter, TElement element)
@@ -58,25 +72,11 @@ namespace CommonMark.Formatters
         {
         }
 
-        public bool WriteOpening(IHtmlTextWriter writer, Block block, bool tight)
+        public bool IsTight(Block block, bool tight)
         {
             return inner.CanHandle(block)
-                ? inner.WriteOpening(writer, block, tight)
-                : outer.WriteOpening(writer, block, tight);
-        }
-
-        public string GetClosing(IHtmlFormatter formatter, Block block, bool tight)
-        {
-            return inner.CanHandle(block)
-                ? inner.GetClosing(formatter, block, tight)
-                : outer.GetClosing(formatter, block, tight);
-        }
-
-        public bool? IsStackTight(Block block, bool tight)
-        {
-            return inner.CanHandle(block)
-                ? inner.IsStackTight(block, tight)
-                : outer.IsStackTight(block, tight);
+                ? inner.IsTight(block, tight)
+                : outer.IsTight(block, tight);
         }
 
         public static IBlockFormatter Merge(IBlockFormatter inner, IBlockFormatter outer)
@@ -101,25 +101,39 @@ namespace CommonMark.Formatters
                 : outer;
         }
 
-        public bool WriteOpening(IHtmlTextWriter writer, Inline inline, bool plaintext, bool withinLink)
+        public bool WritePlaintextOpening(IHtmlTextWriter writer, Inline inline, bool withinLink)
         {
             return inner.CanHandle(inline)
-                ? inner.WriteOpening(writer, inline, plaintext, withinLink)
-                : outer.WriteOpening(writer, inline, plaintext, withinLink);
+                ? inner.WritePlaintextOpening(writer, inline, withinLink)
+                : outer.WritePlaintextOpening(writer, inline, withinLink);
         }
 
-        public string GetClosing(IHtmlFormatter formatter, Inline inline, bool plaintext, bool withinLink)
+        public string GetInfix(Inline inline)
         {
             return inner.CanHandle(inline)
-                ? inner.GetClosing(formatter, inline, plaintext, withinLink)
-                : outer.GetClosing(formatter, inline, plaintext, withinLink);
+                ? inner.GetInfix(inline)
+                : outer.GetInfix(inline);
         }
 
-        public bool IsStackWithinLink(Inline inline, bool withinLink)
+        public string GetPlaintextClosing(Inline inline, bool withinLink)
         {
             return inner.CanHandle(inline)
-                ? inner.IsStackWithinLink(inline, withinLink)
-                : outer.IsStackWithinLink(inline, withinLink);
+                ? inner.GetPlaintextClosing(inline, withinLink)
+                : outer.GetPlaintextClosing(inline, withinLink);
+        }
+
+        public bool IsPlaintextInlines(Inline element)
+        {
+            return inner.CanHandle(element)
+                ? inner.IsPlaintextInlines(element)
+                : outer.IsPlaintextInlines(element);
+        }
+
+        public bool IsWithinLink(Inline inline, bool withinLink)
+        {
+            return inner.CanHandle(inline)
+                ? inner.IsWithinLink(inline, withinLink)
+                : outer.IsWithinLink(inline, withinLink);
         }
     }
 }

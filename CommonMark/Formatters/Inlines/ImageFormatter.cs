@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using CommonMark.Syntax;
-using System.Text;
 
 namespace CommonMark.Formatters.Inlines
 {
@@ -23,66 +22,67 @@ namespace CommonMark.Formatters.Inlines
         /// </summary>
         /// <param name="writer">HTML writer.</param>
         /// <param name="element">Inline lement.</param>
-        /// <param name="plaintext"><c>true</c> to render inline elements as plaintext.</param>
-        /// <param name="withinLink">The parent's link stacking option.</param>
+        /// <param name="withinLink">The parent's rendering option.</param>
         /// <returns><c>true</c> if the parent formatter should visit the child elements.</returns>
-        public override bool WriteOpening(IHtmlTextWriter writer, Inline element, bool plaintext, bool withinLink)
+        public override bool WriteOpening(IHtmlTextWriter writer, Inline element, bool withinLink)
         {
-            if (plaintext)
-            {
-                return true;
-            }
-
-            writer.WriteConstant("<img src=\"");
+            writer.WriteConstant("<img");
+            WritePosition(writer, element);
+            writer.WriteConstant(" src=\"");
             writer.WriteEncodedUrl(ResolveUri(element.TargetUrl));
             writer.WriteConstant("\" alt=\"");
             return false;
         }
 
         /// <summary>
-        /// Returns the closing of an inline element.
+        /// Writes the plaintext opening of an inline element.
         /// </summary>
-        /// <param name="formatter">HTML formatter.</param>
+        /// <param name="writer">HTML writer.</param>
         /// <param name="element">Inline lement.</param>
-        /// <param name="plaintext"><c>true</c> to render inline elements as plaintext.</param>
-        /// <param name="withinLink">The parent's link stacking option.</param>
-        /// <returns>The closing.</returns>
-        public override string GetClosing(IHtmlFormatter formatter, Inline element, bool plaintext, bool withinLink)
+        /// <param name="withinLink">The parent's rendering option.</param>
+        /// <returns><c>true</c> if the parent formatter should visit the child elements.</returns>
+        public override bool WritePlaintextOpening(IHtmlTextWriter writer, Inline element, bool withinLink)
         {
-            if (plaintext)
-            {
-                return null;
-            }
-
-            var sb = new StringBuilder();
-            sb.Append('\"');
-
-            if (element.LiteralContentValue.Length > 0)
-            {
-                sb.Append(" title=\"");
-                sb.Append(formatter.EscapeHtml(element.LiteralContentValue));
-                sb.Append('\"');
-            }
-
-            if (Parameters.TrackPositions)
-            {
-                sb.Append(formatter.PrintPosition(element));
-            }
-
-            sb.Append(" />");
-            return sb.ToString();
+            return true;
         }
 
         /// <summary>
-        /// Returns the inline content rendering option.
+        /// Returns the infix of an inline element.
+        /// </summary>
+        /// <param name="element">Inline element.</param>
+        /// <returns>The infix.</returns>
+        public override string GetInfix(Inline element)
+        {
+            return "\" title=\"";
+        }
+
+        /// <summary>
+        /// Returns the closing of an inline element.
+        /// </summary>
+        /// <param name="element">Inline lement.</param>
+        /// <param name="withinLink">The parent's rendering option.</param>
+        /// <returns>The closing.</returns>
+        public override string GetClosing(Inline element, bool withinLink)
+        {
+            return "\" />";
+        }
+
+        /// <summary>
+        /// Determines whether inline content should be rendered as plain text.
+        /// </summary>
+        /// <param name="element">Inline element.</param>
+        /// <returns><c>true</c> to render the child inlines as plain text.</returns>
+        public override bool IsPlaintextInlines(Inline element)
+        {
+            return true;
+        }
+
+        /// <summary>
+        /// Determines whether inline content should be rendered as HTML.
         /// </summary>
         /// <param name="element">Element.</param>
-        /// <returns>
-        /// <c>true</c> to render the child inlines as plain text,
-        /// <c>false</c> to render the literal content as HTML,
-        /// or <c>null</c> to skip content rendering.
-        /// </returns>
-        public override bool? IsRenderPlainTextInlines(Inline element)
+        /// <returns><c>true</c> to render the literal content as HTML.</returns>
+        public override bool IsHtmlInlines(Inline element)
         {
             return true;
         }

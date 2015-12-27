@@ -50,11 +50,10 @@ namespace CommonMark.Formatters.Blocks
         /// <summary>
         /// Returns the closing of a block element.
         /// </summary>
-        /// <param name="formatter">HTML formatter.</param>
         /// <param name="element">Block element.</param>
         /// <param name="tight"><c>true</c> to stack paragraphs tightly.</param>
         /// <returns>The closing.</returns>
-        public override string GetClosing(IHtmlFormatter formatter, Block element, bool tight)
+        public override string GetClosing(Block element, bool tight)
         {
             var headingLevel = element.Heading.Level;
             return headingLevel > 6
@@ -63,17 +62,13 @@ namespace CommonMark.Formatters.Blocks
         }
 
         /// <summary>
-        /// Returns the inline content rendering option.
+        /// Determines whether inline content should be rendered as HTML.
         /// </summary>
-        /// <param name="element">Element.</param>
-        /// <returns>
-        /// <c>true</c> to render the child inlines as plain text,
-        /// <c>false</c> to render the literal content as HTML,
-        /// or <c>null</c> to skip content rendering.
-        /// </returns>
-        public override bool? IsRenderPlainTextInlines(Block element)
+        /// <param name="element">Block element.</param>
+        /// <returns><c>true</c> to render the child inlines as HTML.</returns>
+        public override bool IsHtmlInlines(Block element)
         {
-            return false;
+            return true;
         }
 
         /// <summary>

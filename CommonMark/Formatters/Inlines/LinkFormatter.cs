@@ -22,19 +22,13 @@ namespace CommonMark.Formatters.Inlines
         /// </summary>
         /// <param name="writer">HTML writer.</param>
         /// <param name="element">Inline lement.</param>
-        /// <param name="plaintext"><c>true</c> to render inline elements as plaintext.</param>
-        /// <param name="withinLink">The parent's link stacking option.</param>
+        /// <param name="withinLink">The parent's rendering option.</param>
         /// <returns><c>true</c> if the parent formatter should visit the child elements.</returns>
-        public override bool WriteOpening(IHtmlTextWriter writer, Inline element, bool plaintext, bool withinLink)
+        public override bool WriteOpening(IHtmlTextWriter writer, Inline element, bool withinLink)
         {
             if (withinLink)
             {
                 writer.Write('[');
-                return true;
-            }
-
-            if (plaintext)
-            {
                 return true;
             }
 
@@ -55,27 +49,50 @@ namespace CommonMark.Formatters.Inlines
         }
 
         /// <summary>
-        /// Returns the closing of an inline element.
+        /// Writes the plaintext opening of an inline element.
         /// </summary>
-        /// <param name="formatter">HTML formatter.</param>
+        /// <param name="writer">HTML writer.</param>
         /// <param name="element">Inline lement.</param>
-        /// <param name="plaintext"><c>true</c> to render inline elements as plaintext.</param>
-        /// <param name="withinLink">The parent's link stacking option.</param>
-        /// <returns>The closing.</returns>
-        public override string GetClosing(IHtmlFormatter formatter, Inline element, bool plaintext, bool withinLink)
+        /// <param name="withinLink">The parent's rendering option.</param>
+        /// <returns><c>true</c> if the parent formatter should visit the child elements.</returns>
+        public override bool WritePlaintextOpening(IHtmlTextWriter writer, Inline element, bool withinLink)
         {
-            return !withinLink
-                ? base.GetClosing(formatter, element, plaintext, withinLink)
-                : "]";
+            if (withinLink)
+            {
+                writer.Write('[');
+            }
+            return true;
         }
 
         /// <summary>
-        /// Returns the link stacking option for an inline element.
+        /// Returns the closing of an inline element.
+        /// </summary>
+        /// <param name="element">Inline lement.</param>
+        /// <param name="withinLink">The parent's rendering option.</param>
+        /// <returns>The closing.</returns>
+        public override string GetClosing(Inline element, bool withinLink)
+        {
+            return withinLink ? "]" : "</a>";
+        }
+
+        /// <summary>
+        /// Returns the plaintext closing of an inline element.
+        /// </summary>
+        /// <param name="element">Inline lement.</param>
+        /// <param name="withinLink">The parent's rendering option.</param>
+        /// <returns>The closing.</returns>
+        public override string GetPlaintextClosing(Inline element, bool withinLink)
+        {
+            return withinLink ? "]" : null;
+        }
+
+        /// <summary>
+        /// Determines whether inline content is to be rendered within a link.
         /// </summary>
         /// <param name="element">Inline element.</param>
-        /// <param name="withinLink">The parent's link stacking option.</param>
-        /// <returns><c>true</c> to stack elements within a link.</returns>
-        public override bool IsStackWithinLink(Inline element, bool withinLink)
+        /// <param name="withinLink">The parent's rendering option.</param>
+        /// <returns><c>true</c> to render elements within a link.</returns>
+        public override bool IsWithinLink(Inline element, bool withinLink)
         {
             return true;
         }

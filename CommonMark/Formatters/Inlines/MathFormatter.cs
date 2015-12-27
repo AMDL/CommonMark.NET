@@ -9,7 +9,7 @@ namespace CommonMark.Formatters.Inlines
         {
         }
 
-        public override bool WriteOpening(IHtmlTextWriter writer, Inline element, bool plaintext, bool withinLink)
+        public override bool WriteOpening(IHtmlTextWriter writer, Inline element, bool withinLink)
         {
             writer.WriteConstant("<span class=\"math\"");
             WritePosition(writer, element);

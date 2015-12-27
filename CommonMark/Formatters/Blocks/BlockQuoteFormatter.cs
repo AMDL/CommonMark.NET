@@ -15,20 +15,5 @@ namespace CommonMark.Formatters.Blocks
             : base(parameters, BlockTag.BlockQuote, "blockquote", textTag: "block_quote")
         {
         }
-
-        /// <summary>
-        /// Returns the paragraph stacking option for a block element.
-        /// </summary>
-        /// <param name="element">Block element.</param>
-        /// <param name="tight">The parent's stacking option.</param>
-        /// <returns>
-        /// <c>true</c> to stack paragraphs tightly,
-        /// <c>false</c> to stack paragraphs loosely,
-        /// or <c>null</c> to skip paragraph stacking.
-        /// </returns>
-        public override bool? IsStackTight(Block element, bool tight)
-        {
-            return false;
-        }
     }
 }

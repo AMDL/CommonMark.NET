@@ -21,17 +21,6 @@ namespace CommonMark.Formatters.Inlines
         }
 
         /// <summary>
-        /// Returns the link stacking option for an inline element.
-        /// </summary>
-        /// <param name="element">Inline element.</param>
-        /// <param name="withinLink">The parent's stacking option.</param>
-        /// <returns><c>true</c> to stack elements within a link.</returns>
-        public override bool IsStackWithinLink(Inline element, bool withinLink)
-        {
-            return withinLink;
-        }
-
-        /// <summary>
         /// Returns the properties of an element.
         /// </summary>
         /// <param name="formatter">Syntax formatter.</param>

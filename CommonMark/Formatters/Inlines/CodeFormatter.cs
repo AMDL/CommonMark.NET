@@ -18,17 +18,13 @@ namespace CommonMark.Formatters.Inlines
         }
 
         /// <summary>
-        /// Returns the inline content rendering option.
+        /// Determines whether inline content should be rendered as HTML.
         /// </summary>
-        /// <param name="element">Element.</param>
-        /// <returns>
-        /// <c>true</c> to render the child inlines as plain text,
-        /// <c>false</c> to render the literal content as HTML,
-        /// or <c>null</c> to skip content rendering.
-        /// </returns>
-        public override bool? IsRenderPlainTextInlines(Inline element)
+        /// <param name="element">Inline element.</param>
+        /// <returns><c>true</c> to render the literal content as HTML.</returns>
+        public override bool IsHtmlInlines(Inline element)
         {
-            return false;
+            return true;
         }
 
         /// <summary>

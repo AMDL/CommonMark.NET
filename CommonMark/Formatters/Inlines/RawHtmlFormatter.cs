@@ -22,10 +22,23 @@ namespace CommonMark.Formatters.Inlines
         /// </summary>
         /// <param name="writer">HTML writer.</param>
         /// <param name="element">Inline element.</param>
-        /// <param name="withinLink">The parent's link stacking option.</param>
-        /// <param name="plaintext"><c>true</c> to render inline elements as plaintext.</param>
+        /// <param name="withinLink">The parent's rendering option.</param>
         /// <returns><c>true</c> if the parent formatter should visit the child elements.</returns>
-        public override bool WriteOpening(IHtmlTextWriter writer, Inline element, bool plaintext, bool withinLink)
+        public override bool WriteOpening(IHtmlTextWriter writer, Inline element, bool withinLink)
+        {
+            // cannot output source position for HTML blocks
+            writer.Write(element.LiteralContentValue);
+            return false;
+        }
+
+        /// <summary>
+        /// Writes the plaintext opening of an inline element.
+        /// </summary>
+        /// <param name="writer">HTML writer.</param>
+        /// <param name="element">Inline element.</param>
+        /// <param name="withinLink">The parent's rendering option.</param>
+        /// <returns><c>true</c> if the parent formatter should visit the child elements.</returns>
+        public override bool WritePlaintextOpening(IHtmlTextWriter writer, Inline element, bool withinLink)
         {
             // cannot output source position for HTML blocks
             writer.Write(element.LiteralContentValue);

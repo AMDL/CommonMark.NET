@@ -173,7 +173,8 @@ namespace CommonMark
 
         internal T[] GetItems<T>(IEnumerable<T> initItems, int count,
             Func<ICommonMarkExtension, IEnumerable<T>> itemsFactory,
-            Func<T, int> keyFactory, Func<T, T, T> valueFactory)
+            Func<T, int> keyFactory, Func<T, T, T> valueFactory,
+            Func<int, T> dummyFactory)
         {
             var items = new T[count];
 
@@ -197,6 +198,12 @@ namespace CommonMark
                         items[key] = valueFactory(items[key], item);
                     }
                 }
+            }
+
+            for (int i = 0; i < count; i++)
+            {
+                if (items[i] == null)
+                    items[i] = dummyFactory(i);
             }
 
             return items;

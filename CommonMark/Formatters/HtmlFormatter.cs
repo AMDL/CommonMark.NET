@@ -5,7 +5,7 @@ using CommonMark.Syntax;
 
 namespace CommonMark.Formatters
 {
-    internal class HtmlFormatter : IHtmlFormatter
+    internal class HtmlFormatter
     {
         private static readonly char[] EscapeHtmlCharacters = { '&', '<', '>', '"' };
         private const string HexCharacters = "0123456789ABCDEF";
@@ -96,28 +96,54 @@ namespace CommonMark.Formatters
         /// Escapes special HTML characters.
         /// </summary>
         /// <remarks>Orig: escape_html(inp, preserve_entities)</remarks>
+#if OptimizeFor45
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+#endif
         internal static void EscapeHtml(StringPart input, HtmlTextWriter target)
         {
             if (input.Length == 0)
                 return;
 
-            int pos;
-            int lastPos = input.StartIndex;
-            char[] buffer;
+            EscapeHtmlInner(input, target);
+        }
 
-            if (target.Buffer.Length < input.Length)
-                buffer = target.Buffer = new char[input.Length];
-            else
-                buffer = target.Buffer;
-                 
-            input.Source.CopyTo(input.StartIndex, buffer, 0, input.Length);
-
-            while ((pos = input.Source.IndexOfAny(EscapeHtmlCharacters, lastPos, input.Length - lastPos + input.StartIndex)) != -1)
+        /// <summary>
+        /// Escapes special HTML characters.
+        /// </summary>
+        /// <remarks>Orig: escape_html(inp, preserve_entities)</remarks>
+#if OptimizeFor45
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+#endif
+        internal static void EscapeHtml(StringContent inp, HtmlTextWriter target)
+        {
+            var parts = inp.RetrieveParts();
+            for (var i = parts.Offset; i < parts.Offset + parts.Count; i++)
             {
-                target.Write(buffer, lastPos - input.StartIndex, pos - lastPos);
+                EscapeHtmlInner(parts.Array[i], target);
+            }
+        }
+
+#if OptimizeFor45
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+#endif
+        private static void EscapeHtmlInner(StringPart part, HtmlTextWriter target)
+        {
+            if (target.Buffer.Length < part.Length)
+                target.Buffer = new char[part.Length];
+
+            char[] buffer = target.Buffer;
+
+            part.Source.CopyTo(part.StartIndex, buffer, 0, part.Length);
+
+            int lastPos = part.StartIndex;
+            int pos;
+
+            while ((pos = part.Source.IndexOfAny(EscapeHtmlCharacters, lastPos, part.Length - lastPos + part.StartIndex)) != -1)
+            {
+                target.Write(buffer, lastPos - part.StartIndex, pos - lastPos);
                 lastPos = pos + 1;
 
-                switch (input.Source[pos])
+                switch (part.Source[pos])
                 {
                     case '<':
                         target.WriteConstant(EscapeHtmlLessThan);
@@ -134,69 +160,81 @@ namespace CommonMark.Formatters
                 }
             }
 
-            target.Write(buffer, lastPos - input.StartIndex, input.Length - lastPos + input.StartIndex);
+            target.Write(buffer, lastPos - part.StartIndex, part.Length - lastPos + part.StartIndex);
         }
 
-        /// <summary>
-        /// Escapes special HTML characters.
-        /// </summary>
-        /// <remarks>Orig: escape_html(inp, preserve_entities)</remarks>
-        internal static void EscapeHtml(StringContent inp, HtmlTextWriter target)
-        {
-            int pos;
-            int lastPos;
-            char[] buffer = target.Buffer;
+        private delegate bool WriteOpeningDelegate<T>(IHtmlTextWriter writer, T element, bool flag);
 
-            var parts = inp.RetrieveParts();
-            for (var i = parts.Offset; i < parts.Offset + parts.Count; i++)
-            {
-                var part = parts.Array[i];
+        private delegate string GetInfixDelegate<T>(T element);
 
-                if (buffer.Length < part.Length)
-                    buffer = target.Buffer = new char[part.Length];
+        private delegate string GetClosingDelegate<T>(T element, bool flag);
 
-                part.Source.CopyTo(part.StartIndex, buffer, 0, part.Length);
+        private delegate bool RenderDelegate<T>(T element);
 
-                lastPos = part.StartIndex;
-                while ((pos = part.Source.IndexOfAny(EscapeHtmlCharacters, lastPos, part.Length - lastPos + part.StartIndex)) != -1)
-                {
-                    target.Write(buffer, lastPos - part.StartIndex, pos - lastPos);
-                    lastPos = pos + 1;
-
-                    switch (part.Source[pos])
-                    {
-                        case '<':
-                            target.WriteConstant(EscapeHtmlLessThan);
-                            break;
-                        case '>':
-                            target.WriteConstant(EscapeHtmlGreaterThan);
-                            break;
-                        case '&':
-                            target.WriteConstant(EscapeHtmlAmpersand);
-                            break;
-                        case '"':
-                            target.WriteConstant(EscapeHtmlQuote);
-                            break;
-                    }
-                }
-
-                target.Write(buffer, lastPos - part.StartIndex, part.Length - lastPos + part.StartIndex);
-            }
-        }
+        private delegate bool InheritDelegate<T>(T element, bool flag);
 
         private readonly CommonMarkSettings settings;
         private readonly Stack<BlockStackEntry> blockStack;
         private readonly Stack<InlineStackEntry> inlineStack;
-        private readonly IBlockFormatter[] blockFormatters;
-        private readonly IInlineFormatter[] inlineFormatters;
+
+        private readonly WriteOpeningDelegate<Block>[] blockOpeners;
+        private readonly GetClosingDelegate<Block>[] blockClosers;
+        private readonly RenderDelegate<Block>[] blockHtmlRenderers;
+        private readonly InheritDelegate<Block>[] blockStackers;
+
+        private readonly WriteOpeningDelegate<Inline>[] inlineOpeners;
+        private readonly GetInfixDelegate<Inline>[] inlineInfixers;
+        private readonly GetClosingDelegate<Inline>[] inlineClosers;
+        private readonly RenderDelegate<Inline>[] inlineHtmlRenderers;
+        private readonly RenderDelegate<Inline>[] inlinePlaintextRenderers;
+        private readonly WriteOpeningDelegate<Inline>[] inlinePlaintextOpeners;
+        private readonly GetClosingDelegate<Inline>[] inlinePlaintextClosers;
+        private readonly InheritDelegate<Inline>[] inlineStackers;
 
         public HtmlFormatter(CommonMarkSettings settings)
         {
             this.settings = settings;
+
             blockStack = new Stack<BlockStackEntry>();
             inlineStack = new Stack<InlineStackEntry>();
-            blockFormatters = settings.FormatterParameters.BlockFormatters;
-            inlineFormatters = settings.FormatterParameters.InlineFormatters;
+
+            var blockFormatters = settings.FormatterParameters.BlockFormatters;
+
+            blockOpeners = new WriteOpeningDelegate<Block>[(int)BlockTag.Count];
+            blockClosers = new GetClosingDelegate<Block>[(int)BlockTag.Count];
+            blockHtmlRenderers = new RenderDelegate<Block>[(int)BlockTag.Count];
+            blockStackers = new InheritDelegate<Block>[(int)BlockTag.Count];
+
+            for (var i = 0; i < (int)BlockTag.Count; i++)
+            {
+                blockOpeners[i] = blockFormatters[i].WriteOpening;
+                blockClosers[i] = blockFormatters[i].GetClosing;
+                blockHtmlRenderers[i] = blockFormatters[i].IsHtmlInlines;
+                blockStackers[i] = blockFormatters[i].IsTight;
+            }
+
+            var inlineFormatters = settings.FormatterParameters.InlineFormatters;
+
+            inlineOpeners = new WriteOpeningDelegate<Inline>[(int)InlineTag.Count];
+            inlineInfixers = new GetInfixDelegate<Inline>[(int)InlineTag.Count];
+            inlineClosers = new GetClosingDelegate<Inline>[(int)InlineTag.Count];
+            inlineHtmlRenderers = new RenderDelegate<Inline>[(int)InlineTag.Count];
+            inlinePlaintextRenderers = new RenderDelegate<Inline>[(int)InlineTag.Count];
+            inlinePlaintextOpeners = new WriteOpeningDelegate<Inline>[(int)InlineTag.Count];
+            inlinePlaintextClosers = new GetClosingDelegate<Inline>[(int)InlineTag.Count];
+            inlineStackers = new InheritDelegate<Inline>[(int)InlineTag.Count];
+
+            for (var i = 0; i < (int)InlineTag.Count; i++)
+            {
+                inlineOpeners[i] = inlineFormatters[i].WriteOpening;
+                inlineInfixers[i] = inlineFormatters[i].GetInfix;
+                inlineClosers[i] = inlineFormatters[i].GetClosing;
+                inlineHtmlRenderers[i] = inlineFormatters[i].IsHtmlInlines;
+                inlinePlaintextRenderers[i] = inlineFormatters[i].IsPlaintextInlines;
+                inlinePlaintextOpeners[i] = inlineFormatters[i].WritePlaintextOpening;
+                inlinePlaintextClosers[i] = inlineFormatters[i].GetPlaintextClosing;
+                inlineStackers[i] = inlineFormatters[i].IsWithinLink;
+            }
         }
 
         public void BlocksToHtml(TextWriter writer, Block block)
@@ -211,47 +249,33 @@ namespace CommonMark.Formatters
             inlineStack.Clear();
 
             bool visitChildren;
-            string stackLiteral = null;
-            bool stackTight = false;
+            string stackLiteral;
+            bool renderHtmlInlines;
             bool tight = false;
-
-            IBlockFormatter formatter;
-            bool? isRenderPlainTextInlines;
-            bool? isStackTight;
 
             while (block != null)
             {
-                visitChildren = false;
+                visitChildren = WriteOpening(writer, block, tight);
 
-                formatter = blockFormatters[(int)block.Tag];
-                if (formatter == null)
-                {
-                    throw new CommonMarkException("Block type " + block.Tag + " is not supported.", block);
-                }
-
-                visitChildren = formatter.WriteOpening(writer, block, tight);
-                stackLiteral = formatter.GetClosing(this, block, tight);
-
-                isRenderPlainTextInlines = formatter.IsRenderPlainTextInlines(block);
-                if (isRenderPlainTextInlines == false)
+                renderHtmlInlines = IsRenderHtmlInlines(block);
+                if (renderHtmlInlines)
                 {
                     InlinesToHtml(writer, block.InlineContent);
                     if (block.Tag == BlockTag.Paragraph)
-                        writer.WriteConstant(stackLiteral);
+                        writer.WriteConstant(GetClosing(block, tight));
                     else
-                        writer.WriteLineConstant(stackLiteral);
-                    stackLiteral = null;
+                        writer.WriteLineConstant(GetClosing(block, tight));
                 }
-
-                isStackTight = formatter.IsStackTight(block, tight);
-                if (isStackTight.HasValue)
-                    stackTight = isStackTight.Value;
 
                 if (visitChildren)
                 {
+                    stackLiteral = !renderHtmlInlines
+                        ? GetClosing(block, tight)
+                        : null;
+
                     blockStack.Push(new BlockStackEntry(stackLiteral, block.NextSibling, tight));
 
-                    tight = stackTight;
+                    tight = IsTight(block, tight);
                     block = block.FirstChild;
                 }
                 else if (block.NextSibling != null)
@@ -274,52 +298,92 @@ namespace CommonMark.Formatters
             }
         }
 
+#if OptimizeFor45
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+#endif
+        private bool WriteOpening(IHtmlTextWriter writer, Block block, bool tight)
+        {
+            return blockOpeners[(int)block.Tag](writer, block, tight);
+        }
+
+#if OptimizeFor45
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+#endif
+        private string GetClosing(Block block, bool tight)
+        {
+            return blockClosers[(int)block.Tag](block, tight);
+        }
+
+#if OptimizeFor45
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+#endif
+        private bool IsRenderHtmlInlines(Block block)
+        {
+            return blockHtmlRenderers[(int)block.Tag](block);
+        }
+
+#if OptimizeFor45
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+#endif
+        private bool IsTight(Block block, bool tight)
+        {
+            return blockStackers[(int)block.Tag](block, tight);
+        }
+
         /// <summary>
         /// Writes the inline list to the given writer as HTML code. 
         /// </summary>
         private void InlinesToHtml(HtmlTextWriter writer, Inline inline)
         {
-            bool plaintext = false;
+            bool stackPlaintext;
+            bool? plaintext = false;
             bool withinLink = false;
-            bool stackWithinLink = false;
             bool visitChildren;
-            string stackLiteral = null;
-
-            IInlineFormatter formatter;
-            bool? isRenderPlainTextInlines;
+            string stackLiteral;
+            bool renderHtmlInlines = false;
 
             while (inline != null)
             {
-                formatter = inlineFormatters[(int)inline.Tag];
-                if (formatter == null)
-                {
-                    throw new CommonMarkException("Inline type " + inline.Tag + " is not supported.", inline);
-                }
+                stackPlaintext = false;
 
-                visitChildren = formatter.WriteOpening(writer, inline, plaintext, withinLink);
-                stackLiteral = formatter.GetClosing(this, inline, plaintext, withinLink);
-
-                if (!plaintext)
+                switch (plaintext)
                 {
-                    isRenderPlainTextInlines = formatter.IsRenderPlainTextInlines(inline);
-                    if (isRenderPlainTextInlines == true)
-                    {
-                        plaintext = true;
-                        visitChildren = true;
-                    }
-                    else if (isRenderPlainTextInlines == false)
-                    {
+                    case false:
+                        visitChildren = WriteOpening(writer, inline, withinLink);
+                        stackLiteral = GetClosing(inline, withinLink);
+                        stackPlaintext = IsRenderPlaintextInlines(inline);
+                        renderHtmlInlines = IsRenderHtmlInlines(inline);
+                        if (stackPlaintext)
+                        {
+                            plaintext = true;
+                            visitChildren = true;
+                        }
+                        else if (renderHtmlInlines)
+                        {
+                            EscapeHtml(inline.LiteralContentValue, writer);
+                        }
+                        break;
+
+                    case true:
+                        visitChildren = WritePlaintextOpening(writer, inline, withinLink);
+                        stackLiteral = GetPlaintextClosing(inline, withinLink);
+                        break;
+
+                    default:
+                        visitChildren = false;
+                        stackLiteral = null;
                         EscapeHtml(inline.LiteralContentValue, writer);
-                    }
+                        break;
                 }
-
-                stackWithinLink = formatter.IsStackWithinLink(inline, withinLink);
 
                 if (visitChildren)
                 {
                     inlineStack.Push(new InlineStackEntry(stackLiteral, inline.NextSibling, plaintext, withinLink));
 
-                    withinLink = stackWithinLink;
+                    if (stackPlaintext && renderHtmlInlines && inline.LiteralContentValue.Length > 0)
+                        inlineStack.Push(new InlineStackEntry(GetInfix(inline), inline, null, withinLink));
+
+                    withinLink = IsWithinLink(inline, withinLink);
                     inline = inline.FirstChild;
                 }
                 else if (inline.NextSibling != null)
@@ -342,6 +406,70 @@ namespace CommonMark.Formatters
             }
         }
 
+#if OptimizeFor45
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+#endif
+        private bool WriteOpening(IHtmlTextWriter writer, Inline inline, bool tight)
+        {
+            return inlineOpeners[(int)inline.Tag](writer, inline, tight);
+        }
+
+#if OptimizeFor45
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+#endif
+        private string GetInfix(Inline inline)
+        {
+            return inlineInfixers[(int)inline.Tag](inline);
+        }
+
+#if OptimizeFor45
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+#endif
+        private string GetClosing(Inline inline, bool withinLink)
+        {
+            return inlineClosers[(int)inline.Tag](inline, withinLink);
+        }
+
+#if OptimizeFor45
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+#endif
+        private bool WritePlaintextOpening(IHtmlTextWriter writer, Inline inline, bool tight)
+        {
+            return inlinePlaintextOpeners[(int)inline.Tag](writer, inline, tight);
+        }
+
+#if OptimizeFor45
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+#endif
+        private string GetPlaintextClosing(Inline inline, bool withinLink)
+        {
+            return inlinePlaintextClosers[(int)inline.Tag](inline, withinLink);
+        }
+
+#if OptimizeFor45
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+#endif
+        private bool IsRenderPlaintextInlines(Inline inline)
+        {
+            return inlinePlaintextRenderers[(int)inline.Tag](inline);
+        }
+
+#if OptimizeFor45
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+#endif
+        private bool IsRenderHtmlInlines(Inline inline)
+        {
+            return inlineHtmlRenderers[(int)inline.Tag](inline);
+        }
+
+#if OptimizeFor45
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+#endif
+        private bool IsWithinLink(Inline inline, bool withinLink)
+        {
+            return inlineStackers[(int)inline.Tag](inline, withinLink);
+        }
+
         private struct BlockStackEntry
         {
             public string Literal { get; }
@@ -360,57 +488,15 @@ namespace CommonMark.Formatters
         {
             public string Literal { get; }
             public Inline Target { get; }
-            public bool IsPlaintext { get; }
+            public bool? IsPlaintext { get; }
             public bool IsWithinLink { get; }
 
-            public InlineStackEntry(string literal, Inline target, bool isPlaintext, bool isWithinLink)
+            public InlineStackEntry(string literal, Inline target, bool? isPlaintext, bool isWithinLink)
             {
                 Literal = literal;
                 Target = target;
                 IsPlaintext = isPlaintext;
                 IsWithinLink = isWithinLink;
-            }
-        }
-
-        string IHtmlFormatter.EscapeHtml(StringPart part)
-        {
-            using (MemoryStream stream = new MemoryStream())
-            {
-                using (TextWriter writer = new StreamWriter(stream))
-                {
-                    var htmlWriter = new HtmlTextWriter(writer);
-                    EscapeHtml(part, htmlWriter);
-                }
-                var buffer = stream.ToArray();
-                return Encoding.UTF8.GetString(buffer, 0, buffer.Length);
-            }
-        }
-
-        string IHtmlFormatter.EscapeUrl(string url)
-        {
-            using (MemoryStream stream = new MemoryStream())
-            {
-                using (TextWriter writer = new StreamWriter(stream))
-                {
-                    var htmlWriter = new HtmlTextWriter(writer);
-                    EscapeUrl(url, htmlWriter);
-                }
-                var buffer = stream.ToArray();
-                return Encoding.UTF8.GetString(buffer, 0, buffer.Length);
-            }
-        }
-
-        string IHtmlFormatter.PrintPosition(Inline element)
-        {
-            using (MemoryStream stream = new MemoryStream())
-            {
-                using (TextWriter writer = new StreamWriter(stream))
-                {
-                    var htmlWriter = new HtmlTextWriter(writer);
-                    htmlWriter.WritePosition(element);
-                }
-                var buffer = stream.ToArray();
-                return Encoding.UTF8.GetString(buffer, 0, buffer.Length);
             }
         }
     }

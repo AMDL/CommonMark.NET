@@ -33,16 +33,12 @@ namespace CommonMark.Formatters.Blocks
         }
 
         /// <summary>
-        /// Returns the paragraph stacking option for a block element.
+        /// Determines whether paragraph rendering should be skipped for a block element.
         /// </summary>
         /// <param name="element">Block element.</param>
-        /// <param name="tight">The parent's stacking option.</param>
-        /// <returns>
-        /// <c>true</c> to stack paragraphs tightly,
-        /// <c>false</c> to stack paragraphs loosely,
-        /// or <c>null</c> to skip paragraph stacking.
-        /// </returns>
-        public override bool? IsStackTight(Block element, bool tight)
+        /// <param name="tight">The parent's rendering option.</param>
+        /// <returns><c>true</c> to skip paragraph rendering.</returns>
+        public override bool IsTight(Block element, bool tight)
         {
             return element.UnorderedList.IsTight;
         }

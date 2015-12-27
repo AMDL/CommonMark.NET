@@ -49,42 +49,44 @@ namespace CommonMark.Formatters
 
         #region BlockFormatters
 
-        private Formatters.IBlockFormatter[] _blockFormatters;
+        private IBlockFormatter[] _blockFormatters;
 
         /// <summary>
-        /// Gets the block element formatters.
+        /// Gets the block element 
         /// </summary>
-        internal Formatters.IBlockFormatter[] BlockFormatters
+        internal IBlockFormatter[] BlockFormatters
         {
             get { return _blockFormatters; }
         }
 
-        private Formatters.IBlockFormatter[] GetBlockFormatters()
+        private IBlockFormatter[] GetBlockFormatters()
         {
             return Settings.Extensions.GetItems(
-                Formatters.BlockFormatter.InitializeFormatters(this), (int)Syntax.BlockTag.Count,
-                ext => ext.BlockFormatters, f => (int)f.Tag, DelegateBlockFormatter.Merge);
+                BlockFormatter.InitializeFormatters(this), (int)Syntax.BlockTag.Count,
+                ext => ext.BlockFormatters, f => (int)f.Tag, DelegateBlockFormatter.Merge,
+                i => new BlockFormatter(this, (Syntax.BlockTag)i));
         }
 
         #endregion BlockFormatters
 
         #region InlineFormatters
 
-        private Formatters.IInlineFormatter[] _inlineFormatters;
+        private IInlineFormatter[] _inlineFormatters;
 
         /// <summary>
-        /// Gets the inline element formatters.
+        /// Gets the inline element 
         /// </summary>
-        internal Formatters.IInlineFormatter[] InlineFormatters
+        internal IInlineFormatter[] InlineFormatters
         {
             get { return _inlineFormatters; }
         }
 
-        private Formatters.IInlineFormatter[] GetInlineFormatters()
+        private IInlineFormatter[] GetInlineFormatters()
         {
             return Settings.Extensions.GetItems(
-                Formatters.InlineFormatter.InitializeFormatters(this), (int)Syntax.InlineTag.Count,
-                ext => ext.InlineFormatters, f => (int)f.Tag, DelegateInlineFormatter.Merge);
+                InlineFormatter.InitializeFormatters(this), (int)Syntax.InlineTag.Count,
+                ext => ext.InlineFormatters, f => (int)f.Tag, DelegateInlineFormatter.Merge,
+                i => new InlineFormatter(this, (Syntax.InlineTag)i));
         }
 
         #endregion InlineFormatters

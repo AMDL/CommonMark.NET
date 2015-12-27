@@ -71,17 +71,24 @@ namespace CommonMark.Formatters
         public abstract bool CanHandle(TElement element);
 
         /// <summary>
-        /// Returns the inline content rendering option.
+        /// Returns the closing of an element.
         /// </summary>
         /// <param name="element">Element.</param>
-        /// <returns>
-        /// <c>true</c> to render the child inlines as plain text,
-        /// <c>false</c> to render the literal content as HTML,
-        /// or <c>null</c> to skip content rendering.
-        /// </returns>
-        public virtual bool? IsRenderPlainTextInlines(TElement element)
+        /// <param name="flag">Element-specific flag.</param>
+        /// <returns>The closing.</returns>
+        public virtual string GetClosing(TElement element, bool flag)
         {
-            return null;
+            return !IsSelfClosing ? "</" + HtmlTag + '>' : null;
+        }
+
+        /// <summary>
+        /// Determines whether inline content should be rendered as HTML.
+        /// </summary>
+        /// <param name="element">Element.</param>
+        /// <returns><c>true</c> to render inline content as HTML.</returns>
+        public virtual bool IsHtmlInlines(TElement element)
+        {
+            return false;
         }
 
         /// <summary>
@@ -108,16 +115,6 @@ namespace CommonMark.Formatters
         {
             if (Parameters.TrackPositions)
                 DoWritePosition(writer, element);
-        }
-
-        /// <summary>
-        /// Returns the closing of an element.
-        /// </summary>
-        /// <param name="element">Element.</param>
-        /// <returns>The closing.</returns>
-        protected string DoGetClosing(TElement element)
-        {
-            return !IsSelfClosing ? "</" + HtmlTag + '>' : null;
         }
 
         /// <summary>

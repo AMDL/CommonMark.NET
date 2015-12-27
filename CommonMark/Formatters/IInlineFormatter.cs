@@ -8,31 +8,42 @@ namespace CommonMark.Formatters
     public interface IInlineFormatter : IElementFormatter<Inline, InlineTag>
     {
         /// <summary>
-        /// Writes the opening of an inline element.
+        /// Writes the plain text opening of an inline element.
         /// </summary>
         /// <param name="writer">HTML writer.</param>
         /// <param name="element">Inline element.</param>
-        /// <param name="plaintext"><c>true</c> to render inline elements as plaintext.</param>
-        /// <param name="withinLink">The parent's link stacking option.</param>
+        /// <param name="withinLink">The parent's rendering option.</param>
         /// <returns><c>true</c> if the parent formatter should visit the child elements.</returns>
-        bool WriteOpening(IHtmlTextWriter writer, Inline element, bool plaintext, bool withinLink);
+        bool WritePlaintextOpening(IHtmlTextWriter writer, Inline element, bool withinLink);
 
         /// <summary>
-        /// Returns the closing of an inline element.
+        /// Returns the infix of an inline element.
         /// </summary>
-        /// <param name="formatter">HTML formatter.</param>
         /// <param name="element">Inline element.</param>
-        /// <param name="plaintext"><c>true</c> to render inline elements as plaintext.</param>
-        /// <param name="withinLink">The parent's link stacking option.</param>
+        /// <returns>The infix.</returns>
+        string GetInfix(Inline element);
+
+        /// <summary>
+        /// Returns the plain text closing of an inline element.
+        /// </summary>
+        /// <param name="element">Inline element.</param>
+        /// <param name="withinLink">The parent's rendering option.</param>
         /// <returns>The closing.</returns>
-        string GetClosing(IHtmlFormatter formatter, Inline element, bool plaintext, bool withinLink);
+        string GetPlaintextClosing(Inline element, bool withinLink);
 
         /// <summary>
-        /// Returns the link stacking option for an inline element.
+        /// Determines whether inline content should be rendered as plain text.
         /// </summary>
         /// <param name="element">Inline element.</param>
-        /// <param name="withinLink">The parent's link stacking option.</param>
-        /// <returns><c>true</c> to stack elements within a link.</returns>
-        bool IsStackWithinLink(Inline element, bool withinLink);
+        /// <returns><c>true</c> to render the child inlines as plain text.</returns>
+        bool IsPlaintextInlines(Inline element);
+
+        /// <summary>
+        /// Determines whether inline content is to be rendered within a link.
+        /// </summary>
+        /// <param name="element">Inline element.</param>
+        /// <param name="withinLink">The parent's rendering option.</param>
+        /// <returns><c>true</c> to render elements within a link.</returns>
+        bool IsWithinLink(Inline element, bool withinLink);
     }
 }

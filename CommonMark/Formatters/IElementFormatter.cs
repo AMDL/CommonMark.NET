@@ -29,22 +29,35 @@ namespace CommonMark.Formatters
         bool CanHandle(TElement element);
 
         /// <summary>
+        /// Writes the opening of an element.
+        /// </summary>
+        /// <param name="writer">HTML writer.</param>
+        /// <param name="element">Element.</param>
+        /// <param name="flag">Element-specific flag.</param>
+        /// <returns><c>true</c> if the parent formatter should visit the child elements.</returns>
+        bool WriteOpening(IHtmlTextWriter writer, TElement element, bool flag);
+
+        /// <summary>
+        /// Returns the closing of an element.
+        /// </summary>
+        /// <param name="element">Element.</param>
+        /// <param name="flag">Element-specific flag.</param>
+        /// <returns>The closing.</returns>
+        string GetClosing(TElement element, bool flag);
+
+        /// <summary>
+        /// Determines whether inline content should be rendered as HTML.
+        /// </summary>
+        /// <param name="element">Element.</param>
+        /// <returns><c>true</c> to render inline content as HTML.</returns>
+        bool IsHtmlInlines(TElement element);
+
+        /// <summary>
         /// Returns the properties of an element.
         /// </summary>
         /// <param name="formatter">Syntax formatter.</param>
         /// <param name="element">Element.</param>
         /// <returns>Properties or <c>null</c>.</returns>
         IEnumerable<KeyValuePair<string, object>> GetSyntaxData(ISyntaxFormatter formatter, TElement element);
-
-        /// <summary>
-        /// Returns the inline content rendering option.
-        /// </summary>
-        /// <param name="element">Element.</param>
-        /// <returns>
-        /// <c>true</c> to render the child inlines as plain text,
-        /// <c>false</c> to render the literal content as HTML,
-        /// or <c>null</c> to skip content rendering.
-        /// </returns>
-        bool? IsRenderPlainTextInlines(TElement element);
     }
 }

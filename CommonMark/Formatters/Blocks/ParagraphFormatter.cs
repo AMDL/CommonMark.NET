@@ -37,27 +37,22 @@ namespace CommonMark.Formatters.Blocks
         /// <summary>
         /// Returns the closing of a block element.
         /// </summary>
-        /// <param name="formatter">HTML formatter.</param>
         /// <param name="element">Block element.</param>
         /// <param name="tight"><c>true</c> to stack paragraphs tightly.</param>
         /// <returns>The closing.</returns>
-        public override string GetClosing(IHtmlFormatter formatter, Block element, bool tight)
+        public override string GetClosing(Block element, bool tight)
         {
             return !tight ? "</p>" : null;
         }
 
         /// <summary>
-        /// Returns the paragraph stacking option for a block element.
+        /// Determines whether inline content should be rendered as HTML.
         /// </summary>
         /// <param name="element">Block element.</param>
-        /// <returns>
-        /// <c>true</c> to stack paragraphs tightly,
-        /// <c>false</c> to stack paragraphs loosely,
-        /// or <c>null</c> to skip paragraph stacking.
-        /// </returns>
-        public override bool? IsRenderPlainTextInlines(Block element)
+        /// <returns><c>true</c> to render the child inlines as HTML.</returns>
+        public override bool IsHtmlInlines(Block element)
         {
-            return false;
+            return true;
         }
     }
 }
