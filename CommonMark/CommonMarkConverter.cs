@@ -220,7 +220,7 @@ namespace CommonMark
                 switch (settings.OutputFormat)
                 {
                     case OutputFormat.Html:
-                        new HtmlFormatter(settings).BlocksToHtml(target, document);
+                        HtmlFormatter.BlocksToHtml(target, document, settings);
                         break;
                     case OutputFormat.TextSyntaxTree:
                         TextSyntaxFormatter.PrintBlocks(target, document, settings);

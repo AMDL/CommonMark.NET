@@ -5,7 +5,7 @@ using CommonMark.Syntax;
 
 namespace CommonMark.Formatters
 {
-    internal class HtmlFormatter
+    internal static class HtmlFormatter
     {
         private static readonly char[] EscapeHtmlCharacters = { '&', '<', '>', '"' };
         private const string HexCharacters = "0123456789ABCDEF";
@@ -18,11 +18,11 @@ namespace CommonMark.Formatters
         private static readonly bool[] UrlSafeCharacters = {
             false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,
             false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,
-            false, true,  false, true,  true,  true,  false, false, true,  true,  true,  true,  true,  true,  true,  true, 
-            true,  true,  true,  true,  true,  true,  true,  true,  true,  true,  true,  true,  false, true,  false, true, 
-            true,  true,  true,  true,  true,  true,  true,  true,  true,  true,  true,  true,  true,  true,  true,  true, 
-            true,  true,  true,  true,  true,  true,  true,  true,  true,  true,  true,  false, false, false, false, true, 
-            false, true,  true,  true,  true,  true,  true,  true,  true,  true,  true,  true,  true,  true,  true,  true, 
+            false, true,  false, true,  true,  true,  false, false, true,  true,  true,  true,  true,  true,  true,  true,
+            true,  true,  true,  true,  true,  true,  true,  true,  true,  true,  true,  true,  false, true,  false, true,
+            true,  true,  true,  true,  true,  true,  true,  true,  true,  true,  true,  true,  true,  true,  true,  true,
+            true,  true,  true,  true,  true,  true,  true,  true,  true,  true,  true,  false, false, false, false, true,
+            false, true,  true,  true,  true,  true,  true,  true,  true,  true,  true,  true,  true,  true,  true,  true,
             true,  true,  true,  true,  true,  true,  true,  true,  true,  true,  true,  false, false, false, false, false
         };
 
@@ -163,133 +163,155 @@ namespace CommonMark.Formatters
             target.Write(buffer, lastPos - part.StartIndex, part.Length - lastPos + part.StartIndex);
         }
 
-        private delegate bool WriteOpeningDelegate<T>(IHtmlTextWriter writer, T element, bool flag);
-
-        private delegate string GetInfixDelegate<T>(T element);
-
-        private delegate string GetClosingDelegate<T>(T element, bool flag);
-
-        private delegate bool RenderDelegate<T>(T element);
-
-        private delegate bool InheritDelegate<T>(T element, bool flag);
-
-        private readonly CommonMarkSettings settings;
-        private readonly Stack<BlockStackEntry> blockStack;
-        private readonly Stack<InlineStackEntry> inlineStack;
-
-        private readonly WriteOpeningDelegate<Block>[] blockOpeners;
-        private readonly GetClosingDelegate<Block>[] blockClosers;
-        private readonly RenderDelegate<Block>[] blockHtmlRenderers;
-        private readonly InheritDelegate<Block>[] blockStackers;
-
-        private readonly WriteOpeningDelegate<Inline>[] inlineOpeners;
-        private readonly GetInfixDelegate<Inline>[] inlineInfixers;
-        private readonly GetClosingDelegate<Inline>[] inlineClosers;
-        private readonly RenderDelegate<Inline>[] inlineHtmlRenderers;
-        private readonly RenderDelegate<Inline>[] inlinePlaintextRenderers;
-        private readonly WriteOpeningDelegate<Inline>[] inlinePlaintextOpeners;
-        private readonly GetClosingDelegate<Inline>[] inlinePlaintextClosers;
-        private readonly InheritDelegate<Inline>[] inlineStackers;
-
-        public HtmlFormatter(CommonMarkSettings settings)
+        public static void BlocksToHtml(TextWriter writer, Block block, CommonMarkSettings settings)
         {
-            this.settings = settings;
-
-            blockStack = new Stack<BlockStackEntry>();
-            inlineStack = new Stack<InlineStackEntry>();
-
-            var blockFormatters = settings.FormatterParameters.BlockFormatters;
-
-            blockOpeners = new WriteOpeningDelegate<Block>[(int)BlockTag.Count];
-            blockClosers = new GetClosingDelegate<Block>[(int)BlockTag.Count];
-            blockHtmlRenderers = new RenderDelegate<Block>[(int)BlockTag.Count];
-            blockStackers = new InheritDelegate<Block>[(int)BlockTag.Count];
-
-            for (var i = 0; i < (int)BlockTag.Count; i++)
-            {
-                blockOpeners[i] = blockFormatters[i].WriteOpening;
-                blockClosers[i] = blockFormatters[i].GetClosing;
-                blockHtmlRenderers[i] = blockFormatters[i].IsHtmlInlines;
-                blockStackers[i] = blockFormatters[i].IsTight;
-            }
-
-            var inlineFormatters = settings.FormatterParameters.InlineFormatters;
-
-            inlineOpeners = new WriteOpeningDelegate<Inline>[(int)InlineTag.Count];
-            inlineInfixers = new GetInfixDelegate<Inline>[(int)InlineTag.Count];
-            inlineClosers = new GetClosingDelegate<Inline>[(int)InlineTag.Count];
-            inlineHtmlRenderers = new RenderDelegate<Inline>[(int)InlineTag.Count];
-            inlinePlaintextRenderers = new RenderDelegate<Inline>[(int)InlineTag.Count];
-            inlinePlaintextOpeners = new WriteOpeningDelegate<Inline>[(int)InlineTag.Count];
-            inlinePlaintextClosers = new GetClosingDelegate<Inline>[(int)InlineTag.Count];
-            inlineStackers = new InheritDelegate<Inline>[(int)InlineTag.Count];
-
-            for (var i = 0; i < (int)InlineTag.Count; i++)
-            {
-                inlineOpeners[i] = inlineFormatters[i].WriteOpening;
-                inlineInfixers[i] = inlineFormatters[i].GetInfix;
-                inlineClosers[i] = inlineFormatters[i].GetClosing;
-                inlineHtmlRenderers[i] = inlineFormatters[i].IsHtmlInlines;
-                inlinePlaintextRenderers[i] = inlineFormatters[i].IsPlaintextInlines;
-                inlinePlaintextOpeners[i] = inlineFormatters[i].WritePlaintextOpening;
-                inlinePlaintextClosers[i] = inlineFormatters[i].GetPlaintextClosing;
-                inlineStackers[i] = inlineFormatters[i].IsWithinLink;
-            }
-        }
-
-        public void BlocksToHtml(TextWriter writer, Block block)
-        {
+            var blockFormatter = new BlockHtmlFormatter(settings);
+            var inlineFormatter = new InlineHtmlFormatter(settings);
             var wrapper = new HtmlTextWriter(writer);
-            BlocksToHtmlInner(wrapper, block);
+            blockFormatter.Format(wrapper, inlineFormatter, block);
+        }
+    }
+
+    internal abstract class ElementHtmlFormatter<TElement, TTag, TFormatter, TStackEntry>
+        where TFormatter : IElementFormatter<TElement, TTag>
+    {
+        protected delegate bool WriteOpeningDelegate(IHtmlTextWriter writer, TElement element, bool flag);
+        protected delegate string GetClosingDelegate(TElement element, bool flag);
+        protected delegate bool IsRenderDelegate(TElement element);
+
+        protected readonly Stack<TStackEntry> stack = new Stack<TStackEntry>();
+
+        private readonly WriteOpeningDelegate[] writeOpening;
+        private readonly GetClosingDelegate[] getClosing;
+        private readonly IsRenderDelegate[] isHtmlInlines;
+
+        protected ElementHtmlFormatter(TFormatter[] formatters, int count)
+        {
+            Formatters = formatters;
+            Count = count;
+
+            writeOpening = new WriteOpeningDelegate[count];
+            getClosing = new GetClosingDelegate[count];
+            isHtmlInlines = new IsRenderDelegate[count];
+
+            for (int i = 0; i < count; i++)
+            {
+                writeOpening[i] = formatters[i].WriteOpening;
+                getClosing[i] = formatters[i].GetClosing;
+                isHtmlInlines[i] = formatters[i].IsHtmlInlines;
+            }
         }
 
-        private void BlocksToHtmlInner(HtmlTextWriter writer, Block block)
+        protected TFormatter[] Formatters
         {
-            blockStack.Clear();
-            inlineStack.Clear();
+            get;
+        }
 
+        protected int Count
+        {
+            get;
+        }
+
+#if OptimizeFor45
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+#endif
+        protected bool WriteOpening(int index, IHtmlTextWriter writer, TElement element, bool tight)
+        {
+            return writeOpening[index](writer, element, tight);
+        }
+
+#if OptimizeFor45
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+#endif
+        protected string GetClosing(int index, TElement element, bool tight)
+        {
+            return getClosing[index](element, tight);
+        }
+
+#if OptimizeFor45
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+#endif
+        protected bool IsHtmlInlines(int index, TElement element)
+        {
+            return isHtmlInlines[index](element);
+        }
+    }
+
+    internal sealed class BlockHtmlFormatter : ElementHtmlFormatter<Block, BlockTag, IBlockFormatter, BlockHtmlFormatter.Entry>
+    {
+        internal struct Entry
+        {
+            public string Literal { get; }
+            public Block Target { get; }
+            public bool IsTight { get; }
+
+            public Entry(string literal, Block target, bool isTight)
+            {
+                Literal = literal;
+                Target = target;
+                IsTight = isTight;
+            }
+        }
+
+        private delegate bool IsTightDelegate(Block element, bool flag);
+
+        private readonly IsTightDelegate[] isTight;
+
+        public BlockHtmlFormatter(CommonMarkSettings settings)
+            : base(settings.FormatterParameters.BlockFormatters, (int)BlockTag.Count)
+        {
+            isTight = new IsTightDelegate[Count];
+
+            for (var i = 0; i < Count; i++)
+            {
+                isTight[i] = Formatters[i].IsTight;
+            }
+        }
+
+        public void Format(HtmlTextWriter writer, InlineHtmlFormatter inlineFormatter, Block block)
+        {
             bool visitChildren;
             string stackLiteral;
             bool renderHtmlInlines;
             bool tight = false;
+            int index;
 
             while (block != null)
             {
-                visitChildren = WriteOpening(writer, block, tight);
+                index = (int)block.Tag;
 
-                renderHtmlInlines = IsRenderHtmlInlines(block);
+                visitChildren = WriteOpening(index, writer, block, tight);
+
+                renderHtmlInlines = IsHtmlInlines(index, block);
                 if (renderHtmlInlines)
                 {
-                    InlinesToHtml(writer, block.InlineContent);
+                    inlineFormatter.Format(writer, block.InlineContent);
+                    stackLiteral = GetClosing(index, block, tight);
                     if (block.Tag == BlockTag.Paragraph)
-                        writer.WriteConstant(GetClosing(block, tight));
+                        writer.WriteConstant(stackLiteral);
                     else
-                        writer.WriteLineConstant(GetClosing(block, tight));
+                        writer.WriteLineConstant(stackLiteral);
                 }
 
                 if (visitChildren)
                 {
                     stackLiteral = !renderHtmlInlines
-                        ? GetClosing(block, tight)
+                        ? GetClosing(index, block, tight)
                         : null;
 
-                    blockStack.Push(new BlockStackEntry(stackLiteral, block.NextSibling, tight));
+                    stack.Push(new Entry(stackLiteral, block.NextSibling, tight));
 
-                    tight = IsTight(block, tight);
+                    tight = IsTight(index, block, tight);
                     block = block.FirstChild;
-                }
-                else if (block.NextSibling != null)
-                {
-                    block = block.NextSibling;
                 }
                 else
                 {
-                    block = null;
+                    block = block.NextSibling;
                 }
 
-                while (block == null && blockStack.Count > 0)
+                while (block == null && stack.Count > 0)
                 {
-                    var entry = blockStack.Pop();
+                    var entry = stack.Pop();
 
                     writer.WriteLineConstant(entry.Literal);
                     tight = entry.IsTight;
@@ -301,58 +323,81 @@ namespace CommonMark.Formatters
 #if OptimizeFor45
         [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
 #endif
-        private bool WriteOpening(IHtmlTextWriter writer, Block block, bool tight)
+        private bool IsTight(int index, Block element, bool tight)
         {
-            return blockOpeners[(int)block.Tag](writer, block, tight);
+            return isTight[index](element, tight);
+        }
+    }
+
+    internal sealed class InlineHtmlFormatter : ElementHtmlFormatter<Inline, InlineTag, IInlineFormatter, InlineHtmlFormatter.Entry>
+    {
+        internal struct Entry
+        {
+            public string Literal { get; }
+            public Inline Target { get; }
+            public bool? IsPlaintext { get; }
+            public bool IsWithinLink { get; }
+
+            public Entry(string literal, Inline target, bool? isPlaintext, bool isWithinLink)
+            {
+                Literal = literal;
+                Target = target;
+                IsPlaintext = isPlaintext;
+                IsWithinLink = isWithinLink;
+            }
         }
 
-#if OptimizeFor45
-        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-#endif
-        private string GetClosing(Block block, bool tight)
-        {
-            return blockClosers[(int)block.Tag](block, tight);
-        }
+        private delegate string GetInfixDelegate(Inline element);
+        private delegate bool IsWithinLinkDelegate(Inline element, bool flag);
 
-#if OptimizeFor45
-        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-#endif
-        private bool IsRenderHtmlInlines(Block block)
-        {
-            return blockHtmlRenderers[(int)block.Tag](block);
-        }
+        private readonly WriteOpeningDelegate[] writePlaintextOpening;
+        private readonly GetClosingDelegate[] getPlaintextClosing;
+        private readonly GetInfixDelegate[] getInfix;
+        private readonly IsRenderDelegate[] isPlaintextInlines;
+        private readonly IsWithinLinkDelegate[] isWithinLink;
 
-#if OptimizeFor45
-        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-#endif
-        private bool IsTight(Block block, bool tight)
+        public InlineHtmlFormatter(CommonMarkSettings settings)
+            : base(settings.FormatterParameters.InlineFormatters, (int)InlineTag.Count)
         {
-            return blockStackers[(int)block.Tag](block, tight);
+            writePlaintextOpening = new WriteOpeningDelegate[Count];
+            getPlaintextClosing = new GetClosingDelegate[Count];
+            getInfix = new GetInfixDelegate[Count];
+            isPlaintextInlines = new IsRenderDelegate[Count];
+            isWithinLink = new IsWithinLinkDelegate[Count];
+
+            for (var i = 0; i < Count; i++)
+            {
+                writePlaintextOpening[i] = Formatters[i].WritePlaintextOpening;
+                getPlaintextClosing[i] = Formatters[i].GetPlaintextClosing;
+                getInfix[i] = Formatters[i].GetInfix;
+                isPlaintextInlines[i] = Formatters[i].IsPlaintextInlines;
+                isWithinLink[i] = Formatters[i].IsWithinLink;
+            }
         }
 
         /// <summary>
         /// Writes the inline list to the given writer as HTML code. 
         /// </summary>
-        private void InlinesToHtml(HtmlTextWriter writer, Inline inline)
+        public void Format(HtmlTextWriter writer, Inline inline)
         {
-            bool stackPlaintext;
+            var stackPlaintext = false;
             bool? plaintext = false;
             bool withinLink = false;
             bool visitChildren;
             string stackLiteral;
             bool renderHtmlInlines = false;
+            int index;
 
             while (inline != null)
             {
-                stackPlaintext = false;
-
+                index = (int)inline.Tag;
                 switch (plaintext)
                 {
                     case false:
-                        visitChildren = WriteOpening(writer, inline, withinLink);
-                        stackLiteral = GetClosing(inline, withinLink);
-                        stackPlaintext = IsRenderPlaintextInlines(inline);
-                        renderHtmlInlines = IsRenderHtmlInlines(inline);
+                        visitChildren = WriteOpening(index, writer, inline, withinLink);
+                        stackLiteral = GetClosing(index, inline, withinLink);
+                        stackPlaintext = IsPlaintextInlines(index, inline);
+                        renderHtmlInlines = IsHtmlInlines(index, inline);
                         if (stackPlaintext)
                         {
                             plaintext = true;
@@ -360,44 +405,43 @@ namespace CommonMark.Formatters
                         }
                         else if (renderHtmlInlines)
                         {
-                            EscapeHtml(inline.LiteralContentValue, writer);
+                            HtmlFormatter.EscapeHtml(inline.LiteralContentValue, writer);
                         }
                         break;
 
                     case true:
-                        visitChildren = WritePlaintextOpening(writer, inline, withinLink);
-                        stackLiteral = GetPlaintextClosing(inline, withinLink);
+                        visitChildren = WritePlaintextOpening(index, writer, inline, withinLink);
+                        stackLiteral = GetPlaintextClosing(index, inline, withinLink);
                         break;
 
                     default:
                         visitChildren = false;
                         stackLiteral = null;
-                        EscapeHtml(inline.LiteralContentValue, writer);
+                        HtmlFormatter.EscapeHtml(inline.LiteralContentValue, writer);
                         break;
                 }
 
                 if (visitChildren)
                 {
-                    inlineStack.Push(new InlineStackEntry(stackLiteral, inline.NextSibling, plaintext, withinLink));
+                    stack.Push(new Entry(stackLiteral, inline.NextSibling, plaintext, withinLink));
 
                     if (stackPlaintext && renderHtmlInlines && inline.LiteralContentValue.Length > 0)
-                        inlineStack.Push(new InlineStackEntry(GetInfix(inline), inline, null, withinLink));
+                    {
+                        stackLiteral = GetInfix(index, inline);
+                        stack.Push(new Entry(stackLiteral, inline, null, withinLink));
+                    }
 
-                    withinLink = IsWithinLink(inline, withinLink);
+                    withinLink = IsWithinLink(index, inline, withinLink);
                     inline = inline.FirstChild;
-                }
-                else if (inline.NextSibling != null)
-                {
-                    inline = inline.NextSibling;
                 }
                 else
                 {
-                    inline = null;
+                    inline = inline.NextSibling;
                 }
 
-                while (inline == null && inlineStack.Count > 0)
+                while (inline == null && stack.Count > 0)
                 {
-                    var entry = inlineStack.Pop();
+                    var entry = stack.Pop();
                     writer.WriteConstant(entry.Literal);
                     inline = entry.Target;
                     withinLink = entry.IsWithinLink;
@@ -409,95 +453,41 @@ namespace CommonMark.Formatters
 #if OptimizeFor45
         [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
 #endif
-        private bool WriteOpening(IHtmlTextWriter writer, Inline inline, bool tight)
+        private bool WritePlaintextOpening(int index, IHtmlTextWriter writer, Inline element, bool tight)
         {
-            return inlineOpeners[(int)inline.Tag](writer, inline, tight);
+            return writePlaintextOpening[index](writer, element, tight);
         }
 
 #if OptimizeFor45
         [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
 #endif
-        private string GetInfix(Inline inline)
+        private string GetInfix(int index, Inline element)
         {
-            return inlineInfixers[(int)inline.Tag](inline);
+            return getInfix[index](element);
         }
 
 #if OptimizeFor45
         [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
 #endif
-        private string GetClosing(Inline inline, bool withinLink)
+        private string GetPlaintextClosing(int index, Inline element, bool withinLink)
         {
-            return inlineClosers[(int)inline.Tag](inline, withinLink);
+            return getPlaintextClosing[index](element, withinLink);
         }
 
 #if OptimizeFor45
         [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
 #endif
-        private bool WritePlaintextOpening(IHtmlTextWriter writer, Inline inline, bool tight)
+        private bool IsPlaintextInlines(int index, Inline element)
         {
-            return inlinePlaintextOpeners[(int)inline.Tag](writer, inline, tight);
+            return isPlaintextInlines[index](element);
         }
 
 #if OptimizeFor45
         [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
 #endif
-        private string GetPlaintextClosing(Inline inline, bool withinLink)
+        private bool IsWithinLink(int index, Inline element, bool withinLink)
         {
-            return inlinePlaintextClosers[(int)inline.Tag](inline, withinLink);
-        }
-
-#if OptimizeFor45
-        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-#endif
-        private bool IsRenderPlaintextInlines(Inline inline)
-        {
-            return inlinePlaintextRenderers[(int)inline.Tag](inline);
-        }
-
-#if OptimizeFor45
-        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-#endif
-        private bool IsRenderHtmlInlines(Inline inline)
-        {
-            return inlineHtmlRenderers[(int)inline.Tag](inline);
-        }
-
-#if OptimizeFor45
-        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-#endif
-        private bool IsWithinLink(Inline inline, bool withinLink)
-        {
-            return inlineStackers[(int)inline.Tag](inline, withinLink);
-        }
-
-        private struct BlockStackEntry
-        {
-            public string Literal { get; }
-            public Block Target { get; }
-            public bool IsTight { get; }
-
-            public BlockStackEntry(string literal, Block target, bool isTight)
-            {
-                Literal = literal;
-                Target = target;
-                IsTight = isTight;
-            }
-        }
-
-        private struct InlineStackEntry
-        {
-            public string Literal { get; }
-            public Inline Target { get; }
-            public bool? IsPlaintext { get; }
-            public bool IsWithinLink { get; }
-
-            public InlineStackEntry(string literal, Inline target, bool? isPlaintext, bool isWithinLink)
-            {
-                Literal = literal;
-                Target = target;
-                IsPlaintext = isPlaintext;
-                IsWithinLink = isWithinLink;
-            }
+            return isWithinLink[index](element, withinLink);
         }
     }
 }
