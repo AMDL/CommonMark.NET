@@ -93,7 +93,7 @@ namespace CommonMark.Formatters
         {
             yield return new DocumentFormatter(parameters);
             yield return new AtxHeadingFormatter(parameters);
-            yield return new SETextHeadingFormatter(parameters);
+            yield return new SetextHeadingFormatter(parameters);
             yield return new ParagraphFormatter(parameters);
             yield return new BlockQuoteFormatter(parameters);
             yield return new ThematicBreakFormatter(parameters);

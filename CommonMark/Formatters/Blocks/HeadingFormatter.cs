@@ -101,22 +101,22 @@ namespace CommonMark.Formatters.Blocks
         /// </summary>
         /// <param name="parameters">Formatter parameters.</param>
         public AtxHeadingFormatter(FormatterParameters parameters)
-            : base(parameters, BlockTag.AtxHeading, "atx_header")
+            : base(parameters, BlockTag.AtxHeading, "atx_heading")
         {
         }
     }
 
     /// <summary>
-    /// <see cref="BlockTag.SETextHeading"/> element formatter.
+    /// <see cref="BlockTag.SetextHeading"/> element formatter.
     /// </summary>
-    public sealed class SETextHeadingFormatter : HeadingFormatter
+    public sealed class SetextHeadingFormatter : HeadingFormatter
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="SETextHeadingFormatter"/> class.
+        /// Initializes a new instance of the <see cref="SetextHeadingFormatter"/> class.
         /// </summary>
         /// <param name="parameters">Formatter parameters.</param>
-        public SETextHeadingFormatter(FormatterParameters parameters)
-            : base(parameters, BlockTag.SETextHeading, "setext_header")
+        public SetextHeadingFormatter(FormatterParameters parameters)
+            : base(parameters, BlockTag.SetextHeading, "setext_heading")
         {
         }
     }

@@ -60,15 +60,15 @@ namespace CommonMark.Syntax
         AtxHeader = AtxHeading,
 
         /// <summary>
-        /// A heading element that was parsed from a Setext style markup (<c>heading\n========</c>).
+        /// A heading element that was parsed from a setext style markup (<c>heading\n========</c>).
         /// </summary>
-        SETextHeading,
+        SetextHeading,
 
         /// <summary>
-        /// Obsolete. Use <see cref="SETextHeading"/> instead.
+        /// Obsolete. Use <see cref="SetextHeading"/> instead.
         /// </summary>
-        [Obsolete("Use " + nameof(SETextHeading) + " instead.")]
-        SETextHeader = SETextHeading,
+        [Obsolete("Use " + nameof(SetextHeading) + " instead.")]
+        SETextHeader = SetextHeading,
 
         /// <summary>
         /// A thematic break element.

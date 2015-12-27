@@ -5,15 +5,15 @@ namespace CommonMark.Parser.Blocks.Delimiters
     /// <summary>
     /// Setext heading delimiter parameters.
     /// </summary>
-    public sealed class SETextHeadingDelimiterParameters
+    public sealed class SetextHeadingDelimiterParameters
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="SETextHeadingDelimiterParameters"/> structure.
+        /// Initializes a new instance of the <see cref="SetextHeadingDelimiterParameters"/> structure.
         /// </summary>
         /// <param name="character">Delimiter character.</param>
         /// <param name="headingLevel">Heading level.</param>
         /// <param name="minCount">Minimum character count.</param>
-        public SETextHeadingDelimiterParameters(char character, int headingLevel, int minCount = 1)
+        public SetextHeadingDelimiterParameters(char character, int headingLevel, int minCount = 1)
         {
             Character = character;
             HeadingLevel = headingLevel;
@@ -39,15 +39,15 @@ namespace CommonMark.Parser.Blocks.Delimiters
     /// <summary>
     /// Setext heading delimiter handler.
     /// </summary>
-    public sealed class SETextHeadingHandler : BlockDelimiterHandler
+    public sealed class SetextHeadingHandler : BlockDelimiterHandler
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="SETextHeadingHandler"/> class.
+        /// Initializes a new instance of the <see cref="SetextHeadingHandler"/> class.
         /// </summary>
         /// <param name="settings">Common settings.</param>
         /// <param name="tag">Block element tag.</param>
         /// <param name="parameters">Delimiter parameters.</param>
-        public SETextHeadingHandler(CommonMarkSettings settings, BlockTag tag, SETextHeadingDelimiterParameters parameters)
+        public SetextHeadingHandler(CommonMarkSettings settings, BlockTag tag, SetextHeadingDelimiterParameters parameters)
             : base(settings, tag, parameters.Character)
         {
             Character = parameters.Character;

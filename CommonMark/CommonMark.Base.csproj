@@ -104,7 +104,7 @@
     <Compile Include="Parser\Blocks\Delimiters\OrderedListItemHandler.cs" />
     <Compile Include="Parser\Blocks\Delimiters\ParagraphHandler.cs" />
     <Compile Include="Parser\Blocks\Delimiters\RomanListItemHandler.cs" />
-    <Compile Include="Parser\Blocks\Delimiters\SETextHeadingHandler.cs" />
+    <Compile Include="Parser\Blocks\Delimiters\SetextHeadingHandler.cs" />
     <Compile Include="Parser\Blocks\Delimiters\HashListItemHandler.cs" />
     <Compile Include="Parser\Blocks\OrderedListItemParser.cs" />
     <Compile Include="Parser\DelegateBlockDelimiterHandler.cs" />
@@ -129,7 +129,7 @@
     <Compile Include="Parser\Blocks\ListItemParser.cs" />
     <Compile Include="Parser\Blocks\ListParser.cs" />
     <Compile Include="Parser\Blocks\ParagraphParser.cs" />
-    <Compile Include="Parser\Blocks\SETextHeadingParser.cs" />
+    <Compile Include="Parser\Blocks\SetextHeadingParser.cs" />
     <Compile Include="Parser\DelegateBlockOpener.cs" />
     <Compile Include="Parser\DelegateBlockParser.cs" />
     <Compile Include="Extension\Figures.cs" />

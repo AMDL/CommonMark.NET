@@ -25,16 +25,16 @@ namespace CommonMark.Extension
         /// <param name="settings">Common settings.</param>
         protected override IEnumerable<IBlockParser> InitializeBlockParsers(CommonMarkSettings settings)
         {
-            var parameters = new SETextHeadingParameters()
+            var parameters = new SetextHeadingParameters()
             {
                 Delimiters = new[]
                 {
-                    new SETextHeadingDelimiterParameters('=', 1),
-                    new SETextHeadingDelimiterParameters('-', 2),
-                    new SETextHeadingDelimiterParameters('.', 3, 4),
+                    new SetextHeadingDelimiterParameters('=', 1),
+                    new SetextHeadingDelimiterParameters('-', 2),
+                    new SetextHeadingDelimiterParameters('.', 3, 4),
                 },
             };
-            yield return new SETextHeadingParser(settings, parameters);
+            yield return new SetextHeadingParser(settings, parameters);
         }
     }
 }

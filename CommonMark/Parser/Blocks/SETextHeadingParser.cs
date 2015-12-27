@@ -7,38 +7,38 @@ namespace CommonMark.Parser.Blocks
     /// <summary>
     /// Setext heading parameters.
     /// </summary>
-    public sealed class SETextHeadingParameters
+    public sealed class SetextHeadingParameters
     {
         /// <summary>
         /// Gets or sets the delimiter parameters.
         /// </summary>
-        public SETextHeadingDelimiterParameters[] Delimiters { get; set; }
+        public SetextHeadingDelimiterParameters[] Delimiters { get; set; }
     }
 
     /// <summary>
-    /// <see cref="BlockTag.SETextHeading"/> element parser.
+    /// <see cref="BlockTag.SetextHeading"/> element parser.
     /// </summary>
-    public sealed class SETextHeadingParser : BlockParser
+    public sealed class SetextHeadingParser : BlockParser
     {
         /// <summary>
         /// The default parameters instance.
         /// </summary>
-        public static readonly SETextHeadingParameters DefaultParameters = new SETextHeadingParameters
+        public static readonly SetextHeadingParameters DefaultParameters = new SetextHeadingParameters
         {
             Delimiters = new[]
             {
-                new SETextHeadingDelimiterParameters('=', 1),
-                new SETextHeadingDelimiterParameters('-', 2),
+                new SetextHeadingDelimiterParameters('=', 1),
+                new SetextHeadingDelimiterParameters('-', 2),
             },
         };
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SETextHeadingParser"/> class.
+        /// Initializes a new instance of the <see cref="SetextHeadingParser"/> class.
         /// </summary>
         /// <param name="settings">Common settings.</param>
         /// <param name="parameters">Setext heading parameters.</param>
-        public SETextHeadingParser(CommonMarkSettings settings, SETextHeadingParameters parameters = null)
-            : base(settings, BlockTag.SETextHeading)
+        public SetextHeadingParser(CommonMarkSettings settings, SetextHeadingParameters parameters = null)
+            : base(settings, BlockTag.SetextHeading)
         {
             // we don't count setext headings for purposes of tight/loose lists or breaking out of lists.
             IsAlwaysDiscardBlanks = true;
@@ -55,7 +55,7 @@ namespace CommonMark.Parser.Blocks
             {
                 foreach (var delimiter in Parameters.Delimiters)
                 {
-                    yield return new SETextHeadingHandler(Settings, Tag, delimiter);
+                    yield return new SetextHeadingHandler(Settings, Tag, delimiter);
                 }
             }
         }
@@ -97,7 +97,7 @@ namespace CommonMark.Parser.Blocks
             return ProcessInlines(container, subject, ref inlineStack, Settings.InlineParserParameters);
         }
 
-        private SETextHeadingParameters Parameters
+        private SetextHeadingParameters Parameters
         {
             get;
         }
