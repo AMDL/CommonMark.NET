@@ -3,7 +3,7 @@
 namespace CommonMark.Syntax
 {
     /// <summary>
-    /// Contains additional data for list block elements. Used in <see cref="Block.DocumentData"/> property.
+    /// Contains additional data for list block elements. Used in the <see cref="Block.Document"/> property.
     /// </summary>
     public class DocumentData
     {

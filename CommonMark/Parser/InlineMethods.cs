@@ -533,7 +533,7 @@ namespace CommonMark.Parser
             }
 
             // insert reference into refmap
-            AddReference(subj.DocumentData.ReferenceMap, lab.Value, url, title, parameters);
+            AddReference(subj.Document.ReferenceMap, lab.Value, url, title, parameters);
 
             return subj.Position;
 

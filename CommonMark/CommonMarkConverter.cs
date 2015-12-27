@@ -1,8 +1,6 @@
 ﻿using CommonMark.Formatters;
 using CommonMark.Parser;
 using System;
-using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Text;
 
@@ -180,7 +178,7 @@ namespace CommonMark
 
             try
             {
-                BlockMethods.ProcessInlines(document, document.DocumentData, settings);
+                BlockMethods.ProcessInlines(document, document.Document, settings);
             }
             catch(CommonMarkException)
             {

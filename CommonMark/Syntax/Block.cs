@@ -56,8 +56,8 @@ namespace CommonMark.Syntax
 #pragma warning disable 0618
             Block e = new Block(BlockTag.Document, 1, 1, 0);
 #pragma warning restore 0618
-            e.DocumentData = new DocumentData();
-            e.DocumentData.ReferenceMap = new Dictionary<string, Reference>();
+            e.Document = new DocumentData();
+            e.Document.ReferenceMap = new Dictionary<string, Reference>();
             e.Top = e;
             return e;
         }
@@ -225,27 +225,27 @@ namespace CommonMark.Syntax
         /// <summary>
         /// Gets or sets the additional properties that apply to document nodes.
         /// </summary>
-        public DocumentData DocumentData { get; set; }
+        public DocumentData Document { get; set; }
 
         /// <summary>
         /// Gets or sets the dictionary containing resolved link references. Only set on the document node, <c>null</c>
         /// and not used for all other elements.
         /// </summary>
-        [Obsolete("Use " + nameof(DocumentData) + " instead.")]
+        [Obsolete("Use " + nameof(Document) + " instead.")]
         public Dictionary<string, Reference> ReferenceMap
         {
-            get { return DocumentData?.ReferenceMap; }
+            get { return Document?.ReferenceMap; }
             set
             {
-                if (DocumentData == null)
+                if (Document == null)
                 {
                     if (value == null)
                     {
                         return;
                     }
-                    DocumentData = new DocumentData();
+                    Document = new DocumentData();
                 }
-                DocumentData.ReferenceMap = value;
+                Document.ReferenceMap = value;
             }
         }
 
