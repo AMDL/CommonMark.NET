@@ -336,15 +336,13 @@ namespace CommonMark.Formatters
 #endif
         private bool IsTight(int index, Block element, bool tight)
         {
-            if (IsListItem(index))
-            {
-                return isForceTightLists.HasValue
-                    ? isForceTightLists.Value
-                    : tight;
-            }
-            return IsList(index)
-                ? isTight[index](element)
-                : false;
+            if (IsList(index))
+                return isTight[index](element);
+            if (!IsListItem(index))
+                return false;
+            if (isForceTightLists.HasValue)
+                return isForceTightLists.Value;
+            return tight;
         }
 
 #if OptimizeFor45

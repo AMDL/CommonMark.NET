@@ -81,12 +81,20 @@ namespace CommonMark.Formatters
 
         public bool IsList
         {
-            get { return inner.IsList; }
+            get
+            {
+                return inner.IsList
+                    || outer.IsList;
+            }
         }
 
         public bool IsListItem
         {
-            get { return inner.IsListItem; }
+            get
+            {
+                return inner.IsListItem
+                    || outer.IsListItem;
+            }
         }
 
         public static IBlockFormatter Merge(IBlockFormatter inner, IBlockFormatter outer)
