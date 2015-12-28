@@ -72,11 +72,21 @@ namespace CommonMark.Formatters
         {
         }
 
-        public bool IsTight(Block block, bool tight)
+        public bool IsTight(Block block)
         {
             return inner.CanHandle(block)
-                ? inner.IsTight(block, tight)
-                : outer.IsTight(block, tight);
+                ? inner.IsTight(block)
+                : outer.IsTight(block);
+        }
+
+        public bool IsList
+        {
+            get { return inner.IsList; }
+        }
+
+        public bool IsListItem
+        {
+            get { return inner.IsListItem; }
         }
 
         public static IBlockFormatter Merge(IBlockFormatter inner, IBlockFormatter outer)

@@ -50,9 +50,8 @@ namespace CommonMark.Formatters.Blocks
         /// Determines whether paragraph rendering should be skipped for a block element.
         /// </summary>
         /// <param name="element">Block element.</param>
-        /// <param name="tight">The parent's rendering option.</param>
         /// <returns><c>true</c> to skip paragraph rendering.</returns>
-        public override bool IsTight(Block element, bool tight)
+        public override bool IsTight(Block element)
         {
             return element.OrderedList.IsTight;
         }

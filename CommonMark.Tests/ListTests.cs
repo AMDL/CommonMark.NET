@@ -41,5 +41,30 @@ namespace CommonMark.Tests
         {
             Helpers.ExecuteTest("+\n+", "<ul>\n<li></li>\n<li></li>\n</ul>");
         }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Loose Lists")]
+        public void LooseListsDisabledByDefault()
+        {
+            Helpers.ExecuteTest("- baz\n+ foo\n\n+ bar", "<ul>\n<li>baz</li>\n</ul>\n<ul>\n<li><p>foo</p></li>\n<li><p>bar</p></li>\n</ul>");
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Loose Lists")]
+        public void LooseLists()
+        {
+            var s = CommonMarkSettings.Default.Clone();
+            s.Extensions.Register(new Extension.LooseLists(new Extension.LooseListsSettings(false)));
+            Helpers.ExecuteTest("- baz\n+ foo\n\n+ bar", "<ul>\n<li><p>baz</p></li>\n</ul>\n<ul>\n<li><p>foo</p></li>\n<li><p>bar</p></li>\n</ul>", s);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Loose Lists")]
+        public void TightLists()
+        {
+            var s = CommonMarkSettings.Default.Clone();
+            s.Extensions.Register(new Extension.LooseLists(new Extension.LooseListsSettings(true)));
+            Helpers.ExecuteTest("- baz\n+ foo\n\n+ bar", "<ul>\n<li>baz</li>\n</ul>\n<ul>\n<li>foo</li>\n<li>bar</li>\n</ul>", s);
+        }
     }
 }

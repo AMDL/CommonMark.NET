@@ -58,6 +58,7 @@
     <Compile Include="Extension\FancyListsSettings.cs" />
     <Compile Include="Extension\HeadingDots.cs" />
     <Compile Include="Extension\LegacyLists.cs" />
+    <Compile Include="Extension\LooseLists.cs" />
     <Compile Include="Extension\MathDollars.cs" />
     <Compile Include="Extension\NumericListStyles.cs" />
     <Compile Include="Extension\ReferenceCase.cs" />

@@ -253,18 +253,29 @@ namespace CommonMark.Formatters
             }
         }
 
-        private delegate bool IsTightDelegate(Block element, bool flag);
+        private delegate bool IsTightDelegate(Block element);
 
+        private readonly bool? isForceTightLists;
+        private readonly long isList;
+        private readonly long isListItem;
         private readonly IsTightDelegate[] isTight;
 
         public BlockHtmlFormatter(CommonMarkSettings settings)
             : base(settings.FormatterParameters.BlockFormatters, (int)BlockTag.Count)
         {
+            isForceTightLists = settings.FormatterParameters.IsForceTightLists;
+
             isTight = new IsTightDelegate[Count];
 
+            long m = 1;
             for (var i = 0; i < Count; i++)
             {
+                if (Formatters[i].IsList)
+                    isList |= m;
+                if (Formatters[i].IsListItem)
+                    isListItem |= m;
                 isTight[i] = Formatters[i].IsTight;
+                m <<= 1;
             }
         }
 
@@ -325,7 +336,31 @@ namespace CommonMark.Formatters
 #endif
         private bool IsTight(int index, Block element, bool tight)
         {
-            return isTight[index](element, tight);
+            if (IsListItem(index))
+            {
+                return isForceTightLists.HasValue
+                    ? isForceTightLists.Value
+                    : tight;
+            }
+            return IsList(index)
+                ? isTight[index](element)
+                : false;
+        }
+
+#if OptimizeFor45
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+#endif
+        private bool IsList(int index)
+        {
+            return 0 != (isList & (1 << index));
+        }
+
+#if OptimizeFor45
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+#endif
+        private bool IsListItem(int index)
+        {
+            return 0 != (isListItem & (1 << index));
         }
     }
 

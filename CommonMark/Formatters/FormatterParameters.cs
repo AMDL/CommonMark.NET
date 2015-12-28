@@ -38,23 +38,29 @@ namespace CommonMark.Formatters
 
         #endregion TrackPositions
 
+        #region Lists
+
+        /// <summary>
+        /// Gets or sets a value indicating whether list items should always be rendered loosely/tightly.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> to render all lists tightly,
+        /// <c>false</c> to render all lists loosely, or
+        /// <c>null</c> for no special behavior.
+        /// </value>
+        internal bool? IsForceTightLists { get; set; }
+
         /// <summary>
         /// Gets or sets a value indicating whether list types need to be written to the output.
         /// </summary>
-        public bool IsOutputListTypes
-        {
-            get;
-            set;
-        }
+        internal bool IsOutputListTypes { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether list styles need to be written to the output.
         /// </summary>
-        public bool IsOutputListStyles
-        {
-            get;
-            set;
-        }
+        public bool IsOutputListStyles { get; set; }
+
+        #endregion
 
         #region UriResolver
 

@@ -19,6 +19,7 @@ namespace CommonMark.Formatters.Blocks
         public ListFormatter(FormatterParameters parameters, BlockTag tag, string htmlTag, string textTag)
             : base(parameters, tag, htmlTag, textTag: textTag)
         {
+            IsList = true;
         }
 
         /// <summary>

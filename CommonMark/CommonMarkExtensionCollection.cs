@@ -94,6 +94,7 @@ namespace CommonMark
             Register(new Extension.MathDollars());
             Register(new Extension.LegacyLists());
             Register(new Extension.ReferenceCase(new Extension.ReferenceCaseSettings(Extension.ReferenceCaseType.UpperInvariant)));
+            Register(new Extension.LooseLists(new Extension.LooseListsSettings()));
             Register(new Extension.FancyLists(new Extension.FancyListsSettings
             {
                 Features = Extension.FancyListsFeatures.All,

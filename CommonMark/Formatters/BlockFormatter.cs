@@ -33,17 +33,6 @@ namespace CommonMark.Formatters
         }
 
         /// <summary>
-        /// Determines whether paragraph rendering should be skipped for a block element.
-        /// </summary>
-        /// <param name="element">Block element.</param>
-        /// <param name="tight">The parent's rendering option.</param>
-        /// <returns><c>true</c> to skip paragraph rendering.</returns>
-        public virtual bool IsTight(Block element, bool tight)
-        {
-            return false;
-        }
-
-        /// <summary>
         /// Writes the opening of a block element.
         /// </summary>
         /// <param name="writer">HTML writer.</param>
@@ -71,6 +60,34 @@ namespace CommonMark.Formatters
         protected override void DoWritePosition(IHtmlTextWriter writer, Block element)
         {
             writer.WritePosition(element);
+        }
+
+        /// <summary>
+        /// Determines whether paragraph rendering should be skipped for a block element.
+        /// </summary>
+        /// <param name="element">Block element.</param>
+        /// <returns><c>true</c> to skip paragraph rendering.</returns>
+        public virtual bool IsTight(Block element)
+        {
+            return false;
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether handled elements are lists.
+        /// </summary>
+        public bool IsList
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether handled elements are list items.
+        /// </summary>
+        public bool IsListItem
+        {
+            get;
+            set;
         }
 
         internal static IEnumerable<IBlockFormatter> InitializeFormatters(FormatterParameters parameters)

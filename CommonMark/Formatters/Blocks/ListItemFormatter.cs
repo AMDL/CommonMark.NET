@@ -14,17 +14,7 @@ namespace CommonMark.Formatters.Blocks
         public ListItemFormatter(FormatterParameters parameters)
             : base(parameters, BlockTag.ListItem, "li", textTag: "list_item")
         {
-        }
-
-        /// <summary>
-        /// Determines whether paragraph rendering should be skipped for a block element.
-        /// </summary>
-        /// <param name="element">Block element.</param>
-        /// <param name="tight">The parent's rendering option.</param>
-        /// <returns><c>true</c> to skip paragraph rendering.</returns>
-        public override bool IsTight(Block element, bool tight)
-        {
-            return tight;
+            IsListItem = true;
         }
     }
 }
