@@ -16,16 +16,7 @@ namespace CommonMark.Formatters.Inlines
             : base(parameters, InlineTag.Code, htmlTags: "code")
         {
             IsFixedOpening = true;
-        }
-
-        /// <summary>
-        /// Determines whether inline content should be rendered as HTML.
-        /// </summary>
-        /// <param name="element">Inline element.</param>
-        /// <returns><c>true</c> to render the literal content as HTML.</returns>
-        public override bool IsHtmlInlines(Inline element)
-        {
-            return true;
+            IsFixedHtmlInlines = true;
         }
 
         /// <summary>

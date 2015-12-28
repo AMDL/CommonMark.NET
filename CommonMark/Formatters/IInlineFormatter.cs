@@ -33,5 +33,11 @@ namespace CommonMark.Formatters
         /// Gets the infix of an inline element.
         /// </summary>
         string Infix { get; }
+
+        /// <summary>
+        /// Gets a value indicating whether inline content should always be rendered as plain text.
+        /// </summary>
+        /// <value><c>true</c> to render the child inlines as plain text.</value>
+        bool? IsFixedPlaintextInlines { get; }
     }
 }

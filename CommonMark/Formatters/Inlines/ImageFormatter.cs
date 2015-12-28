@@ -17,6 +17,8 @@ namespace CommonMark.Formatters.Inlines
         {
             Infix = "\" title=\"";
             IsSelfClosing = true;
+            IsFixedHtmlInlines = true;
+            IsFixedPlaintextInlines = true;
         }
 
         /// <summary>
@@ -53,26 +55,6 @@ namespace CommonMark.Formatters.Inlines
         public override string GetClosing(Inline element)
         {
             return "\" />";
-        }
-
-        /// <summary>
-        /// Determines whether inline content should be rendered as plain text.
-        /// </summary>
-        /// <param name="element">Inline element.</param>
-        /// <returns><c>true</c> to render the child inlines as plain text.</returns>
-        public override bool IsPlaintextInlines(Inline element)
-        {
-            return true;
-        }
-
-        /// <summary>
-        /// Determines whether inline content should be rendered as HTML.
-        /// </summary>
-        /// <param name="element">Element.</param>
-        /// <returns><c>true</c> to render the literal content as HTML.</returns>
-        public override bool IsHtmlInlines(Inline element)
-        {
-            return true;
         }
 
         /// <summary>

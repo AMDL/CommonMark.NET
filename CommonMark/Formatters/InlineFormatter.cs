@@ -19,6 +19,7 @@ namespace CommonMark.Formatters
         public InlineFormatter(FormatterParameters parameters, InlineTag tag, string textTag = null, params string[] htmlTags)
             : base(parameters, tag, textTag, htmlTags)
         {
+            IsFixedPlaintextInlines = false;
         }
 
         /// <summary>
@@ -94,13 +95,23 @@ namespace CommonMark.Formatters
         /// <returns><c>true</c> to render the child inlines as plain text.</returns>
         public virtual bool IsPlaintextInlines(Inline element)
         {
-            return false;
+            return IsFixedPlaintextInlines == true;
         }
 
         /// <summary>
         /// Gets or sets the infix of an inline element.
         /// </summary>
         public string Infix
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether inline content should always be rendered as plain text.
+        /// </summary>
+        /// <value><c>true</c> to render the child inlines as plain text.</value>
+        public bool? IsFixedPlaintextInlines
         {
             get;
             set;

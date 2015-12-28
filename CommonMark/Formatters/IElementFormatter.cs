@@ -34,6 +34,12 @@ namespace CommonMark.Formatters
         bool IsSelfClosing { get; }
 
         /// <summary>
+        /// Gets a value indicating whether inline content should always be rendered as HTML.
+        /// </summary>
+        /// <value><c>true</c> to render inline content as HTML.</value>
+        bool? IsFixedHtmlInlines { get; }
+
+        /// <summary>
         /// Gets the text syntax tree tag.
         /// </summary>
         /// <value>Tag.</value>

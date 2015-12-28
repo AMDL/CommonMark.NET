@@ -57,6 +57,16 @@ namespace CommonMark.Formatters
             }
         }
 
+        public bool? IsFixedHtmlInlines
+        {
+            get
+            {
+                return inner.IsFixedHtmlInlines == outer.IsFixedHtmlInlines
+                    ? inner.IsFixedHtmlInlines
+                    : null;
+            }
+        }
+
         public bool CanHandle(TElement element)
         {
             return inner.CanHandle(element)
@@ -173,6 +183,16 @@ namespace CommonMark.Formatters
             {
                 return inner.Infix
                     ?? outer.Infix;
+            }
+        }
+
+        public bool? IsFixedPlaintextInlines
+        {
+            get
+            {
+                return inner.IsFixedPlaintextInlines == outer.IsFixedPlaintextInlines
+                    ? inner.IsFixedPlaintextInlines
+                    : null;
             }
         }
     }

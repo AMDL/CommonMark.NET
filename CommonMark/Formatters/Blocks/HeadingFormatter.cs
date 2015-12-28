@@ -21,6 +21,7 @@ namespace CommonMark.Formatters.Blocks
         protected HeadingFormatter(FormatterParameters parameters, BlockTag tag, string textTag)
             : base(parameters, tag, textTag: textTag)
         {
+            IsFixedHtmlInlines = true;
         }
 
         /// <summary>
@@ -57,16 +58,6 @@ namespace CommonMark.Formatters.Blocks
             return headingLevel > 6
                 ? "</h" + headingLevel.ToString(CultureInfo.InvariantCulture) + ">"
                 : CloserTags[headingLevel - 1];
-        }
-
-        /// <summary>
-        /// Determines whether inline content should be rendered as HTML.
-        /// </summary>
-        /// <param name="element">Block element.</param>
-        /// <returns><c>true</c> to render the child inlines as HTML.</returns>
-        public override bool IsHtmlInlines(Block element)
-        {
-            return true;
         }
 
         /// <summary>

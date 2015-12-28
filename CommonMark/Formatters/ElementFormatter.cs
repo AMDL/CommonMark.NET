@@ -20,11 +20,12 @@ namespace CommonMark.Formatters
         /// <param name="htmlTags">HTML tags.</param>
         protected ElementFormatter(FormatterParameters parameters, TTag tag, string textTag, params string[] htmlTags)
         {
-            this.Parameters = parameters;
-            this.Tag = tag;
-            this.HtmlTags = htmlTags;
-            this.IsSelfClosing = htmlTags == null || htmlTags.Length == 0;
-            this.TextTag = textTag ?? (!IsSelfClosing ? htmlTags[0] : null);
+            Parameters = parameters;
+            Tag = tag;
+            HtmlTags = htmlTags;
+            IsSelfClosing = htmlTags == null || htmlTags.Length == 0;
+            TextTag = textTag ?? (!IsSelfClosing ? htmlTags[0] : null);
+            IsFixedHtmlInlines = false;
         }
 
         #endregion
@@ -70,6 +71,16 @@ namespace CommonMark.Formatters
         }
 
         /// <summary>
+        /// Gets or sets a value indicating whether inline content should always be rendered as HTML.
+        /// </summary>
+        /// <value><c>true</c> to render inline content as HTML.</value>
+        public bool? IsFixedHtmlInlines
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// Gets the text syntax tree tag.
         /// </summary>
         /// <value>Tag.</value>
@@ -106,7 +117,7 @@ namespace CommonMark.Formatters
         /// <returns><c>true</c> to render inline content as HTML.</returns>
         public virtual bool IsHtmlInlines(TElement element)
         {
-            return false;
+            return IsFixedHtmlInlines == true;
         }
 
         /// <summary>

@@ -183,8 +183,11 @@ namespace CommonMark.Formatters
 
         protected readonly string[] prefix;
         protected readonly string[] closing;
-        protected readonly long isFixedOpening;
-        protected readonly long isSelfClosing;
+
+        protected readonly int isFixedOpening;
+        protected readonly int isSelfClosing;
+        protected readonly int isFixedHtmlInlines;
+        protected readonly int fixedHtmlInlines;
 
         protected readonly WriteOpeningDelegate[] writeOpening;
 
@@ -206,7 +209,7 @@ namespace CommonMark.Formatters
             getClosing = new GetClosingDelegate[Count];
             isHtmlInlines = new IsRenderDelegate[Count];
 
-            long m = 1;
+            var m = 1;
             for (int i = 0; i < Count; i++)
             {
                 var formatter = Formatters[i];
@@ -239,6 +242,14 @@ namespace CommonMark.Formatters
                         }
                         closing[i] = sb.ToString();
                     }
+                }
+
+                var html = formatter.IsFixedHtmlInlines;
+                if (html != null)
+                {
+                    isFixedHtmlInlines |= m;
+                    if (html.Value)
+                        fixedHtmlInlines |= m;
                 }
 
                 writeOpening[i] = formatter.WriteOpening;
@@ -298,7 +309,9 @@ namespace CommonMark.Formatters
 #endif
         protected bool IsHtmlInlines(int index, TElement element)
         {
-            return isHtmlInlines[index](element);
+            return 0 != (isFixedHtmlInlines & (1 << index))
+                ? 0 != (fixedHtmlInlines & (1 << index))
+                : isHtmlInlines[index](element);
         }
     }
 
@@ -320,8 +333,8 @@ namespace CommonMark.Formatters
 
         private delegate bool IsTightDelegate(Block element);
 
-        private readonly long isList;
-        private readonly long isListItem;
+        private readonly int isList;
+        private readonly int isListItem;
         private readonly IsTightDelegate[] isTight;
 
         private bool? IsForceTightLists
@@ -334,15 +347,18 @@ namespace CommonMark.Formatters
         {
             isTight = new IsTightDelegate[Count];
 
-            long m = 1;
+            var m = 1;
             for (var i = 0; i < Count; i++)
             {
                 var formatter = Formatters[i];
+
                 if (formatter.IsList)
                     isList |= m;
                 if (formatter.IsListItem)
                     isListItem |= m;
+
                 isTight[i] = formatter.IsTight;
+
                 m <<= 1;
             }
         }
@@ -494,24 +510,37 @@ namespace CommonMark.Formatters
 
         private readonly WriteOpeningDelegate[] writePlaintextOpening;
         private readonly GetClosingDelegate[] getPlaintextClosing;
-        private readonly string[] infix;
         private readonly IsRenderDelegate[] isPlaintextInlines;
+        private readonly string[] infix;
+        private readonly int isFixedPlaintextInlines;
+        private readonly int fixedPlaintextInlines;
 
         public InlineHtmlFormatter(CommonMarkSettings settings)
             : base(settings.FormatterParameters, settings.FormatterParameters.InlineFormatters, (int)InlineTag.Count)
         {
             writePlaintextOpening = new WriteOpeningDelegate[Count];
             getPlaintextClosing = new GetClosingDelegate[Count];
-            infix = new string[Count];
             isPlaintextInlines = new IsRenderDelegate[Count];
+            infix = new string[Count];
 
+            var m = 1;
             for (var i = 0; i < Count; i++)
             {
                 var formatter = Formatters[i];
                 writePlaintextOpening[i] = formatter.WritePlaintextOpening;
                 getPlaintextClosing[i] = formatter.GetPlaintextClosing;
-                infix[i] = formatter.Infix;
                 isPlaintextInlines[i] = formatter.IsPlaintextInlines;
+                infix[i] = formatter.Infix;
+
+                var plaintext = formatter.IsFixedPlaintextInlines;
+                if (plaintext != null)
+                {
+                    isFixedPlaintextInlines |= m;
+                    if (plaintext.Value)
+                        fixedPlaintextInlines |= m;
+                }
+
+                m <<= 1;
             }
         }
 
@@ -659,7 +688,9 @@ namespace CommonMark.Formatters
 #endif
         private bool IsPlaintextInlines(int index, Inline element)
         {
-            return isPlaintextInlines[index](element);
+            return 0 != (isFixedPlaintextInlines & (1 << index))
+                ? 0 != (fixedPlaintextInlines & (1 << index))
+                : isPlaintextInlines[index](element);
         }
 
 #if OptimizeFor45
