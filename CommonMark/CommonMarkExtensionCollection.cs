@@ -88,13 +88,13 @@ namespace CommonMark
         /// </summary>
         public void RegisterAll()
         {
-            Register(new Extension.Strikeout(Settings));
-            Register(new Extension.Subscript(Settings));
-            Register(new Extension.Superscript(Settings));
-            Register(new Extension.MathDollars(Settings));
-            Register(new Extension.LegacyLists(Settings));
-            Register(new Extension.ReferenceCase(Settings, new Extension.ReferenceCaseSettings(Extension.ReferenceCaseType.UpperInvariant)));
-            Register(new Extension.FancyLists(Settings, new Extension.FancyListsSettings
+            Register(new Extension.Strikeout());
+            Register(new Extension.Subscript());
+            Register(new Extension.Superscript());
+            Register(new Extension.MathDollars());
+            Register(new Extension.LegacyLists());
+            Register(new Extension.ReferenceCase(new Extension.ReferenceCaseSettings(Extension.ReferenceCaseType.UpperInvariant)));
+            Register(new Extension.FancyLists(new Extension.FancyListsSettings
             {
                 Features = Extension.FancyListsFeatures.All,
                 NumericListStyles = Extension.NumericListStyles.All,
@@ -169,6 +169,39 @@ namespace CommonMark
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
+        }
+
+        internal void InitializeInlineParsing()
+        {
+            if (_list != null)
+            {
+                foreach (var extension in _list)
+                {
+                    extension.InitializeInlineParsing(Settings);
+                }
+            }
+        }
+
+        internal void InitializeBlockParsing()
+        {
+            if (_list != null)
+            {
+                foreach (var extension in _list)
+                {
+                    extension.InitializeBlockParsing(Settings);
+                }
+            }
+        }
+
+        internal void InitializeFormatting(Formatters.FormatterParameters parameters)
+        {
+            if (_list != null)
+            {
+                foreach (var extension in _list)
+                {
+                    extension.InitializeFormatting(parameters);
+                }
+            }
         }
 
         internal T[] GetItems<T>(IEnumerable<T> initItems, int count,

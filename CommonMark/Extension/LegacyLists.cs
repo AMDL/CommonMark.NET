@@ -14,15 +14,6 @@ namespace CommonMark.Extension
     public class LegacyLists : CommonMarkExtension
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="LegacyLists"/> class.
-        /// </summary>
-        /// <param name="settings">Common settings.</param>
-        public LegacyLists(CommonMarkSettings settings)
-            : base(settings)
-        {
-        }
-
-        /// <summary>
         /// Initializes the block parsers.
         /// </summary>
         /// <param name="settings">Common settings.</param>

@@ -1,5 +1,4 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using CommonMark.Extension;
 
 namespace CommonMark.Tests
 {
@@ -15,7 +14,7 @@ namespace CommonMark.Tests
                 if (s == null)
                 {
                     s = CommonMarkSettings.Default.Clone();
-                    s.Extensions.Register(new Strikeout(s));
+                    s.Extensions.Register(new Extension.Strikeout());
                     _settings = s;
                 }
                 return s;
@@ -42,8 +41,8 @@ namespace CommonMark.Tests
         public void StrikeoutWithSubscript()
         {
             var s = CommonMarkSettings.Default.Clone();
-            s.Extensions.Register(new Extension.Strikeout(s));
-            s.Extensions.Register(new Extension.Subscript(s));
+            s.Extensions.Register(new Extension.Strikeout());
+            s.Extensions.Register(new Extension.Subscript());
             Helpers.ExecuteTest("foo ~~~bar~~~", "<p>foo <del><sub>bar</sub></del></p>", s);
         }
 
@@ -53,8 +52,8 @@ namespace CommonMark.Tests
         {
             // '[' char in the middle will delay the ~~ match to the post-process phase.
             var s = CommonMarkSettings.Default.Clone();
-            s.Extensions.Register(new Extension.Strikeout(s));
-            s.Extensions.Register(new Extension.Subscript(s));
+            s.Extensions.Register(new Extension.Strikeout());
+            s.Extensions.Register(new Extension.Subscript());
             Helpers.ExecuteTest("foo ~~~ba[r~~~", "<p>foo <del><sub>ba[r</sub></del></p>", s);
         }
 

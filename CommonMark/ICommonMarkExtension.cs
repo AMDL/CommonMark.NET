@@ -10,6 +10,24 @@ namespace CommonMark
     public interface ICommonMarkExtension
     {
         /// <summary>
+        /// Initializes the block parsing properties.
+        /// </summary>
+        /// <param name="settings">Common settings.</param>
+        void InitializeBlockParsing(CommonMarkSettings settings);
+
+        /// <summary>
+        /// Initializes the inline parsing properties.
+        /// </summary>
+        /// <param name="settings">Common settings.</param>
+        void InitializeInlineParsing(CommonMarkSettings settings);
+
+        /// <summary>
+        /// Initializes the formatting properties.
+        /// </summary>
+        /// <param name="parameters">Formatter parameters.</param>
+        void InitializeFormatting(FormatterParameters parameters);
+
+        /// <summary>
         /// Gets the block parsers.
         /// </summary>
         IEnumerable<IBlockParser> BlockParsers { get; }
@@ -33,11 +51,6 @@ namespace CommonMark
         /// Gets the escapable characters.
         /// </summary>
         IEnumerable<char> EscapableCharacters { get; }
-
-        /// <summary>
-        /// Gets the reference normalizer.
-        /// </summary>
-        StringNormalizerDelegate ReferenceNormalizer { get; }
 
         /// <summary>
         /// Gets the block formatters.

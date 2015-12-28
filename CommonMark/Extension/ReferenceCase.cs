@@ -64,21 +64,19 @@ namespace CommonMark.Extension
         /// <summary>
         /// Initializes a new instance of the <see cref="ReferenceCase"/> class.
         /// </summary>
-        /// <param name="settings">Common settings.</param>
         /// <param name="referenceCaseSettings">Reference case settings.</param>
-        public ReferenceCase(CommonMarkSettings settings, ReferenceCaseSettings referenceCaseSettings)
-            : base(settings)
+        public ReferenceCase(ReferenceCaseSettings referenceCaseSettings)
         {
-            this.settings = referenceCaseSettings;
+            settings = referenceCaseSettings;
         }
 
         /// <summary>
-        /// Creates the reference normalizer.
+        /// Initializes the inline parsing properties.
         /// </summary>
-        /// <returns>Reference normalizer delegate.</returns>
-        protected override StringNormalizerDelegate InitializeReferenceNormalizer()
+        /// <param name="settings">Common settings.</param>
+        public override void InitializeInlineParsing(CommonMarkSettings settings)
         {
-            return NormalizeReference;
+            settings.InlineParserParameters.CompleteNormalizeReference = NormalizeReference;
         }
 
         private string NormalizeReference(string s)

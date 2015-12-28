@@ -30,14 +30,17 @@ namespace CommonMark.Parser
         /// <param name="settings">Common settings.</param>
         protected InlineParserParameters(CommonMarkSettings settings)
         {
-            this.Settings = settings;
+            Settings = settings;
+            CompleteNormalizeReference = DoCompleteNormalizeReference;
+
+            Settings.Extensions.InitializeInlineParsing();
+
             this._delimiterHandlers = GetDelimiterHandlers();
             this._delimiterCharacters = GetDelimiterCharacters();
             this._parsers = GetParsers();
             this._handlers = GetHandlers();
             this._specialCharacters = GetSpecialCharacters();
             this._escapableCharacters = GetEscapableCharacters();
-            this._referenceNormalizer = GetReferenceNormalizer();
         }
 
         #endregion Constructor
@@ -235,26 +238,21 @@ namespace CommonMark.Parser
 
         #region ReferenceNormalizer
 
-        private readonly StringNormalizerDelegate _referenceNormalizer;
-
         /// <summary>
-        /// Gets the reference normalizer.
+        /// Gets or sets the reference normalizer.
         /// </summary>
-        public StringNormalizerDelegate ReferenceNormalizer
+        internal StringNormalizerDelegate CompleteNormalizeReference
         {
 #if OptimizeFor45
             [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
 #endif
-            get { return _referenceNormalizer; }
+            get;
+            set;
         }
 
-        /// <summary>
-        /// Creates the reference normalizer.
-        /// </summary>
-        /// <returns>Reference normalizer delegate.</returns>
-        protected virtual StringNormalizerDelegate GetReferenceNormalizer()
+        private string DoCompleteNormalizeReference(string s)
         {
-            return s => s.ToUpperInvariant();
+            return s.ToUpperInvariant();
         }
 
         #endregion ReferenceNormalizer
@@ -299,19 +297,6 @@ namespace CommonMark.Parser
                 }
             }
             return parsers.ToArray();
-        }
-
-        /// <summary>
-        /// Creates the reference normalizer.
-        /// </summary>
-        /// <returns>Reference normalizer delegate.</returns>
-        protected override StringNormalizerDelegate GetReferenceNormalizer()
-        {
-            StringNormalizerDelegate normalizer;
-            foreach (var ext in Settings.Extensions)
-                if ((normalizer = ext.ReferenceNormalizer) != null)
-                    return normalizer;
-            return base.GetReferenceNormalizer();
         }
     }
 

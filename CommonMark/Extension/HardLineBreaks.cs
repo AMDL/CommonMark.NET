@@ -10,15 +10,6 @@ namespace CommonMark.Extension
     public sealed class HardLineBreaks : CommonMarkExtension
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="HardLineBreaks"/> class.
-        /// </summary>
-        /// <param name="settings">Common settings.</param>
-        public HardLineBreaks(CommonMarkSettings settings)
-            : base(settings)
-        {
-        }
-
-        /// <summary>
         /// Initializes the inline formatters.
         /// </summary>
         protected override IEnumerable<IInlineFormatter> InitializeInlineFormatters(FormatterParameters parameters)

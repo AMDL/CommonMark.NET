@@ -11,15 +11,6 @@ namespace CommonMark.Extension
     public class HeadingDots : CommonMarkExtension
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="HeadingDots"/> class.
-        /// </summary>
-        /// <param name="settings"></param>
-        public HeadingDots(CommonMarkSettings settings)
-            : base(settings)
-        {
-        }
-
-        /// <summary>
         /// Initializes the block parsers.
         /// </summary>
         /// <param name="settings">Common settings.</param>

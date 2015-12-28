@@ -16,10 +16,8 @@ namespace CommonMark.Extension
         /// <summary>
         /// Initializes a new instance of the <see cref="FancyLists"/> class.
         /// </summary>
-        /// <param name="settings">Common settings.</param>
         /// <param name="fancyListsSettings">Fancy lists settings.</param>
-        public FancyLists(CommonMarkSettings settings, FancyListsSettings fancyListsSettings)
-            : base(settings)
+        public FancyLists(FancyListsSettings fancyListsSettings)
         {
             this.fancyListsSettings = fancyListsSettings;
         }

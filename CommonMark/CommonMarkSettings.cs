@@ -80,7 +80,7 @@ namespace CommonMark
             {
                 if (_renderSoftLineBreaksAsLineBreaks != value)
                 {
-                    _renderSoftLineBreaksAsLineBreaks = Update(value, new Extension.HardLineBreaks(this));
+                    _renderSoftLineBreaksAsLineBreaks = Update(value, new Extension.HardLineBreaks());
                 }
             }
         }
@@ -103,7 +103,7 @@ namespace CommonMark
                 {
                     this._additionalFeatures = value;
                     var strikethroughTilde = 0 != (value & CommonMarkAdditionalFeatures.StrikethroughTilde);
-                    Update(strikethroughTilde, new Extension.Strikeout(this));
+                    Update(strikethroughTilde, new Extension.Strikeout());
                 }
             }
         }

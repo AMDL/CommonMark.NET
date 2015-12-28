@@ -11,15 +11,6 @@ namespace CommonMark.Extension
     public class Superscript : CommonMarkExtension
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="Superscript"/> class.
-        /// </summary>
-        /// <param name="settings">Common settings.</param>
-        public Superscript(CommonMarkSettings settings)
-            : base(settings)
-        {
-        }
-
-        /// <summary>
         /// Creates the mapping from character to inline delimiter handler.
         /// </summary>
         protected override IDictionary<char, IInlineDelimiterHandler> InitializeInlineDelimiterHandlers()

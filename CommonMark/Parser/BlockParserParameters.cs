@@ -61,7 +61,10 @@ namespace CommonMark.Parser
         /// <param name="settings">Common settings.</param>
         public BlockParserParameters(CommonMarkSettings settings)
         {
-            this.Settings = settings;
+            Settings = settings;
+
+            Settings.Extensions.InitializeBlockParsing();
+
             this._parsers = GetParsers();
             this._handlers = GetHandlers();
             this._initializers = GetInitializers();

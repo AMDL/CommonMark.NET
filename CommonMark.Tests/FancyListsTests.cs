@@ -15,7 +15,7 @@ namespace CommonMark.Tests
                 if (s == null)
                 {
                     s = CommonMarkSettings.Default.Clone();
-                    s.Extensions.Register(new FancyLists(s, new FancyListsSettings()));
+                    s.Extensions.Register(new FancyLists(new FancyListsSettings()));
                     _emptySettings = s;
                 }
                 return s;
@@ -31,7 +31,7 @@ namespace CommonMark.Tests
                 if (s == null)
                 {
                     s = CommonMarkSettings.Default.Clone();
-                    s.Extensions.Register(new FancyLists(s, new FancyListsSettings
+                    s.Extensions.Register(new FancyLists(new FancyListsSettings
                     {
                         Features = Extension.FancyListsFeatures.All,
                         NumericListStyles = Extension.NumericListStyles.All,
@@ -56,7 +56,7 @@ namespace CommonMark.Tests
         public void LowerLatinListDisabledAlone()
         {
             var s = CommonMarkSettings.Default.Clone();
-            s.Extensions.Register(new FancyLists(s, new FancyListsSettings(FancyListsFeatures.All & ~FancyListsFeatures.LowerLatin)));
+            s.Extensions.Register(new FancyLists(new FancyListsSettings(FancyListsFeatures.All & ~FancyListsFeatures.LowerLatin)));
             Helpers.ExecuteTest("a. foo\n", "<p>a. foo</p>", s);
         }
 
@@ -114,7 +114,7 @@ namespace CommonMark.Tests
         public void UpperLatinListDisabledAlone()
         {
             var s = CommonMarkSettings.Default.Clone();
-            s.Extensions.Register(new FancyLists(s, new FancyListsSettings(FancyListsFeatures.All & ~FancyListsFeatures.UpperLatin)));
+            s.Extensions.Register(new FancyLists(new FancyListsSettings(FancyListsFeatures.All & ~FancyListsFeatures.UpperLatin)));
             Helpers.ExecuteTest("A.  foo\n", "<p>A.  foo</p>", s);
         }
 
@@ -186,7 +186,7 @@ namespace CommonMark.Tests
         public void LowerRomanListDisabledAlone()
         {
             var s = CommonMarkSettings.Default.Clone();
-            s.Extensions.Register(new FancyLists(s, new FancyListsSettings(FancyListsFeatures.All & ~FancyListsFeatures.LowerRoman)));
+            s.Extensions.Register(new FancyLists(new FancyListsSettings(FancyListsFeatures.All & ~FancyListsFeatures.LowerRoman)));
             Helpers.ExecuteTest("i. foo\n", "<ol start=\"9\" type=\"a\" style=\"list-style-type: lower-latin\">\n<li>foo</li>\n</ol>", s);
         }
 
@@ -265,7 +265,7 @@ namespace CommonMark.Tests
         public void UpperRomanListDisabledAlone()
         {
             var s = CommonMarkSettings.Default.Clone();
-            s.Extensions.Register(new FancyLists(s, new FancyListsSettings(FancyListsFeatures.All & ~FancyListsFeatures.UpperRoman)));
+            s.Extensions.Register(new FancyLists(new FancyListsSettings(FancyListsFeatures.All & ~FancyListsFeatures.UpperRoman)));
             Helpers.ExecuteTest("I.  foo\n", "<ol start=\"9\" type=\"A\" style=\"list-style-type: upper-latin\">\n<li>foo</li>\n</ol>", s);
         }
 
@@ -323,7 +323,7 @@ namespace CommonMark.Tests
         public void HashListDisabledAlone()
         {
             var s = CommonMarkSettings.Default.Clone();
-            s.Extensions.Register(new FancyLists(s, new FancyListsSettings(FancyListsFeatures.All & ~FancyListsFeatures.OrderedHashes)));
+            s.Extensions.Register(new FancyLists(new FancyListsSettings(FancyListsFeatures.All & ~FancyListsFeatures.OrderedHashes)));
             Helpers.ExecuteTest("#. foo", "<p>#. foo</p>", s);
         }
 
@@ -395,7 +395,7 @@ namespace CommonMark.Tests
         public void BulletList1DisabledAlone()
         {
             var s = CommonMarkSettings.Default.Clone();
-            s.Extensions.Register(new FancyLists(s, new FancyListsSettings(FancyListsFeatures.All & ~FancyListsFeatures.Bullets)));
+            s.Extensions.Register(new FancyLists(new FancyListsSettings(FancyListsFeatures.All & ~FancyListsFeatures.Bullets)));
             Helpers.ExecuteTest("• foo\n• bar", "<p>• foo\n• bar</p>", s);
         }
 
@@ -425,7 +425,7 @@ namespace CommonMark.Tests
         public void BulletList2DisabledAlone()
         {
             var s = CommonMarkSettings.Default.Clone();
-            s.Extensions.Register(new FancyLists(s, new FancyListsSettings(FancyListsFeatures.All & ~FancyListsFeatures.Bullets)));
+            s.Extensions.Register(new FancyLists(new FancyListsSettings(FancyListsFeatures.All & ~FancyListsFeatures.Bullets)));
             Helpers.ExecuteTest("o foo\no bar", "<p>o foo\no bar</p>", s);
         }
 
@@ -455,7 +455,7 @@ namespace CommonMark.Tests
         public void BulletList3DisabledAlone()
         {
             var s = CommonMarkSettings.Default.Clone();
-            s.Extensions.Register(new FancyLists(s, new FancyListsSettings(FancyListsFeatures.All & ~FancyListsFeatures.Bullets)));
+            s.Extensions.Register(new FancyLists(new FancyListsSettings(FancyListsFeatures.All & ~FancyListsFeatures.Bullets)));
             Helpers.ExecuteTest(" foo\n bar", "<p> foo\n bar</p>", s);
         }
 
@@ -499,7 +499,7 @@ namespace CommonMark.Tests
         public void DiscListDisabledAlone()
         {
             var s = CommonMarkSettings.Default.Clone();
-            s.Extensions.Register(new FancyLists(s, new FancyListsSettings(FancyListsFeatures.All & ~FancyListsFeatures.Discs)));
+            s.Extensions.Register(new FancyLists(new FancyListsSettings(FancyListsFeatures.All & ~FancyListsFeatures.Discs)));
             Helpers.ExecuteTest("● foo\n● bar", "<p>● foo\n● bar</p>", s);
         }
 
@@ -522,7 +522,7 @@ namespace CommonMark.Tests
         public void CircleListDisabledAlone()
         {
             var s = CommonMarkSettings.Default.Clone();
-            s.Extensions.Register(new FancyLists(s, new FancyListsSettings(FancyListsFeatures.All & ~FancyListsFeatures.Circles)));
+            s.Extensions.Register(new FancyLists(new FancyListsSettings(FancyListsFeatures.All & ~FancyListsFeatures.Circles)));
             Helpers.ExecuteTest("◦ foo\n◦ bar", "<p>◦ foo\n◦ bar</p>", s);
         }
 
@@ -545,7 +545,7 @@ namespace CommonMark.Tests
         public void SquareListDisabledAlone()
         {
             var s = CommonMarkSettings.Default.Clone();
-            s.Extensions.Register(new FancyLists(s, new FancyListsSettings(FancyListsFeatures.All & ~FancyListsFeatures.Squares)));
+            s.Extensions.Register(new FancyLists(new FancyListsSettings(FancyListsFeatures.All & ~FancyListsFeatures.Squares)));
             Helpers.ExecuteTest("▪ foo\n▪ bar", "<p>▪ foo\n▪ bar</p>", s);
         }
 
@@ -568,7 +568,7 @@ namespace CommonMark.Tests
         public void UnbulletedListDisabledAlone()
         {
             var s = CommonMarkSettings.Default.Clone();
-            s.Extensions.Register(new FancyLists(s, new FancyListsSettings(FancyListsFeatures.All & ~FancyListsFeatures.Unbulleted)));
+            s.Extensions.Register(new FancyLists(new FancyListsSettings(FancyListsFeatures.All & ~FancyListsFeatures.Unbulleted)));
             Helpers.ExecuteTest("∙ foo\n∙ bar", "<p>∙ foo\n∙ bar</p>", s);
         }
 
@@ -591,7 +591,7 @@ namespace CommonMark.Tests
         public void ArabicIndicDisabledAlone()
         {
             var s = CommonMarkSettings.Default.Clone();
-            s.Extensions.Register(new FancyLists(s, new FancyListsSettings(NumericListStyles.All & ~NumericListStyles.ArabicIndic)));
+            s.Extensions.Register(new FancyLists(new FancyListsSettings(NumericListStyles.All & ~NumericListStyles.ArabicIndic)));
             Helpers.ExecuteTest("٠.\n", "<p>٠.</p>", s);
         }
 
@@ -621,7 +621,7 @@ namespace CommonMark.Tests
         public void PersianDisabledAlone()
         {
             var s = CommonMarkSettings.Default.Clone();
-            s.Extensions.Register(new FancyLists(s, new FancyListsSettings(NumericListStyles.All & ~NumericListStyles.Persian)));
+            s.Extensions.Register(new FancyLists(new FancyListsSettings(NumericListStyles.All & ~NumericListStyles.Persian)));
             Helpers.ExecuteTest("۰.\n", "<p>۰.</p>", s);
         }
 
@@ -658,7 +658,7 @@ namespace CommonMark.Tests
         public void FullWidthDecimalDisabledAlone()
         {
             var s = CommonMarkSettings.Default.Clone();
-            s.Extensions.Register(new FancyLists(s, new FancyListsSettings(NumericListStyles.All & ~NumericListStyles.FullWidthDecimal)));
+            s.Extensions.Register(new FancyLists(new FancyListsSettings(NumericListStyles.All & ~NumericListStyles.FullWidthDecimal)));
             Helpers.ExecuteTest("０.\n", "<p>０.</p>", s);
         }
 
@@ -688,7 +688,7 @@ namespace CommonMark.Tests
         public void LowerGreekListDisabledAlone()
         {
             var s = CommonMarkSettings.Default.Clone();
-            s.Extensions.Register(new FancyLists(s, new FancyListsSettings(AlphaListStyles.All & ~AlphaListStyles.LowerGreek)));
+            s.Extensions.Register(new FancyLists(new FancyListsSettings(AlphaListStyles.All & ~AlphaListStyles.LowerGreek)));
             Helpers.ExecuteTest("α. άλφα", "<p>α. άλφα</p>", s);
         }
 
@@ -732,7 +732,7 @@ namespace CommonMark.Tests
         public void LowerRussianListDisabledAlone()
         {
             var s = CommonMarkSettings.Default.Clone();
-            s.Extensions.Register(new FancyLists(s, new FancyListsSettings(AlphaListStyles.All & ~AlphaListStyles.LowerRussian)));
+            s.Extensions.Register(new FancyLists(new FancyListsSettings(AlphaListStyles.All & ~AlphaListStyles.LowerRussian)));
             Helpers.ExecuteTest("а. арбузы", "<p>а. арбузы</p>", s);
         }
 
@@ -790,7 +790,7 @@ namespace CommonMark.Tests
         public void UpperRussianListDisabledAlone()
         {
             var s = CommonMarkSettings.Default.Clone();
-            s.Extensions.Register(new FancyLists(s, new FancyListsSettings(AlphaListStyles.All & ~AlphaListStyles.UpperRussian)));
+            s.Extensions.Register(new FancyLists(new FancyListsSettings(AlphaListStyles.All & ~AlphaListStyles.UpperRussian)));
             Helpers.ExecuteTest("А.  Арбузы", "<p>А.  Арбузы</p>", s);
         }
 
@@ -848,7 +848,7 @@ namespace CommonMark.Tests
         public void HiraganaListDisabledAlone()
         {
             var s = CommonMarkSettings.Default.Clone();
-            s.Extensions.Register(new FancyLists(s, new FancyListsSettings(AlphaListStyles.All & ~AlphaListStyles.Hiragana)));
+            s.Extensions.Register(new FancyLists(new FancyListsSettings(AlphaListStyles.All & ~AlphaListStyles.Hiragana)));
             Helpers.ExecuteTest("あ、 1", "<p>あ、 1</p>", s);
         }
 
@@ -886,7 +886,7 @@ namespace CommonMark.Tests
         public void KatakanaListDisabledAlone()
         {
             var s = CommonMarkSettings.Default.Clone();
-            s.Extensions.Register(new FancyLists(s, new FancyListsSettings(AlphaListStyles.All & ~AlphaListStyles.Katakana)));
+            s.Extensions.Register(new FancyLists(new FancyListsSettings(AlphaListStyles.All & ~AlphaListStyles.Katakana)));
             Helpers.ExecuteTest("ア、 1", "<p>ア、 1</p>", s);
         }
 
@@ -923,7 +923,7 @@ namespace CommonMark.Tests
         public void EarthlyBranchListDisabledAlone()
         {
             var s = CommonMarkSettings.Default.Clone();
-            s.Extensions.Register(new FancyLists(s, new FancyListsSettings(AlphaListStyles.None & ~AlphaListStyles.EarthlyBranch)));
+            s.Extensions.Register(new FancyLists(new FancyListsSettings(AlphaListStyles.None & ~AlphaListStyles.EarthlyBranch)));
             Helpers.ExecuteTest("子、 1", "<p>子、 1</p>", s);
         }
 
@@ -953,7 +953,7 @@ namespace CommonMark.Tests
         public void HeavenlyStemListDisabledAlone()
         {
             var s = CommonMarkSettings.Default.Clone();
-            s.Extensions.Register(new FancyLists(s, new FancyListsSettings(AlphaListStyles.None & ~AlphaListStyles.HeavenlyStem)));
+            s.Extensions.Register(new FancyLists(new FancyListsSettings(AlphaListStyles.None & ~AlphaListStyles.HeavenlyStem)));
             Helpers.ExecuteTest("甲、 1", "<p>甲、 1</p>", s);
         }
 
@@ -983,7 +983,7 @@ namespace CommonMark.Tests
         public void HebrewListDisabledAlone()
         {
             var s = CommonMarkSettings.Default.Clone();
-            s.Extensions.Register(new FancyLists(s, new FancyListsSettings(AdditiveListStyles.None & ~AdditiveListStyles.Hebrew)));
+            s.Extensions.Register(new FancyLists(new FancyListsSettings(AdditiveListStyles.None & ~AdditiveListStyles.Hebrew)));
             Helpers.ExecuteTest("יא. אללה הוא עכבר", "<p>יא. אללה הוא עכבר</p>", s);
         }
 

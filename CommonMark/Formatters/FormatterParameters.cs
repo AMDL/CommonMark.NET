@@ -15,7 +15,10 @@ namespace CommonMark.Formatters
         /// <param name="settings">Common settings.</param>
         public FormatterParameters(CommonMarkSettings settings)
         {
-            this.Settings = settings;
+            Settings = settings;
+
+            Settings.Extensions.InitializeFormatting(this);
+
             this._blockFormatters = GetBlockFormatters();
             this._inlineFormatters = GetInlineFormatters();
             this._syntaxFormatter = new SyntaxFormatter();

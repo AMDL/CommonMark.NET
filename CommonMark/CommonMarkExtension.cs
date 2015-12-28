@@ -1,6 +1,5 @@
 ﻿using CommonMark.Formatters;
 using CommonMark.Parser;
-using System;
 using System.Collections.Generic;
 
 namespace CommonMark
@@ -10,36 +9,27 @@ namespace CommonMark
     /// </summary>
     public abstract class CommonMarkExtension : ICommonMarkExtension
     {
-        #region Constructor
+        #region InitializeBlockParsing
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CommonMarkExtension"/> class.
+        /// Initializes the block parsing properties.
         /// </summary>
         /// <param name="settings">Common settings.</param>
-        protected CommonMarkExtension(CommonMarkSettings settings)
+        public virtual void InitializeBlockParsing(CommonMarkSettings settings)
         {
-            this._blockParsers = settings.GetLazy(() => InitializeBlockParsers(settings));
-            this._blockDelimiterHandlers = settings.GetLazy(() => InitializeBlockDelimiterHandlers(settings));
-            this._inlineParsers = settings.GetLazy(() => InitializeInlineParsers(settings));
-            this._inlineDelimiterHandlers = settings.GetLazy(InitializeInlineDelimiterHandlers);
-            this._escapableCharacters = settings.GetLazy(InitializeEscapableCharacters);
-
-            this._referenceNormalizer = settings.GetLazy(InitializeReferenceNormalizer);
-
-            var parameters = settings.FormatterParameters;
-            this._blockFormatters = settings.GetLazy(() => InitializeBlockFormatters(parameters));
-            this._inlineFormatters = settings.GetLazy(() => InitializeInlineFormatters(parameters));
+            _blockParsers = InitializeBlockParsers(settings);
+            _blockDelimiterHandlers = InitializeBlockDelimiterHandlers(settings);
         }
 
         #endregion
 
         #region Block Parsers
 
-        private readonly Lazy<IEnumerable<IBlockParser>> _blockParsers;
+        private IEnumerable<IBlockParser> _blockParsers;
 
         IEnumerable<IBlockParser> ICommonMarkExtension.BlockParsers
         {
-            get { return _blockParsers.Value; }
+            get { return _blockParsers; }
         }
 
         /// <summary>
@@ -55,13 +45,13 @@ namespace CommonMark
 
         #region Block Delimiter Handlers
 
-        private Lazy<IEnumerable<IBlockDelimiterHandler>> _blockDelimiterHandlers;
+        private IEnumerable<IBlockDelimiterHandler> _blockDelimiterHandlers;
 
         IEnumerable<IBlockDelimiterHandler> ICommonMarkExtension.BlockDelimiterHandlers
         {
             get
             {
-                return _blockDelimiterHandlers.Value;
+                return _blockDelimiterHandlers;
             }
         }
 
@@ -75,13 +65,31 @@ namespace CommonMark
 
         #endregion
 
+        #region InitializeInlineParsing
+
+        /// <summary>
+        /// Initializes the inline parsing properties.
+        /// </summary>
+        /// <param name="settings">Common settings.</param>
+        public virtual void InitializeInlineParsing(CommonMarkSettings settings)
+        {
+            _inlineParsers = InitializeInlineParsers(settings);
+
+            _inlineDelimiterHandlers = new Dictionary<char, IInlineDelimiterHandler>();
+            InitializeInlineDelimiterHandlers();
+
+            _escapableCharacters = InitializeEscapableCharacters();
+        }
+
+        #endregion
+
         #region Inline Parsers
 
-        private readonly Lazy<IEnumerable<IInlineParser>> _inlineParsers;
+        private IEnumerable<IInlineParser> _inlineParsers;
 
         IEnumerable<IInlineParser> ICommonMarkExtension.InlineParsers
         {
-            get { return _inlineParsers.Value; }
+            get { return _inlineParsers; }
         }
 
         /// <summary>
@@ -97,11 +105,11 @@ namespace CommonMark
 
         #region Inline Delimiter Handlers
 
-        private readonly Lazy<IDictionary<char, IInlineDelimiterHandler>> _inlineDelimiterHandlers;
+        private IDictionary<char, IInlineDelimiterHandler> _inlineDelimiterHandlers;
 
         IDictionary<char, IInlineDelimiterHandler> ICommonMarkExtension.InlineDelimiterHandlers
         {
-            get { return _inlineDelimiterHandlers.Value; }
+            get { return _inlineDelimiterHandlers; }
         }
 
         /// <summary>
@@ -120,18 +128,19 @@ namespace CommonMark
         /// <returns>Mapping from character to inline delimiter handler.</returns>
         protected IDictionary<char, IInlineDelimiterHandler> Register(char c, IInlineDelimiterHandler handler)
         {
-            return Register(_inlineDelimiterHandlers, c, handler);
+            _inlineDelimiterHandlers.Add(c, handler);
+            return _inlineDelimiterHandlers;
         }
 
         #endregion
 
         #region Escapable Characters
 
-        private readonly Lazy<IEnumerable<char>> _escapableCharacters;
+        private IEnumerable<char> _escapableCharacters;
 
         IEnumerable<char> ICommonMarkExtension.EscapableCharacters
         {
-            get { return _escapableCharacters.Value; }
+            get { return _escapableCharacters; }
         }
 
         /// <summary>
@@ -144,33 +153,27 @@ namespace CommonMark
 
         #endregion
 
-        #region ReferenceNormalizer
-
-        private readonly Lazy<StringNormalizerDelegate> _referenceNormalizer;
-
-        StringNormalizerDelegate ICommonMarkExtension.ReferenceNormalizer
-        {
-            get { return _referenceNormalizer.Value; }
-        }
+        #region InitializeFormatting
 
         /// <summary>
-        /// Initializes the reference normalizer.
+        /// Initializes the formatting properties.
         /// </summary>
-        /// <returns>Reference normalizer delegate.</returns>
-        protected virtual StringNormalizerDelegate InitializeReferenceNormalizer()
+        /// <param name="parameters">Formatter parameters.</param>
+        public virtual void InitializeFormatting(FormatterParameters parameters)
         {
-            return null;
+            _blockFormatters = InitializeBlockFormatters(parameters);
+            _inlineFormatters = InitializeInlineFormatters(parameters);
         }
 
         #endregion
 
         #region BlockFormatters
 
-        private readonly Lazy<IEnumerable<IBlockFormatter>> _blockFormatters;
+        private IEnumerable<IBlockFormatter> _blockFormatters;
 
         IEnumerable<IBlockFormatter> ICommonMarkExtension.BlockFormatters
         {
-            get { return _blockFormatters.Value; }
+            get { return _blockFormatters; }
         }
 
         /// <summary>
@@ -185,11 +188,11 @@ namespace CommonMark
 
         #region InlineFormatters
 
-        private readonly Lazy<IEnumerable<IInlineFormatter>> _inlineFormatters;
+        private IEnumerable<IInlineFormatter> _inlineFormatters;
 
         IEnumerable<IInlineFormatter> ICommonMarkExtension.InlineFormatters
         {
-            get { return _inlineFormatters.Value; }
+            get { return _inlineFormatters; }
         }
 
         /// <summary>
@@ -230,17 +233,6 @@ namespace CommonMark
         public override string ToString()
         {
             return GetType().Name;
-        }
-
-        #endregion
-
-        #region Register methods
-
-        private IDictionary<TKey, TValue> Register<TKey, TValue>(Lazy<IDictionary<TKey, TValue>> lazy, TKey key, TValue value)
-        {
-            var items = lazy.IsValueCreated ? lazy.Value : new Dictionary<TKey, TValue>();
-            items.Add(key, value);
-            return items;
         }
 
         #endregion

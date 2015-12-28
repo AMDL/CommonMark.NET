@@ -19,7 +19,7 @@ namespace CommonMark.Parser
                 return string.Empty;
 
             var result = NormalizeWhitespace(s.Source, s.StartIndex, s.Length);
-            return parameters.ReferenceNormalizer(result);
+            return parameters.CompleteNormalizeReference(result);
         }
 
         /// <summary>

@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace CommonMark.Tests
 {
@@ -15,7 +14,7 @@ namespace CommonMark.Tests
                 if (s == null)
                 {
                     s = CommonMarkSettings.Default.Clone();
-                    s.Extensions.Register(new Extension.MathDollars(s));
+                    s.Extensions.Register(new Extension.MathDollars());
                     _settings = s;
                 }
                 return s;

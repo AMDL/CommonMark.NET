@@ -13,15 +13,6 @@ namespace CommonMark.Extension
     public class MathDollars : CommonMarkExtension
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="MathDollars"/> class.
-        /// </summary>
-        /// <param name="settings"></param>
-        public MathDollars(CommonMarkSettings settings)
-            : base(settings)
-        {
-        }
-
-        /// <summary>
         /// Initializes the mapping from character to inline delimiter handler.
         /// </summary>
         protected override IDictionary<char, IInlineDelimiterHandler> InitializeInlineDelimiterHandlers()

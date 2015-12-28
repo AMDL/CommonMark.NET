@@ -14,7 +14,7 @@ namespace CommonMark.Tests
                 if (s == null)
                 {
                     s = CommonMarkSettings.Default.Clone();
-                    s.Extensions.Register(new Extension.Superscript(s));
+                    s.Extensions.Register(new Extension.Superscript());
                     _settings = s;
                 }
                 return s;

@@ -14,7 +14,7 @@ namespace CommonMark.Tests
                 if (s == null)
                 {
                     s = CommonMarkSettings.Default.Clone();
-                    s.Extensions.Register(new Extension.HeadingDots(s));
+                    s.Extensions.Register(new Extension.HeadingDots());
                     _HeadingDotsSettings = s;
                 }
                 return s;

@@ -553,7 +553,7 @@ third";
 
             var data = "~~~~foo~~~~ ~";
             var stng = Settings.Clone();
-            stng.Extensions.Register(new Extension.Strikeout(stng));
+            stng.Extensions.Register(new Extension.Strikeout());
             var doc = Helpers.ParseDocument(data, stng);
 
             var inline = doc.AsEnumerable().FirstOrDefault(o => o.Inline != null && o.Inline.Tag == Syntax.InlineTag.Strikethrough);
