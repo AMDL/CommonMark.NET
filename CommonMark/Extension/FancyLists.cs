@@ -113,10 +113,9 @@ namespace CommonMark.Extension
 
         private static IEnumerable<UnorderedListItemParameters> GetUnorderedParameters()
         {
-            yield return new UnorderedListItemParameters(markerChars: new[] { '•', 'o', '' });
-            yield return new UnorderedListItemParameters("disc", '●');
-            yield return new UnorderedListItemParameters("circle", '◦');
-            yield return new UnorderedListItemParameters("square", '▪');
+            yield return new UnorderedListItemParameters("disc", '•');
+            yield return new UnorderedListItemParameters("circle", 'o');
+            yield return new UnorderedListItemParameters("square", '');
             yield return new UnorderedListItemParameters("none", '∙');
         }
 

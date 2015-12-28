@@ -63,25 +63,20 @@ namespace CommonMark.Extension
         OrderedHashes = 32,
 
         /// <summary>
-        /// <c>•</c>, <c>o</c> and <c></c> will be recognized as unordered list markers.
-        /// </summary>
-        Bullets = 128,
-
-        /// <summary>
         /// Unordered lists with filled circle markers.
-        /// <c>●</c> will be recognized as marker.
+        /// <c>•</c> will be recognized as marker.
         /// </summary>
         Discs = 256,
 
         /// <summary>
         /// Unordered lists with circle markers.
-        /// <c>◦</c> will be recognized as marker.
+        /// <c>o</c> will be recognized as marker.
         /// </summary>
         Circles = 512,
 
         /// <summary>
         /// Unordered lists with square markers.
-        /// <c>▪</c> will be recognized as marker.
+        /// <c></c> will be recognized as marker.
         /// </summary>
         Squares = 1024,
 
@@ -94,7 +89,7 @@ namespace CommonMark.Extension
         /// <summary>
         /// All extended unordered lists are enabled.
         /// </summary>
-        Unordered = 3968,
+        Unordered = 3840,
 
         /// <summary>
         /// List types will be rendered in the output.
