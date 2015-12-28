@@ -17,7 +17,7 @@ namespace CommonMark.Tests
                 if (s == null)
                 {
                     s = CommonMarkSettings.Default.Clone();
-                    s.TrackSourcePosition = true;
+                    s.Extensions.Register(new Extension.TrackSourcePositions());
                     _settings = s;
                 }
                 return s;

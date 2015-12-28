@@ -109,6 +109,7 @@ namespace CommonMark
                 Features = Extension.TableCaptionsFeatures.All,
                 Leads = new[] { "Table" },
             }));
+            Register(new Extension.TrackSourcePositions());
             Settings.Reset();
         }
 
@@ -172,24 +173,24 @@ namespace CommonMark
             return GetEnumerator();
         }
 
-        internal void InitializeInlineParsing()
+        internal void InitializeBlockParsing(Parser.BlockParserParameters parameters)
         {
             if (_list != null)
             {
                 foreach (var extension in _list)
                 {
-                    extension.InitializeInlineParsing(Settings);
+                    extension.InitializeBlockParsing(parameters);
                 }
             }
         }
 
-        internal void InitializeBlockParsing()
+        internal void InitializeInlineParsing(Parser.InlineParserParameters parameters)
         {
             if (_list != null)
             {
                 foreach (var extension in _list)
                 {
-                    extension.InitializeBlockParsing(Settings);
+                    extension.InitializeInlineParsing(parameters);
                 }
             }
         }

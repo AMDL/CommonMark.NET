@@ -33,7 +33,7 @@ namespace CommonMark.Parser
             Settings = settings;
             CompleteNormalizeReference = DoCompleteNormalizeReference;
 
-            Settings.Extensions.InitializeInlineParsing();
+            Settings.Extensions.InitializeInlineParsing(this);
 
             this._delimiterHandlers = GetDelimiterHandlers();
             this._delimiterCharacters = GetDelimiterCharacters();

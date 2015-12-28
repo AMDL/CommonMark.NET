@@ -12,14 +12,14 @@ namespace CommonMark
         /// <summary>
         /// Initializes the block parsing properties.
         /// </summary>
-        /// <param name="settings">Common settings.</param>
-        void InitializeBlockParsing(CommonMarkSettings settings);
+        /// <param name="parameters">Block parser parameters.</param>
+        void InitializeBlockParsing(BlockParserParameters parameters);
 
         /// <summary>
         /// Initializes the inline parsing properties.
         /// </summary>
-        /// <param name="settings">Common settings.</param>
-        void InitializeInlineParsing(CommonMarkSettings settings);
+        /// <param name="parameters">Inline parser parameters.</param>
+        void InitializeInlineParsing(InlineParserParameters parameters);
 
         /// <summary>
         /// Initializes the formatting properties.

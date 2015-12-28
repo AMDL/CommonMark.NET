@@ -64,6 +64,7 @@
     <Compile Include="Extension\ReferenceCase.cs" />
     <Compile Include="Extension\Subscript.cs" />
     <Compile Include="Extension\Superscript.cs" />
+    <Compile Include="Extension\TrackSourcePositions.cs" />
     <Compile Include="Formatters\Blocks\BlockQuoteFormatter.cs" />
     <Compile Include="Formatters\Blocks\DocumentFormatter.cs" />
     <Compile Include="Formatters\Blocks\HtmlBlockFormatter.cs" />

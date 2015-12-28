@@ -73,10 +73,10 @@ namespace CommonMark.Extension
         /// <summary>
         /// Initializes the inline parsing properties.
         /// </summary>
-        /// <param name="settings">Common settings.</param>
-        public override void InitializeInlineParsing(CommonMarkSettings settings)
+        /// <param name="parameters">Inline parser parameters.</param>
+        public override void InitializeInlineParsing(InlineParserParameters parameters)
         {
-            settings.InlineParserParameters.CompleteNormalizeReference = NormalizeReference;
+            parameters.CompleteNormalizeReference = NormalizeReference;
         }
 
         private string NormalizeReference(string s)

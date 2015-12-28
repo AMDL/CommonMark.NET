@@ -111,7 +111,7 @@ namespace CommonMark
 
             var cur = Syntax.Block.CreateDocument();
             var doc = cur;
-            var line = new LineInfo(settings.TrackSourcePosition);
+            var line = new LineInfo(settings.BlockParserParameters.TrackPositions);
 
             try
             {

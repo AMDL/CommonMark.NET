@@ -31,10 +31,7 @@ namespace CommonMark.Formatters
         /// <summary>
         /// Gets or sets a value indicating whether source positions need to be written to the output.
         /// </summary>
-        public bool TrackPositions
-        {
-            get { return Settings.TrackSourcePosition; }
-        }
+        internal bool TrackPositions { get; set; }
 
         #endregion TrackPositions
 

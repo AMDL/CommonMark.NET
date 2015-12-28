@@ -13,7 +13,7 @@ namespace CommonMark.Tests
             // Example 210 handles case that relies on Block.SourcePosition property (everything else just sets it)
 
             var s = CommonMarkSettings.Default.Clone();
-            s.TrackSourcePosition = true;
+            s.Extensions.Register(new Extension.TrackSourcePositions());
 
             Helpers.Log("Example {0}" + Environment.NewLine + "Section: {0}" + Environment.NewLine, 210, "Container blocks - Lists");
             Helpers.ExecuteTest("* a\n*\n\n* c", @"<ul␣data-sourcepos=""0-10"">

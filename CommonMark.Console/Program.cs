@@ -62,7 +62,7 @@ namespace CommonMark
                     }
                     else if (string.Equals(args[i], "--sourcepos", StringComparison.OrdinalIgnoreCase))
                     {
-                        settings.TrackSourcePosition = true;
+                        settings.Extensions.Register(new Extension.TrackSourcePositions());
                     }
                     else if (string.Equals(args[i], "--bench", StringComparison.OrdinalIgnoreCase))
                     {

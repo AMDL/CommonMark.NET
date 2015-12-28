@@ -50,10 +50,9 @@ namespace CommonMark.Formatters
             int indent = 0;
             var stack = new Stack<BlockStackEntry>();
             var inlineStack = new Stack<InlineStackEntry>();
-            var buffer = new StringBuilder();
-            var trackPositions = settings.TrackSourcePosition;
 
             var parameters = settings.FormatterParameters;
+            var trackPositions = parameters.TrackPositions;
             IBlockFormatter[] formatters = parameters.BlockFormatters;
             IBlockFormatter formatter;
             IEnumerable<KeyValuePair<string, object>> data;
@@ -84,7 +83,7 @@ namespace CommonMark.Formatters
 
                 if (element.InlineContent != null)
                 {
-                    PrintInlines(writer, element.InlineContent, indent + 2, inlineStack, buffer, settings);
+                    PrintInlines(writer, element.InlineContent, indent + 2, inlineStack, settings);
                 }
 
                 if (element.FirstChild != null)
@@ -112,10 +111,10 @@ namespace CommonMark.Formatters
             }
         }
 
-        private static void PrintInlines(TextWriter writer, Inline element, int indent, Stack<InlineStackEntry> stack, StringBuilder buffer, CommonMarkSettings settings)
+        private static void PrintInlines(TextWriter writer, Inline element, int indent, Stack<InlineStackEntry> stack, CommonMarkSettings settings)
         {
-            var trackPositions = settings.TrackSourcePosition;
             var parameters = settings.FormatterParameters;
+            var trackPositions = parameters.TrackPositions;
             IInlineFormatter[] formatters = parameters.InlineFormatters;
             IInlineFormatter formatter;
             IEnumerable<KeyValuePair<string, object>> data;

@@ -44,6 +44,8 @@ namespace CommonMark
             }
         }
 
+        #region Extensions
+
         private bool _trackSourcePosition;
 
         /// <summary>
@@ -56,13 +58,21 @@ namespace CommonMark
         /// of these properties are undefined.
         /// This also controls if these values will be written to the output.
         /// </summary>
+        [Obsolete("Use the " + nameof(Extension.TrackSourcePositions) + " extension instead.")]
         public bool TrackSourcePosition
         {
-            get { return _trackSourcePosition; }
-            set { _trackSourcePosition = value; }
+            get
+            {
+                return _trackSourcePosition;
+            }
+            set
+            {
+                if (_trackSourcePosition != value)
+                {
+                    _trackSourcePosition = Update(value, new Extension.TrackSourcePositions());
+                }
+            }
         }
-
-        #region Extensions
 
         private bool _renderSoftLineBreaksAsLineBreaks;
 

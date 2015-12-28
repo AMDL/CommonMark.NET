@@ -14,11 +14,11 @@ namespace CommonMark
         /// <summary>
         /// Initializes the block parsing properties.
         /// </summary>
-        /// <param name="settings">Common settings.</param>
-        public virtual void InitializeBlockParsing(CommonMarkSettings settings)
+        /// <param name="parameters">Block parser parameters.</param>
+        public virtual void InitializeBlockParsing(BlockParserParameters parameters)
         {
-            _blockParsers = InitializeBlockParsers(settings);
-            _blockDelimiterHandlers = InitializeBlockDelimiterHandlers(settings);
+            _blockParsers = InitializeBlockParsers(parameters.Settings);
+            _blockDelimiterHandlers = InitializeBlockDelimiterHandlers(parameters.Settings);
         }
 
         #endregion
@@ -70,10 +70,10 @@ namespace CommonMark
         /// <summary>
         /// Initializes the inline parsing properties.
         /// </summary>
-        /// <param name="settings">Common settings.</param>
-        public virtual void InitializeInlineParsing(CommonMarkSettings settings)
+        /// <param name="parameters">Inline parser parameters.</param>
+        public virtual void InitializeInlineParsing(InlineParserParameters parameters)
         {
-            _inlineParsers = InitializeInlineParsers(settings);
+            _inlineParsers = InitializeInlineParsers(parameters.Settings);
             _inlineDelimiterHandlers = InitializeInlineDelimiterHandlers();
             _escapableCharacters = InitializeEscapableCharacters();
         }

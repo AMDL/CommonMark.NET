@@ -63,7 +63,7 @@ namespace CommonMark.Parser
         {
             Settings = settings;
 
-            Settings.Extensions.InitializeBlockParsing();
+            Settings.Extensions.InitializeBlockParsing(this);
 
             this._parsers = GetParsers();
             this._handlers = GetHandlers();
@@ -84,6 +84,15 @@ namespace CommonMark.Parser
         }
 
         #endregion Constructor
+
+        #region TrackPositions
+
+        /// <summary>
+        /// Gets or sets a value indicating whether source positions need to be tracked.
+        /// </summary>
+        internal bool TrackPositions { get; set; }
+
+        #endregion TrackPositions
 
         #region Parsers
 
@@ -476,6 +485,18 @@ namespace CommonMark.Parser
 
         #endregion OpenIndentedCode
 
+        #region Settings
+
+        /// <summary>
+        /// Gets the common settings object.
+        /// </summary>
+        public CommonMarkSettings Settings
+        {
+            get;
+        }
+
+        #endregion Settings
+
         /// <summary>
         /// Returns the parser delegates of the specified type.
         /// </summary>
@@ -514,7 +535,5 @@ namespace CommonMark.Parser
             }
             return c;
         }
-
-        private CommonMarkSettings Settings { get; }
     }
 }
