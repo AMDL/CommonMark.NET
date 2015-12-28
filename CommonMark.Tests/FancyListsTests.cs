@@ -854,7 +854,7 @@ namespace CommonMark.Tests
         public void EarthlyBranchListDisabledAlone()
         {
             var s = CommonMarkSettings.Default.Clone();
-            s.Extensions.Register(new FancyLists(new FancyListsSettings(AlphaListStyles.None & ~AlphaListStyles.EarthlyBranch)));
+            s.Extensions.Register(new FancyLists(new FancyListsSettings(AlphaListStyles.All & ~AlphaListStyles.EarthlyBranch)));
             Helpers.ExecuteTest("子、 1", "<p>子、 1</p>", s);
         }
 
@@ -884,7 +884,7 @@ namespace CommonMark.Tests
         public void HeavenlyStemListDisabledAlone()
         {
             var s = CommonMarkSettings.Default.Clone();
-            s.Extensions.Register(new FancyLists(new FancyListsSettings(AlphaListStyles.None & ~AlphaListStyles.HeavenlyStem)));
+            s.Extensions.Register(new FancyLists(new FancyListsSettings(AlphaListStyles.All & ~AlphaListStyles.HeavenlyStem)));
             Helpers.ExecuteTest("甲、 1", "<p>甲、 1</p>", s);
         }
 
@@ -914,7 +914,7 @@ namespace CommonMark.Tests
         public void HebrewListDisabledAlone()
         {
             var s = CommonMarkSettings.Default.Clone();
-            s.Extensions.Register(new FancyLists(new FancyListsSettings(AdditiveListStyles.None & ~AdditiveListStyles.Hebrew)));
+            s.Extensions.Register(new FancyLists(new FancyListsSettings(AdditiveListStyles.All & ~AdditiveListStyles.Hebrew)));
             Helpers.ExecuteTest("יא. אללה הוא עכבר", "<p>יא. אללה הוא עכבר</p>", s);
         }
 
