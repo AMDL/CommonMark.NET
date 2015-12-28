@@ -28,9 +28,8 @@ namespace CommonMark.Formatters.Blocks
         /// </summary>
         /// <param name="writer">HTML writer.</param>
         /// <param name="element">Block element.</param>
-        /// <param name="tight"><c>true</c> to stack paragraphs tightly.</param>
         /// <returns><c>true</c> if the parent formatter should visit the child elements.</returns>
-        public override bool WriteOpening(IHtmlTextWriter writer, Block element, bool tight)
+        public override bool WriteOpening(IHtmlTextWriter writer, Block element)
         {
             writer.EnsureLine();
             var headingLevel = element.Heading.Level;
@@ -51,9 +50,8 @@ namespace CommonMark.Formatters.Blocks
         /// Returns the closing of a block element.
         /// </summary>
         /// <param name="element">Block element.</param>
-        /// <param name="tight"><c>true</c> to stack paragraphs tightly.</param>
         /// <returns>The closing.</returns>
-        public override string GetClosing(Block element, bool tight)
+        public override string GetClosing(Block element)
         {
             var headingLevel = element.Heading.Level;
             return headingLevel > 6

@@ -33,17 +33,15 @@ namespace CommonMark.Formatters
         /// </summary>
         /// <param name="writer">HTML writer.</param>
         /// <param name="element">Element.</param>
-        /// <param name="flag">Element-specific flag.</param>
         /// <returns><c>true</c> if the parent formatter should visit the child elements.</returns>
-        bool WriteOpening(IHtmlTextWriter writer, TElement element, bool flag);
+        bool WriteOpening(IHtmlTextWriter writer, TElement element);
 
         /// <summary>
         /// Returns the closing of an element.
         /// </summary>
         /// <param name="element">Element.</param>
-        /// <param name="flag">Element-specific flag.</param>
         /// <returns>The closing.</returns>
-        string GetClosing(TElement element, bool flag);
+        string GetClosing(TElement element);
 
         /// <summary>
         /// Determines whether inline content should be rendered as HTML.

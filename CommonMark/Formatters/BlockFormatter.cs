@@ -37,9 +37,8 @@ namespace CommonMark.Formatters
         /// </summary>
         /// <param name="writer">HTML writer.</param>
         /// <param name="element">Block element.</param>
-        /// <param name="tight"><c>true</c> to stack paragraphs tightly.</param>
         /// <returns><c>true</c> if the parent formatter should visit the child elements.</returns>
-        public virtual bool WriteOpening(IHtmlTextWriter writer, Block element, bool tight)
+        public virtual bool WriteOpening(IHtmlTextWriter writer, Block element)
         {
             writer.EnsureLine();
             var value = "<" + HtmlTag;

@@ -37,9 +37,8 @@ namespace CommonMark.Formatters
         /// </summary>
         /// <param name="writer">HTML writer.</param>
         /// <param name="element">Inline element.</param>
-        /// <param name="withinLink">The parent's rendering option.</param>
         /// <returns><c>true</c> if the parent formatter should visit the child elements.</returns>
-        public virtual bool WriteOpening(IHtmlTextWriter writer, Inline element, bool withinLink)
+        public virtual bool WriteOpening(IHtmlTextWriter writer, Inline element)
         {
             var value = "<" + HtmlTag;
             writer.WriteConstant(value);
@@ -56,9 +55,8 @@ namespace CommonMark.Formatters
         /// </summary>
         /// <param name="writer">HTML writer.</param>
         /// <param name="element">Inline element.</param>
-        /// <param name="withinLink">The parent's rendering option.</param>
         /// <returns><c>true</c> if the parent formatter should visit the child elements.</returns>
-        public virtual bool WritePlaintextOpening(IHtmlTextWriter writer, Inline element, bool withinLink)
+        public virtual bool WritePlaintextOpening(IHtmlTextWriter writer, Inline element)
         {
             writer.WriteEncodedHtml(element.LiteralContentValue);
             return !IsSelfClosing;
@@ -78,9 +76,8 @@ namespace CommonMark.Formatters
         /// Returns the plain text closing of an inline element.
         /// </summary>
         /// <param name="element">Inline element.</param>
-        /// <param name="withinLink">The parent's rendering option.</param>
         /// <returns>The closing.</returns>
-        public virtual string GetPlaintextClosing(Inline element, bool withinLink)
+        public virtual string GetPlaintextClosing(Inline element)
         {
             return null;
         }
@@ -93,17 +90,6 @@ namespace CommonMark.Formatters
         public virtual bool IsPlaintextInlines(Inline element)
         {
             return false;
-        }
-
-        /// <summary>
-        /// Determines whether inline content is to be rendered within a link.
-        /// </summary>
-        /// <param name="element">Inline element.</param>
-        /// <param name="withinLink">The parent's rendering option.</param>
-        /// <returns><c>true</c> to render elements within a link.</returns>
-        public virtual bool IsWithinLink(Inline element, bool withinLink)
-        {
-            return withinLink;
         }
 
         /// <summary>

@@ -22,9 +22,8 @@ namespace CommonMark.Formatters.Blocks
         /// </summary>
         /// <param name="writer">HTML writer.</param>
         /// <param name="element">Inline element.</param>
-        /// <param name="tight"><c>true</c> to stack paragraphs tightly.</param>
         /// <returns><c>true</c> if the parent formatter should visit the child elements.</returns>
-        public override bool WriteOpening(IHtmlTextWriter writer, Block element, bool tight)
+        public override bool WriteOpening(IHtmlTextWriter writer, Block element)
         {
             // cannot output source position for HTML blocks
             writer.Write(element.StringContent);

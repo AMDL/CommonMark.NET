@@ -74,9 +74,8 @@ namespace CommonMark.Formatters
         /// Returns the closing of an element.
         /// </summary>
         /// <param name="element">Element.</param>
-        /// <param name="flag">Element-specific flag.</param>
         /// <returns>The closing.</returns>
-        public virtual string GetClosing(TElement element, bool flag)
+        public virtual string GetClosing(TElement element)
         {
             return !IsSelfClosing ? "</" + HtmlTag + '>' : null;
         }

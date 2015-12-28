@@ -22,9 +22,8 @@ namespace CommonMark.Formatters.Inlines
         /// </summary>
         /// <param name="writer">HTML writer.</param>
         /// <param name="element">Inline lement.</param>
-        /// <param name="withinLink">The parent's rendering option.</param>
         /// <returns><c>true</c> if the parent formatter should visit the child elements.</returns>
-        public override bool WriteOpening(IHtmlTextWriter writer, Inline element, bool withinLink)
+        public override bool WriteOpening(IHtmlTextWriter writer, Inline element)
         {
             writer.WriteConstant("<img");
             WritePosition(writer, element);
@@ -39,9 +38,8 @@ namespace CommonMark.Formatters.Inlines
         /// </summary>
         /// <param name="writer">HTML writer.</param>
         /// <param name="element">Inline lement.</param>
-        /// <param name="withinLink">The parent's rendering option.</param>
         /// <returns><c>true</c> if the parent formatter should visit the child elements.</returns>
-        public override bool WritePlaintextOpening(IHtmlTextWriter writer, Inline element, bool withinLink)
+        public override bool WritePlaintextOpening(IHtmlTextWriter writer, Inline element)
         {
             return true;
         }
@@ -60,9 +58,8 @@ namespace CommonMark.Formatters.Inlines
         /// Returns the closing of an inline element.
         /// </summary>
         /// <param name="element">Inline lement.</param>
-        /// <param name="withinLink">The parent's rendering option.</param>
         /// <returns>The closing.</returns>
-        public override string GetClosing(Inline element, bool withinLink)
+        public override string GetClosing(Inline element)
         {
             return "\" />";
         }

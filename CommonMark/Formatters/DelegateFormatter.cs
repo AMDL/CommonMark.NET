@@ -36,18 +36,18 @@ namespace CommonMark.Formatters
                 || outer.CanHandle(element);
         }
 
-        public bool WriteOpening(IHtmlTextWriter writer, TElement element, bool flag)
+        public bool WriteOpening(IHtmlTextWriter writer, TElement element)
         {
             return inner.CanHandle(element)
-                ? inner.WriteOpening(writer, element, flag)
-                : outer.WriteOpening(writer, element, flag);
+                ? inner.WriteOpening(writer, element)
+                : outer.WriteOpening(writer, element);
         }
 
-        public string GetClosing(TElement element, bool withinLink)
+        public string GetClosing(TElement element)
         {
             return inner.CanHandle(element)
-                ? inner.GetClosing(element, withinLink)
-                : outer.GetClosing(element, withinLink);
+                ? inner.GetClosing(element)
+                : outer.GetClosing(element);
         }
 
         public bool IsHtmlInlines(TElement element)
@@ -119,11 +119,11 @@ namespace CommonMark.Formatters
                 : outer;
         }
 
-        public bool WritePlaintextOpening(IHtmlTextWriter writer, Inline inline, bool withinLink)
+        public bool WritePlaintextOpening(IHtmlTextWriter writer, Inline inline)
         {
             return inner.CanHandle(inline)
-                ? inner.WritePlaintextOpening(writer, inline, withinLink)
-                : outer.WritePlaintextOpening(writer, inline, withinLink);
+                ? inner.WritePlaintextOpening(writer, inline)
+                : outer.WritePlaintextOpening(writer, inline);
         }
 
         public string GetInfix(Inline inline)
@@ -133,11 +133,11 @@ namespace CommonMark.Formatters
                 : outer.GetInfix(inline);
         }
 
-        public string GetPlaintextClosing(Inline inline, bool withinLink)
+        public string GetPlaintextClosing(Inline inline)
         {
             return inner.CanHandle(inline)
-                ? inner.GetPlaintextClosing(inline, withinLink)
-                : outer.GetPlaintextClosing(inline, withinLink);
+                ? inner.GetPlaintextClosing(inline)
+                : outer.GetPlaintextClosing(inline);
         }
 
         public bool IsPlaintextInlines(Inline element)
@@ -145,13 +145,6 @@ namespace CommonMark.Formatters
             return inner.CanHandle(element)
                 ? inner.IsPlaintextInlines(element)
                 : outer.IsPlaintextInlines(element);
-        }
-
-        public bool IsWithinLink(Inline inline, bool withinLink)
-        {
-            return inner.CanHandle(inline)
-                ? inner.IsWithinLink(inline, withinLink)
-                : outer.IsWithinLink(inline, withinLink);
         }
     }
 }

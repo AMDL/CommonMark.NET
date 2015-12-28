@@ -175,8 +175,8 @@ namespace CommonMark.Formatters
     internal abstract class ElementHtmlFormatter<TElement, TTag, TFormatter, TStackEntry>
         where TFormatter : IElementFormatter<TElement, TTag>
     {
-        protected delegate bool WriteOpeningDelegate(IHtmlTextWriter writer, TElement element, bool flag);
-        protected delegate string GetClosingDelegate(TElement element, bool flag);
+        protected delegate bool WriteOpeningDelegate(IHtmlTextWriter writer, TElement element);
+        protected delegate string GetClosingDelegate(TElement element);
         protected delegate bool IsRenderDelegate(TElement element);
 
         protected readonly Stack<TStackEntry> stack = new Stack<TStackEntry>();
@@ -185,8 +185,9 @@ namespace CommonMark.Formatters
         private readonly GetClosingDelegate[] getClosing;
         private readonly IsRenderDelegate[] isHtmlInlines;
 
-        protected ElementHtmlFormatter(TFormatter[] formatters, int count)
+        protected ElementHtmlFormatter(FormatterParameters parameters, TFormatter[] formatters, int count)
         {
+            Parameters = parameters;
             Formatters = formatters;
             Count = count;
 
@@ -202,6 +203,11 @@ namespace CommonMark.Formatters
             }
         }
 
+        protected FormatterParameters Parameters
+        {
+            get;
+        }
+
         protected TFormatter[] Formatters
         {
             get;
@@ -212,20 +218,25 @@ namespace CommonMark.Formatters
             get;
         }
 
-#if OptimizeFor45
-        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-#endif
-        protected bool WriteOpening(int index, IHtmlTextWriter writer, TElement element, bool tight)
+        protected bool TrackPositions
         {
-            return writeOpening[index](writer, element, tight);
+            get { return Parameters.TrackPositions; }
         }
 
 #if OptimizeFor45
         [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
 #endif
-        protected string GetClosing(int index, TElement element, bool tight)
+        protected bool WriteOpening(int index, IHtmlTextWriter writer, TElement element)
         {
-            return getClosing[index](element, tight);
+            return writeOpening[index](writer, element);
+        }
+
+#if OptimizeFor45
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+#endif
+        protected string GetClosing(int index, TElement element)
+        {
+            return getClosing[index](element);
         }
 
 #if OptimizeFor45
@@ -255,16 +266,18 @@ namespace CommonMark.Formatters
 
         private delegate bool IsTightDelegate(Block element);
 
-        private readonly bool? isForceTightLists;
         private readonly long isList;
         private readonly long isListItem;
         private readonly IsTightDelegate[] isTight;
 
-        public BlockHtmlFormatter(CommonMarkSettings settings)
-            : base(settings.FormatterParameters.BlockFormatters, (int)BlockTag.Count)
+        private bool? IsForceTightLists
         {
-            isForceTightLists = settings.FormatterParameters.IsForceTightLists;
+            get { return Parameters.IsForceTightLists; }
+        }
 
+        public BlockHtmlFormatter(CommonMarkSettings settings)
+            : base(settings.FormatterParameters, settings.FormatterParameters.BlockFormatters, (int)BlockTag.Count)
+        {
             isTight = new IsTightDelegate[Count];
 
             long m = 1;
@@ -291,23 +304,39 @@ namespace CommonMark.Formatters
             {
                 index = (int)block.Tag;
 
-                visitChildren = WriteOpening(index, writer, block, tight);
-
-                renderHtmlInlines = IsHtmlInlines(index, block);
-                if (renderHtmlInlines)
+                if (IsParagraph(index))
                 {
+                    if (!tight)
+                    {
+                        writer.WriteConstant("<p");
+                        if (TrackPositions)
+                            writer.WritePosition(block);
+                        writer.Write('>');
+                    }
+                    visitChildren = true;
+                    renderHtmlInlines = true;
                     inlineFormatter.Format(writer, block.InlineContent);
-                    stackLiteral = GetClosing(index, block, tight);
-                    if (block.Tag == BlockTag.Paragraph)
-                        writer.WriteConstant(stackLiteral);
-                    else
+                    if (!tight)
+                    {
+                        writer.WriteConstant("</p>");
+                    }
+                }
+                else
+                {
+                    visitChildren = WriteOpening(index, writer, block);
+                    renderHtmlInlines = IsHtmlInlines(index, block);
+                    if (renderHtmlInlines)
+                    {
+                        inlineFormatter.Format(writer, block.InlineContent);
+                        stackLiteral = GetClosing(index, block);
                         writer.WriteLineConstant(stackLiteral);
+                    }
                 }
 
                 if (visitChildren)
                 {
                     stackLiteral = !renderHtmlInlines
-                        ? GetClosing(index, block, tight)
+                        ? GetClosing(index, block)
                         : null;
 
                     stack.Push(new Entry(stackLiteral, block.NextSibling, tight));
@@ -340,8 +369,8 @@ namespace CommonMark.Formatters
                 return isTight[index](element);
             if (!IsListItem(index))
                 return false;
-            if (isForceTightLists.HasValue)
-                return isForceTightLists.Value;
+            if (IsForceTightLists.HasValue)
+                return IsForceTightLists.Value;
             return tight;
         }
 
@@ -359,6 +388,14 @@ namespace CommonMark.Formatters
         private bool IsListItem(int index)
         {
             return 0 != (isListItem & (1 << index));
+        }
+
+#if OptimizeFor45
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+#endif
+        private bool IsParagraph(int index)
+        {
+            return index == (int)BlockTag.Paragraph;
         }
     }
 
@@ -381,22 +418,19 @@ namespace CommonMark.Formatters
         }
 
         private delegate string GetInfixDelegate(Inline element);
-        private delegate bool IsWithinLinkDelegate(Inline element, bool flag);
 
         private readonly WriteOpeningDelegate[] writePlaintextOpening;
         private readonly GetClosingDelegate[] getPlaintextClosing;
         private readonly GetInfixDelegate[] getInfix;
         private readonly IsRenderDelegate[] isPlaintextInlines;
-        private readonly IsWithinLinkDelegate[] isWithinLink;
 
         public InlineHtmlFormatter(CommonMarkSettings settings)
-            : base(settings.FormatterParameters.InlineFormatters, (int)InlineTag.Count)
+            : base(settings.FormatterParameters, settings.FormatterParameters.InlineFormatters, (int)InlineTag.Count)
         {
             writePlaintextOpening = new WriteOpeningDelegate[Count];
             getPlaintextClosing = new GetClosingDelegate[Count];
             getInfix = new GetInfixDelegate[Count];
             isPlaintextInlines = new IsRenderDelegate[Count];
-            isWithinLink = new IsWithinLinkDelegate[Count];
 
             for (var i = 0; i < Count; i++)
             {
@@ -404,7 +438,6 @@ namespace CommonMark.Formatters
                 getPlaintextClosing[i] = Formatters[i].GetPlaintextClosing;
                 getInfix[i] = Formatters[i].GetInfix;
                 isPlaintextInlines[i] = Formatters[i].IsPlaintextInlines;
-                isWithinLink[i] = Formatters[i].IsWithinLink;
             }
         }
 
@@ -416,6 +449,7 @@ namespace CommonMark.Formatters
             var stackPlaintext = false;
             bool? plaintext = false;
             bool withinLink = false;
+            bool isLink;
             bool visitChildren;
             string stackLiteral;
             bool renderHtmlInlines = false;
@@ -424,27 +458,47 @@ namespace CommonMark.Formatters
             while (inline != null)
             {
                 index = (int)inline.Tag;
+                isLink = IsLink(index);
+
                 switch (plaintext)
                 {
                     case false:
-                        visitChildren = WriteOpening(index, writer, inline, withinLink);
-                        stackLiteral = GetClosing(index, inline, withinLink);
-                        stackPlaintext = IsPlaintextInlines(index, inline);
-                        renderHtmlInlines = IsHtmlInlines(index, inline);
-                        if (stackPlaintext)
+                        if (isLink && withinLink)
                         {
-                            plaintext = true;
+                            writer.Write('[');
+                            stackLiteral = "]";
                             visitChildren = true;
                         }
-                        else if (renderHtmlInlines)
+                        else
                         {
-                            HtmlFormatter.EscapeHtml(inline.LiteralContentValue, writer);
+                            visitChildren = WriteOpening(index, writer, inline);
+                            stackLiteral = GetClosing(index, inline);
+                            stackPlaintext = IsPlaintextInlines(index, inline);
+                            renderHtmlInlines = IsHtmlInlines(index, inline);
+                            if (stackPlaintext)
+                            {
+                                plaintext = true;
+                                visitChildren = true;
+                            }
+                            else if (renderHtmlInlines)
+                            {
+                                HtmlFormatter.EscapeHtml(inline.LiteralContentValue, writer);
+                            }
                         }
                         break;
 
                     case true:
-                        visitChildren = WritePlaintextOpening(index, writer, inline, withinLink);
-                        stackLiteral = GetPlaintextClosing(index, inline, withinLink);
+                        if (isLink && withinLink)
+                        {
+                            writer.Write('[');
+                            stackLiteral = "]";
+                            visitChildren = true;
+                        }
+                        else
+                        {
+                            visitChildren = WritePlaintextOpening(index, writer, inline);
+                            stackLiteral = GetPlaintextClosing(index, inline);
+                        }
                         break;
 
                     default:
@@ -464,7 +518,7 @@ namespace CommonMark.Formatters
                         stack.Push(new Entry(stackLiteral, inline, null, withinLink));
                     }
 
-                    withinLink = IsWithinLink(index, inline, withinLink);
+                    withinLink |= isLink;
                     inline = inline.FirstChild;
                 }
                 else
@@ -486,9 +540,9 @@ namespace CommonMark.Formatters
 #if OptimizeFor45
         [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
 #endif
-        private bool WritePlaintextOpening(int index, IHtmlTextWriter writer, Inline element, bool tight)
+        private bool WritePlaintextOpening(int index, IHtmlTextWriter writer, Inline element)
         {
-            return writePlaintextOpening[index](writer, element, tight);
+            return writePlaintextOpening[index](writer, element);
         }
 
 #if OptimizeFor45
@@ -502,9 +556,9 @@ namespace CommonMark.Formatters
 #if OptimizeFor45
         [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
 #endif
-        private string GetPlaintextClosing(int index, Inline element, bool withinLink)
+        private string GetPlaintextClosing(int index, Inline element)
         {
-            return getPlaintextClosing[index](element, withinLink);
+            return getPlaintextClosing[index](element);
         }
 
 #if OptimizeFor45
@@ -518,9 +572,9 @@ namespace CommonMark.Formatters
 #if OptimizeFor45
         [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
 #endif
-        private bool IsWithinLink(int index, Inline element, bool withinLink)
+        private static bool IsLink(int index)
         {
-            return isWithinLink[index](element, withinLink);
+            return index == (int)InlineTag.Link;
         }
     }
 }

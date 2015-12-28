@@ -21,9 +21,8 @@ namespace CommonMark.Formatters.Inlines
         /// </summary>
         /// <param name="writer">HTML writer.</param>
         /// <param name="element">Inline element.</param>
-        /// <param name="withinLink">The parent's rendering option.</param>
         /// <returns><c>true</c> if the parent formatter should visit the child elements.</returns>
-        public override bool WriteOpening(IHtmlTextWriter writer, Inline element, bool withinLink)
+        public override bool WriteOpening(IHtmlTextWriter writer, Inline element)
         {
             writer.WriteLine();
             return false;
@@ -34,9 +33,8 @@ namespace CommonMark.Formatters.Inlines
         /// </summary>
         /// <param name="writer">HTML writer.</param>
         /// <param name="element">Inline element.</param>
-        /// <param name="withinLink">The parent's rendering option.</param>
         /// <returns><c>true</c> if the parent formatter should visit the child elements.</returns>
-        public override bool WritePlaintextOpening(IHtmlTextWriter writer, Inline element, bool withinLink)
+        public override bool WritePlaintextOpening(IHtmlTextWriter writer, Inline element)
         {
             writer.WriteLine();
             return false;
@@ -50,7 +48,7 @@ namespace CommonMark.Formatters.Inlines
         {
         }
 
-        public override bool WriteOpening(IHtmlTextWriter writer, Inline element, bool withinLink)
+        public override bool WriteOpening(IHtmlTextWriter writer, Inline element)
         {
             writer.WriteConstant("<br");
             WritePosition(writer, element);
