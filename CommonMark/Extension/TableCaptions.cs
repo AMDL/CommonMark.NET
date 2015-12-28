@@ -15,12 +15,10 @@ namespace CommonMark.Extension
         /// <summary>
         /// Initializes a new instance of the <see cref="TableCaptions"/> class.
         /// </summary>
-        /// <param name="settings">Common settings.</param>
         /// <param name="tableCaptionsSettings">Table captions settings.</param>
-        public TableCaptions(CommonMarkSettings settings, TableCaptionsSettings tableCaptionsSettings)
-            : base(settings)
+        public TableCaptions(TableCaptionsSettings tableCaptionsSettings)
         {
-            this.settings = tableCaptionsSettings;
+            settings = tableCaptionsSettings;
         }
 
         /// <summary>

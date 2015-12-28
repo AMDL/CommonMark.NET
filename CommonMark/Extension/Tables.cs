@@ -11,15 +11,6 @@ namespace CommonMark.Extension
     public abstract class Tables : CommonMarkExtension
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="Tables"/> class.
-        /// </summary>
-        /// <param name="settings">Common settings.</param>
-        protected Tables(CommonMarkSettings settings)
-            : base(settings)
-        {
-        }
-
-        /// <summary>
         /// Initializes the block formatters.
         /// </summary>
         /// <param name="parameters">Formatter parameters.</param>
