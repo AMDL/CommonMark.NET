@@ -297,13 +297,10 @@ namespace CommonMark.Parser
 
         #region InitializeDelimiterHandlers
 
-        internal static IInlineDelimiterHandler[] InitializeDelimiterHandlers(int length)
+        internal static IEnumerable<IInlineDelimiterHandler> InitializeDelimiterHandlers()
         {
-            length = length > '_' ? length : '_' + 1;
-            var h = new IInlineDelimiterHandler[length];
-            h['*'] = new Inlines.Delimiters.AsteriskHandler();
-            h['_'] = new Inlines.Delimiters.UnderscoreHandler();
-            return h;
+            yield return new Inlines.Delimiters.AsteriskHandler();
+            yield return new Inlines.Delimiters.UnderscoreHandler();
         }
 
         #endregion InitializeDelimiterHandlers

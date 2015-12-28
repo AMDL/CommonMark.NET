@@ -11,6 +11,14 @@
             this.outer = outer;
         }
 
+        public char Character
+        {
+            get
+            {
+                return inner.Character;
+            }
+        }
+
         public Syntax.InlineTag GetTag(int numdelims)
         {
             var tag = inner.GetTag(numdelims);

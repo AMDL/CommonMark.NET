@@ -43,9 +43,9 @@ namespace CommonMark
         IEnumerable<IInlineParser> InlineParsers { get; }
 
         /// <summary>
-        /// Gets the mapping from character to inline delimiter handler.
+        /// Gets the inline delimiter handlers.
         /// </summary>
-        IDictionary<char, IInlineDelimiterHandler> InlineDelimiterHandlers { get; }
+        IEnumerable<IInlineDelimiterHandler> InlineDelimiterHandlers { get; }
 
         /// <summary>
         /// Gets the escapable characters.

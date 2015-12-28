@@ -13,9 +13,9 @@ namespace CommonMark.Extension
         /// <summary>
         /// Creates the mapping from character to inline delimiter handler.
         /// </summary>
-        protected override IDictionary<char, IInlineDelimiterHandler> InitializeInlineDelimiterHandlers()
+        protected override IEnumerable<IInlineDelimiterHandler> InitializeInlineDelimiterHandlers()
         {
-            return Register('~', new InlineDelimiterHandler(InlineTag.Subscript));
+            yield return new InlineDelimiterHandler('~', InlineTag.Subscript);
         }
 
         /// <summary>

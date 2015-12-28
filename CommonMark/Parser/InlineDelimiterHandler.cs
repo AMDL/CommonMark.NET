@@ -10,10 +10,12 @@ namespace CommonMark.Parser
         /// <summary>
         /// Initializes a new instance of the <see cref="InlineDelimiterHandler"/> class.
         /// </summary>
+        /// <param name="character">Handled character.</param>
         /// <param name="singleCharacterTag">The tag to use for inline elements created when a single-character delimiter is matched.</param>
         /// <param name="doubleCharacterTag">The tag to use for inline elements created when a double-character delimiter is matched.</param>
-        public InlineDelimiterHandler(InlineTag singleCharacterTag = 0, InlineTag doubleCharacterTag = 0)
+        public InlineDelimiterHandler(char character, InlineTag singleCharacterTag = 0, InlineTag doubleCharacterTag = 0)
         {
+            Character = character;
             SingleCharacterTag = singleCharacterTag;
             DoubleCharacterTag = doubleCharacterTag;
         }
@@ -65,6 +67,11 @@ namespace CommonMark.Parser
         {
             return true;
         }
+
+        /// <summary>
+        /// Gets the handled character.
+        /// </summary>
+        public char Character { get; }
 
         /// <summary>
         /// Gets the single-character element tag.

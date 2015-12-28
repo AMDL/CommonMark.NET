@@ -6,6 +6,14 @@
     public interface IInlineDelimiterHandler
     {
         /// <summary>
+        /// Gets the handled character.
+        /// </summary>
+        char Character
+        {
+            get;
+        }
+
+        /// <summary>
         /// Returns the inline element tag that corresponds to the specified delimiter count.
         /// </summary>
         /// <param name="delimiterCount">Delimiter character count.</param>

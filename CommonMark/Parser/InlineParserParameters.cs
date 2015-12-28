@@ -282,8 +282,8 @@ namespace CommonMark.Parser
 
         internal override IInlineDelimiterHandler[] GetDelimiterHandlers()
         {
-            return Settings.Extensions.GetItems(InlineParser.InitializeDelimiterHandlers,
-                ext => ext.InlineDelimiterHandlers, key => key, DelegateInlineDelimiterHandler.Merge);
+            return Settings.Extensions.GetItems(InlineParser.InitializeDelimiterHandlers(),
+                ext => ext.InlineDelimiterHandlers, h => h.Character, h => h, DelegateInlineDelimiterHandler.Merge);
         }
 
         internal override IEnumerable<IInlineParser> GetParsers()
@@ -321,7 +321,26 @@ namespace CommonMark.Parser
 
         internal override IInlineDelimiterHandler[] GetDelimiterHandlers()
         {
-            return InlineParser.InitializeDelimiterHandlers(0);
+            var initItems = InlineParser.InitializeDelimiterHandlers();
+
+            var dictionary = new Dictionary<char, IInlineDelimiterHandler>();
+            var maxKey = 0;
+
+            char key;
+            foreach (var item in initItems)
+            {
+                key = item.Character;
+                dictionary[key] = item;
+                maxKey = maxKey > key ? maxKey : key;
+            }
+
+            var items = new IInlineDelimiterHandler[maxKey + 1];
+            foreach (var kvp in dictionary)
+            {
+                items[kvp.Key] = kvp.Value;
+            }
+
+            return items;
         }
     }
 }

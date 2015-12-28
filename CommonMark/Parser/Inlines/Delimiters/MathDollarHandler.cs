@@ -3,7 +3,7 @@
     internal sealed class MathDollarHandler : InlineDelimiterHandler
     {
         public MathDollarHandler()
-            : base(Syntax.InlineTag.Math)
+            : base('$', Syntax.InlineTag.Math)
         {
         }
 

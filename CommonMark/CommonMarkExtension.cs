@@ -74,10 +74,7 @@ namespace CommonMark
         public virtual void InitializeInlineParsing(CommonMarkSettings settings)
         {
             _inlineParsers = InitializeInlineParsers(settings);
-
-            _inlineDelimiterHandlers = new Dictionary<char, IInlineDelimiterHandler>();
-            InitializeInlineDelimiterHandlers();
-
+            _inlineDelimiterHandlers = InitializeInlineDelimiterHandlers();
             _escapableCharacters = InitializeEscapableCharacters();
         }
 
@@ -105,31 +102,19 @@ namespace CommonMark
 
         #region Inline Delimiter Handlers
 
-        private IDictionary<char, IInlineDelimiterHandler> _inlineDelimiterHandlers;
+        private IEnumerable<IInlineDelimiterHandler> _inlineDelimiterHandlers;
 
-        IDictionary<char, IInlineDelimiterHandler> ICommonMarkExtension.InlineDelimiterHandlers
+        IEnumerable<IInlineDelimiterHandler> ICommonMarkExtension.InlineDelimiterHandlers
         {
             get { return _inlineDelimiterHandlers; }
         }
 
         /// <summary>
-        /// Initializes the mapping from character to inline delimiter handler.
+        /// Initializes the inline delimiter handlers.
         /// </summary>
-        protected virtual IDictionary<char, IInlineDelimiterHandler> InitializeInlineDelimiterHandlers()
+        protected virtual IEnumerable<IInlineDelimiterHandler> InitializeInlineDelimiterHandlers()
         {
             return null;
-        }
-
-        /// <summary>
-        /// Registers an inline delimiter handler.
-        /// </summary>
-        /// <param name="c">Handled character.</param>
-        /// <param name="handler">Inline delimiter handler.</param>
-        /// <returns>Mapping from character to inline delimiter handler.</returns>
-        protected IDictionary<char, IInlineDelimiterHandler> Register(char c, IInlineDelimiterHandler handler)
-        {
-            _inlineDelimiterHandlers.Add(c, handler);
-            return _inlineDelimiterHandlers;
         }
 
         #endregion

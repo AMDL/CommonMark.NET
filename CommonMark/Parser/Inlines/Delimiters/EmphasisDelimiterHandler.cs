@@ -8,8 +8,8 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="EmphasisHandler"/> class.
         /// </summary>
-        protected EmphasisHandler()
-            : base(Syntax.InlineTag.Emphasis, Syntax.InlineTag.Strong)
+        protected EmphasisHandler(char character)
+            : base(character, Syntax.InlineTag.Emphasis, Syntax.InlineTag.Strong)
         {
         }
     }
@@ -19,6 +19,13 @@
     /// </summary>
     public class AsteriskHandler : EmphasisHandler
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AsteriskHandler"/> class.
+        /// </summary>
+        public AsteriskHandler()
+            : base('*')
+        {
+        }
     }
 
     /// <summary>
@@ -26,6 +33,14 @@
     /// </summary>
     public class UnderscoreHandler : EmphasisHandler
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UnderscoreHandler"/> class.
+        /// </summary>
+        public UnderscoreHandler()
+            : base('_')
+        {
+        }
+
         /// <summary>
         /// Handles a matched opener.
         /// </summary>
