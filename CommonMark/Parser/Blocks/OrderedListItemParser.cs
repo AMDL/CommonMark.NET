@@ -57,7 +57,7 @@ namespace CommonMark.Parser.Blocks
         /// <param name="maxChar">Last marker character.</param>
         /// <param name="startValue">Start value.</param>
         /// <param name="factor">Value factor.</param>
-        public OrderedListMarkerRangeParameters(char minChar, char maxChar, short startValue = 0, short factor = 1)
+        public OrderedListMarkerRangeParameters(char minChar, char maxChar, short startValue = 0, short factor = 0)
             : base(startValue)
         {
             MinCharacter = minChar;

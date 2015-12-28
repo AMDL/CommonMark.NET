@@ -1052,6 +1052,92 @@ namespace CommonMark.Tests
 
         [TestMethod]
         [TestCategory("Container blocks - Fancy lists")]
+        public void GeorgianListDisabledByDefault()
+        {
+            Helpers.ExecuteTest("ა.  1", "<p>ა.  1</p>", EmptySettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void GeorgianListDisabledAlone()
+        {
+            var s = CommonMarkSettings.Default.Clone();
+            s.Extensions.Register(new FancyLists(new FancyListsSettings(AdditiveListStyles.All & ~AdditiveListStyles.Georgian)));
+            Helpers.ExecuteTest("ა.  1", "<p>ა.  1</p>", s);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void GeorgianListStart1()
+        {
+            Helpers.ExecuteTest("ა.  1", "<ol style=\"list-style-type: georgian\">\n<li>1</li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void GeorgianListStart7()
+        {
+            Helpers.ExecuteTest("ზ.  7", "<ol start=\"7\" style=\"list-style-type: georgian\">\n<li>7</li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void GeorgianListStart8()
+        {
+            Helpers.ExecuteTest("ჱ.  8", "<ol start=\"8\" style=\"list-style-type: georgian\">\n<li>8</li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void GeorgianListStart9()
+        {
+            Helpers.ExecuteTest("თ.  9", "<ol start=\"9\" style=\"list-style-type: georgian\">\n<li>9</li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void GeorgianListStart10()
+        {
+            Helpers.ExecuteTest("ი.  10", "<ol start=\"10\" style=\"list-style-type: georgian\">\n<li>10</li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void GeorgianListStart43()
+        {
+            Helpers.ExecuteTest("მგ.  43", "<ol start=\"43\" style=\"list-style-type: georgian\">\n<li>43</li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void GeorgianListStart77()
+        {
+            Helpers.ExecuteTest("ოზ.  77", "<ol start=\"77\" style=\"list-style-type: georgian\">\n<li>77</li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void GeorgianListStart1065()
+        {
+            Helpers.ExecuteTest("ჩჲე.  1065", "<ol start=\"1065\" style=\"list-style-type: georgian\">\n<li>1065</li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void GeorgianListStart5865()
+        {
+            Helpers.ExecuteTest("ჭყჲე.  5865", "<ol start=\"5865\" style=\"list-style-type: georgian\">\n<li>5865</li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void GeorgianListStart9999()
+        {
+            Helpers.ExecuteTest("ჰშჟთ.  9999", "<ol start=\"9999\" style=\"list-style-type: georgian\">\n<li>9999</li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
         public void HebrewListDisabledByDefault()
         {
             Helpers.ExecuteTest("יא. אללה הוא עכבר", "<p>יא. אללה הוא עכבר</p>", EmptySettings);

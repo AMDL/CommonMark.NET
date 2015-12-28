@@ -120,13 +120,21 @@ namespace CommonMark.Parser.Blocks.Delimiters
 
             var rangeMin = range.MinCharacter;
             var rangeMax = range.MaxCharacter;
-            var value = range.StartValue > 0 ? range.StartValue : (short)(valueMap.Count + 1);
-            var factor = range.Factor;
+            var value = range.StartValue > 0
+                ? range.StartValue
+                : (short)(valueMap.Count + 1);
+            var factor = range.Factor > 0
+                ? range.Factor
+                : (range.StartValue > 0
+                    ? range.StartValue
+                    : (short)1);
+
             for (int i = 0; i <= rangeMax - rangeMin; i++)
             {
                 valueMap.Add((char)(i + rangeMin), value);
                 value += factor;
             }
+
             if (rangeMin < min)
                 min = rangeMin;
             if (rangeMax > max)

@@ -27,13 +27,21 @@ namespace CommonMark.Extension
         UpperArmenian = 2,
 
         /// <summary>
+        /// Georgian letters.
+        /// </summary>
+        /// <remarks>
+        /// At least two spaces after the dot are required.
+        /// </remarks>
+        Georgian = 4,
+
+        /// <summary>
         /// Hebrew letters.
         /// </summary>
         /// <remarks>
         /// If dots are used as delimiters, at least two spaces after the dot are required.
         /// If parentheses are used as delimiters, only single letters will be recognized as markers.
         /// </remarks>
-        Hebrew = 4,
+        Hebrew = 8,
 
         /// <summary>
         /// All extended additive list styles are enabled.

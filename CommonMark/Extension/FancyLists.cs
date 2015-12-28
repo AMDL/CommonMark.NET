@@ -283,6 +283,7 @@ namespace CommonMark.Extension
         {
             yield return GetLowerArmenianParameters();
             yield return GetUpperArmenianParameters();
+            yield return GetGeorgianParameters();
             yield return GetHebrewParameters();
         }
 
@@ -293,9 +294,9 @@ namespace CommonMark.Extension
                 markers: new[]
                 {
                     new OrderedListMarkerRangeParameters('ա', 'թ'),
-                    new OrderedListMarkerRangeParameters('ժ', 'ղ', 10, 10),
-                    new OrderedListMarkerRangeParameters('ճ', 'ջ', 100, 100),
-                    new OrderedListMarkerRangeParameters('ռ', 'ք', 1000, 1000),
+                    new OrderedListMarkerRangeParameters('ժ', 'ղ', 10),
+                    new OrderedListMarkerRangeParameters('ճ', 'ջ', 100),
+                    new OrderedListMarkerRangeParameters('ռ', 'ք', 1000),
                 },
                 valueBase: 1,
                 delimiters: new[] { new ListItemDelimiterParameters('.') });
@@ -308,9 +309,33 @@ namespace CommonMark.Extension
                 markers: new OrderedListMarkerParameters[]
                 {
                     new OrderedListMarkerRangeParameters('Ա', 'Թ'),
-                    new OrderedListMarkerRangeParameters('Ժ', 'Ղ', 10, 10),
-                    new OrderedListMarkerRangeParameters('Ճ', 'Ջ', 100, 100),
-                    new OrderedListMarkerRangeParameters('Ռ', 'Ք', 1000, 1000),
+                    new OrderedListMarkerRangeParameters('Ժ', 'Ղ', 10),
+                    new OrderedListMarkerRangeParameters('Ճ', 'Ջ', 100),
+                    new OrderedListMarkerRangeParameters('Ռ', 'Ք', 1000),
+                },
+                valueBase: 1,
+                delimiters: new[] { new ListItemDelimiterParameters('.', 2) });
+        }
+
+        private static OrderedListItemParameters GetGeorgianParameters()
+        {
+            return new OrderedListItemParameters(
+                listStyle: "georgian",
+                markers: new OrderedListMarkerParameters[]
+                {
+                    new OrderedListMarkerRangeParameters('ა', 'ზ'),
+                    new OrderedListSingleMarkerParameters('ჱ', 8),
+                    new OrderedListSingleMarkerParameters('თ', 9),
+                    new OrderedListMarkerRangeParameters('ი', 'ნ', 10),
+                    new OrderedListSingleMarkerParameters('ჲ', 60),
+                    new OrderedListMarkerRangeParameters('ო', 'ჟ', 70, 10),
+                    new OrderedListMarkerRangeParameters('რ', 'შ', 100),
+                    new OrderedListMarkerRangeParameters('ჩ', 'ჭ', 1000),
+                    new OrderedListSingleMarkerParameters('ჳ', 6000),
+                    new OrderedListSingleMarkerParameters('ჴ', 7000),
+                    new OrderedListSingleMarkerParameters('ხ', 8000),
+                    new OrderedListSingleMarkerParameters('ჰ', 9000),
+                    new OrderedListSingleMarkerParameters('ჵ', 10000),
                 },
                 valueBase: 1,
                 delimiters: new[] { new ListItemDelimiterParameters('.', 2) });
@@ -318,21 +343,23 @@ namespace CommonMark.Extension
 
         private static OrderedListItemParameters GetHebrewParameters()
         {
-            return new OrderedListItemParameters(listStyle: "hebrew", markers: new OrderedListMarkerParameters[]
-            {
-                new OrderedListMarkerRangeParameters('א', 'י'),
-                new OrderedListSingleMarkerParameters('כ', 20),
-                new OrderedListSingleMarkerParameters('ל', 30),
-                new OrderedListSingleMarkerParameters('מ', 40),
-                new OrderedListSingleMarkerParameters('נ', 50),
-                new OrderedListSingleMarkerParameters('ס', 60),
-                new OrderedListSingleMarkerParameters('ע', 70),
-                new OrderedListSingleMarkerParameters('פ', 80),
-                new OrderedListSingleMarkerParameters('צ', 90),
-                new OrderedListMarkerRangeParameters('ק', 'ת', 100, 100),
-            },
-            valueBase: 1,
-            delimiters: ListItemDelimiterParameters.DefaultUpper);
+            return new OrderedListItemParameters(
+                listStyle: "hebrew",
+                markers: new OrderedListMarkerParameters[]
+                {
+                    new OrderedListMarkerRangeParameters('א', 'י'),
+                    new OrderedListSingleMarkerParameters('כ', 20),
+                    new OrderedListSingleMarkerParameters('ל', 30),
+                    new OrderedListSingleMarkerParameters('מ', 40),
+                    new OrderedListSingleMarkerParameters('נ', 50),
+                    new OrderedListSingleMarkerParameters('ס', 60),
+                    new OrderedListSingleMarkerParameters('ע', 70),
+                    new OrderedListSingleMarkerParameters('פ', 80),
+                    new OrderedListSingleMarkerParameters('צ', 90),
+                    new OrderedListMarkerRangeParameters('ק', 'ת', 100),
+                },
+                valueBase: 1,
+                delimiters: ListItemDelimiterParameters.DefaultUpper);
         }
 
         private static IBlockDelimiterHandler CreateAlphaHandler(CommonMarkSettings settings, OrderedListItemParameters parameters, ListItemDelimiterParameters delimiter)
