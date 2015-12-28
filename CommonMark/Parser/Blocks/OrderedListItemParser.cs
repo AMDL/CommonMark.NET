@@ -40,9 +40,9 @@ namespace CommonMark.Parser.Blocks
         }
 
         /// <summary>
-        /// Gets or sets the marker character.
+        /// Gets the marker character.
         /// </summary>
-        public char Character { get; set; }
+        public char Character { get; }
     }
 
     /// <summary>
@@ -56,22 +56,29 @@ namespace CommonMark.Parser.Blocks
         /// <param name="minChar">First marker character.</param>
         /// <param name="maxChar">Last marker character.</param>
         /// <param name="startValue">Start value.</param>
-        public OrderedListMarkerRangeParameters(char minChar, char maxChar, short startValue = 0)
+        /// <param name="factor">Value factor.</param>
+        public OrderedListMarkerRangeParameters(char minChar, char maxChar, short startValue = 0, short factor = 1)
             : base(startValue)
         {
-            this.MinCharacter = minChar;
-            this.MaxCharacter = maxChar;
+            MinCharacter = minChar;
+            MaxCharacter = maxChar;
+            Factor = factor;
         }
 
         /// <summary>
-        /// Gets or sets the first character in the list marker character range.
+        /// Gets the first character in the list marker character range.
         /// </summary>
-        public char MinCharacter { get; set; }
+        public char MinCharacter { get; }
 
         /// <summary>
-        /// Gets or sets the last character in the list marker character range.
+        /// Gets the last character in the list marker character range.
         /// </summary>
-        public char MaxCharacter { get; set; }
+        public char MaxCharacter { get; }
+
+        /// <summary>
+        /// Gets the value factor.
+        /// </summary>
+        public short Factor { get; }
     }
 
     /// <summary>

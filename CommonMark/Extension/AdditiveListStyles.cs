@@ -14,13 +14,26 @@ namespace CommonMark.Extension
         None = 0,
 
         /// <summary>
+        /// Lowercase Armenian letters.
+        /// </summary>
+        LowerArmenian = 1,
+
+        /// <summary>
+        /// Uppercase Armenian letters.
+        /// </summary>
+        /// <remarks>
+        /// At least two spaces after the dot are required.
+        /// </remarks>
+        UpperArmenian = 2,
+
+        /// <summary>
         /// Hebrew letters.
         /// </summary>
         /// <remarks>
         /// If dots are used as delimiters, at least two spaces after the dot are required.
         /// If parentheses are used as delimiters, only single letters will be recognized as markers.
         /// </remarks>
-        Hebrew,
+        Hebrew = 4,
 
         /// <summary>
         /// All extended additive list styles are enabled.

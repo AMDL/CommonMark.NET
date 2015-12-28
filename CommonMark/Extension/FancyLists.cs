@@ -281,7 +281,39 @@ namespace CommonMark.Extension
 
         private static IEnumerable<OrderedListItemParameters> GetAdditiveParameters()
         {
+            yield return GetLowerArmenianParameters();
+            yield return GetUpperArmenianParameters();
             yield return GetHebrewParameters();
+        }
+
+        private static OrderedListItemParameters GetLowerArmenianParameters()
+        {
+            return new OrderedListItemParameters(
+                listStyle: "lower-armenian",
+                markers: new[]
+                {
+                    new OrderedListMarkerRangeParameters('ա', 'թ'),
+                    new OrderedListMarkerRangeParameters('ժ', 'ղ', 10, 10),
+                    new OrderedListMarkerRangeParameters('ճ', 'ջ', 100, 100),
+                    new OrderedListMarkerRangeParameters('ռ', 'ք', 1000, 1000),
+                },
+                valueBase: 1,
+                delimiters: new[] { new ListItemDelimiterParameters('.') });
+        }
+
+        private static OrderedListItemParameters GetUpperArmenianParameters()
+        {
+            return new OrderedListItemParameters(
+                listStyle: "upper-armenian",
+                markers: new OrderedListMarkerParameters[]
+                {
+                    new OrderedListMarkerRangeParameters('Ա', 'Թ'),
+                    new OrderedListMarkerRangeParameters('Ժ', 'Ղ', 10, 10),
+                    new OrderedListMarkerRangeParameters('Ճ', 'Ջ', 100, 100),
+                    new OrderedListMarkerRangeParameters('Ռ', 'Ք', 1000, 1000),
+                },
+                valueBase: 1,
+                delimiters: new[] { new ListItemDelimiterParameters('.', 2) });
         }
 
         private static OrderedListItemParameters GetHebrewParameters()
@@ -297,10 +329,7 @@ namespace CommonMark.Extension
                 new OrderedListSingleMarkerParameters('ע', 70),
                 new OrderedListSingleMarkerParameters('פ', 80),
                 new OrderedListSingleMarkerParameters('צ', 90),
-                new OrderedListSingleMarkerParameters('ק', 100),
-                new OrderedListSingleMarkerParameters('ר', 200),
-                new OrderedListSingleMarkerParameters('ש', 300),
-                new OrderedListSingleMarkerParameters('ת', 400),
+                new OrderedListMarkerRangeParameters('ק', 'ת', 100, 100),
             },
             valueBase: 1,
             delimiters: ListItemDelimiterParameters.DefaultUpper);

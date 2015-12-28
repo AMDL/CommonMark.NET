@@ -964,6 +964,94 @@ namespace CommonMark.Tests
 
         [TestMethod]
         [TestCategory("Container blocks - Fancy lists")]
+        public void LowerArmentianListDisabledByDefault()
+        {
+            Helpers.ExecuteTest("ա. 1", "<p>ա. 1</p>", EmptySettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void LowerArmentianListDisabledAlone()
+        {
+            var s = CommonMarkSettings.Default.Clone();
+            s.Extensions.Register(new FancyLists(new FancyListsSettings(AdditiveListStyles.All & ~AdditiveListStyles.LowerArmenian)));
+            Helpers.ExecuteTest("ա. 1", "<p>ա. 1</p>", s);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void LowerArmentianListStart1()
+        {
+            Helpers.ExecuteTest("ա. 1", "<ol style=\"list-style-type: lower-armenian\">\n<li>1</li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void LowerArmentianListStart11()
+        {
+            Helpers.ExecuteTest("ժա. 11", "<ol start=\"11\" style=\"list-style-type: lower-armenian\">\n<li>11</li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void LowerArmentianListStart7865()
+        {
+            Helpers.ExecuteTest("ւպկե. 7865", "<ol start=\"7865\" style=\"list-style-type: lower-armenian\">\n<li>7865</li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void LowerArmentianListStart9999()
+        {
+            Helpers.ExecuteTest("քջղթ. 9999", "<ol start=\"9999\" style=\"list-style-type: lower-armenian\">\n<li>9999</li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void UpperArmenianListDisabledByDefault()
+        {
+            Helpers.ExecuteTest("Ա.  1", "<p>Ա.  1</p>", EmptySettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void UpperArmenianListDisabledAlone()
+        {
+            var s = CommonMarkSettings.Default.Clone();
+            s.Extensions.Register(new FancyLists(new FancyListsSettings(AdditiveListStyles.All & ~AdditiveListStyles.UpperArmenian)));
+            Helpers.ExecuteTest("Ա.  1", "<p>Ա.  1</p>", s);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void UpperArmenianListStart1()
+        {
+            Helpers.ExecuteTest("Ա.  1", "<ol style=\"list-style-type: upper-armenian\">\n<li>1</li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void UpperArmenianListStart11()
+        {
+            Helpers.ExecuteTest("ԺԱ.  11", "<ol start=\"11\" style=\"list-style-type: upper-armenian\">\n<li>11</li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void UpperArmenianListStart7865()
+        {
+            Helpers.ExecuteTest("ՒՊԿԵ.  7865", "<ol start=\"7865\" style=\"list-style-type: upper-armenian\">\n<li>7865</li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void UpperArmentianListStart9999()
+        {
+            Helpers.ExecuteTest("ՔՋՂԹ.  9999", "<ol start=\"9999\" style=\"list-style-type: upper-armenian\">\n<li>9999</li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
         public void HebrewListDisabledByDefault()
         {
             Helpers.ExecuteTest("יא. אללה הוא עכבר", "<p>יא. אללה הוא עכבר</p>", EmptySettings);
@@ -1011,6 +1099,13 @@ namespace CommonMark.Tests
         public void HebrewListStart400()
         {
             Helpers.ExecuteTest("ת.  פ.", "<ol start=\"400\" style=\"list-style-type: hebrew\">\n<li>פ.</li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void HebrewListStart199()
+        {
+            Helpers.ExecuteTest("קצט.  פ.", "<ol start=\"199\" style=\"list-style-type: hebrew\">\n<li>פ.</li>\n</ol>", FullSettings);
         }
 
         [TestMethod]
