@@ -11,15 +11,6 @@ namespace CommonMark.Extension
     public abstract class Figures : CommonMarkExtension
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="Figures"/> class.
-        /// </summary>
-        /// <param name="settings">Common settings.</param>
-        protected Figures(CommonMarkSettings settings)
-            : base(settings)
-        {
-        }
-
-        /// <summary>
         /// Initializes the block formatters.
         /// </summary>
         /// <param name="parameters">Formatter parameters.</param>
