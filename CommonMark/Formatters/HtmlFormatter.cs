@@ -417,11 +417,9 @@ namespace CommonMark.Formatters
             }
         }
 
-        private delegate string GetInfixDelegate(Inline element);
-
         private readonly WriteOpeningDelegate[] writePlaintextOpening;
         private readonly GetClosingDelegate[] getPlaintextClosing;
-        private readonly GetInfixDelegate[] getInfix;
+        private readonly string[] infix;
         private readonly IsRenderDelegate[] isPlaintextInlines;
 
         public InlineHtmlFormatter(CommonMarkSettings settings)
@@ -429,14 +427,14 @@ namespace CommonMark.Formatters
         {
             writePlaintextOpening = new WriteOpeningDelegate[Count];
             getPlaintextClosing = new GetClosingDelegate[Count];
-            getInfix = new GetInfixDelegate[Count];
+            infix = new string[Count];
             isPlaintextInlines = new IsRenderDelegate[Count];
 
             for (var i = 0; i < Count; i++)
             {
                 writePlaintextOpening[i] = Formatters[i].WritePlaintextOpening;
                 getPlaintextClosing[i] = Formatters[i].GetPlaintextClosing;
-                getInfix[i] = Formatters[i].GetInfix;
+                infix[i] = Formatters[i].Infix;
                 isPlaintextInlines[i] = Formatters[i].IsPlaintextInlines;
             }
         }
@@ -514,7 +512,7 @@ namespace CommonMark.Formatters
 
                     if (stackPlaintext && renderHtmlInlines && inline.LiteralContentValue.Length > 0)
                     {
-                        stackLiteral = GetInfix(index, inline);
+                        stackLiteral = GetInfix(index);
                         stack.Push(new Entry(stackLiteral, inline, null, withinLink));
                     }
 
@@ -548,9 +546,9 @@ namespace CommonMark.Formatters
 #if OptimizeFor45
         [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
 #endif
-        private string GetInfix(int index, Inline element)
+        private string GetInfix(int index)
         {
-            return getInfix[index](element);
+            return infix[index];
         }
 
 #if OptimizeFor45

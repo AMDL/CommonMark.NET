@@ -126,13 +126,6 @@ namespace CommonMark.Formatters
                 : outer.WritePlaintextOpening(writer, inline);
         }
 
-        public string GetInfix(Inline inline)
-        {
-            return inner.CanHandle(inline)
-                ? inner.GetInfix(inline)
-                : outer.GetInfix(inline);
-        }
-
         public string GetPlaintextClosing(Inline inline)
         {
             return inner.CanHandle(inline)
@@ -145,6 +138,15 @@ namespace CommonMark.Formatters
             return inner.CanHandle(element)
                 ? inner.IsPlaintextInlines(element)
                 : outer.IsPlaintextInlines(element);
+        }
+
+        public string Infix
+        {
+            get
+            {
+                return inner.Infix
+                    ?? outer.Infix;
+            }
         }
     }
 }

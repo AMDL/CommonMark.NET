@@ -15,6 +15,7 @@ namespace CommonMark.Formatters.Inlines
         public ImageFormatter(FormatterParameters parameters)
             : base(parameters, InlineTag.Image, textTag: "image")
         {
+            Infix = "\" title=\"";
         }
 
         /// <summary>
@@ -42,16 +43,6 @@ namespace CommonMark.Formatters.Inlines
         public override bool WritePlaintextOpening(IHtmlTextWriter writer, Inline element)
         {
             return true;
-        }
-
-        /// <summary>
-        /// Returns the infix of an inline element.
-        /// </summary>
-        /// <param name="element">Inline element.</param>
-        /// <returns>The infix.</returns>
-        public override string GetInfix(Inline element)
-        {
-            return "\" title=\"";
         }
 
         /// <summary>

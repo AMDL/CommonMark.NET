@@ -63,16 +63,6 @@ namespace CommonMark.Formatters
         }
 
         /// <summary>
-        /// Returns the infix of an inline element.
-        /// </summary>
-        /// <param name="element">Inline element.</param>
-        /// <returns>The infix.</returns>
-        public virtual string GetInfix(Inline element)
-        {
-            return null;
-        }
-
-        /// <summary>
         /// Returns the plain text closing of an inline element.
         /// </summary>
         /// <param name="element">Inline element.</param>
@@ -90,6 +80,15 @@ namespace CommonMark.Formatters
         public virtual bool IsPlaintextInlines(Inline element)
         {
             return false;
+        }
+
+        /// <summary>
+        /// Gets or sets the infix of an inline element.
+        /// </summary>
+        public string Infix
+        {
+            get;
+            set;
         }
 
         /// <summary>

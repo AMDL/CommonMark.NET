@@ -16,13 +16,6 @@ namespace CommonMark.Formatters
         bool WritePlaintextOpening(IHtmlTextWriter writer, Inline element);
 
         /// <summary>
-        /// Returns the infix of an inline element.
-        /// </summary>
-        /// <param name="element">Inline element.</param>
-        /// <returns>The infix.</returns>
-        string GetInfix(Inline element);
-
-        /// <summary>
         /// Returns the plain text closing of an inline element.
         /// </summary>
         /// <param name="element">Inline element.</param>
@@ -35,5 +28,10 @@ namespace CommonMark.Formatters
         /// <param name="element">Inline element.</param>
         /// <returns><c>true</c> to render the child inlines as plain text.</returns>
         bool IsPlaintextInlines(Inline element);
+
+        /// <summary>
+        /// Gets the infix of an inline element.
+        /// </summary>
+        string Infix { get; }
     }
 }
