@@ -181,7 +181,13 @@ namespace CommonMark.Formatters
 
         protected readonly Stack<TStackEntry> stack = new Stack<TStackEntry>();
 
-        private readonly WriteOpeningDelegate[] writeOpening;
+        protected readonly string[] prefix;
+        protected readonly string[] closing;
+        protected readonly long isFixedOpening;
+        protected readonly long isSelfClosing;
+
+        protected readonly WriteOpeningDelegate[] writeOpening;
+
         private readonly GetClosingDelegate[] getClosing;
         private readonly IsRenderDelegate[] isHtmlInlines;
 
@@ -191,15 +197,55 @@ namespace CommonMark.Formatters
             Formatters = formatters;
             Count = count;
 
-            writeOpening = new WriteOpeningDelegate[count];
-            getClosing = new GetClosingDelegate[count];
-            isHtmlInlines = new IsRenderDelegate[count];
+            var sb = new StringBuilder();
 
-            for (int i = 0; i < count; i++)
+            prefix = new string[Count];
+            closing = new string[Count];
+
+            writeOpening = new WriteOpeningDelegate[Count];
+            getClosing = new GetClosingDelegate[Count];
+            isHtmlInlines = new IsRenderDelegate[Count];
+
+            long m = 1;
+            for (int i = 0; i < Count; i++)
             {
-                writeOpening[i] = formatters[i].WriteOpening;
-                getClosing[i] = formatters[i].GetClosing;
-                isHtmlInlines[i] = formatters[i].IsHtmlInlines;
+                var formatter = Formatters[i];
+                var htmlTags = formatter.HtmlTags;
+                if (formatter.IsFixedOpening)
+                    isFixedOpening |= m;
+                if (formatter.IsSelfClosing)
+                    isSelfClosing |= m;
+
+                if (htmlTags != null)
+                {
+                    sb.Length = 0;
+                    for (int j = 0; j < htmlTags.Length; j++)
+                    {
+                        if (sb.Length > 0)
+                            sb.Append('>');
+                        sb.Append('<');
+                        sb.Append(htmlTags[j]);
+                    }
+                    prefix[i] = sb.ToString();
+
+                    if (!IsSelfClosing(i))
+                    {
+                        sb.Length = 0;
+                        for (var j = htmlTags.Length - 1; j >= 0; j--)
+                        {
+                            sb.Append("</");
+                            sb.Append(htmlTags[j]);
+                            sb.Append('>');
+                        }
+                        closing[i] = sb.ToString();
+                    }
+                }
+
+                writeOpening[i] = formatter.WriteOpening;
+                getClosing[i] = formatter.GetClosing;
+                isHtmlInlines[i] = formatter.IsHtmlInlines;
+
+                m <<= 1;
             }
         }
 
@@ -226,9 +272,17 @@ namespace CommonMark.Formatters
 #if OptimizeFor45
         [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
 #endif
-        protected bool WriteOpening(int index, IHtmlTextWriter writer, TElement element)
+        protected bool IsFixedOpening(int index)
         {
-            return writeOpening[index](writer, element);
+            return 0 != (isFixedOpening & (1 << index));
+        }
+
+#if OptimizeFor45
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+#endif
+        protected bool IsSelfClosing(int index)
+        {
+            return 0 != (isSelfClosing & (1 << index));
         }
 
 #if OptimizeFor45
@@ -236,7 +290,7 @@ namespace CommonMark.Formatters
 #endif
         protected string GetClosing(int index, TElement element)
         {
-            return getClosing[index](element);
+            return closing[index] ?? getClosing[index](element);
         }
 
 #if OptimizeFor45
@@ -283,11 +337,12 @@ namespace CommonMark.Formatters
             long m = 1;
             for (var i = 0; i < Count; i++)
             {
-                if (Formatters[i].IsList)
+                var formatter = Formatters[i];
+                if (formatter.IsList)
                     isList |= m;
-                if (Formatters[i].IsListItem)
+                if (formatter.IsListItem)
                     isListItem |= m;
-                isTight[i] = Formatters[i].IsTight;
+                isTight[i] = formatter.IsTight;
                 m <<= 1;
             }
         }
@@ -363,6 +418,26 @@ namespace CommonMark.Formatters
 #if OptimizeFor45
         [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
 #endif
+        private bool WriteOpening(int index, HtmlTextWriter writer, Block element)
+        {
+            if (IsFixedOpening(index))
+            {
+                writer.EnsureLine();
+                writer.WriteConstant(prefix[index]);
+                if (TrackPositions)
+                    writer.WritePosition(element);
+                if (IsSelfClosing(index))
+                    writer.WriteLineConstant(" />");
+                else
+                    writer.WriteLine('>');
+                return !IsSelfClosing(index);
+            }
+            return writeOpening[index](writer, element);
+        }
+
+#if OptimizeFor45
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+#endif
         private bool IsTight(int index, Block element, bool tight)
         {
             if (IsList(index))
@@ -432,10 +507,11 @@ namespace CommonMark.Formatters
 
             for (var i = 0; i < Count; i++)
             {
-                writePlaintextOpening[i] = Formatters[i].WritePlaintextOpening;
-                getPlaintextClosing[i] = Formatters[i].GetPlaintextClosing;
-                infix[i] = Formatters[i].Infix;
-                isPlaintextInlines[i] = Formatters[i].IsPlaintextInlines;
+                var formatter = Formatters[i];
+                writePlaintextOpening[i] = formatter.WritePlaintextOpening;
+                getPlaintextClosing[i] = formatter.GetPlaintextClosing;
+                infix[i] = formatter.Infix;
+                isPlaintextInlines[i] = formatter.IsPlaintextInlines;
             }
         }
 
@@ -538,7 +614,26 @@ namespace CommonMark.Formatters
 #if OptimizeFor45
         [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
 #endif
-        private bool WritePlaintextOpening(int index, IHtmlTextWriter writer, Inline element)
+        private bool WriteOpening(int index, HtmlTextWriter writer, Inline element)
+        {
+            if (IsFixedOpening(index))
+            {
+                writer.WriteConstant(prefix[index]);
+                if (TrackPositions)
+                    writer.WritePosition(element);
+                if (IsSelfClosing(index))
+                    writer.WriteConstant(" />");
+                else
+                    writer.Write('>');
+                return !IsSelfClosing(index);
+            }
+            return writeOpening[index](writer, element);
+        }
+
+#if OptimizeFor45
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+#endif
+        private bool WritePlaintextOpening(int index, HtmlTextWriter writer, Inline element)
         {
             return writePlaintextOpening[index](writer, element);
         }

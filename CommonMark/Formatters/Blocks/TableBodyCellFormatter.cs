@@ -6,7 +6,7 @@ namespace CommonMark.Formatters.Blocks
     internal sealed class TableBodyCellFormatter : BlockFormatter
     {
         public TableBodyCellFormatter(FormatterParameters parameters)
-            : base(parameters, BlockTag.TableBodyCell, "td")
+            : base(parameters, BlockTag.TableBodyCell, htmlTags: "td")
         {
         }
 
@@ -25,7 +25,6 @@ namespace CommonMark.Formatters.Blocks
                     writer.WriteConstant(" style=\"text-align: center\"");
                     break;
             }
-
             WritePosition(writer, block);
             writer.WriteLine('>');
             return true;

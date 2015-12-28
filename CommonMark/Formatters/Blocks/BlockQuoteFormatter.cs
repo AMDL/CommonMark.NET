@@ -12,8 +12,9 @@ namespace CommonMark.Formatters.Blocks
         /// </summary>
         /// <param name="parameters"></param>
         public BlockQuoteFormatter(FormatterParameters parameters)
-            : base(parameters, BlockTag.BlockQuote, "blockquote", textTag: "block_quote")
+            : base(parameters, BlockTag.BlockQuote, textTag: "block_quote", htmlTags: "blockquote")
         {
+            IsFixedOpening = true;
         }
     }
 }

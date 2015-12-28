@@ -6,8 +6,9 @@ namespace CommonMark.Formatters.Blocks
     internal class TableFormatter : BlockFormatter
     {
         public TableFormatter(FormatterParameters parameters)
-            : base(parameters, BlockTag.Table, "table")
+            : base(parameters, BlockTag.Table, htmlTags: "table")
         {
+            IsFixedOpening = true;
         }
 
         public override IEnumerable<KeyValuePair<string, object>> GetSyntaxData(ISyntaxFormatter formatter, Block block)

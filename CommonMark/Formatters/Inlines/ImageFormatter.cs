@@ -13,9 +13,10 @@ namespace CommonMark.Formatters.Inlines
         /// </summary>
         /// <param name="parameters">Formatter parameters.</param>
         public ImageFormatter(FormatterParameters parameters)
-            : base(parameters, InlineTag.Image, textTag: "image")
+            : base(parameters, InlineTag.Image, textTag: "image", htmlTags: "img")
         {
             Infix = "\" title=\"";
+            IsSelfClosing = true;
         }
 
         /// <summary>
@@ -26,8 +27,7 @@ namespace CommonMark.Formatters.Inlines
         /// <returns><c>true</c> if the parent formatter should visit the child elements.</returns>
         public override bool WriteOpening(IHtmlTextWriter writer, Inline element)
         {
-            writer.WriteConstant("<img");
-            WritePosition(writer, element);
+            StartWriteOpening(writer, element);
             writer.WriteConstant(" src=\"");
             writer.WriteEncodedUrl(ResolveUri(element.TargetUrl));
             writer.WriteConstant("\" alt=\"");

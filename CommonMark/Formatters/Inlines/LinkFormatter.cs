@@ -13,7 +13,7 @@ namespace CommonMark.Formatters.Inlines
         /// </summary>
         /// <param name="parameters">Formatter parameters.</param>
         public LinkFormatter(FormatterParameters parameters)
-            : base(parameters, InlineTag.Link, "a", textTag: "link")
+            : base(parameters, InlineTag.Link, "link", "a")
         {
         }
 
@@ -50,26 +50,6 @@ namespace CommonMark.Formatters.Inlines
         public override bool WritePlaintextOpening(IHtmlTextWriter writer, Inline element)
         {
             return true;
-        }
-
-        /// <summary>
-        /// Returns the closing of an inline element.
-        /// </summary>
-        /// <param name="element">Inline lement.</param>
-        /// <returns>The closing.</returns>
-        public override string GetClosing(Inline element)
-        {
-            return "</a>";
-        }
-
-        /// <summary>
-        /// Returns the plaintext closing of an inline element.
-        /// </summary>
-        /// <param name="element">Inline lement.</param>
-        /// <returns>The closing.</returns>
-        public override string GetPlaintextClosing(Inline element)
-        {
-            return null;
         }
 
         /// <summary>

@@ -13,11 +13,12 @@ namespace CommonMark.Formatters.Inlines
         /// </summary>
         /// <param name="parameters">Formatter parameters.</param>
         /// <param name="tag">Inline element tag.</param>
-        /// <param name="htmlTag">HTML tag.</param>
-        /// <param name="textTag">Text syntax tree tag. If unspecified, <paramref name="htmlTag"/> will be used.</param>
-        protected EmphasisFormatter(FormatterParameters parameters, InlineTag tag, string htmlTag, string textTag = null)
-            : base(parameters, tag, htmlTag, textTag: textTag)
+        /// <param name="textTag">Text syntax tree tag. If unspecified, the first element of <paramref name="htmlTags"/> will be used.</param>
+        /// <param name="htmlTags">HTML tags.</param>
+        protected EmphasisFormatter(FormatterParameters parameters, InlineTag tag, string textTag = null, params string[] htmlTags)
+            : base(parameters, tag, textTag, htmlTags)
         {
+            IsFixedOpening = true;
         }
 
         /// <summary>

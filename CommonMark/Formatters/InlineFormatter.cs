@@ -14,11 +14,10 @@ namespace CommonMark.Formatters
         /// </summary>
         /// <param name="parameters">Formatter parameters.</param>
         /// <param name="tag">Inline element tag.</param>
-        /// <param name="htmlTag">HTML tag.</param>
-        /// <param name="isSelfClosing"><c>true</c> if <paramref name="htmlTag"/> is self-closing.</param>
-        /// <param name="textTag">Text syntax tree tag. If unspecified, <paramref name="htmlTag"/> will be used.</param>
-        public InlineFormatter(FormatterParameters parameters, InlineTag tag, string htmlTag = null, bool isSelfClosing = false, string textTag = null)
-            : base(parameters, tag, htmlTag, isSelfClosing, textTag)
+        /// <param name="textTag">Text syntax tree tag. If unspecified, the first element of <paramref name="htmlTags"/> will be used.</param>
+        /// <param name="htmlTags">HTML tags.</param>
+        public InlineFormatter(FormatterParameters parameters, InlineTag tag, string textTag = null, params string[] htmlTags)
+            : base(parameters, tag, textTag, htmlTags)
         {
         }
 
@@ -40,14 +39,30 @@ namespace CommonMark.Formatters
         /// <returns><c>true</c> if the parent formatter should visit the child elements.</returns>
         public virtual bool WriteOpening(IHtmlTextWriter writer, Inline element)
         {
-            var value = "<" + HtmlTag;
-            writer.WriteConstant(value);
-            WritePosition(writer, element);
+            StartWriteOpening(writer, element);
             if (IsSelfClosing)
                 writer.WriteConstant(" />");
             else
                 writer.Write('>');
             return !IsSelfClosing;
+        }
+
+        /// <summary>
+        /// Writes the start of an inline element opening.
+        /// </summary>
+        /// <param name="writer">HTML writer.</param>
+        /// <param name="element">Inline element.</param>
+        protected void StartWriteOpening(IHtmlTextWriter writer, Inline element)
+        {
+            var value = string.Empty;
+            for (int i = 0; i < HtmlTags.Length; i++)
+            {
+                if (value.Length > 0)
+                    value += '>';
+                value += "<" + HtmlTags[i];
+            }
+            writer.WriteConstant(value);
+            WritePosition(writer, element);
         }
 
         /// <summary>

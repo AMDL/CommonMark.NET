@@ -12,7 +12,7 @@ namespace CommonMark.Formatters.Inlines
         /// </summary>
         /// <param name="parameters">Formatter parameters.</param>
         public StrongFormatter(FormatterParameters parameters)
-            : base(parameters, InlineTag.Strong, "strong")
+            : base(parameters, InlineTag.Strong, htmlTags: "strong")
         {
         }
     }

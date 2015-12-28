@@ -16,6 +16,24 @@ namespace CommonMark.Formatters
         TTag Tag { get; }
 
         /// <summary>
+        /// Gets the HTML tags.
+        /// </summary>
+        /// <value>HTML tags.</value>
+        string[] HtmlTags { get; }
+
+        /// <summary>
+        /// Gets a value indicating whether handled elements have a fixed opening.
+        /// </summary>
+        /// <value><c>true</c> if handled elements have a fixed opening.</value>
+        bool IsFixedOpening { get; }
+
+        /// <summary>
+        /// Gets a value indicating whether the HTML tags are self-closing.
+        /// </summary>
+        /// <value><c>true</c> if the HTML tags are self-closing.</value>
+        bool IsSelfClosing { get; }
+
+        /// <summary>
         /// Gets the text syntax tree tag.
         /// </summary>
         /// <value>Tag.</value>

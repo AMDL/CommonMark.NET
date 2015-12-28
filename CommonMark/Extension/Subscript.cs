@@ -23,7 +23,7 @@ namespace CommonMark.Extension
         /// </summary>
         protected override IEnumerable<IInlineFormatter> InitializeInlineFormatters(FormatterParameters parameters)
         {
-            yield return new InlineFormatter(parameters, InlineTag.Subscript, "sub");
+            yield return new InlineFormatter(parameters, InlineTag.Subscript, htmlTags: "sub");
         }
     }
 }

@@ -40,12 +40,12 @@ namespace CommonMark.Extension
             var formatters = new List<IBlockFormatter>(base.InitializeBlockFormatters(parameters));
             if (0 != (settings.Features & PipeTablesFeatures.Footers))
             {
-                formatters.Add(new BlockFormatter(parameters, BlockTag.TableFooter, "tfoot"));
+                formatters.Add(new BlockFormatter(parameters, BlockTag.TableFooter, htmlTags: "tfoot"));
             }
             if (0 != (settings.Features & PipeTablesFeatures.ColumnGroups))
             {
                 formatters.Add(new TableColumnFormatter(parameters));
-                formatters.Add(new BlockFormatter(parameters, BlockTag.TableColumnGroup, "colgroup"));
+                formatters.Add(new BlockFormatter(parameters, BlockTag.TableColumnGroup, htmlTags: "colgroup"));
             }
             return formatters;
         }

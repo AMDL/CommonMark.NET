@@ -14,24 +14,12 @@ namespace CommonMark.Formatters.Blocks
         /// </summary>
         /// <param name="parameters">Formatter parameters.</param>
         /// <param name="tag">Block element tag.</param>
-        /// <param name="htmlTag">HTML tag.</param>
         /// <param name="textTag">Text syntax tree tag.</param>
-        public ListFormatter(FormatterParameters parameters, BlockTag tag, string htmlTag, string textTag)
-            : base(parameters, tag, htmlTag, textTag: textTag)
+        /// <param name="htmlTags">HTML tag.</param>
+        public ListFormatter(FormatterParameters parameters, BlockTag tag, string textTag, params string[] htmlTags)
+            : base(parameters, tag, textTag, htmlTags)
         {
             IsList = true;
-        }
-
-        /// <summary>
-        /// Writes the start of a list element opening.
-        /// </summary>
-        /// <param name="writer">HTML writer.</param>
-        /// <param name="element">List element.</param>
-        protected void StartWriteOpening(IHtmlTextWriter writer, Block element)
-        {
-            writer.EnsureLine();
-            writer.Write('<');
-            writer.WriteConstant(HtmlTag);
         }
 
         /// <summary>
@@ -49,7 +37,6 @@ namespace CommonMark.Formatters.Blocks
                 writer.WriteConstant(list.Style);
                 writer.Write('\"');
             }
-            WritePosition(writer, element);
             writer.WriteLine('>');
             return true;
         }

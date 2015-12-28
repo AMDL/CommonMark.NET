@@ -13,10 +13,11 @@ namespace CommonMark.Formatters.Blocks
         /// </summary>
         /// <param name="parameters">Formatter parameters.</param>
         /// <param name="tag">Block element tag.</param>
-        /// <param name="htmlTag">HTML tag.</param>
-        public CaptionFormatter(FormatterParameters parameters, BlockTag tag, string htmlTag)
-            : base(parameters, tag, htmlTag)
+        /// <param name="htmlTags">HTML tags.</param>
+        public CaptionFormatter(FormatterParameters parameters, BlockTag tag, params string[] htmlTags)
+            : base(parameters, tag, htmlTags: htmlTags)
         {
+            IsFixedOpening = true;
         }
 
         /// <summary>

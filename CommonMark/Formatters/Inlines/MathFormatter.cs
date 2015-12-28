@@ -5,7 +5,7 @@ namespace CommonMark.Formatters.Inlines
     internal sealed class MathFormatter : InlineFormatter
     {
         public MathFormatter(FormatterParameters parameters)
-            : base(parameters, InlineTag.Math, "span", textTag: "math")
+            : base(parameters, InlineTag.Math, "math", "span")
         {
         }
 

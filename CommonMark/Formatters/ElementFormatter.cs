@@ -16,16 +16,15 @@ namespace CommonMark.Formatters
         /// </summary>
         /// <param name="parameters">Formatter parameters.</param>
         /// <param name="tag">Element tag.</param>
-        /// <param name="htmlTag">HTML tag.</param>
-        /// <param name="isSelfClosing"><c>true</c> if <paramref name="htmlTag"/> is self-closing.</param>
-        /// <param name="textTag">Text syntax tree tag. If unspecified, <paramref name="htmlTag"/> will be used.</param>
-        protected ElementFormatter(FormatterParameters parameters, TTag tag, string htmlTag, bool isSelfClosing, string textTag)
+        /// <param name="textTag">Text syntax tree tag. If unspecified, the first element of <paramref name="htmlTags"/> will be used.</param>
+        /// <param name="htmlTags">HTML tags.</param>
+        protected ElementFormatter(FormatterParameters parameters, TTag tag, string textTag, params string[] htmlTags)
         {
             this.Parameters = parameters;
             this.Tag = tag;
-            this.HtmlTag = htmlTag;
-            this.TextTag = textTag ?? htmlTag;
-            this.IsSelfClosing = isSelfClosing || htmlTag == null;
+            this.HtmlTags = htmlTags;
+            this.IsSelfClosing = htmlTags == null || htmlTags.Length == 0;
+            this.TextTag = textTag ?? (!IsSelfClosing ? htmlTags[0] : null);
         }
 
         #endregion
@@ -42,12 +41,32 @@ namespace CommonMark.Formatters
         }
 
         /// <summary>
-        /// Gets the HTML tag.
+        /// Gets the HTML tags.
         /// </summary>
-        /// <value>HTML tag.</value>
-        protected string HtmlTag
+        /// <value>HTML tags.</value>
+        public string[] HtmlTags
         {
             get;
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether handled elements have a fixed opening.
+        /// </summary>
+        /// <value><c>true</c> if handled elements have a fixed opening.</value>
+        public bool IsFixedOpening
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the HTML tags are self-closing.
+        /// </summary>
+        /// <value><c>true</c> if the HTML tags are self-closing.</value>
+        public bool IsSelfClosing
+        {
+            get;
+            set;
         }
 
         /// <summary>
@@ -77,7 +96,7 @@ namespace CommonMark.Formatters
         /// <returns>The closing.</returns>
         public virtual string GetClosing(TElement element)
         {
-            return !IsSelfClosing ? "</" + HtmlTag + '>' : null;
+            return null;
         }
 
         /// <summary>
@@ -139,15 +158,6 @@ namespace CommonMark.Formatters
         /// Gets the formatter parameters.
         /// </summary>
         protected FormatterParameters Parameters
-        {
-            get;
-        }
-
-        /// <summary>
-        /// Gets the value indicating whether the HTML tag is self-closing.
-        /// </summary>
-        /// <value><c>true</c> if the HTML tag is self-closing.</value>
-        protected bool IsSelfClosing
         {
             get;
         }

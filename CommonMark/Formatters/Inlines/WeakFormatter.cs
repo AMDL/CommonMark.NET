@@ -12,7 +12,7 @@ namespace CommonMark.Formatters.Inlines
         /// </summary>
         /// <param name="parameters">Formatter parameters.</param>
         public WeakFormatter(FormatterParameters parameters)
-            : base(parameters, InlineTag.Emphasis, "em", "emph")
+            : base(parameters, InlineTag.Emphasis, "emph", "em")
         {
         }
     }

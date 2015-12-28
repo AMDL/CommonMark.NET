@@ -13,8 +13,9 @@ namespace CommonMark.Formatters.Inlines
         /// </summary>
         /// <param name="parameters">Formatter parameters.</param>
         public CodeFormatter(FormatterParameters parameters)
-            : base(parameters, InlineTag.Code, "code", isSelfClosing: false)
+            : base(parameters, InlineTag.Code, htmlTags: "code")
         {
+            IsFixedOpening = true;
         }
 
         /// <summary>

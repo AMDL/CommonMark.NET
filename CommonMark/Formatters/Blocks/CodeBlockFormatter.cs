@@ -15,7 +15,7 @@ namespace CommonMark.Formatters.Blocks
         /// <param name="tag">Block element tag.</param>
         /// <param name="textTag">Text syntax tree tag.</param>
         protected CodeBlockFormatter(FormatterParameters parameters, BlockTag tag, string textTag)
-            : base(parameters, tag, textTag: textTag)
+            : base(parameters, tag, textTag, "pre", "code")
         {
         }
 
@@ -27,9 +27,7 @@ namespace CommonMark.Formatters.Blocks
         /// <returns><c>true</c> if the parent formatter should visit the child elements.</returns>
         public override bool WriteOpening(IHtmlTextWriter writer, Block element)
         {
-            writer.EnsureLine();
-            writer.WriteConstant("<pre><code");
-            WritePosition(writer, element);
+            StartWriteOpening(writer, element);
             WriteInfo(writer, element);
             writer.Write('>');
             writer.WriteEncodedHtml(element.StringContent);

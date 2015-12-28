@@ -12,8 +12,9 @@ namespace CommonMark.Formatters.Inlines
         /// </summary>
         /// <param name="parameters">Formatter parameters.</param>
         public LineBreakFormatter(FormatterParameters parameters)
-            : base(parameters, InlineTag.LineBreak, textTag: "linebreak")
+            : base(parameters, InlineTag.LineBreak, "linebreak", "br")
         {
+            IsSelfClosing = true;
         }
 
         /// <summary>

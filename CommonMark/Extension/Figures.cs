@@ -17,7 +17,7 @@ namespace CommonMark.Extension
         protected override IEnumerable<IBlockFormatter> InitializeBlockFormatters(FormatterParameters parameters)
         {
             yield return new CaptionFormatter(parameters, BlockTag.FigureCaption, "figcaption");
-            yield return new BlockFormatter(parameters, BlockTag.Figure, "figure");
+            yield return new BlockFormatter(parameters, BlockTag.Figure, htmlTags: "figure");
         }
     }
 }

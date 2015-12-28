@@ -21,6 +21,33 @@ namespace CommonMark.Formatters
             get;
         }
 
+        public string[] HtmlTags
+        {
+            get
+            {
+                return inner.HtmlTags
+                    ?? outer.HtmlTags;
+            }
+        }
+
+        public bool IsFixedOpening
+        {
+            get
+            {
+                return inner.IsFixedOpening
+                    && outer.IsFixedOpening;
+            }
+        }
+
+        public bool IsSelfClosing
+        {
+            get
+            {
+                return inner.IsSelfClosing
+                    && outer.IsSelfClosing;
+            }
+        }
+
         public string TextTag
         {
             get

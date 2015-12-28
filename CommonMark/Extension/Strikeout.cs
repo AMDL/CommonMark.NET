@@ -23,7 +23,7 @@ namespace CommonMark.Extension
         /// </summary>
         protected override IEnumerable<IInlineFormatter> InitializeInlineFormatters(FormatterParameters parameters)
         {
-            yield return new InlineFormatter(parameters, InlineTag.Strikethrough, "del");
+            yield return new InlineFormatter(parameters, InlineTag.Strikethrough, htmlTags: "del");
         }
     }
 }

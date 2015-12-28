@@ -25,9 +25,9 @@ namespace CommonMark.Extension
         /// </summary>
         protected override IEnumerable<IBlockFormatter> InitializeBlockFormatters(FormatterParameters parameters)
         {
-            yield return new BlockFormatter(parameters, BlockTag.DefinitionList, "dl") { IsList = true };
-            yield return new BlockFormatter(parameters, BlockTag.Term, "dt");
-            yield return new BlockFormatter(parameters, BlockTag.Definition, "dd") { IsListItem = true };
+            yield return new BlockFormatter(parameters, BlockTag.DefinitionList, htmlTags: "dl") { IsList = true };
+            yield return new BlockFormatter(parameters, BlockTag.Term, htmlTags: "dt");
+            yield return new BlockFormatter(parameters, BlockTag.Definition, htmlTags: "dd") { IsListItem = true };
         }
     }
 }

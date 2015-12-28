@@ -16,7 +16,7 @@ namespace CommonMark.Formatters.Blocks
         /// <param name="tag">Block element tag.</param>
         /// <param name="textTag">Text syntax tree tag.</param>
         public OrderedListFormatter(FormatterParameters parameters, BlockTag tag = BlockTag.OrderedList, string textTag = "ordered_list")
-            : base(parameters, tag, "ol", textTag)
+            : base(parameters, tag, textTag, "ol")
         {
         }
 

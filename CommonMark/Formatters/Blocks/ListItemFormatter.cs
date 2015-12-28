@@ -12,8 +12,9 @@ namespace CommonMark.Formatters.Blocks
         /// </summary>
         /// <param name="parameters">Formatter parameters.</param>
         public ListItemFormatter(FormatterParameters parameters)
-            : base(parameters, BlockTag.ListItem, "li", textTag: "list_item")
+            : base(parameters, BlockTag.ListItem, "list_item", "li")
         {
+            IsFixedOpening = true;
             IsListItem = true;
         }
     }

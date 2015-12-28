@@ -15,7 +15,7 @@ namespace CommonMark.Formatters.Blocks
         /// <param name="tag">Block element tag.</param>
         /// <param name="textTag">Text syntax tree tag.</param>
         public UnorderedListFormatter(FormatterParameters parameters, BlockTag tag = BlockTag.UnorderedList, string textTag = "unordered_list")
-            : base(parameters, tag, "ul", textTag)
+            : base(parameters, tag, textTag, "ul")
         {
         }
 

@@ -14,6 +14,7 @@ namespace CommonMark.Formatters.Blocks
         public ParagraphFormatter(FormatterParameters parameters)
             : base(parameters, BlockTag.Paragraph, textTag: "paragraph")
         {
+            IsFixedOpening = true;
         }
     }
 }
