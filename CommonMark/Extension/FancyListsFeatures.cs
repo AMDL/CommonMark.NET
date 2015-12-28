@@ -97,6 +97,16 @@ namespace CommonMark.Extension
         Unordered = 3968,
 
         /// <summary>
+        /// List types will be rendered in the output.
+        /// </summary>
+        OutputTypes = 4096,
+
+        /// <summary>
+        /// List styles will be rendered in the output.
+        /// </summary>
+        OutputStyles = 8192,
+
+        /// <summary>
         /// All fancy lists features are enabled.
         /// </summary>
         All = 0x7FFFFFFF

@@ -42,7 +42,7 @@ namespace CommonMark.Formatters.Blocks
         /// <returns><c>true</c> if the parent formatter should visit the child elements.</returns>
         protected bool CompleteWriteOpening(IHtmlTextWriter writer, Block element, TData list)
         {
-            if (list.Style != null)
+            if (list.Style != null && Parameters.IsOutputListStyles)
             {
                 writer.WriteConstant(" style=\"list-style-type: ");
                 writer.WriteConstant(list.Style);

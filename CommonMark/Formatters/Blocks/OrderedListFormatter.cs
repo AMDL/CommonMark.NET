@@ -37,7 +37,7 @@ namespace CommonMark.Formatters.Blocks
                 writer.WriteConstant(list.Start.ToString(CultureInfo.InvariantCulture));
                 writer.Write('\"');
             }
-            if (list.MarkerType != 0)
+            if (list.MarkerType != 0 && Parameters.IsOutputListTypes)
             {
                 writer.WriteConstant(" type=\"");
                 writer.Write((char)list.MarkerType);

@@ -3,6 +3,7 @@ using CommonMark.Parser.Blocks;
 using CommonMark.Parser.Blocks.Delimiters;
 using System;
 using System.Collections.Generic;
+using CommonMark.Formatters;
 
 namespace CommonMark.Extension
 {
@@ -11,7 +12,7 @@ namespace CommonMark.Extension
     /// </summary>
     public class FancyLists : CommonMarkExtension
     {
-        private readonly FancyListsSettings fancyListsSettings;
+        private readonly FancyListsSettings settings;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FancyLists"/> class.
@@ -19,7 +20,7 @@ namespace CommonMark.Extension
         /// <param name="fancyListsSettings">Fancy lists settings.</param>
         public FancyLists(FancyListsSettings fancyListsSettings)
         {
-            this.fancyListsSettings = fancyListsSettings;
+            settings = fancyListsSettings;
         }
 
         /// <summary>
@@ -34,7 +35,6 @@ namespace CommonMark.Extension
             AddLatinHandlers(handlers, settings);
             AddHashHandlers(handlers, settings);
             AddUnorderedHandlers(handlers, settings);
-            AddDecimalHandlers(handlers, settings);
             AddNumericHandlers(handlers, settings);
             AddAlphaHandlers(handlers, settings);
             AddAdditiveHandlers(handlers, settings);
@@ -46,12 +46,22 @@ namespace CommonMark.Extension
         /// </summary>
         protected override IEnumerable<char> InitializeEscapableCharacters()
         {
-            return GetCharacters(GetUnorderedParameters, (int)fancyListsSettings.Features, (int)FancyListsFeatures.Unordered);
+            return GetCharacters(GetUnorderedParameters, (int)settings.Features, (int)FancyListsFeatures.Unordered);
+        }
+
+        /// <summary>
+        /// Initializes the formatting properties.
+        /// </summary>
+        /// <param name="parameters">Formatter parameters.</param>
+        public override void InitializeFormatting(FormatterParameters parameters)
+        {
+            parameters.IsOutputListTypes = 0 != (settings.Features & FancyListsFeatures.OutputTypes);
+            parameters.IsOutputListStyles = 0 != (settings.Features & FancyListsFeatures.OutputStyles);
         }
 
         private void AddRomanHandlers(List<IBlockDelimiterHandler> handlers, CommonMarkSettings settings)
         {
-            AddHandlers(handlers, settings, GetRomanParameters, CreateRomanHandler, (int)fancyListsSettings.Features, (int)FancyListsFeatures.Roman);
+            AddHandlers(handlers, settings, GetRomanParameters, CreateRomanHandler, (int)this.settings.Features, (int)FancyListsFeatures.Roman);
         }
 
         private static IEnumerable<OrderedListItemParameters> GetRomanParameters()
@@ -67,7 +77,7 @@ namespace CommonMark.Extension
 
         private void AddLatinHandlers(List<IBlockDelimiterHandler> handlers, CommonMarkSettings settings)
         {
-            AddHandlers(handlers, settings, GetLatinParameters, CreateLatinHandler, (int)fancyListsSettings.Features, (int)FancyListsFeatures.Latin);
+            AddHandlers(handlers, settings, GetLatinParameters, CreateLatinHandler, (int)this.settings.Features, (int)FancyListsFeatures.Latin);
         }
 
         private static IEnumerable<OrderedListItemParameters> GetLatinParameters()
@@ -83,7 +93,7 @@ namespace CommonMark.Extension
 
         private void AddHashHandlers(List<IBlockDelimiterHandler> handlers, CommonMarkSettings settings)
         {
-            AddHandlers(handlers, settings, GetHashParameters, CreateHashHandler, (int)fancyListsSettings.Features, (int)FancyListsFeatures.OrderedHashes);
+            AddHandlers(handlers, settings, GetHashParameters, CreateHashHandler, (int)this.settings.Features, (int)FancyListsFeatures.OrderedHashes);
         }
 
         private static IEnumerable<OrderedListItemParameters> GetHashParameters()
@@ -98,7 +108,7 @@ namespace CommonMark.Extension
 
         private void AddUnorderedHandlers(List<IBlockDelimiterHandler> handlers, CommonMarkSettings settings)
         {
-            AddHandlers(handlers, settings, GetUnorderedParameters, CreateUnorderedHandler, (int)fancyListsSettings.Features, (int)FancyListsFeatures.Unordered);
+            AddHandlers(handlers, settings, GetUnorderedParameters, CreateUnorderedHandler, (int)this.settings.Features, (int)FancyListsFeatures.Unordered);
         }
 
         private static IEnumerable<UnorderedListItemParameters> GetUnorderedParameters()
@@ -117,7 +127,7 @@ namespace CommonMark.Extension
 
         private void AddDecimalHandlers(List<IBlockDelimiterHandler> handlers, CommonMarkSettings settings)
         {
-            if (0 != (fancyListsSettings.Features & FancyListsFeatures.OrderedHashes))
+            if (0 != (this.settings.Features & FancyListsFeatures.OrderedHashes))
             {
                 var parameters = NumericListItemHandler.DefaultParameters.Clone();
                 parameters.MarkerType = Syntax.OrderedListMarkerType.Decimal;
@@ -127,7 +137,7 @@ namespace CommonMark.Extension
 
         private void AddNumericHandlers(List<IBlockDelimiterHandler> handlers, CommonMarkSettings settings)
         {
-            AddHandlers(handlers, settings, GetNumericParameters, CreateNumericHandler, (int)fancyListsSettings.NumericListStyles, (int)NumericListStyles.All);
+            AddHandlers(handlers, settings, GetNumericParameters, CreateNumericHandler, (int)this.settings.NumericListStyles, (int)NumericListStyles.All);
         }
 
         private static IEnumerable<OrderedListItemParameters> GetNumericParameters()
@@ -165,7 +175,7 @@ namespace CommonMark.Extension
 
         private void AddAlphaHandlers(List<IBlockDelimiterHandler> handlers, CommonMarkSettings settings)
         {
-            AddHandlers(handlers, settings, GetAlphaParameters, CreateAlphaHandler, (int)fancyListsSettings.AlphaListStyles, (int)AlphaListStyles.All);
+            AddHandlers(handlers, settings, GetAlphaParameters, CreateAlphaHandler, (int)this.settings.AlphaListStyles, (int)AlphaListStyles.All);
         }
 
         private static IEnumerable<OrderedListItemParameters> GetAlphaParameters()
@@ -247,7 +257,7 @@ namespace CommonMark.Extension
 
         private void AddAdditiveHandlers(List<IBlockDelimiterHandler> handlers, CommonMarkSettings settings)
         {
-            AddHandlers(handlers, settings, GetAdditiveParameters, CreateAlphaHandler, (int)fancyListsSettings.AdditiveListStyles, (int)AdditiveListStyles.All);
+            AddHandlers(handlers, settings, GetAdditiveParameters, CreateAlphaHandler, (int)this.settings.AdditiveListStyles, (int)AdditiveListStyles.All);
         }
 
         private static IEnumerable<OrderedListItemParameters> GetAdditiveParameters()

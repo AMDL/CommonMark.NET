@@ -15,8 +15,9 @@ namespace CommonMark.Parser.Blocks.Delimiters
             BlockTag.ListItem,
             BlockTag.OrderedList,
 #pragma warning disable 0618
-            ListType.Ordered
+            ListType.Ordered,
 #pragma warning restore 0618
+            OrderedListMarkerType.Decimal
         );
 
         /// <summary>

@@ -38,6 +38,24 @@ namespace CommonMark.Formatters
 
         #endregion TrackPositions
 
+        /// <summary>
+        /// Gets or sets a value indicating whether list types need to be written to the output.
+        /// </summary>
+        public bool IsOutputListTypes
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether list styles need to be written to the output.
+        /// </summary>
+        public bool IsOutputListStyles
+        {
+            get;
+            set;
+        }
+
         #region UriResolver
 
         /// <summary>
