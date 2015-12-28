@@ -311,7 +311,8 @@ namespace CommonMark.Extension
 
         internal static void IncorporateCells(Block block)
         {
-            if (block.Tag != BlockTag.TableCell)
+            var tag = block.Tag;
+            if (tag != BlockTag.TableHeaderCell && tag != BlockTag.TableBodyCell)
                 return;
 
             var table = block.Parent.Table;
@@ -338,7 +339,7 @@ namespace CommonMark.Extension
                 }
 
 #pragma warning disable 0618
-                nextChild = new Block(BlockTag.TableCell, startLine, startColumn, sourcePosition)
+                nextChild = new Block(tag, startLine, startColumn, sourcePosition)
 #pragma warning restore 0618
                 {
                     Parent = block,

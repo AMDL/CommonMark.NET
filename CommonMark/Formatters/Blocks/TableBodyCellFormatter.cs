@@ -6,13 +6,8 @@ namespace CommonMark.Formatters.Blocks
     internal sealed class TableBodyCellFormatter : BlockFormatter
     {
         public TableBodyCellFormatter(FormatterParameters parameters)
-            : base(parameters, BlockTag.TableCell, "td")
+            : base(parameters, BlockTag.TableBodyCell, "td")
         {
-        }
-
-        public override bool CanHandle(Block block)
-        {
-            return block.Tag == BlockTag.TableCell && block.Parent.Tag == BlockTag.TableBody;
         }
 
         public override bool WriteOpening(IHtmlTextWriter writer, Block block, bool tight)
@@ -42,27 +37,6 @@ namespace CommonMark.Formatters.Blocks
             {
                 {"align", block.TableCell.ColumnData.Alignment},
             };
-        }
-    }
-
-    internal sealed class TableHeaderCellFormatter : BlockFormatter
-    {
-        public TableHeaderCellFormatter(FormatterParameters parameters)
-            : base(parameters, BlockTag.TableCell, "th")
-        {
-        }
-
-        public override bool CanHandle(Block element)
-        {
-            return element.Tag == BlockTag.TableCell && element.Parent.Tag != BlockTag.TableBody;
-        }
-    }
-
-    internal sealed class TableCellFormatter : DelegateBlockFormatter
-    {
-        public TableCellFormatter(FormatterParameters parameters)
-            : base(BlockTag.TableCell, new TableBodyCellFormatter(parameters), new TableHeaderCellFormatter(parameters))
-        {
         }
     }
 }

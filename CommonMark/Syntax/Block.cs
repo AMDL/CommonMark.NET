@@ -223,7 +223,8 @@ namespace CommonMark.Syntax
 
         /// <summary>
         /// Gets or sets the additional properties that apply to table cell elements.
-        /// Only set for <see cref="BlockTag.TableCell"/> elements if tables are enabled.
+        /// Only set for <see cref="BlockTag.TableHeaderCell"/> and
+        /// <see cref="BlockTag.TableBodyCell"/> elements if tables are enabled.
         /// </summary>
         public TableCellData TableCell { get; set; }
 

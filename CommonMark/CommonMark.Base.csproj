@@ -151,7 +151,7 @@
     <Compile Include="Formatters\IElementFormatter.cs" />
     <Compile Include="Formatters\IHtmlTextWriter.cs" />
     <Compile Include="Formatters\Blocks\CaptionFormatter.cs" />
-    <Compile Include="Formatters\Blocks\TableCellFormatter.cs" />
+    <Compile Include="Formatters\Blocks\TableBodyCellFormatter.cs" />
     <Compile Include="Formatters\Blocks\TableFormatter.cs" />
     <Compile Include="Formatters\InlineFormatter.cs" />
     <Compile Include="Func.cs" />

@@ -162,16 +162,22 @@ namespace CommonMark.Syntax
         TableBody,
 
         /// <summary>
-        /// A table row element. Will contain <see cref="TableCell"/> elements.
+        /// A table row element. Will contain <see cref="TableHeaderCell"/> or <see cref="TableBodyCell"/> elements.
         /// Only present if tables are enabled.
         /// </summary>
         TableRow,
 
         /// <summary>
-        /// A table cell element.
+        /// A table header/footer cell element.
         /// Only present if tables are enabled.
         /// </summary>
-        TableCell,
+        TableHeaderCell,
+
+        /// <summary>
+        /// A table body cell element.
+        /// Only present if tables are enabled.
+        /// </summary>
+        TableBodyCell,
 
         /// <summary>
         /// A figure element.
