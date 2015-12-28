@@ -14,12 +14,10 @@ namespace CommonMark.Extension
         /// <summary>
         /// Initializes a new instance of the <see cref="DefinitionLists"/> class.
         /// </summary>
-        /// <param name="settings">Common settings.</param>
         /// <param name="definitionListsSettings">Definition lists settings.</param>
-        public DefinitionLists(CommonMarkSettings settings, DefinitionListsSettings definitionListsSettings)
-            : base(settings)
+        public DefinitionLists(DefinitionListsSettings definitionListsSettings)
         {
-            this.settings = definitionListsSettings;
+            settings = definitionListsSettings;
         }
 
         /// <summary>

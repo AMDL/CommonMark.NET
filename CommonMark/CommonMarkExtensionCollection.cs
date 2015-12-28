@@ -101,7 +101,7 @@ namespace CommonMark
                 AlphaListStyles = Extension.AlphaListStyles.All,
                 AdditiveListStyles = Extension.AdditiveListStyles.All,
             }));
-            Register(new Extension.DefinitionLists(Settings, new Extension.DefinitionListsSettings(Extension.DefinitionListsFeatures.All)));
+            Register(new Extension.DefinitionLists(new Extension.DefinitionListsSettings(Extension.DefinitionListsFeatures.All)));
             Register(new Extension.PipeTables(Settings, new Extension.PipeTablesSettings(Extension.PipeTablesFeatures.All)));
             Register(new Extension.TableCaptions(Settings, new Extension.TableCaptionsSettings
             {
