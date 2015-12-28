@@ -68,6 +68,22 @@
         HeavenlyStem = 64,
 
         /// <summary>
+        /// Full-width lowercase ASCII letters.
+        /// </summary>
+        /// <remarks>
+        /// At least one space after the dot is required.
+        /// </remarks>
+        FullWidthLower = 128,
+
+        /// <summary>
+        /// Full-width uppercase ASCII letters.
+        /// </summary>
+        /// <remarks>
+        /// At least one space after the dot is required.
+        /// </remarks>
+        FullWidthUpper = 256,
+
+        /// <summary>
         /// All extended alphabetical list styles are enabled.
         /// </summary>
         All = 0x7FFFFFFF

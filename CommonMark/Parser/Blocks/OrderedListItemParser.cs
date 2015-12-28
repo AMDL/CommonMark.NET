@@ -104,6 +104,19 @@ namespace CommonMark.Parser.Blocks
         /// <summary>
         /// Initializes a new instance of the <see cref="OrderedListItemParameters"/> class.
         /// </summary>
+        /// <param name="markerMinChar">First marker character.</param>
+        /// <param name="markerMaxChar">Last marker character.</param>
+        /// <param name="maxMarkerLength">Maximum marker length.</param>
+        /// <param name="listStyle">List style.</param>
+        /// <param name="delimiterChars">Delimiter characters.</param>
+        public OrderedListItemParameters(char markerMinChar, char markerMaxChar, int maxMarkerLength = 3, string listStyle = null, params char[] delimiterChars)
+            : this(new[] { new OrderedListMarkerRangeParameters(markerMinChar, markerMaxChar) }, listStyle: listStyle, delimiters: GetDelimiters(delimiterChars, maxMarkerLength))
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="OrderedListItemParameters"/> class.
+        /// </summary>
         /// <param name="markerChars">Marker characters.</param>
         /// <param name="maxMarkerLength">Maximum marker length.</param>
         /// <param name="listStyle">List style.</param>

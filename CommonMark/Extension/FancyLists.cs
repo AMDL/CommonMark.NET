@@ -186,6 +186,8 @@ namespace CommonMark.Extension
             yield return GetKatakanaParameters();
             yield return GetEarthlyBranchParameters();
             yield return GetHeavenlyStemParameters();
+            yield return GetFullWidthLowerParameters();
+            yield return GetFullWidthUpperParameters();
         }
 
         private static OrderedListItemParameters GetLowerGreekParameters()
@@ -252,6 +254,24 @@ namespace CommonMark.Extension
                 listStyle: "cjk-heavenly-stem",
                 markerChars: "甲乙丙丁戊己庚辛壬癸",
                 delimiterChars: '、');
+        }
+
+        private static OrderedListItemParameters GetFullWidthLowerParameters()
+        {
+            return new OrderedListItemParameters(
+                listStyle: "fullwidth-lower-alpha",
+                markerMinChar: 'ａ',
+                markerMaxChar: 'ｚ',
+                delimiterChars: '．');
+        }
+
+        private static OrderedListItemParameters GetFullWidthUpperParameters()
+        {
+            return new OrderedListItemParameters(
+                listStyle: "fullwidth-upper-alpha",
+                markerMinChar: 'Ａ',
+                markerMaxChar: 'Ｚ',
+                delimiterChars: '．');
         }
 
         private void AddAdditiveHandlers(List<IBlockDelimiterHandler> handlers, CommonMarkSettings settings)

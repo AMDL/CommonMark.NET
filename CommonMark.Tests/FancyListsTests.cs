@@ -904,6 +904,66 @@ namespace CommonMark.Tests
 
         [TestMethod]
         [TestCategory("Container blocks - Fancy lists")]
+        public void FullWidthLowerListDisabledByDefault()
+        {
+            Helpers.ExecuteTest("ａ． 1", "<p>ａ． 1</p>", EmptySettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void FullWidthLowerListDisabledAlone()
+        {
+            var s = CommonMarkSettings.Default.Clone();
+            s.Extensions.Register(new FancyLists(new FancyListsSettings(AlphaListStyles.All & ~AlphaListStyles.FullWidthLower)));
+            Helpers.ExecuteTest("ａ． 1", "<p>ａ． 1</p>", s);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void FullWidthLowerListStart1()
+        {
+            Helpers.ExecuteTest("ａ． 1", "<ol style=\"list-style-type: fullwidth-lower-alpha\">\n<li>1</li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void FullWidthLowerListStart9999()
+        {
+            Helpers.ExecuteTest("ｎｔｏ． 9999", "<ol start=\"9999\" style=\"list-style-type: fullwidth-lower-alpha\">\n<li>9999</li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void FullWidthUpperListDisabledByDefault()
+        {
+            Helpers.ExecuteTest("ａ． 1", "<p>ａ． 1</p>", EmptySettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void FullWidthUpperListDisabledAlone()
+        {
+            var s = CommonMarkSettings.Default.Clone();
+            s.Extensions.Register(new FancyLists(new FancyListsSettings(AlphaListStyles.All & ~AlphaListStyles.FullWidthUpper)));
+            Helpers.ExecuteTest("Ａ． 1", "<p>Ａ． 1</p>", s);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void FullWidthUpperListStart1()
+        {
+            Helpers.ExecuteTest("Ａ． 1", "<ol style=\"list-style-type: fullwidth-upper-alpha\">\n<li>1</li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
+        public void FullWidthUpperListStart9999()
+        {
+            Helpers.ExecuteTest("ＮＴＯ． 9999", "<ol start=\"9999\" style=\"list-style-type: fullwidth-upper-alpha\">\n<li>9999</li>\n</ol>", FullSettings);
+        }
+
+        [TestMethod]
+        [TestCategory("Container blocks - Fancy lists")]
         public void HebrewListDisabledByDefault()
         {
             Helpers.ExecuteTest("יא. אללה הוא עכבר", "<p>יא. אללה הוא עכבר</p>", EmptySettings);
