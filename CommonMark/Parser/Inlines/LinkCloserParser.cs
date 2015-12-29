@@ -83,38 +83,37 @@ namespace CommonMark.Parser.Inlines
         // Parse a link or the link portion of an image, or return a fallback.
         private static Reference ParseLinkDetails(Subject subj, InlineParserParameters parameters)
         {
-            int n;
-            int sps;
-            int endlabel, starturl, endurl, starttitle, endtitle, endall;
-            string url, title;
-            endlabel = subj.Position;
+            var endLabel = subj.Position;
+            var curChar = InlineMethods.peek_char(subj);
 
-            var c = InlineMethods.peek_char(subj);
-
-            if (c == '(' &&
-                    ((sps = ScanSpaces(subj.Buffer, subj.Position + 1, subj.Length)) > -1) &&
-                    ((n = Scanner.scan_link_url(subj.Buffer, subj.Position + 1 + sps, subj.Length)) > -1))
+            int spaceCount, urlLength;
+            if (curChar == '(' &&
+                    ((spaceCount = ScanSpaces(subj.Buffer, subj.Position + 1, subj.Length)) > -1) &&
+                    ((urlLength = Scanner.scan_link_url(subj.Buffer, subj.Position + 1 + spaceCount, subj.Length)) > -1))
             {
                 // try to parse an explicit link:
-                starturl = subj.Position + 1 + sps; // after (
-                endurl = starturl + n;
-                starttitle = endurl + ScanSpaces(subj.Buffer, endurl, subj.Length);
+                var startUrl = subj.Position + 1 + spaceCount; // after (
+                var endUrl = startUrl + urlLength;
+                var startTitle = endUrl + ScanSpaces(subj.Buffer, endUrl, subj.Length);
+
                 // ensure there are spaces btw url and title
-                endtitle = (starttitle == endurl) ? starttitle :
-                           starttitle + Scanner.scan_link_title(subj.Buffer, starttitle, subj.Length);
-                endall = endtitle + ScanSpaces(subj.Buffer, endtitle, subj.Length);
-                if (endall < subj.Length && subj.Buffer[endall] == ')')
+                var endTitle = (startTitle == endUrl)
+                    ? startTitle
+                    : startTitle + Scanner.scan_link_title(subj.Buffer, startTitle, subj.Length);
+                var endAll = endTitle + ScanSpaces(subj.Buffer, endTitle, subj.Length);
+                if (endAll < subj.Length && subj.Buffer[endAll] == ')')
                 {
-                    subj.Position = endall + 1;
-                    url = subj.Buffer.Substring(starturl, endurl - starturl);
+                    subj.Position = endAll + 1;
+
+                    var url = subj.Buffer.Substring(startUrl, urlLength);
                     url = InlineMethods.CleanUrl(url, parameters);
-                    title = subj.Buffer.Substring(starttitle, endtitle - starttitle);
+                    var title = subj.Buffer.Substring(startTitle, endTitle - startTitle);
                     title = InlineMethods.CleanTitle(title, parameters);
 
-                    return new Reference() { Title = title, Url = url };
+                    return new Reference(null, url, title);
                 }
             }
-            else if (c == '[' || c == ' ' || c == '\n')
+            else if (curChar == '[')
             {
                 var label = InlineMethods.ParseReferenceLabel(subj);
                 if (label != null)
@@ -128,13 +127,13 @@ namespace CommonMark.Parser.Inlines
 
                     // rollback the subject but return InvalidReference so that the caller knows not to
                     // parse 'foo' from [foo][bar].
-                    subj.Position = endlabel;
+                    subj.Position = endLabel;
                     return Reference.InvalidReference;
                 }
             }
 
             // rollback the subject position because didn't match anything.
-            subj.Position = endlabel;
+            subj.Position = endLabel;
             return null;
         }
 

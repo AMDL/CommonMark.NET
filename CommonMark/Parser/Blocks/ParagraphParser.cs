@@ -81,7 +81,7 @@ namespace CommonMark.Parser.Blocks
                 var origPos = subj.Position;
                 while (subj.Position < subj.Buffer.Length
                     && subj.Buffer[subj.Position] == '['
-                    && 0 != InlineMethods.ParseReference(subj, Settings.InlineParserParameters))
+                    && InlineMethods.ParseReference(subj, Settings.InlineParserParameters))
                 {
                 }
 

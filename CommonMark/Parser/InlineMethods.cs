@@ -1,5 +1,4 @@
 ﻿using CommonMark.Syntax;
-using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -390,56 +389,35 @@ namespace CommonMark.Parser
         /// reference definition labels for use with the reference dictionary because 
         /// it does not properly parse nested inlines.
         /// 
-        /// Assumes the source starts with '[' character or spaces before '['.
+        /// Assumes the source starts with '[' character.
         /// Returns null and does not advance if no matching ] is found.
         /// Note the precedence:  code backticks have precedence over label bracket
         /// markers, which have precedence over *, _, and other inline formatting
         /// markers. So, 2 below contains a link while 1 does not:
         /// 1. [a link `with a ](/url)` character
-        /// 2. [a link *with emphasized ](/url) text*        /// </summary>
+        /// 2. [a link *with emphasized ](/url) text*
+        /// </summary>
         public static StringPart? ParseReferenceLabel(Subject subj)
         {
-            var startPos = subj.Position;
-            var source = subj.Buffer;
-            var len = subj.Length;
+            var startOffset = subj.Position;
+            var labelStartOffset = ++subj.Position;
 
-            while (subj.Position < len)
-            {
-                var c = subj.Buffer[subj.Position];
-                if (c == ' ' || c == '\n')
-                {
-                    subj.Position++;
-                    continue;
-                }
-                else if (c == '[')
-                {
-                    subj.Position++;
-                    break;
-                }
-                else
-                {
-                    subj.Position = startPos;
-                    return null;
-                }
-            }
+            var line = subj.Buffer;
+            var length = subj.Position + Reference.MaximumReferenceLabelLength;
+            if (length > line.Length)
+                length = line.Length;
 
-            var labelStartPos = subj.Position;
-
-            len = subj.Position + Reference.MaximumReferenceLabelLength;
-            if (len > source.Length)
-                len = source.Length;
-
-            subj.Position = source.IndexOfAny(BracketSpecialCharacters, subj.Position, len - subj.Position);
+            subj.Position = line.IndexOfAny(BracketSpecialCharacters, subj.Position, length - subj.Position);
             while (subj.Position > -1)
             {
-                var c = source[subj.Position];
+                var c = line[subj.Position];
                 if (c == '\\')
                 {
                     subj.Position += 2;
-                    if (subj.Position >= len)
+                    if (subj.Position >= length)
                         break;
 
-                    subj.Position = source.IndexOfAny(BracketSpecialCharacters, subj.Position, len - subj.Position);
+                    subj.Position = line.IndexOfAny(BracketSpecialCharacters, subj.Position, length - subj.Position);
                 }
                 else if (c == '[')
                 {
@@ -447,31 +425,34 @@ namespace CommonMark.Parser
                 }
                 else
                 {
-                    var label = new StringPart(source, labelStartPos, subj.Position - labelStartPos);
+                    var label = new StringPart(line, labelStartOffset, subj.Position - labelStartOffset);
                     subj.Position++;
                     return label;
                 }
             }
 
-            subj.Position = startPos;
+            subj.Position = startOffset;
             return null;
         }
 
-        // Parse reference.  Assumes string begins with '[' character.
-        // Modify refmap if a reference is encountered.
-        // Return 0 if no reference found, otherwise position of subject
-        // after reference is parsed.
-        public static int ParseReference(Subject subj, InlineParserParameters parameters)
+        /// <summary>
+        /// Parses a reference. Assumes the string begins with '[' character.
+        /// Modifies the refmap if a reference is encountered.
+        /// </summary>
+        /// <param name="subj"></param>
+        /// <param name="parameters"></param>
+        /// <returns><c>true</c> if successful.</returns>
+        public static bool ParseReference(Subject subj, InlineParserParameters parameters)
         {
             string title;
             var startPos = subj.Position;
 
             // parse label:
-            var lab = ParseReferenceLabel(subj);
-            if (lab == null || lab.Value.Length > Reference.MaximumReferenceLabelLength)
+            var label = ParseReferenceLabel(subj);
+            if (label == null || label.Value.Length > Reference.MaximumReferenceLabelLength)
                 goto INVALID;
 
-            if (!HasNonWhitespace(lab.Value))
+            if (!HasNonWhitespace(label.Value))
                 goto INVALID;
 
             // colon:
@@ -533,13 +514,13 @@ namespace CommonMark.Parser
             }
 
             // insert reference into refmap
-            AddReference(subj.Document.ReferenceMap, lab.Value, url, title, parameters);
+            AddReference(subj.Document.ReferenceMap, label.Value, url, title, parameters);
 
-            return subj.Position;
+            return true;
 
         INVALID:
             subj.Position = startPos;
-            return 0;
+            return false;
         }
 
         /// <summary>
