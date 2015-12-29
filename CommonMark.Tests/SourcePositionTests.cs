@@ -63,7 +63,7 @@ namespace CommonMark.Tests
 
         [TestMethod]
         [TestCategory("SourcePosition - Blocks")]
-        public void SourcePositionHorizontalRuler()
+        public void SourcePositionThematicBreak()
         {
             var data = "foo\n\n----\n\nbar";
             var doc = Helpers.ParseDocument(data, Settings);
