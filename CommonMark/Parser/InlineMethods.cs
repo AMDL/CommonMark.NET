@@ -27,9 +27,9 @@ namespace CommonMark.Parser
         /// <returns>
         /// A valid reference, <see cref="Reference.InvalidReference"/> if the reference label is not valid, or <c>null</c>.
         /// </returns>
-        public static Reference LookupReference(Dictionary<string, Reference> refmap, StringPart lab, InlineParserParameters parameters)
+        public static Reference LookupReference(DocumentData data, StringPart lab, InlineParserParameters parameters)
         {
-            if (refmap == null)
+            if (data?.ReferenceMap == null)
                 return null;
 
             if (lab.Length > Reference.MaximumReferenceLabelLength)
@@ -38,7 +38,7 @@ namespace CommonMark.Parser
             string label = NormalizeReference(lab, parameters);
 
             Reference r;
-            if (refmap.TryGetValue(label, out r))
+            if (data.ReferenceMap.TryGetValue(label, out r))
                 return r;
 
             return null;
@@ -505,7 +505,7 @@ namespace CommonMark.Parser
                     if (c == '\n')
                         subj.Position++;
                     else if (c != '\0')
-                       goto INVALID;
+                        goto INVALID;
                 }
                 else
                 {
@@ -518,7 +518,7 @@ namespace CommonMark.Parser
 
             return true;
 
-        INVALID:
+            INVALID:
             subj.Position = startPos;
             return false;
         }

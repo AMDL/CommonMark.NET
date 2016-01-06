@@ -206,7 +206,7 @@ namespace CommonMark.Syntax
         public HeadingData Heading { get; set; }
 
         /// <summary>
-        /// Gets or sets the heading level (as in <c>&lt;h1&gt;</c> or <c>&lt;h2&gt;</c>).
+        /// Obsolete. Use <see cref="Heading"/> instead.
         /// </summary>
         [Obsolete("Use " + nameof(Heading) + " instead.")]
         public int HeaderLevel
@@ -248,8 +248,7 @@ namespace CommonMark.Syntax
         public DocumentData Document { get; set; }
 
         /// <summary>
-        /// Gets or sets the dictionary containing resolved link references. Only set on the document node, <c>null</c>
-        /// and not used for all other elements.
+        /// Obsolete. Use <see cref="Document"/> instead.
         /// </summary>
         [Obsolete("Use " + nameof(Document) + " instead.")]
         public Dictionary<string, Reference> ReferenceMap

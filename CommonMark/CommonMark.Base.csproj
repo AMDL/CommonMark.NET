@@ -237,6 +237,5 @@
     </EmbeddedResource>
     <None Include="Properties\public.snk" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="CommonMark.Targets.csproj" />
 </Project>

@@ -1,4 +1,6 @@
-﻿namespace CommonMark.Syntax
+﻿using System;
+
+namespace CommonMark.Syntax
 {
     /// <summary>
     /// Specifies the element type of an <see cref="Inline"/> instance.
