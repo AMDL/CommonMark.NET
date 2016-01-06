@@ -13,7 +13,7 @@ namespace CommonMark.Formatters.Inlines
         /// </summary>
         /// <param name="parameters">Formatter parameters.</param>
         public RawHtmlFormatter(FormatterParameters parameters)
-            : base(parameters, InlineTag.RawHtml, textTag: "html")
+            : base(parameters, InlineTag.RawHtml, textTag: "html_inline")
         {
         }
 
