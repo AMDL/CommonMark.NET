@@ -153,8 +153,8 @@ namespace CommonMark.Parser
         {
             var istack = new InlineStack
             {
-                DelimeterCount = numdelims,
-                Delimeter = delimiter,
+                DelimiterCount = numdelims,
+                Delimiter = delimiter,
                 StartingInline = inlText,
                 StartPosition = subj.Position,
                 Priority = priority,

@@ -154,17 +154,17 @@ namespace CommonMark.Parser
             return sb.ToString();
         }
 
-        internal static int MatchInlineStack(InlineStack opener, Subject subj, int closingDelimeterCount, InlineStack closer, InlineDelimiterCharacterParameters delimiters, InlineParserParameters parameters)
+        internal static int MatchInlineStack(InlineStack opener, Subject subj, int closingDelimiterCount, InlineStack closer, InlineDelimiterCharacterParameters delimiters, InlineParserParameters parameters)
         {
-            // calculate the actual number of delimeters used from this closer
+            // calculate the actual number of delimiters used from this closer
             int useDelims;
-            var openerDelims = opener.DelimeterCount;
+            var openerDelims = opener.DelimiterCount;
 
             var singleChar = delimiters.SingleCharacter;
             var doubleChar = delimiters.DoubleCharacter;
-            if (closingDelimeterCount < 3 || openerDelims < 3)
+            if (closingDelimiterCount < 3 || openerDelims < 3)
             {
-                useDelims = closingDelimeterCount <= openerDelims ? closingDelimeterCount : openerDelims;
+                useDelims = closingDelimiterCount <= openerDelims ? closingDelimiterCount : openerDelims;
                 if (useDelims == 2 && doubleChar.IsEmpty)
                     useDelims = 1;
                 if (useDelims == 1 && singleChar.IsEmpty)
@@ -175,7 +175,7 @@ namespace CommonMark.Parser
             else if (doubleChar.IsEmpty)
                 useDelims = 1;
             else
-                useDelims = closingDelimeterCount % 2 == 0 ? 2 : 1;
+                useDelims = closingDelimiterCount % 2 == 0 ? 2 : 1;
 
             Inline inl = opener.StartingInline;
             InlineTag tag = useDelims == 1 ? singleChar.Tag : doubleChar.Tag;
@@ -192,14 +192,14 @@ namespace CommonMark.Parser
             else
             {
                 // the opener will only partially be used - stack entry remains (truncated) and a new inline is added.
-                opener.DelimeterCount -= useDelims;
-                inl.LiteralContent = inl.LiteralContent.Substring(0, opener.DelimeterCount);
+                opener.DelimiterCount -= useDelims;
+                inl.LiteralContent = inl.LiteralContent.Substring(0, opener.DelimiterCount);
                 inl.SourceLastPosition -= useDelims;
 
                 inl.NextSibling = new Inline(tag, inl.NextSibling);
                 inl = inl.NextSibling;
 
-                inl.SourcePosition = opener.StartingInline.SourcePosition + opener.DelimeterCount;
+                inl.SourcePosition = opener.StartingInline.SourcePosition + opener.DelimiterCount;
             }
 
             // there are two callers for this method, distinguished by the `closer` argument.
@@ -211,13 +211,13 @@ namespace CommonMark.Parser
             if (closer != null)
             {
                 var clInl = closer.StartingInline;
-                if ((closer.DelimeterCount -= useDelims) > 0)
+                if ((closer.DelimiterCount -= useDelims) > 0)
                 {
                     // a new inline element must be created because the old one has to be the one that
                     // finalizes the children of the emphasis
                     var newCloserInline = new Inline(clInl.LiteralContent.Substring(useDelims));
                     newCloserInline.SourcePosition = inl.SourceLastPosition = clInl.SourcePosition + useDelims;
-                    newCloserInline.SourceLength = closer.DelimeterCount;
+                    newCloserInline.SourceLength = closer.DelimiterCount;
                     newCloserInline.NextSibling = clInl.NextSibling;
 
                     clInl.LiteralContent = null;
@@ -235,7 +235,7 @@ namespace CommonMark.Parser
             }
             else if (subj != null)
             {
-                inl.SourceLastPosition = subj.Position - closingDelimeterCount + useDelims;
+                inl.SourceLastPosition = subj.Position - closingDelimiterCount + useDelims;
                 subj.LastInline = inl;
             }
 

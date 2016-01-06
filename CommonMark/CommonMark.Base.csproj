@@ -213,7 +213,7 @@
     <Compile Include="Syntax\InlineTag.cs" />
     <Compile Include="Syntax\ListData.cs" />
     <Compile Include="Formatters\TextSyntaxFormatter.cs" />
-    <Compile Include="Syntax\ListDelimeter.cs" />
+    <Compile Include="Syntax\ListDelimiter.cs" />
     <Compile Include="Syntax\ListType.cs" />
     <Compile Include="Syntax\OrderedListData.cs" />
     <Compile Include="Syntax\OrderedListMarkerType.cs" />

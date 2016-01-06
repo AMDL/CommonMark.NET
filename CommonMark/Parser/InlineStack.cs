@@ -29,14 +29,14 @@ namespace CommonMark.Parser
         public Inline StartingInline;
 
         /// <summary>
-        /// The number of delimeter characters found for this opener.
+        /// The number of delimiter characters found for this opener.
         /// </summary>
-        public int DelimeterCount;
+        public int DelimiterCount;
 
         /// <summary>
         /// The character that was used in the opener.
         /// </summary>
-        public char Delimeter;
+        public char Delimiter;
 
         /// <summary>
         /// The position in the <see cref="Subject.Buffer"/> where this inline element was found.
@@ -102,10 +102,10 @@ namespace CommonMark.Parser
         /// </summary>
         /// <param name="seachBackwardsFrom">Stack element to search backwards from.</param>
         /// <param name="priority">Priority.</param>
-        /// <param name="delimeter">Delimiter character.</param>
+        /// <param name="delimiter">Delimiter character.</param>
         /// <param name="canClose"><c>true</c> if a matching opener was found.</param>
         /// <returns>Inline stack.</returns>
-        public static InlineStack FindMatchingOpener(InlineStack seachBackwardsFrom, InlineStackPriority priority, char delimeter, out bool canClose)
+        public static InlineStack FindMatchingOpener(InlineStack seachBackwardsFrom, InlineStackPriority priority, char delimiter, out bool canClose)
         {
             canClose = true;
             var istack = seachBackwardsFrom;
@@ -119,7 +119,7 @@ namespace CommonMark.Parser
                 }
 
                 if (istack.Priority > priority ||
-                    (istack.Delimeter == delimeter && 0 != (istack.Flags & InlineStackFlags.Closer)))
+                    (istack.Delimiter == delimiter && 0 != (istack.Flags & InlineStackFlags.Closer)))
                 {
                     // there might be a closer further back but we cannot go there yet because a higher priority element is blocking
                     // the other option is that the stack entry could be a closer for the same char - this means
@@ -127,7 +127,7 @@ namespace CommonMark.Parser
                     return null;
                 }
 
-                if (istack.Delimeter == delimeter)
+                if (istack.Delimiter == delimiter)
                     return istack;
 
                 istack = istack.Previous;
@@ -234,15 +234,15 @@ namespace CommonMark.Parser
                     else if (0 != (istack.Flags & InlineStackFlags.Closer))
                     {
                         bool canClose;
-                        var iopener = FindMatchingOpener(istack.Previous, istack.Priority, istack.Delimeter, out canClose);
+                        var iopener = FindMatchingOpener(istack.Previous, istack.Priority, istack.Delimiter, out canClose);
                         if (iopener != null)
                         {
                             bool retry = false;
-                            var delimiters = iopener.Delimeter < delimChars.Length ? delimChars[iopener.Delimeter] : default(InlineDelimiterCharacterParameters);
+                            var delimiters = iopener.Delimiter < delimChars.Length ? delimChars[iopener.Delimiter] : default(InlineDelimiterCharacterParameters);
                             if (!delimiters.IsEmpty)
                             {
-                                var useDelims = InlineMethods.MatchInlineStack(iopener, subj, istack.DelimeterCount, istack, delimiters, parameters);
-                                if (istack.DelimeterCount > 0)
+                                var useDelims = InlineMethods.MatchInlineStack(iopener, subj, istack.DelimiterCount, istack, delimiters, parameters);
+                                if (istack.DelimiterCount > 0)
                                     retry = true;
                             }
 

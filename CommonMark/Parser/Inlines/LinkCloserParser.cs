@@ -37,7 +37,7 @@ namespace CommonMark.Parser.Inlines
             if (istack != null)
             {
                 // if the opener is "inactive" then it means that there was a nested link
-                if (istack.DelimeterCount == -1)
+                if (istack.DelimiterCount == -1)
                 {
                     InlineStack.RemoveStackEntry(istack, subj, istack, parameters);
                     return new Inline("]", subj.Position - 1, subj.Position);
@@ -157,13 +157,13 @@ namespace CommonMark.Parser.Inlines
                     var temp = opener.Previous;
                     while (temp != null && temp.Priority <= InlineStack.InlineStackPriority.Links)
                     {
-                        if (temp.Delimeter == '[' && temp.Flags == opener.Flags)
+                        if (temp.Delimiter == '[' && temp.Flags == opener.Flags)
                         {
                             // mark the previous entries as "inactive"
-                            if (temp.DelimeterCount == -1)
+                            if (temp.DelimiterCount == -1)
                                 break;
 
-                            temp.DelimeterCount = -1;
+                            temp.DelimiterCount = -1;
                         }
 
                         temp = temp.Previous;
