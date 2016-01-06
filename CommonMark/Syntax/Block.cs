@@ -212,13 +212,7 @@ namespace CommonMark.Syntax
         public int HeaderLevel
         {
             get { return Heading.Level; }
-            set
-            {
-                Heading = new HeadingData
-                {
-                    Level = (byte)value,
-                };
-            }
+            set { Heading = new HeadingData(value); }
         }
 
         /// <summary>

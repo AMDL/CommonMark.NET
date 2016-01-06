@@ -67,10 +67,7 @@ namespace CommonMark.Parser.Blocks.Delimiters
             {
                 info.AdvanceOffset(info.Line.Length - 1 - info.Offset, false);
                 info.Container.Tag = Tag;
-                info.Container.Heading = new HeadingData
-                {
-                    Level = HeadingLevel <= byte.MaxValue ? (byte)HeadingLevel : byte.MaxValue,
-                };
+                info.Container.Heading = new HeadingData(HeadingLevel);
                 return true;
             }
             return false;
