@@ -20,6 +20,7 @@ namespace CommonMark.Parser.Blocks.Delimiters
                 new OrderedListSingleMarkerParameters('x', value:10),
                 new OrderedListSingleMarkerParameters('l', value:50),
                 new OrderedListSingleMarkerParameters('c', value:100),
+                new OrderedListSingleMarkerParameters('d', value:500),
                 new OrderedListSingleMarkerParameters('m', value:1000),
             },
             delimiters: new[]
@@ -41,6 +42,7 @@ namespace CommonMark.Parser.Blocks.Delimiters
                 new OrderedListSingleMarkerParameters('X', value:10),
                 new OrderedListSingleMarkerParameters('L', value:50),
                 new OrderedListSingleMarkerParameters('C', value:100),
+                new OrderedListSingleMarkerParameters('D', value:500),
                 new OrderedListSingleMarkerParameters('M', value:1000),
             },
             delimiters: new[]

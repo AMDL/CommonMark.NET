@@ -250,7 +250,7 @@ namespace CommonMark.Tests
         [TestCategory("Container blocks - Fancy lists")]
         public void TrailingLowerRomanInLowerLatinList()
         {
-            Helpers.ExecuteTest("c. foo\nd. bar", "<ol start=\"3\" type=\"a\" style=\"list-style-type: lower-latin\">\n<li>foo</li>\n<li>bar</li>\n</ol>", FullSettings);
+            Helpers.ExecuteTest("c. foo\nd. bar\ne. baz", "<ol start=\"3\" type=\"a\" style=\"list-style-type: lower-latin\">\n<li>foo</li>\n<li>bar</li>\n<li>baz</li>\n</ol>", FullSettings);
         }
 
         [TestMethod]

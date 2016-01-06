@@ -68,13 +68,27 @@ namespace CommonMark.Parser.Blocks.Delimiters
             {
                 int start = 0;
                 short value = 0;
-                AdjustStart(ref start, ref value, info.CurrentCharacter);
-                containerList.Start = start - 1; //assuming consecutive markers
+                char curChar = DecimalToRoman(containerList); //Assuming single character
+                AdjustStart(ref start, ref value, curChar);
+                containerList.Start = start;
                 containerList.MarkerType = list.MarkerType;
                 containerList.Style = list.Style;
                 return true;
             }
             return false;
+        }
+
+        private static char DecimalToRoman(OrderedListData containerList)
+        {
+            var start = containerList.Start;
+            var markerType = containerList.MarkerType;
+            var parameters = markerType == OrderedListMarkerType.LowerRoman
+                ? RomanListItemHandler.LowerRomanParameters
+                : RomanListItemHandler.UpperRomanParameters;
+            foreach (OrderedListSingleMarkerParameters marker in parameters.Markers)
+                if (start == marker.StartValue)
+                    return marker.Character;
+            return (char)0;
         }
     }
 }
