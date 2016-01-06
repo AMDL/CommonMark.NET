@@ -22,7 +22,7 @@ namespace CommonMark.Tests
         }
 
         [TestMethod]
-        [TestCategory("Leaf blocks - ATX headers")]
+        [TestCategory("Leaf blocks - ATX headings")]
         public void HeadingsAndHorizontalRulers()
         {
             // see https://github.com/Knagis/CommonMark.NET/issues/60
@@ -30,114 +30,114 @@ namespace CommonMark.Tests
         }
 
         [TestMethod]
-        [TestCategory("Leaf blocks - Setext headers")]
+        [TestCategory("Leaf blocks - Setext headings")]
         public void HeadingDotsDisabledByDefault()
         {
             Helpers.ExecuteTest("foo\n..\n", "<p>foo\n..</p>");
         }
 
         [TestMethod]
-        [TestCategory("Leaf blocks - Setext headers")]
+        [TestCategory("Leaf blocks - Setext headings")]
         public void HeadingDotsDisabledSingleDot()
         {
             Helpers.ExecuteTest("foo\n.\n", "<p>foo\n.</p>", HeadingDotsSettings);
         }
 
         [TestMethod]
-        [TestCategory("Leaf blocks - Setext headers")]
+        [TestCategory("Leaf blocks - Setext headings")]
         public void HeadingDotsExample045()
         {
             Helpers.ExecuteTest("Foo *bar*\n.........\n\nFoo *bar*\n---------", "<h3>Foo <em>bar</em></h3>\n<h2>Foo <em>bar</em></h2>", HeadingDotsSettings);
         }
 
         [TestMethod]
-        [TestCategory("Leaf blocks - Setext headers")]
+        [TestCategory("Leaf blocks - Setext headings")]
         public void HeadingDotsExample046()
         {
             Helpers.ExecuteTest("Foo\n.........................\n\nFoo\n=", "<h3>Foo</h3>\n<h1>Foo</h1>", HeadingDotsSettings);
         }
 
         [TestMethod]
-        [TestCategory("Leaf blocks - Setext headers")]
+        [TestCategory("Leaf blocks - Setext headings")]
         public void HeadingDotsExample047()
         {
             Helpers.ExecuteTest("   Foo\n....\n\n  Foo\n.....\n\n  Foo\n  ---", "<h3>Foo</h3>\n<h3>Foo</h3>\n<h2>Foo</h2>", HeadingDotsSettings);
         }
 
         [TestMethod]
-        [TestCategory("Leaf blocks - Setext headers")]
+        [TestCategory("Leaf blocks - Setext headings")]
         public void HeadingDotsExample048()
         {
             Helpers.ExecuteTest("    Foo\n    ...\n\n    Foo\n---", "<pre><code>Foo\n...\n\nFoo\n</code></pre>\n<hr />", HeadingDotsSettings);
         }
 
         [TestMethod]
-        [TestCategory("Leaf blocks - Setext headers")]
+        [TestCategory("Leaf blocks - Setext headings")]
         public void HeadingDotsExample049()
         {
             Helpers.ExecuteTest("Foo\n   ....      ", "<h3>Foo</h3>", HeadingDotsSettings);
         }
 
         [TestMethod]
-        [TestCategory("Leaf blocks - Setext headers")]
+        [TestCategory("Leaf blocks - Setext headings")]
         public void HeadingDotsExample050()
         {
             Helpers.ExecuteTest("Foo\n    ...", "<p>Foo\n...</p>", HeadingDotsSettings);
         }
 
         [TestMethod]
-        [TestCategory("Leaf blocks - Setext headers")]
+        [TestCategory("Leaf blocks - Setext headings")]
         public void HeadingDotsExample051()
         {
             Helpers.ExecuteTest("Foo\n. .\n\nFoo\n... .", "<p>Foo\n. .</p>\n<p>Foo\n... .</p>", HeadingDotsSettings);
         }
 
         [TestMethod]
-        [TestCategory("Leaf blocks - Setext headers")]
+        [TestCategory("Leaf blocks - Setext headings")]
         public void HeadingDotsExample052()
         {
             Helpers.ExecuteTest("Foo  \n.....", "<h3>Foo</h3>", HeadingDotsSettings);
         }
 
         [TestMethod]
-        [TestCategory("Leaf blocks - Setext headers")]
+        [TestCategory("Leaf blocks - Setext headings")]
         public void HeadingDotsExample053()
         {
             Helpers.ExecuteTest("Foo\\\n....", "<h3>Foo\\</h3>", HeadingDotsSettings);
         }
 
         [TestMethod]
-        [TestCategory("Leaf blocks - Setext headers")]
+        [TestCategory("Leaf blocks - Setext headings")]
         public void HeadingDotsExample054()
         {
             Helpers.ExecuteTest("`Foo\n....\n`\n\n<a title=\"a lot\n....\nof dots\"/>", "<h3>`Foo</h3>\n<p>`</p>\n<h3>&lt;a title=&quot;a lot</h3>\n<p>of dots&quot;/&gt;</p>", HeadingDotsSettings);
         }
 
         [TestMethod]
-        [TestCategory("Leaf blocks - Setext headers")]
+        [TestCategory("Leaf blocks - Setext headings")]
         public void HeadingDotsExample055()
         {
             Helpers.ExecuteTest("> Foo\n...", "<blockquote>\n<p>Foo\n...</p>\n</blockquote>", HeadingDotsSettings);
         }
 
         [TestMethod]
-        [TestCategory("Leaf blocks - Setext headers")]
+        [TestCategory("Leaf blocks - Setext headings")]
         public void HeadingDotsExample056()
         {
             Helpers.ExecuteTest("- Foo\n...", "<ul>\n<li>Foo\n...</li>\n</ul>", HeadingDotsSettings);
         }
 
-        //No Example057 for HeaderDot
+        //No Example057 for HeadingDot
 
         [TestMethod]
-        [TestCategory("Leaf blocks - Setext headers")]
+        [TestCategory("Leaf blocks - Setext headings")]
         public void HeadingDotsExample058()
         {
             Helpers.ExecuteTest("---\nFoo\n....\nBar\n....\nBaz", "<hr />\n<h3>Foo</h3>\n<h3>Bar</h3>\n<p>Baz</p>", HeadingDotsSettings);
         }
 
         [TestMethod]
-        [TestCategory("Leaf blocks - Setext headers")]
+        [TestCategory("Leaf blocks - Setext headings")]
         public void HeadingDotsExample059()
         {
             Helpers.ExecuteTest("....", "<p>....</p>", HeadingDotsSettings);

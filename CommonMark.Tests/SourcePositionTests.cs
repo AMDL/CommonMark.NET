@@ -33,7 +33,7 @@ namespace CommonMark.Tests
 
         [TestMethod]
         [TestCategory("SourcePosition - Blocks")]
-        public void SourcePositionSetextHeader()
+        public void SourcePositionSETextHeading()
         {
             var data = "foo\n\nbaz\n===\n\nbar";
             var doc = Helpers.ParseDocument(data, Settings);
@@ -48,7 +48,7 @@ namespace CommonMark.Tests
 
         [TestMethod]
         [TestCategory("SourcePosition - Blocks")]
-        public void SourcePositionAtxHeader()
+        public void SourcePositionAtxHeading()
         {
             var data = "foo\n\n## baz\n\nbar";
             var doc = Helpers.ParseDocument(data, Settings);

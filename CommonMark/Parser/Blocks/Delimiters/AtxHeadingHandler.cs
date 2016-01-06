@@ -47,7 +47,7 @@ namespace CommonMark.Parser.Blocks.Delimiters
         /// <param name="info">Parser state.</param>
         /// <param name="headingLevel">Heading level.</param>
         /// <returns>Offset, or 0 for no match.</returns>
-        /// <remarks>Original: int scan_atx_heading_start(string s, int pos, int sourceLength, out int headerLevel)</remarks>
+        /// <remarks>Original: int scan_atx_heading_start(string s, int pos, int sourceLength, out int headingLevel)</remarks>
         private int ScanStart(BlockParserInfo info, out int headingLevel)
         {
             var s = info.Line;
