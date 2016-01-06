@@ -77,10 +77,7 @@ namespace CommonMark.Syntax
             this.LiteralContentValue.Length = length; 
             this.SourcePosition = sourcePosition;
             this.SourceLastPosition = sourceLastPosition;
-            this.Emphasis = new EmphasisData
-            {
-                DelimiterCharacter = delimiterCharacter,
-            };
+            this.Emphasis = new EmphasisData(delimiterCharacter);
         }
 
         /// <summary>
