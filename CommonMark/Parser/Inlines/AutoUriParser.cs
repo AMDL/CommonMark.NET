@@ -47,10 +47,10 @@ namespace CommonMark.Parser.Inlines
         {
             // for now the tests do not include anything that would require the use of `escaped_char` part so it is ignored.
 
-            // 31 is the maximum length of a valid scheme
+            // 32 is the maximum length of a valid scheme
             var checkLen = sourceLength - pos;
-            if (checkLen > 31)
-                checkLen = 31;
+            if (checkLen > 32)
+                checkLen = 32;
 
             var colon = false;
             for (var i = pos; i < sourceLength; i++)
